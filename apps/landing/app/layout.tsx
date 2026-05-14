@@ -63,7 +63,6 @@ const jsonLd = {
     'https://www.instagram.com/pinkbinder',
     'https://www.tiktok.com/@pinkbinder',
     'https://www.pinterest.com/pinkbinder',
-    'https://linktr.ee/pinkbinder',
   ],
 }
 

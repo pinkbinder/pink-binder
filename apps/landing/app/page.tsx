@@ -18,7 +18,7 @@ const links = [
   },
   {
     label: '📬 Join the Newsletter',
-    href: '#newsletter',
+    href: 'mailto:hello@pinkbinder.com?subject=Newsletter',
     description: 'Get exclusive deals & updates',
   },
 ]
