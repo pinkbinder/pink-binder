@@ -1,6 +1,6 @@
+import '@repo/ui/globals.css'
 import type { Metadata } from 'next'
 import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from './config/link-in-bio'
-import './globals.css'
 
 const SITE_NAME = BRAND.name
 const SITE_DESCRIPTION = BRAND.description

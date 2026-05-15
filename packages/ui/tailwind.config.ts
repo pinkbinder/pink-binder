@@ -3,10 +3,16 @@ import animate from 'tailwindcss-animate'
 
 const config: Config = {
   darkMode: ['class'],
-  content: ['./src/**/*.{ts,tsx}'],
+  content: [],
   theme: {
     extend: {
       colors: {
+        // Brand colors — the two signature pinks of The Pink Binder
+        brand: {
+          pink: 'hsl(335, 77%, 73%)',
+          'light-pink': 'hsl(335, 77%, 88%)',
+        },
+        // ShadCN-compatible CSS variable tokens
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
@@ -40,6 +46,27 @@ const config: Config = {
           DEFAULT: 'hsl(var(--card))',
           foreground: 'hsl(var(--card-foreground))',
         },
+      },
+      fontFamily: {
+        body: [
+          'Avenir Next',
+          'Nunito',
+          'Segoe UI',
+          'Helvetica Neue',
+          'Trebuchet MS',
+          'Arial Rounded MT',
+          'Arial',
+          'sans-serif',
+        ],
+        title: [
+          'Avenir Next',
+          'Trebuchet MS',
+          'Segoe UI',
+          'Arial Rounded MT',
+          'Gill Sans',
+          'Arial',
+          'sans-serif',
+        ],
       },
       borderRadius: {
         lg: 'var(--radius)',
