@@ -163,6 +163,7 @@ export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
   SPECIES_KEYWORD_SEEDS.map((species) => [species.slug, species])
 ) as Record<string, SpeciesKeywordConfig>
 
+/** Shared SEO defaults for the landing page and sitewide marketing metadata. */
 export const LANDING_SEO = {
   description:
     'Pink Binder is a cute Pokémon card shop and content brand for pink Pokémon card collections, kawaii binder finds, pastel fairy cards, baby shinies, and illustration rares in English, Japanese, and Chinese.',
@@ -177,9 +178,10 @@ export const LANDING_SEO = {
   ]),
 }
 
+/** Shared SEO defaults for blog layouts and post discovery surfaces. */
 export const BLOG_SEO = {
   description:
-    'Pokemon card stories, collecting tips, and product updates from Pink Binder, with a focus on cute Pokémon cards, aesthetic binders, pastel fairy lines, baby shinies, reverse holos, and art or illustration rares.',
+    'Pokémon card stories, collecting tips, and product updates from Pink Binder, with a focus on cute Pokémon cards, aesthetic binders, pastel fairy lines, baby shinies, reverse holos, and art or illustration rares.',
   keywords: uniqueKeywords([
     ...SEO_KEYWORD_GROUPS.blog,
     ...SEO_KEYWORD_GROUPS.cuteBrand,
