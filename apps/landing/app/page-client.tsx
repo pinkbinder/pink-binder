@@ -1,16 +1,30 @@
 'use client'
 
-import { PostCard, SocialBar, SOCIAL_LINKS, type PostCardPost } from '@repo/ui'
+import {
+  EbayListingsCarousel,
+  PostCard,
+  SocialBar,
+  SOCIAL_LINKS,
+  type EbayListing,
+  type PostCardPost,
+} from '@repo/ui'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import { BRAND, LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
+const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
+
 interface LandingPageClientProps {
   blogUrl: string
   latestPost: (PostCardPost & { href: string }) | null
+  ebayListings: EbayListing[]
 }
 
-export default function LandingPageClient({ blogUrl, latestPost }: LandingPageClientProps) {
+export default function LandingPageClient({
+  blogUrl,
+  latestPost,
+  ebayListings,
+}: LandingPageClientProps) {
   const [shareLink, setShareLink] = useState<LandingLink | null>(null)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
   const links = LANDING_LINKS.filter((link) => link.enabled)
@@ -77,6 +91,14 @@ export default function LandingPageClient({ blogUrl, latestPost }: LandingPageCl
             )
           })}
         </nav>
+
+        {ebayListings.length > 0 ? (
+          <EbayListingsCarousel
+            listings={ebayListings}
+            storeUrl={EBAY_STORE_URL}
+            className="w-full"
+          />
+        ) : null}
       </div>
 
       {latestPost ? (
