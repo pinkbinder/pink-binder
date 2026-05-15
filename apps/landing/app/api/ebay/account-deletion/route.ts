@@ -41,7 +41,7 @@ export async function POST(request: Request) {
   const topic =
     request.headers.get('x-ebay-notification-topic') || request.headers.get('x-ebay-topic-name')
 
-  const isExpectedTopic = !topic || topic === REQUIRED_TOPIC
+  const isExpectedTopic = topic === REQUIRED_TOPIC
   const hasNotification = !!payload && typeof payload === 'object'
 
   if (!isExpectedTopic || !hasNotification) {
