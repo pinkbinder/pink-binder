@@ -7,6 +7,8 @@ export interface PostCardPost {
   excerpt: string
   thumbnail?: string
   thumbnailAlt?: string
+  thumbnailFallback?: string
+  thumbnailFit?: 'cover' | 'contain'
   meta?: string
 }
 
@@ -15,17 +17,23 @@ interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 function PostCard({ post, className, ...props }: PostCardProps) {
+  const thumbnailFit = post.thumbnailFit ?? 'cover'
+  const thumbnailSrc = post.thumbnail ?? post.thumbnailFallback
+
   return (
     <Card
       className={cn('overflow-hidden rounded-3xl border-pink-200/70 shadow-sm', className)}
       {...props}
     >
       <div className="bg-muted aspect-[16/10] overflow-hidden">
-        {post.thumbnail ? (
+        {thumbnailSrc ? (
           <img
-            src={post.thumbnail}
+            src={thumbnailSrc}
             alt={post.thumbnailAlt ?? post.title}
-            className="h-full w-full object-cover"
+            className={cn(
+              'h-full w-full',
+              thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
+            )}
           />
         ) : (
           <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br px-6 text-center">
