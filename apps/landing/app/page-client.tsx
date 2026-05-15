@@ -14,7 +14,7 @@ import {
 
 interface LandingPageClientProps {
   blogUrl: string
-  latestPost: PostCardPost | null
+  latestPost: (PostCardPost & { href: string }) | null
 }
 
 export default function LandingPageClient({ blogUrl, latestPost }: LandingPageClientProps) {
@@ -118,7 +118,15 @@ export default function LandingPageClient({ blogUrl, latestPost }: LandingPageCl
               Visit blog →
             </a>
           </div>
-          <PostCard post={latestPost} />
+          <a
+            href={latestPost.href}
+            className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+          >
+            <PostCard post={latestPost} />
+            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-semibold transition-colors">
+              Read article →
+            </span>
+          </a>
         </section>
       ) : null}
 

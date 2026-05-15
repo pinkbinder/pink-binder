@@ -7,18 +7,14 @@ export interface PostCardPost {
   excerpt: string
   thumbnail?: string
   thumbnailAlt?: string
-  href?: string
   meta?: string
 }
 
 interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
   post: PostCardPost
-  ctaLabel?: string
 }
 
-function PostCard({ post, ctaLabel = 'Read article', className, ...props }: PostCardProps) {
-  const safeHref = getSafeHref(post.href)
-
+function PostCard({ post, className, ...props }: PostCardProps) {
   return (
     <Card
       className={cn('overflow-hidden rounded-3xl border-pink-200/70 shadow-sm', className)}
@@ -47,39 +43,9 @@ function PostCard({ post, ctaLabel = 'Read article', className, ...props }: Post
       </CardHeader>
       <CardContent className="space-y-4">
         <p className="text-muted-foreground text-sm leading-6">{post.excerpt}</p>
-        {safeHref ? (
-          <a
-            href={safeHref}
-            className="text-primary hover:text-primary/80 inline-flex text-sm font-semibold transition-colors"
-          >
-            {ctaLabel} →
-          </a>
-        ) : null}
       </CardContent>
     </Card>
   )
-}
-
-function getSafeHref(href?: string) {
-  if (!href) {
-    return undefined
-  }
-
-  if (href.startsWith('/')) {
-    return href
-  }
-
-  try {
-    const url = new URL(href)
-
-    if (url.protocol === 'http:' || url.protocol === 'https:') {
-      return href
-    }
-  } catch {
-    return undefined
-  }
-
-  return undefined
 }
 
 export { PostCard }
