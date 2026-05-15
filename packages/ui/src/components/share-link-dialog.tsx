@@ -189,7 +189,11 @@ export function ShareLinkDialog({
   }
 
   function handlePlatformShare(buildUrl: (url: string, text: string) => string) {
-    window.open(buildUrl(shareUrl, shareText), '_blank', 'noopener,noreferrer')
+    const popup = window.open(buildUrl(shareUrl, shareText), '_blank', 'noopener,noreferrer')
+    if (!popup) {
+      // Popup was blocked — fall back to navigating in the same tab.
+      window.location.href = buildUrl(shareUrl, shareText)
+    }
   }
 
   return (
