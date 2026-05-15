@@ -16,10 +16,10 @@ import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
 const LANDING_PAGE_SHARE_URL = 'https://pinkbinder.shop'
-const CENTER_SPOTLIGHT_CLASSNAME =
-  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]'
-const CENTER_GLOW_CLASSNAME =
-  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] bg-white/30 blur-2xl'
+const CENTER_OVERLAY_LAYOUT_CLASSNAME =
+  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem]'
+const CENTER_SPOTLIGHT_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]`
+const CENTER_GLOW_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} bg-white/30 blur-2xl`
 const LANDING_PAGE_DESCRIPTION =
   'Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and Illustration Rares in English, Japanese, and Chinese!'
 const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
