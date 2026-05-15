@@ -20,7 +20,7 @@ export default function LandingPage() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 py-16">
-      <div className="font-body mx-auto flex w-full max-w-md flex-col items-center gap-8">
+      <div className="mx-auto flex w-full max-w-md flex-col items-center gap-8">
         <header className="flex flex-col items-center gap-3 text-center">
           <div
             className="bg-primary text-primary-foreground flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold shadow-lg"
