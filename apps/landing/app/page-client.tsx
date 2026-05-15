@@ -35,17 +35,23 @@ export default function LandingPageClient({
     <main className="flex min-h-screen flex-col px-4 py-16">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-8">
         <header className="flex flex-col items-center gap-3 text-center">
-          <div
-            className="bg-primary text-primary-foreground flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold shadow-lg"
-            aria-hidden="true"
-          >
-            {BRAND.logoText}
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt={`${BRAND.name} logo`}
+            className="h-20 w-20 rounded-full border border-pink-100 bg-white object-cover shadow-lg"
+            width={80}
+            height={80}
+            priority
+          />
           <h1 className="font-title text-3xl font-bold tracking-tight">{BRAND.name}</h1>
           <p className="text-primary text-base font-medium leading-relaxed">
             <span>{BRAND.subtitleTop}</span>
             <br />
             <span>{BRAND.subtitleBottom}</span>
+          </p>
+          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+            Shop cute Pokemon cards and fan-favorite collectibles, including fairy cards, baby
+            shinies, reverse holos, and art or illustration rares in English, Japanese, and Chinese.
           </p>
         </header>
 
