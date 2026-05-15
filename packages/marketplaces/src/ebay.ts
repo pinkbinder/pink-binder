@@ -52,6 +52,8 @@ export async function getEbayListings(): Promise<EbayListing[]> {
   url.searchParams.set('paginationInput.entriesPerPage', String(EBAY_LISTINGS_PER_PAGE))
 
   try {
+    // The `next` option is a Next.js extension to the standard fetch API for ISR cache control.
+    // In non-Next.js environments it is safely ignored.
     const response = await fetch(url.toString(), {
       next: { revalidate: CACHE_REVALIDATE_SECONDS },
     } as RequestInit)
