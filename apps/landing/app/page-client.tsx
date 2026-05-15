@@ -3,6 +3,7 @@
 import {
   EbayListingsCarousel,
   PostCard,
+  ShareLinkDialog,
   SocialBar,
   type EbayListing,
   type PostCardPost,
@@ -136,79 +137,15 @@ export default function LandingPageClient({
         </section>
       ) : null}
 
-      {shareLink ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
-          role="dialog"
-          aria-modal="true"
-          aria-label={`Share ${shareLink.label}`}
-          onClick={() => setShareLink(null)}
-        >
-          <div
-            className="bg-card text-card-foreground w-full max-w-md rounded-2xl p-5 shadow-xl"
-            onClick={(event) => event.stopPropagation()}
-          >
-            <h2 className="font-title text-xl font-semibold">Share link</h2>
-            <div className="bg-muted mt-4 flex gap-3 rounded-xl p-3">
-              <Image
-                src={shareLink.thumbnail}
-                alt={shareLink.thumbnailAlt}
-                className="h-14 w-14 shrink-0 rounded-lg bg-white object-contain p-1"
-                width={56}
-                height={56}
-              />
-              <div className="min-w-0">
-                <p className="text-sm font-semibold">{shareLink.label}</p>
-                <p className="text-muted-foreground mt-1 text-xs">{shareLink.shareDescription}</p>
-                <p className="text-muted-foreground mt-2 truncate text-xs">{shareUrl}</p>
-              </div>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              <button
-                type="button"
-                onClick={() => copyShareLink(shareUrl, setCopyStatus)}
-                className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg px-3 py-2 text-sm font-semibold"
-              >
-                {copyStatus === 'copied'
-                  ? 'Copied!'
-                  : copyStatus === 'failed'
-                    ? 'Try again'
-                    : 'Copy link'}
-              </button>
-              <button
-                type="button"
-                onClick={() => nativeShare(shareLink, shareUrl)}
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg px-3 py-2 text-sm font-semibold"
-              >
-                Native share
-              </button>
-              <button
-                type="button"
-                onClick={() => shareToSocial('facebook', shareLink, shareUrl)}
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg px-3 py-2 text-sm font-semibold"
-              >
-                Facebook
-              </button>
-              <button
-                type="button"
-                onClick={() => shareToSocial('x', shareLink, shareUrl)}
-                className="bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded-lg px-3 py-2 text-sm font-semibold"
-              >
-                X
-              </button>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShareLink(null)}
-              className="text-muted-foreground hover:bg-accent mt-4 w-full rounded-lg px-3 py-2 text-sm font-medium"
-            >
-              Close
-            </button>
-          </div>
-        </div>
-      ) : null}
+      <ShareLinkDialog
+        item={shareLink}
+        shareUrl={shareUrl}
+        copyStatus={copyStatus}
+        onOpenChange={(open) => {
+          if (!open) setShareLink(null)
+        }}
+        onCopy={() => copyShareLink(shareUrl, setCopyStatus)}
+      />
     </main>
   )
 }
@@ -241,32 +178,4 @@ async function copyShareLink(
   } catch {
     setCopyStatus('failed')
   }
-}
-
-async function nativeShare(link: LandingLink, url: string) {
-  if (!navigator.share) {
-    return
-  }
-
-  try {
-    await navigator.share({
-      title: link.label,
-      text: link.shareDescription,
-      url,
-    })
-  } catch {
-    // User dismissed or sharing failed.
-  }
-}
-
-function shareToSocial(platform: 'facebook' | 'x', link: LandingLink, url: string) {
-  const encodedUrl = encodeURIComponent(url)
-  const encodedText = encodeURIComponent(`${link.label} — ${link.shareDescription}`)
-
-  const socialUrl =
-    platform === 'facebook'
-      ? `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
-      : `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`
-
-  window.open(socialUrl, '_blank', 'noopener,noreferrer')
 }
