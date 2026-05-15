@@ -4,13 +4,13 @@ import {
   EbayListingsCarousel,
   PostCard,
   SocialBar,
-  SOCIAL_LINKS,
   type EbayListing,
   type PostCardPost,
 } from '@repo/ui'
+import { BRAND, SOCIAL_LINKS } from '@repo/config'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
-import { BRAND, LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
+import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
 
@@ -50,8 +50,9 @@ export default function LandingPageClient({
             <span>{BRAND.subtitleBottom}</span>
           </p>
           <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
-            Shop cute Pokemon cards and fan-favorite collectibles, including fairy cards, baby
-            shinies, reverse holos, and art or illustration rares in English, Japanese, and Chinese.
+            Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse
+            kawaii binder favorites like pastel fairy cards, baby shinies, reverse holos, and
+            Illustration Rares in English, Japanese, and Chinese.
           </p>
         </header>
 

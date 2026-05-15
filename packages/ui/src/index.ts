@@ -1,5 +1,5 @@
 // Config
-export * from './config/site'
+export * from '@repo/config'
 
 // Components
 export * from './components/badge'

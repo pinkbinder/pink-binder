@@ -10,6 +10,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@repo/config": "workspace:*",
     "@repo/ui": "workspace:*",
     "gray-matter": "^4.0.3",
     "next": "15.5.18",
