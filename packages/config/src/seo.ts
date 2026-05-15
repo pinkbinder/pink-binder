@@ -20,7 +20,7 @@ export const SEO_KEYWORD_GROUPS = {
     'jirachi star cards',
   ],
   rarity: [
-    'S&V Illustration Rare cards',
+    'Scarlet & Violet Illustration Rare cards',
     'Art Rare pokemon collection',
     'Japanese waifu cards',
     'CHV (Chinese) pokemon cards',
@@ -194,7 +194,7 @@ export const BLOG_SEO = {
 }
 
 export const BLOG_INDEX_SEO = {
-  title: 'Pokemon Card Blog: Cute Card Picks, Tips, and Updates',
+  title: 'Pokémon Card Blog: Cute Card Picks, Tips, and Updates',
   description:
     'Explore Pink Binder posts about cute Pokémon cards, pink Pokémon card collections, kawaii binder picks, fairy lines, baby shinies, reverse holos, and illustration rares in English, Japanese, and Chinese sets.',
   keywords: uniqueKeywords([
