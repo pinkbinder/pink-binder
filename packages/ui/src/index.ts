@@ -7,4 +7,5 @@ export * from './components/post-card'
 export * from './components/separator'
 
 // Utilities
+export * from './lib/format-post-date'
 export * from './lib/utils'
