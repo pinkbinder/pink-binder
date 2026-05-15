@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import Image from 'next/image'
 import {
   BRAND,
@@ -16,7 +16,7 @@ export default function LandingPage() {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
   const links = LANDING_LINKS.filter((link) => link.enabled)
   const socials = SOCIAL_LINKS.filter((social) => social.enabled)
-  const shareUrl = useMemo(() => (shareLink ? resolveShareUrl(shareLink) : ''), [shareLink])
+  const shareUrl = shareLink ? resolveShareUrl(shareLink) : ''
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 py-16">
@@ -226,7 +226,7 @@ function shareToSocial(platform: 'facebook' | 'x', link: LandingLink, url: strin
   const socialUrl =
     platform === 'facebook'
       ? `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`
-      : `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`
+      : `https://x.com/intent/tweet?url=${encodedUrl}&text=${encodedText}`
 
   window.open(socialUrl, '_blank', 'noopener,noreferrer')
 }
