@@ -1,37 +1,10 @@
 import '@repo/ui/globals.css'
 import type { Metadata } from 'next'
-import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from './config/link-in-bio'
+import { BRAND, CONTACT_EMAIL, LANDING_SEO, SITE_URL, SOCIAL_LINKS } from '@repo/config'
 
 const SITE_NAME = BRAND.name
-const SITE_DESCRIPTION =
-  'Pink Binder is a Pokemon card store and creator brand focused on cute Pokemon cards, including fairy cards, baby shinies, reverse holos, and art rare or illustration rare hits in English, Japanese, and Chinese.'
-const SEO_KEYWORDS = [
-  'pokemon cards',
-  'pokemon card shop',
-  'cute pokemon cards',
-  'fairy pokemon cards',
-  'baby shiny pokemon cards',
-  'reverse holo pokemon cards',
-  'art rare pokemon cards',
-  'illustration rare pokemon cards',
-  'english pokemon cards',
-  'japanese pokemon cards',
-  'chinese pokemon cards',
-  'pokemon tcg puerto rico',
-  'eevee cards',
-  'sylveon cards',
-  'mimikyu cards',
-  'jigglypuff cards',
-  'jirachi cards',
-  'espurr cards',
-  'maushold cards',
-  'girly pokemon cards',
-  'kawaii pokemon cards',
-  'pokemon card streamer',
-  'pokemon card live shopping',
-  'pokemon card collector',
-  'pink binder pokemon',
-]
+const SITE_DESCRIPTION = LANDING_SEO.description
+const SEO_KEYWORDS = LANDING_SEO.keywords
 const SOCIAL_PROFILE_URLS = SOCIAL_LINKS.filter(
   (social) => social.enabled && social.icon !== 'email'
 ).map((social) => social.href)
