@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import Image from 'next/image'
 import {
   BRAND,
@@ -16,7 +16,7 @@ export default function LandingPage() {
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
   const links = LANDING_LINKS.filter((link) => link.enabled)
   const socials = SOCIAL_LINKS.filter((social) => social.enabled)
-  const shareUrl = shareLink ? resolveShareUrl(shareLink) : ''
+  const shareUrl = useMemo(() => (shareLink ? resolveShareUrl(shareLink) : ''), [shareLink])
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center px-4 py-16">
