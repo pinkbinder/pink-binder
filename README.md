@@ -35,6 +35,16 @@ pnpm build
 pnpm lint
 ```
 
+## eBay marketplace account deletion notifications
+
+Configure this callback URL in your eBay marketplace account deletion notification settings:
+
+- `https://<your-domain>/api/ebay/account-deletion`
+
+Set this environment variable for `apps/landing`:
+
+- `EBAY_VERIFICATION_TOKEN`: The verification token value configured in your eBay notification subscription.
+
 ## Stack
 
 - **Framework**: Next.js 15 (App Router)
