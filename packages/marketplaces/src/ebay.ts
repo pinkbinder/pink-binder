@@ -1,4 +1,12 @@
-import type { EbayListing } from '@repo/ui'
+export interface EbayListing {
+  id: string
+  title: string
+  price: string
+  currency: string
+  imageUrl: string
+  listingUrl: string
+  condition?: string
+}
 
 const EBAY_FINDING_API_URL = 'https://svcs.ebay.com/services/search/FindingService/v1'
 const EBAY_STORE_NAME = 'thepinkbinder'
@@ -44,16 +52,18 @@ export async function getEbayListings(): Promise<EbayListing[]> {
   url.searchParams.set('paginationInput.entriesPerPage', String(EBAY_LISTINGS_PER_PAGE))
 
   try {
+    // The `next` option is a Next.js extension to the standard fetch API for ISR cache control.
+    // In non-Next.js environments it is safely ignored.
     const response = await fetch(url.toString(), {
       next: { revalidate: CACHE_REVALIDATE_SECONDS },
-    })
+    } as RequestInit)
 
     if (!response.ok) {
       console.error(`eBay API error: ${response.status} ${response.statusText}`)
       return []
     }
 
-    const data: EbayFindingResponse = await response.json()
+    const data = (await response.json()) as EbayFindingResponse
     const root = data?.findItemsIneBayStoresResponse?.[0]
 
     if (root?.ack?.[0] !== 'Success') {

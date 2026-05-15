@@ -1,15 +1,8 @@
 import * as React from 'react'
+import { type EbayListing } from '@repo/marketplaces'
 import { cn } from '../lib/utils'
 
-export interface EbayListing {
-  id: string
-  title: string
-  price: string
-  currency: string
-  imageUrl: string
-  listingUrl: string
-  condition?: string
-}
+export type { EbayListing }
 
 interface EbayListingCardProps extends React.HTMLAttributes<HTMLAnchorElement> {
   listing: EbayListing
