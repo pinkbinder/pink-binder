@@ -44,6 +44,7 @@ Configure this callback URL in your eBay marketplace account deletion notificati
 Set this environment variable for `apps/landing`:
 
 - `EBAY_VERIFICATION_TOKEN`: The verification token value configured in your eBay notification subscription.
+- `EBAY_ACCOUNT_DELETION_ENDPOINT` (optional): Exact public callback URL to use for challenge hashing when your runtime request host differs from the registered eBay endpoint URL.
 
 ## Stack
 
