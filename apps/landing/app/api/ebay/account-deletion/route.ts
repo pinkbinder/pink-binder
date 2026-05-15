@@ -49,8 +49,8 @@ export async function POST(request: Request) {
     request.headers.get('x-ebay-notification-topic') || request.headers.get('x-ebay-topic-name')
   const normalizedTopic = topic?.trim().toUpperCase()
 
-  const isExpectedTopic = !normalizedTopic || normalizedTopic === REQUIRED_TOPIC
-  const hasNotification = payload !== null && typeof payload === 'object'
+  const isExpectedTopic = normalizedTopic === REQUIRED_TOPIC
+  const hasNotification = payload !== null && typeof payload === 'object' && !Array.isArray(payload)
 
   if (!isExpectedTopic || !hasNotification) {
     return NextResponse.json({ error: 'Unexpected notification payload.' }, { status: 400 })
