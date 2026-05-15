@@ -4,6 +4,11 @@
 
 @layer base {
   :root {
+    --font-body:
+      'Avenir Next', 'Nunito', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Arial Rounded MT',
+      Arial, sans-serif;
+    --font-title:
+      'Avenir Next', 'Trebuchet MS', 'Segoe UI', 'Arial Rounded MT', 'Gill Sans', Arial, sans-serif;
     --background: 335 77% 88%;
     --foreground: 330 57% 15%;
     --card: 0 0% 100%;
@@ -11,7 +16,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 330 57% 15%;
     --primary: 335 77% 73%;
-    --primary-foreground: 330 57% 15%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 334 68% 94%;
     --secondary-foreground: 330 45% 22%;
     --muted: 334 55% 92%;
@@ -34,7 +39,7 @@
     --popover: 330 26% 15%;
     --popover-foreground: 335 60% 94%;
     --primary: 335 65% 67%;
-    --primary-foreground: 330 55% 12%;
+    --primary-foreground: 0 0% 100%;
     --secondary: 330 23% 22%;
     --secondary-foreground: 335 48% 90%;
     --muted: 330 20% 20%;
@@ -55,5 +60,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-body);
+  }
+
+  .font-title {
+    font-family: var(--font-title);
+  }
+
+  .font-body {
+    font-family: var(--font-body);
   }
 }
