@@ -1,7 +1,7 @@
 import path from 'path'
 import { formatPostDate } from '@repo/ui'
 import { getPostHref, getPosts } from '../../blog/lib/posts'
-import { getEbayListings } from '../lib/ebay'
+import { getEbayListings } from '@repo/marketplaces'
 import LandingPageClient from './page-client'
 
 const BLOG_URL = process.env.BLOG_URL ?? process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
