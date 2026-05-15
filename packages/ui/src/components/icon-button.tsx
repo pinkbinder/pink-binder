@@ -1,6 +1,6 @@
 import * as React from 'react'
+import type { SocialIcon, SocialLink } from '@repo/config'
 import { cn } from '../lib/utils'
-import type { SocialIcon, SocialLink } from '../config/site'
 
 interface IconButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   label: string
