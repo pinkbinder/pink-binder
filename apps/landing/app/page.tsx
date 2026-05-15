@@ -1,9 +1,10 @@
 import path from 'path'
+import { formatPostDate } from '@repo/ui'
 import { getPosts } from '../../blog/lib/posts'
 import LandingPageClient from './page-client'
 
 const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
-const BLOG_CONTENT_DIR = path.join(process.cwd(), '../blog/content')
+const BLOG_CONTENT_DIR = process.env.BLOG_CONTENT_DIR ?? path.join(process.cwd(), '../blog/content')
 
 export default function LandingPage() {
   const [latestPost] = getPosts(BLOG_CONTENT_DIR)
@@ -28,7 +29,7 @@ export default function LandingPage() {
 
 function resolveBlogImageUrl(image: string) {
   if (!image) {
-    return ''
+    return undefined
   }
 
   if (/^https?:\/\//.test(image)) {
@@ -36,18 +37,4 @@ function resolveBlogImageUrl(image: string) {
   }
 
   return new URL(image, BLOG_URL).toString()
-}
-
-function formatPostDate(date: string) {
-  const parsedDate = new Date(date)
-
-  if (Number.isNaN(parsedDate.getTime())) {
-    return date
-  }
-
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-  }).format(parsedDate)
 }
