@@ -1,9 +1,9 @@
 import path from 'path'
 import { formatPostDate } from '@repo/ui'
-import { getPosts } from '../../blog/lib/posts'
+import { getPostHref, getPosts } from '../../blog/lib/posts'
 import LandingPageClient from './page-client'
 
-const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
+const BLOG_URL = process.env.BLOG_URL ?? process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
 const BLOG_CONTENT_DIR =
   process.env.BLOG_CONTENT_DIR ?? path.resolve(process.cwd(), '..', 'blog', 'content')
 
@@ -19,7 +19,7 @@ export default function LandingPage() {
               title: latestPost.title,
               excerpt: latestPost.description,
               thumbnail: resolveBlogImageUrl(latestPost.image),
-              href: new URL(`/posts/${latestPost.slug}`, BLOG_URL).toString(),
+              href: getPostHref(latestPost.slug, BLOG_URL),
               meta: formatPostDate(latestPost.date),
             }
           : null
@@ -28,8 +28,8 @@ export default function LandingPage() {
   )
 }
 
-function resolveBlogImageUrl(image: string) {
-  if (!image.trim()) {
+function resolveBlogImageUrl(image?: string | null) {
+  if (!image?.trim()) {
     return undefined
   }
 
