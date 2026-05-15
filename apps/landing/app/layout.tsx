@@ -1,19 +1,21 @@
 import type { Metadata } from 'next'
+import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from './config/link-in-bio'
 import './globals.css'
 
-const SITE_URL = 'https://pinkbinder.com'
-const SITE_NAME = 'Pink Binder'
-const SITE_DESCRIPTION =
-  'Pink Binder – your one-stop shop for curated products, creative content, and inspiration. Shop, read, and connect.'
+const SITE_NAME = BRAND.name
+const SITE_DESCRIPTION = BRAND.description
+const SOCIAL_PROFILE_URLS = SOCIAL_LINKS.filter(
+  (social) => social.enabled && social.icon !== 'email'
+).map((social) => social.href)
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} – Shop, Blog & More`,
+    default: SITE_NAME,
     template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
-  keywords: ['pink binder', 'shop', 'blog', 'creative', 'products', 'lifestyle'],
+  keywords: ['the pink binder', 'pokémon tcg', 'trading cards', 'online shop', 'puerto rico'],
   authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
@@ -24,20 +26,20 @@ export const metadata: Metadata = {
     type: 'website',
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} – Shop, Blog & More`,
+    title: SITE_NAME,
     description: SITE_DESCRIPTION,
     images: [
       {
         url: '/og-image.png',
         width: 1200,
         height: 630,
-        alt: `${SITE_NAME} – Shop, Blog & More`,
+        alt: SITE_NAME,
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} – Shop, Blog & More`,
+    title: SITE_NAME,
     description: SITE_DESCRIPTION,
     images: ['/og-image.png'],
   },
@@ -59,11 +61,13 @@ const jsonLd = {
   name: SITE_NAME,
   url: SITE_URL,
   description: SITE_DESCRIPTION,
-  sameAs: [
-    'https://www.instagram.com/pinkbinder',
-    'https://www.tiktok.com/@pinkbinder',
-    'https://www.pinterest.com/pinkbinder',
-  ],
+  email: CONTACT_EMAIL,
+  sameAs: SOCIAL_PROFILE_URLS,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'US',
+    addressRegion: 'Puerto Rico',
+  },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
