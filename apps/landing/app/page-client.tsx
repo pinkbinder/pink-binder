@@ -16,9 +16,17 @@ import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
 const LANDING_PAGE_SHARE_URL = 'https://pinkbinder.shop'
+const LEFT_OVERLAY_CLASSNAME =
+  'absolute -left-24 top-16 h-72 w-40 rounded-[2.5rem] border border-white/50 bg-white/25 shadow-[0_25px_90px_rgba(236,72,153,0.2)] backdrop-blur-[2px]'
+const LEFT_OVERLAY_GLOW_CLASSNAME =
+  'absolute -left-12 top-28 h-20 w-20 rounded-full bg-white/40 blur-sm'
+const RIGHT_OVERLAY_CLASSNAME =
+  'absolute -right-24 bottom-20 h-80 w-44 rounded-[2.75rem] border border-white/55 bg-white/20 shadow-[0_30px_100px_rgba(244,114,182,0.24)] backdrop-blur-[2px]'
+const RIGHT_OVERLAY_GLOW_CLASSNAME =
+  'absolute -right-10 bottom-40 h-24 w-24 rounded-full bg-white/35 blur-sm'
 const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
   label: BRAND.name,
-  href: '/',
+  href: LANDING_PAGE_SHARE_URL,
   thumbnail: '/images/logo.png',
   thumbnailAlt: `${BRAND.name} logo`,
   shareDescription: 'Shop cute Pokémon cards and binder favorites from The Pink Binder.',
@@ -47,10 +55,10 @@ export default function LandingPageClient({
     <main className="relative flex min-h-screen flex-col overflow-hidden px-4 py-16">
       <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className="absolute -left-24 top-16 h-72 w-40 rounded-[2.5rem] border border-white/50 bg-white/25 shadow-[0_25px_90px_rgba(236,72,153,0.2)] backdrop-blur-[2px]" />
-          <div className="absolute -left-12 top-28 h-20 w-20 rounded-full bg-white/40 blur-sm" />
-          <div className="absolute -right-24 bottom-20 h-80 w-44 rounded-[2.75rem] border border-white/55 bg-white/20 shadow-[0_30px_100px_rgba(244,114,182,0.24)] backdrop-blur-[2px]" />
-          <div className="absolute -right-10 bottom-40 h-24 w-24 rounded-full bg-white/35 blur-sm" />
+          <div className={LEFT_OVERLAY_CLASSNAME} />
+          <div className={LEFT_OVERLAY_GLOW_CLASSNAME} />
+          <div className={RIGHT_OVERLAY_CLASSNAME} />
+          <div className={RIGHT_OVERLAY_GLOW_CLASSNAME} />
         </div>
 
         <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6">
