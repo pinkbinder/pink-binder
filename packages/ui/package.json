@@ -17,6 +17,7 @@
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.14",
     "@repo/config": "workspace:*",
+    "@repo/marketplaces": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.511.0",
@@ -32,6 +33,7 @@
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "eslint": "^9.26.0",
