@@ -75,6 +75,9 @@ importers:
 
   apps/blog:
     dependencies:
+      '@repo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -130,6 +133,9 @@ importers:
 
   apps/landing:
     dependencies:
+      '@repo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -226,6 +232,15 @@ importers:
         specifier: 5.8.3
         version: 5.8.3
 
+  packages/config:
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 5.8.3
+        version: 5.8.3
+
   packages/eslint-config:
     devDependencies:
       '@typescript-eslint/eslint-plugin':
@@ -251,6 +266,9 @@ importers:
 
   packages/ui:
     dependencies:
+      '@repo/config':
+        specifier: workspace:*
+        version: link:../config
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
