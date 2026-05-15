@@ -39,14 +39,14 @@ export default function LandingPage() {
 
         <footer className="flex items-center gap-6" aria-label="Social media links">
           {socials.map((social) => {
-            const isMail = social.icon === 'email'
+            const isEmailLink = social.icon === 'email'
 
             return (
               <a
                 key={social.href}
                 href={social.href}
-                target={isMail ? undefined : '_blank'}
-                rel={isMail ? undefined : 'noopener noreferrer'}
+                target={isEmailLink ? undefined : '_blank'}
+                rel={isEmailLink ? undefined : 'noopener noreferrer'}
                 aria-label={social.label}
                 className="bg-primary text-primary-foreground ring-primary/20 hover:bg-primary/90 rounded-full p-2 ring-1 transition-colors"
               >
