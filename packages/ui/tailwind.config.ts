@@ -3,6 +3,8 @@ import animate from 'tailwindcss-animate'
 
 const config: Config = {
   darkMode: ['class'],
+  // Content paths must be defined in each app's tailwind.config.ts — preset paths
+  // resolve relative to the app's directory, not this preset file's location.
   content: [],
   theme: {
     extend: {
