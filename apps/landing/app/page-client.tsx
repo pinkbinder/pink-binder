@@ -34,7 +34,7 @@ export default function LandingPageClient({
 
   return (
     <main className="flex min-h-screen flex-col px-4 py-16">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-8">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-6">
         <header className="flex flex-col items-center gap-3 text-center">
           <Image
             src="/images/logo.png"
@@ -45,15 +45,15 @@ export default function LandingPageClient({
             priority
           />
           <h1 className="font-title text-3xl font-bold tracking-tight">{BRAND.name}</h1>
-          <p className="text-primary text-base font-medium leading-relaxed">
+          <p className="text-primary text-lg font-bold leading-relaxed">
             <span>{BRAND.subtitleTop}</span>
             <br />
             <span>{BRAND.subtitleBottom}</span>
           </p>
-          <p className="text-muted-foreground max-w-sm text-sm leading-relaxed">
+          <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
             Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse
-            kawaii binder favorites like pastel fairy cards, baby shinies, reverse holos, and
-            Illustration Rares in English, Japanese, and Chinese.
+            kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and
+            Illustration Rares in English, Japanese, and Chinese!
           </p>
         </header>
 
@@ -113,7 +113,7 @@ export default function LandingPageClient({
         <section className="mx-auto mt-12 flex w-full max-w-md flex-col gap-4">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-primary text-xs font-semibold uppercase tracking-[0.3em]">
+              <p className="text-primary text-xs font-bold uppercase tracking-[0.3em]">
                 Latest from the blog
               </p>
               <h2 className="font-title mt-2 text-2xl font-semibold">Fresh from Pink Binder</h2>

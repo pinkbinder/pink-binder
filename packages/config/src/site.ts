@@ -4,7 +4,7 @@ export const CONTACT_EMAIL = 'angel@pinkbinder.store'
 export const BRAND = {
   name: 'The Pink Binder',
   subtitleTop: 'Puerto Rico, USA 🇵🇷🇺🇸',
-  subtitleBottom: 'Pokémon TCG collector & online shop!',
+  subtitleBottom: 'Pokémon TCG online shop!',
   description:
     'The Pink Binder is a Puerto Rico based Pokémon TCG collector and online shop sharing products, content, and updates.',
   logoText: 'PB',
