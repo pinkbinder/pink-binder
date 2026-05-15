@@ -1,0 +1,28 @@
+<svg width="1200" height="750" viewBox="0 0 1200 750" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="750" rx="48" fill="#FFF6FA"/>
+  <rect x="48" y="48" width="1104" height="654" rx="40" fill="url(#paint0_linear_58_13)"/>
+  <circle cx="936" cy="188" r="148" fill="#FFE3EF"/>
+  <circle cx="1028" cy="116" r="68" fill="#FFD2E6"/>
+  <circle cx="258" cy="548" r="178" fill="#FFD7E8"/>
+  <path d="M220 148C220 113.83 247.83 86 282 86H702C736.17 86 764 113.83 764 148V430C764 464.17 736.17 492 702 492H282C247.83 492 220 464.17 220 430V148Z" fill="white" fill-opacity="0.82"/>
+  <rect x="272" y="170" width="186" height="18" rx="9" fill="#F6AFCB"/>
+  <rect x="272" y="222" width="442" height="34" rx="17" fill="#5E1D3D"/>
+  <rect x="272" y="274" width="390" height="18" rx="9" fill="#A55B7E"/>
+  <rect x="272" y="326" width="330" height="18" rx="9" fill="#C87FA4"/>
+  <rect x="272" y="402" width="212" height="44" rx="22" fill="#F38AB8"/>
+  <path d="M825 332C825 287.817 860.817 252 905 252H1005C1049.18 252 1085 287.817 1085 332V432C1085 476.183 1049.18 512 1005 512H905C860.817 512 825 476.183 825 432V332Z" fill="white" fill-opacity="0.86"/>
+  <path d="M873 356L956 410L1039 356" stroke="#D15A93" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M873 420L931 382L956 398L981 382L1039 420" stroke="#F091BE" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="220" y="610" fill="#5E1D3D" font-family="'Avenir Next', 'Segoe UI', sans-serif" font-size="62" font-weight="700">
+    Hello, Pink Binder Blog
+  </text>
+  <text x="220" y="664" fill="#8E4568" font-family="'Avenir Next', 'Segoe UI', sans-serif" font-size="30" font-weight="500">
+    Updates, stories, and behind-the-scenes notes from the Pink Binder team.
+  </text>
+  <defs>
+    <linearGradient id="paint0_linear_58_13" x1="108" y1="102" x2="1087" y2="675" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFEAF3"/>
+      <stop offset="1" stop-color="#F6B5CF"/>
+    </linearGradient>
+  </defs>
+</svg>
