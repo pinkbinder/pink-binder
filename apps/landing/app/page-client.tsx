@@ -24,12 +24,14 @@ const RIGHT_OVERLAY_CLASSNAME =
   'absolute -right-24 bottom-20 h-80 w-44 rounded-[2.75rem] border border-white/55 bg-white/20 shadow-[0_30px_100px_rgba(244,114,182,0.24)] backdrop-blur-[2px]'
 const RIGHT_OVERLAY_GLOW_CLASSNAME =
   'absolute -right-10 bottom-40 h-24 w-24 rounded-full bg-white/35 blur-sm'
+const LANDING_PAGE_DESCRIPTION =
+  'Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and Illustration Rares in English, Japanese, and Chinese!'
 const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
   label: BRAND.name,
   href: LANDING_PAGE_SHARE_URL,
   thumbnail: '/images/logo.png',
   thumbnailAlt: `${BRAND.name} logo`,
-  shareDescription: 'Shop cute Pokémon cards and binder favorites from The Pink Binder.',
+  shareDescription: LANDING_PAGE_DESCRIPTION,
 }
 
 interface LandingPageClientProps {
@@ -52,7 +54,7 @@ export default function LandingPageClient({
   const socials = SOCIAL_LINKS.filter((social) => social.enabled)
 
   return (
-    <main className="relative flex min-h-screen flex-col overflow-hidden px-4 py-16">
+    <main className="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-16">
       <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           <div className={LEFT_OVERLAY_CLASSNAME} />
@@ -96,9 +98,7 @@ export default function LandingPageClient({
               <span>{BRAND.subtitleBottom}</span>
             </p>
             <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
-              Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse
-              kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and
-              Illustration Rares in English, Japanese, and Chinese!
+              {LANDING_PAGE_DESCRIPTION}
             </p>
           </header>
 
