@@ -238,7 +238,7 @@ export function createSpeciesPageSeoConfig(
     collection,
     translations: resolved.translations,
     title: `${titleLead} Cute Cards | ${siteName}`,
-    description: `Shop the cutest ${resolved.name} cards in English, Japanese, and Chinese. From rare Illustration Rares to shiny baby cards, we specialize in the pink and pastel side of Pokemon TCG. Fast shipping on all Fairy and Art Rare cards.`,
+    description: `Shop the cutest ${resolved.name} cards in English, Japanese, and Chinese. From rare Illustration Rares to shiny baby cards, we specialize in the pink and pastel side of Pokémon TCG. Fast shipping on all Fairy and Art Rare cards.`,
     heading: `The Ultimate ${resolved.name} Collection: Cute & Rare Cards`,
     keywords: uniqueKeywords([
       resolved.name,
