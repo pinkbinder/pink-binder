@@ -1,4 +1,4 @@
-export interface TcgPlayerListing {
+export interface TCGPlayerListing {
   id: string
   title: string
   price: string
@@ -9,7 +9,7 @@ export interface TcgPlayerListing {
   condition?: string
 }
 
-export async function getTcgPlayerListings(): Promise<TcgPlayerListing[]> {
+export async function getTcgPlayerListings(): Promise<TCGPlayerListing[]> {
   // TODO: Implement TCGPlayer API integration
   return []
 }
