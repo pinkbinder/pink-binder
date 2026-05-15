@@ -1,6 +1,5 @@
 import type { MetadataRoute } from 'next'
-
-const SITE_URL = 'https://pinkbinder.com'
+import { SITE_URL } from './config/link-in-bio'
 
 export default function robots(): MetadataRoute.Robots {
   return {
