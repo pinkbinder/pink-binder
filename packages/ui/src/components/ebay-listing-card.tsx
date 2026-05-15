@@ -38,6 +38,9 @@ function EbayListingCard({ listing, className, ...props }: EbayListingCardProps)
     >
       <div className="bg-muted aspect-square overflow-hidden">
         {listing.imageUrl ? (
+          // Plain <img> is intentional: this shared component lives in @repo/ui
+          // which has no Next.js dependency. The landing app's next.config.mjs
+          // allowlists eBay image hostnames for next/image used elsewhere.
           <img
             src={listing.imageUrl}
             alt={listing.title}

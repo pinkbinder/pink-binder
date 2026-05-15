@@ -3,6 +3,7 @@ import type { EbayListing } from '@repo/ui'
 const EBAY_FINDING_API_URL = 'https://svcs.ebay.com/services/search/FindingService/v1'
 const EBAY_STORE_NAME = 'thepinkbinder'
 const EBAY_LISTINGS_PER_PAGE = 10
+const CACHE_REVALIDATE_SECONDS = 3600 // 1 hour
 
 // eBay Finding API JSON response shapes (abbreviated to what we use)
 interface EbayFindingItem {
@@ -44,7 +45,7 @@ export async function getEbayListings(): Promise<EbayListing[]> {
 
   try {
     const response = await fetch(url.toString(), {
-      next: { revalidate: 3600 }, // Cache for 1 hour (Next.js fetch cache)
+      next: { revalidate: CACHE_REVALIDATE_SECONDS },
     })
 
     if (!response.ok) {
