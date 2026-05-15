@@ -16,14 +16,10 @@ import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
 const LANDING_PAGE_SHARE_URL = 'https://pinkbinder.shop'
-const LEFT_OVERLAY_CLASSNAME =
-  'absolute -left-24 top-16 h-72 w-40 rounded-[2.5rem] border border-white/50 bg-white/25 shadow-[0_25px_90px_rgba(236,72,153,0.2)] backdrop-blur-[2px]'
-const LEFT_OVERLAY_GLOW_CLASSNAME =
-  'absolute -left-12 top-28 h-20 w-20 rounded-full bg-white/40 blur-sm'
-const RIGHT_OVERLAY_CLASSNAME =
-  'absolute -right-24 bottom-20 h-80 w-44 rounded-[2.75rem] border border-white/55 bg-white/20 shadow-[0_30px_100px_rgba(244,114,182,0.24)] backdrop-blur-[2px]'
-const RIGHT_OVERLAY_GLOW_CLASSNAME =
-  'absolute -right-10 bottom-40 h-24 w-24 rounded-full bg-white/35 blur-sm'
+const CENTER_SPOTLIGHT_CLASSNAME =
+  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]'
+const CENTER_GLOW_CLASSNAME =
+  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] bg-white/30 blur-2xl'
 const LANDING_PAGE_DESCRIPTION =
   'Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and Illustration Rares in English, Japanese, and Chinese!'
 const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
@@ -55,14 +51,12 @@ export default function LandingPageClient({
 
   return (
     <main className="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-16">
-      <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
-        <div aria-hidden="true" className="pointer-events-none absolute inset-0">
-          <div className={LEFT_OVERLAY_CLASSNAME} />
-          <div className={LEFT_OVERLAY_GLOW_CLASSNAME} />
-          <div className={RIGHT_OVERLAY_CLASSNAME} />
-          <div className={RIGHT_OVERLAY_GLOW_CLASSNAME} />
-        </div>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className={CENTER_SPOTLIGHT_CLASSNAME} />
+        <div className={CENTER_GLOW_CLASSNAME} />
+      </div>
 
+      <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
         <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6">
           <div className="flex w-full justify-end">
             <button
