@@ -34,8 +34,7 @@ const SHARE_PLATFORMS: {
   {
     id: 'messenger',
     label: 'Share on Messenger',
-    buildUrl: (url) =>
-      `https://www.facebook.com/dialog/send?app_id=87741124305&link=${encodeURIComponent(url)}&redirect_uri=${encodeURIComponent(url)}`,
+    buildUrl: (url) => `fb-messenger://share/?link=${encodeURIComponent(url)}`,
   },
   {
     id: 'x',
