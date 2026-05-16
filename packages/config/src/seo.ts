@@ -88,6 +88,11 @@ export const SEO_KEYWORD_GROUPS = {
     'eevee evolution cards',
     'sylveon espeon glaceon leafeon cards',
   ],
+  mostPopular: [
+    'most popular pokemon cards',
+    'top pokemon fan favorites',
+    'iconic pokemon cards all generations',
+  ],
   rarity: [
     'Scarlet & Violet Illustration Rare cards',
     'Art Rare pokemon collection',
@@ -122,6 +127,7 @@ export type SpeciesCollectionSlug =
   | 'elegant-and-feminine'
   | 'spooky-cute'
   | 'eeveelution-core'
+  | 'most-popular'
 
 export type SpeciesKeywordConfig = {
   slug: string
@@ -253,6 +259,13 @@ export const SPECIES_COLLECTIONS = {
     description: 'Mandatory Eevee and top Eeveelution species for cute collector traffic.',
     featuredSpecies: ['Eevee', 'Sylveon', 'Espeon', 'Glaceon', 'Leafeon'],
   },
+  'most-popular': {
+    slug: 'most-popular',
+    title: 'Most Popular Pokémon',
+    description:
+      'The top fan-favorite Pokémon across generations, from mascots and starters to legendary icons.',
+    featuredSpecies: ['Pikachu', 'Charizard', 'Mewtwo', 'Lucario', 'Greninja'],
+  },
 } as const satisfies Record<
   SpeciesCollectionSlug,
   {
@@ -289,6 +302,7 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   ],
   'spooky-cute': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.spookyCute],
   'eeveelution-core': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.eeveelutions],
+  'most-popular': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mostPopular],
 }
 
 const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
@@ -3047,10 +3061,141 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     types: ['Ghost', 'Poison'],
     generation: 1,
   },
+  // ─── Most Popular (cross-generation fan favorites) ───────────────────────────
+  {
+    slug: 'mewtwo',
+    name: 'Mewtwo',
+    collection: 'most-popular',
+    translations: ['ミュウツー', '超梦'],
+    relatedKeywords: ['mewtwo cards', 'legendary psychic pokemon cards'],
+    relatedEntities: ['Mew', 'Lucario', 'Charizard'],
+    types: ['Psychic'],
+    generation: 1,
+  },
+  {
+    slug: 'rayquaza',
+    name: 'Rayquaza',
+    collection: 'most-popular',
+    translations: ['レックウザ', '烈空坐'],
+    relatedKeywords: ['rayquaza cards', 'dragon legendary pokemon cards'],
+    relatedEntities: ['Charizard', 'Garchomp', 'Lugia'],
+    types: ['Dragon', 'Flying'],
+    generation: 3,
+  },
+  {
+    slug: 'dragonite',
+    name: 'Dragonite',
+    collection: 'most-popular',
+    translations: ['カイリュー', '快龙'],
+    relatedKeywords: ['dragonite cards', 'popular dragon pokemon cards'],
+    relatedEntities: ['Charizard', 'Garchomp', 'Pikachu'],
+    types: ['Dragon', 'Flying'],
+    generation: 1,
+  },
+  {
+    slug: 'garchomp',
+    name: 'Garchomp',
+    collection: 'most-popular',
+    translations: ['ガブリアス', '烈咬陆鲨'],
+    relatedKeywords: ['garchomp cards', 'land shark pokemon cards'],
+    relatedEntities: ['Dragonite', 'Lucario', 'Rayquaza'],
+    types: ['Dragon', 'Ground'],
+    generation: 4,
+  },
+  {
+    slug: 'lapras',
+    name: 'Lapras',
+    collection: 'most-popular',
+    translations: ['ラプラス', '拉普拉斯'],
+    relatedKeywords: ['lapras cards', 'classic water pokemon cards'],
+    relatedEntities: ['Squirtle', 'Lugia', 'Pikachu'],
+    types: ['Water', 'Ice'],
+    generation: 1,
+  },
+  {
+    slug: 'zoroark',
+    name: 'Zoroark',
+    collection: 'most-popular',
+    translations: ['ゾロアーク', '索罗亚克'],
+    relatedKeywords: ['zoroark cards', 'dark illusion pokemon cards'],
+    relatedEntities: ['Lucario', 'Greninja', 'Gengar'],
+    types: ['Dark'],
+    generation: 5,
+  },
+  {
+    slug: 'tyranitar',
+    name: 'Tyranitar',
+    collection: 'most-popular',
+    translations: ['バンギラス', '班基拉斯'],
+    relatedKeywords: ['tyranitar cards', 'popular pseudo legendary pokemon cards'],
+    relatedEntities: ['Garchomp', 'Dragonite', 'Charizard'],
+    types: ['Rock', 'Dark'],
+    generation: 2,
+  },
+  {
+    slug: 'lugia',
+    name: 'Lugia',
+    collection: 'most-popular',
+    translations: ['ルギア', '洛奇亚'],
+    relatedKeywords: ['lugia cards', 'legendary bird guardian pokemon cards'],
+    relatedEntities: ['Mewtwo', 'Rayquaza', 'Lapras'],
+    types: ['Psychic', 'Flying'],
+    generation: 2,
+  },
 ]
 
+const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
+  'pikachu',
+  'charizard',
+  'eevee',
+  'mewtwo',
+  'lucario',
+  'gengar',
+  'greninja',
+  'rayquaza',
+  'gardevoir',
+  'dragonite',
+  'snorlax',
+  'blaziken',
+  'garchomp',
+  'umbreon',
+  'sylveon',
+  'mew',
+  'arcanine',
+  'lapras',
+  'bulbasaur',
+  'squirtle',
+  'charmander',
+  'zoroark',
+  'tyranitar',
+  'lugia',
+  'riolu',
+])
+
+function withMostPopularCollection(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
+  if (!MOST_POPULAR_SPECIES_SLUGS.has(species.slug)) {
+    return species
+  }
+
+  if (species.collection === 'most-popular') {
+    return species
+  }
+
+  const extraCollections = species.extraCollections ?? []
+  if (extraCollections.includes('most-popular')) {
+    return species
+  }
+
+  return {
+    ...species,
+    extraCollections: [...extraCollections, 'most-popular'],
+  }
+}
+
+const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withMostPopularCollection)
+
 export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
-  SPECIES_KEYWORD_SEEDS.map((species) => [species.slug, species])
+  SPECIES_KEYWORD_CONFIG_LIST.map((species) => [species.slug, species])
 ) as Record<string, SpeciesKeywordConfig>
 
 const GENERATION_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'] as const
@@ -3084,6 +3229,7 @@ export const LANDING_SEO = {
     ...SEO_KEYWORD_GROUPS.elegantAndFeminine,
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
+    ...SEO_KEYWORD_GROUPS.mostPopular,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     'pink binder pokemon',
@@ -3115,6 +3261,7 @@ export const BLOG_SEO = {
     ...SEO_KEYWORD_GROUPS.elegantAndFeminine,
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
+    ...SEO_KEYWORD_GROUPS.mostPopular,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     ...SEO_KEYWORD_GROUPS.speciesMoats,
@@ -3138,7 +3285,7 @@ export const BLOG_INDEX_SEO = {
 export function getSpeciesKeywordConfig(species: string) {
   const lookupKey = normalizeLookupValue(species)
 
-  return SPECIES_KEYWORD_SEEDS.find((entry) =>
+  return SPECIES_KEYWORD_CONFIG_LIST.find((entry) =>
     [entry.slug, entry.name, ...entry.translations, ...(entry.relatedEntities ?? [])]
       .map(normalizeLookupValue)
       .includes(lookupKey)
@@ -3154,7 +3301,7 @@ export function getSpeciesKeywordConfig(species: string) {
 export function getSpeciesConfigBySlugOrName(species: string): SpeciesKeywordConfig | undefined {
   const lookupKey = normalizeLookupValue(species)
 
-  return SPECIES_KEYWORD_SEEDS.find((entry) =>
+  return SPECIES_KEYWORD_CONFIG_LIST.find((entry) =>
     [entry.slug, entry.name, ...entry.translations].map(normalizeLookupValue).includes(lookupKey)
   )
 }
