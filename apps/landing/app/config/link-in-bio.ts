@@ -19,7 +19,7 @@ export const LANDING_LINKS: ShopLink[] = [
   {
     label: 'Shop Pink Binder',
     href: '/store',
-    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.store&sz=128',
+    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.shop&sz=128',
     thumbnailAlt: 'Pink Binder Store logo',
     shareDescription: 'Coming soon: the official Pink Binder store.',
     enabled: false,
@@ -27,7 +27,7 @@ export const LANDING_LINKS: ShopLink[] = [
   {
     label: 'Read the Blog',
     href: '/blog',
-    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.store&sz=128',
+    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.shop&sz=128',
     thumbnailAlt: 'Pink Binder Blog logo',
     shareDescription: 'Coming soon: Pokémon TCG stories, tips, and updates.',
     enabled: false,
@@ -35,7 +35,7 @@ export const LANDING_LINKS: ShopLink[] = [
   {
     label: 'Join the Newsletter',
     href: '/newsletter',
-    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.store&sz=128',
+    thumbnail: 'https://www.google.com/s2/favicons?domain=pinkbinder.shop&sz=128',
     thumbnailAlt: 'Pink Binder Newsletter logo',
     shareDescription: 'Coming soon: subscribe for Pink Binder updates.',
     enabled: false,
