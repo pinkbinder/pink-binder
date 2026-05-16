@@ -1,15 +1,18 @@
 import path from 'path'
 import { formatPostDate } from '@repo/ui'
-import { getPostHref, getPosts } from '../../blog/lib/posts'
+import { getAuthoredPosts, getPostHref } from '../../blog/lib/posts'
 import { getEbayListings } from '@repo/marketplaces'
 import LandingPageClient from './page-client'
 
-const BLOG_URL = process.env.BLOG_URL ?? process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
+const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
 const BLOG_CONTENT_DIR =
   process.env.BLOG_CONTENT_DIR ?? path.resolve(process.cwd(), '..', 'blog', 'content')
 
 export default async function LandingPage() {
-  const latestPost = getPosts(BLOG_CONTENT_DIR)[0] ?? null
+  const latestPost =
+    getAuthoredPosts(BLOG_CONTENT_DIR).sort(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )[0] ?? null
   const ebayListings = await getEbayListings()
 
   return (
