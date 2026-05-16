@@ -3542,9 +3542,9 @@ export const BLOG_SEO = {
 }
 
 export const BLOG_INDEX_SEO = {
-  title: 'Pokémon Card Blog: Cute Card Picks, Tips, and Updates',
+  title: 'Cute Pokémon Collector Guide',
   description:
-    'Explore Pink Binder posts about cute Pokémon cards, pink Pokémon card collections, kawaii binder picks, fairy lines, baby shinies, reverse holos, and illustration rares in English, Japanese, and Chinese sets.',
+    'Welcome to your cozy corner for Pokémon cards! This is your guide to the soft, pastel, and art-focused side of the Pokémon TCG—featuring regular updates on the cutest cards, beautiful illustration styles, set previews, and inspiration for your cozy card collection.',
   keywords: uniqueKeywords([
     ...BLOG_SEO.keywords,
     'pokemon card blog',
