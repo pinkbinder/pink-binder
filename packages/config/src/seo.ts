@@ -474,7 +474,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     slug: 'audino',
     name: 'Audino',
     collection: 'pink-pastel-icons',
-    translations: ['tabunne', '差不多娃娃'],
+    translations: ['タブンネ', '差不多娃娃'],
     relatedKeywords: ['audino cards', 'pink healer pokemon cards'],
     relatedEntities: ['Chansey', 'Clefairy'],
     types: ['Normal'],
