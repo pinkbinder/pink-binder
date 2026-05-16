@@ -3586,6 +3586,8 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'murkrow',
   'honchkrow',
   'delibird',
+  'skarmory',
+  'ho-oh',
   'taillow',
   'swellow',
   'wingull',
@@ -3607,6 +3609,8 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'unfezant',
   'ducklett',
   'swanna',
+  'archen',
+  'archeops',
   'rufflet',
   'braviary',
   'vullaby',
@@ -3614,6 +3618,9 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'fletchling',
   'fletchinder',
   'talonflame',
+  'spritzee',
+  'aromatisse',
+  'yveltal',
   'hawlucha',
   'oricorio',
   'rowlet',
@@ -3623,6 +3630,7 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'trumbeak',
   'toucannon',
   'cramorant',
+  'eiscue',
   'rookidee',
   'corvisquire',
   'corviknight',
@@ -3630,7 +3638,9 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'bombirdier',
   'wattrel',
   'kilowattrel',
+  'flittle',
   'espathra',
+  'fezandipiti',
   'quaxly',
   'quaxwell',
   'quaquaval',
@@ -3652,6 +3662,8 @@ const FISH_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'octillery',
   'carvanha',
   'sharpedo',
+  'wailmer',
+  'wailord',
   'barboach',
   'whiscash',
   'clamperl',
@@ -3666,6 +3678,11 @@ const FISH_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'basculin',
   'basculegion',
   'alomomola',
+  'tynamo',
+  'eelektrik',
+  'eelektross',
+  'stunfisk',
+  'kyogre',
   'wishiwashi',
   'bruxish',
   'dracovish',
@@ -3675,9 +3692,16 @@ const FISH_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'wugtrio',
   'veluza',
   'tatsugiri',
+  'dondozo',
+  'finizen',
+  'palafin',
+  'chi-yu',
+  'overqwil',
 ])
 
 const FOOD_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'chansey',
+  'exeggcute',
   'bounsweet',
   'steenee',
   'tsareena',
@@ -3706,6 +3730,7 @@ const FOOD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'sinistcha',
   'capsakid',
   'scovillain',
+  'tatsugiri',
 ])
 
 const NON_ANIMAL_SPECIES_SLUGS = new Set<string>([
@@ -3732,6 +3757,25 @@ const NON_ANIMAL_SPECIES_SLUGS = new Set<string>([
 ])
 
 const COZY_AND_WARM_SPECIES_SLUGS = new Set<string>([
+  'snorlax',
+  'mareep',
+  'flaaffy',
+  'ampharos',
+  'hoothoot',
+  'noctowl',
+  'teddiursa',
+  'castform',
+  'shuppet',
+  'jirachi',
+  'munna',
+  'musharna',
+  'audino',
+  'cottonee',
+  'whimsicott',
+  'litwick',
+  'joltik',
+  'rowlet',
+  'komala',
   'vulpix',
   'ninetales',
   'cyndaquil',
@@ -3748,8 +3792,11 @@ const COZY_AND_WARM_SPECIES_SLUGS = new Set<string>([
   'pyroar',
   'stufful',
   'bewear',
+  'yamper',
+  'greavard',
   'wooloo',
   'dubwool',
+  'clodsire',
   'flareon',
   'pombon',
 ])
@@ -3774,6 +3821,310 @@ const SLEEPY_SPECIES_SLUGS = new Set<string>([
   'drowzee',
   'hypno',
   'komala',
+  'jirachi',
+  'rowlet',
+])
+
+const DOG_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'growlithe',
+  'arcanine',
+  'houndour',
+  'houndoom',
+  'smeargle',
+  'poochyena',
+  'mightyena',
+  'electrike',
+  'manectric',
+  'riolu',
+  'lucario',
+  'lillipup',
+  'herdier',
+  'stoutland',
+  'furfrou',
+  'rockruff',
+  'lycanroc',
+  'yamper',
+  'boltund',
+  'zacian',
+  'zamazenta',
+  'maschiff',
+  'mabosstiff',
+  'fidough',
+  'dachsbun',
+  'greavard',
+  'houndstone',
+  'okidogi',
+  'pombon',
+])
+
+const CAT_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'meowth',
+  'persian',
+  'mew',
+  'mewtwo',
+  'raikou',
+  'skitty',
+  'delcatty',
+  'zangoose',
+  'shinx',
+  'luxio',
+  'luxray',
+  'glameow',
+  'purugly',
+  'purrloin',
+  'liepard',
+  'litleo',
+  'pyroar',
+  'espurr',
+  'meowstic',
+  'litten',
+  'torracat',
+  'incineroar',
+  'zeraora',
+  'perrserker',
+  'sprigatito',
+  'floragato',
+  'meowscarada',
+  'chien-pao',
+  'gecqua',
+])
+
+const BUNNY_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'buneary',
+  'lopunny',
+  'bunnelby',
+  'diggersby',
+  'scorbunny',
+  'raboot',
+  'cinderace',
+  'wigglytuff',
+  'azumarill',
+])
+
+const MICE_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'rattata',
+  'raticate',
+  'pikachu',
+  'raichu',
+  'sandshrew',
+  'sandslash',
+  'nidoran-f',
+  'nidorina',
+  'nidoran-m',
+  'nidorino',
+  'cyndaquil',
+  'quilava',
+  'typhlosion',
+  'sentret',
+  'furret',
+  'marill',
+  'pichu',
+  'bidoof',
+  'bibarel',
+  'pachirisu',
+  'minccino',
+  'cinccino',
+  'emolga',
+  'chespin',
+  'quilladin',
+  'chesnaught',
+  'dedenne',
+  'yungoos',
+  'gumshoos',
+  'togedemaru',
+  'skwovet',
+  'greedent',
+  'morpeko',
+  'pawmi',
+  'pawmo',
+  'pawmot',
+  'tandemaus',
+  'maushold',
+  'shroodle',
+  'grafaiai',
+])
+
+const COTTAGECORE_AND_FLORAL_SPECIES_SLUGS = new Set<string>([
+  'bulbasaur',
+  'ivysaur',
+  'venusaur',
+  'oddish',
+  'gloom',
+  'vileplume',
+  'bellossom',
+  'paras',
+  'parasect',
+  'chikorita',
+  'bayleef',
+  'meganium',
+  'bellsprout',
+  'weepinbell',
+  'victreebel',
+  'hoppip',
+  'skiploom',
+  'jumpluff',
+  'sunkern',
+  'sunflora',
+  'celebi',
+  'roselia',
+  'roserade',
+  'cacnea',
+  'cacturne',
+  'cherrim',
+  'shaymin',
+  'snivy',
+  'servine',
+  'serperior',
+  'cottonee',
+  'whimsicott',
+  'petilil',
+  'lilligant',
+  'maractus',
+  'deerling',
+  'sawsbuck',
+  'foongus',
+  'amoonguss',
+  'flabebe',
+  'floette',
+  'florges',
+  'skiddo',
+  'gogoat',
+  'phantump',
+  'trevenant',
+  'fomantis',
+  'lurantis',
+  'bounsweet',
+  'steenee',
+  'tsareena',
+  'comfey',
+  'grookey',
+  'thwackey',
+  'rillaboom',
+  'gossifleur',
+  'eldegoss',
+  'calyrex',
+  'smoliv',
+  'dolliv',
+  'arboliva',
+  'bramblin',
+  'brambleghast',
+  'toedscool',
+  'toedscruel',
+])
+
+const DREAMY_AND_ETHEREAL_SPECIES_SLUGS = new Set<string>([
+  'mew',
+  'celebi',
+  'jirachi',
+  'cresselia',
+  'audino',
+  'munna',
+  'musharna',
+  'elgyem',
+  'beheeyem',
+  'sylveon',
+  'carbink',
+  'diancie',
+  'cosmog',
+  'cosmoem',
+  'minior',
+  'hattrem',
+  'hatterene',
+  'milcery',
+  'alcremie',
+])
+
+const ELEGANT_AND_FEMININE_SPECIES_SLUGS = new Set<string>([
+  'ninetales',
+  'bellossom',
+  'gardevoir',
+  'milotic',
+  'gorebyss',
+  'roserade',
+  'lilligant',
+  'florges',
+  'oricorio',
+  'tsareena',
+  'primarina',
+  'meloetta',
+  'hatterene',
+  'glimmora',
+])
+
+const PINK_PASTEL_ICONS_SPECIES_SLUGS = new Set<string>([
+  'clefairy',
+  'clefable',
+  'cleffa',
+  'jigglypuff',
+  'wigglytuff',
+  'igglybuff',
+  'chansey',
+  'blissey',
+  'happiny',
+  'slowpoke',
+  'slowbro',
+  'slowking',
+  'lickitung',
+  'lickilicky',
+  'mew',
+  'corsola',
+  'smoochum',
+  'skitty',
+  'delcatty',
+  'gorebyss',
+  'luvdisc',
+  'cherubi',
+  'cherrim',
+  'audino',
+  'alomomola',
+  'spritzee',
+  'aromatisse',
+  'sylveon',
+  'diancie',
+  'stufful',
+  'bewear',
+  'hatenna',
+  'hattrem',
+  'tinkatink',
+  'tinkatuff',
+  'tinkaton',
+  'flamigo',
+])
+
+const SPOOKY_CUTE_SPECIES_SLUGS = new Set<string>([
+  'misdreavus',
+  'shuppet',
+  'litwick',
+  'phantump',
+  'pumpkaboo',
+  'gourgeist',
+  'mimikyu',
+  'sinistea',
+  'polteageist',
+  'greavard',
+  'houndstone',
+  'poltchageist',
+  'sinistcha',
+])
+
+const TINY_AND_ADORABLE_SPECIES_SLUGS = new Set<string>([
+  'pichu',
+  'togepi',
+  'azurill',
+  'budew',
+  'joltik',
+  'flabebe',
+  'cutiefly',
+  'ribombee',
+  'pyukumuku',
+  'togedemaru',
+  'snom',
+  'morpeko',
+  'pincurchin',
+  'pawmi',
+  'tandemaus',
+  'maushold',
+  'tatsugiri',
 ])
 
 /**
@@ -4077,6 +4428,10 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
     next = withoutCollection(next, 'all-other-animals')
   }
   if (
+    DOG_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
+    CAT_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
+    BUNNY_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
+    MICE_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
     BIRD_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
     FISH_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
     COZY_AND_WARM_SPECIES_SLUGS.has(next.slug) ||
@@ -4106,6 +4461,18 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   if (STARTER_BASE_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'starter-pokemon')
   }
+  if (DOG_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'dogs')
+  }
+  if (CAT_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'cats')
+  }
+  if (BUNNY_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'bunny')
+  }
+  if (MICE_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'mice')
+  }
   if (FOOD_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'food-and-sweet-treats')
   }
@@ -4120,6 +4487,24 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   }
   if (SLEEPY_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'sleepy')
+  }
+  if (COTTAGECORE_AND_FLORAL_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'cottagecore-and-floral')
+  }
+  if (DREAMY_AND_ETHEREAL_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'dreamy-and-ethereal')
+  }
+  if (ELEGANT_AND_FEMININE_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'elegant-and-feminine')
+  }
+  if (PINK_PASTEL_ICONS_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'pink-pastel-icons')
+  }
+  if (SPOOKY_CUTE_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'spooky-cute')
+  }
+  if (TINY_AND_ADORABLE_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'tiny-and-adorable')
   }
   if (YUKA_MORII_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'yuka-morii')
