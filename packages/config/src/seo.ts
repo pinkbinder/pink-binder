@@ -77,6 +77,20 @@ export const SEO_KEYWORD_GROUPS = {
     'aquatic pokemon cards',
     'sea life pokemon cards',
   ],
+  cozyAndWarm: [
+    'cozy pokemon cards',
+    'warm pokemon card collection',
+    'vulpix ninetales cards',
+    'fire fox pokemon cards',
+    'fluffy pokemon card binder',
+  ],
+  sleepy: [
+    'sleepy pokemon cards',
+    'snorlax card collection',
+    'slowpoke cute pokemon cards',
+    'abra sleeping pokemon cards',
+    'dreamy pokemon card binder',
+  ],
   allOtherAnimals: [
     'seal pokemon cards',
     'fox pokemon cards',
@@ -142,6 +156,8 @@ export type SpeciesCollectionSlug =
   | 'mice'
   | 'birds'
   | 'fish'
+  | 'cozy-and-warm'
+  | 'sleepy'
   | 'all-other-animals'
   | 'dreamy-and-ethereal'
   | 'pink-pastel-icons'
@@ -259,6 +275,20 @@ export const SPECIES_COLLECTIONS = {
       'Fish and closely related aquatic Pokémon, from tiny swimmers to dramatic sea-serpent evolutions.',
     featuredSpecies: ['Magikarp', 'Feebas', 'Milotic', 'Finneon', 'Veluza'],
   },
+  'cozy-and-warm': {
+    slug: 'cozy-and-warm',
+    title: 'Cozy & Warm',
+    description:
+      'Warm, fuzzy, and fireside Pokémon — fire-type foxes, soft bears, fluffy sheep, and other cozy companion vibes.',
+    featuredSpecies: ['Vulpix', 'Cyndaquil', 'Arcanine', 'Wooloo', 'Darumaka'],
+  },
+  sleepy: {
+    slug: 'sleepy',
+    title: 'Sleepy Pokémon',
+    description:
+      'Slow, drowsy, and dreamlike Pokémon — from Snorlax napping on a road to Abra snoozing through battles.',
+    featuredSpecies: ['Snorlax', 'Jigglypuff', 'Slowpoke', 'Abra', 'Komala'],
+  },
   'all-other-animals': {
     slug: 'all-other-animals',
     title: 'Other Animal Friends',
@@ -346,6 +376,8 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   mice: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mice],
   birds: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.birds],
   fish: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.fish],
+  'cozy-and-warm': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.cozyAndWarm],
+  sleepy: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.sleepy],
   'all-other-animals': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.allOtherAnimals],
   'dreamy-and-ethereal': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.spaceAndDreams],
   'pink-pastel-icons': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.pinkPalace],
@@ -1819,7 +1851,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'snorlax',
     name: 'Snorlax',
-    collection: 'all-other-animals',
+    collection: 'sleepy',
     translations: [],
     relatedKeywords: ['snorlax cards', 'sleeping pokemon cards'],
     relatedEntities: ['Munchlax', 'Teddiursa'],
@@ -3385,7 +3417,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'vulpix',
     name: 'Vulpix',
-    collection: 'all-other-animals',
+    collection: 'cozy-and-warm',
     translations: ['ロコン', '六尾'],
     relatedKeywords: ['vulpix cards', 'cute fox fire pokemon cards', 'alolan vulpix cards'],
     relatedEntities: ['Ninetales', 'Growlithe'],
@@ -3396,6 +3428,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     slug: 'ninetales',
     name: 'Ninetales',
     collection: 'elegant-and-feminine',
+    extraCollections: ['cozy-and-warm'],
     translations: ['キュウコン', '九尾'],
     relatedKeywords: ['ninetales cards', 'elegant fox pokemon cards', 'alolan ninetales cards'],
     relatedEntities: ['Vulpix', 'Cresselia'],
@@ -3630,7 +3663,50 @@ const NON_ANIMAL_SPECIES_SLUGS = new Set<string>([
   'sudowoodo',
   'lucario',
   'mr-mime',
+])
+
+const COZY_AND_WARM_SPECIES_SLUGS = new Set<string>([
+  'vulpix',
+  'ninetales',
+  'cyndaquil',
+  'quilava',
+  'typhlosion',
+  'growlithe',
+  'arcanine',
+  'torkoal',
+  'slugma',
+  'magcargo',
+  'darumaka',
+  'darmanitan',
+  'litleo',
+  'pyroar',
+  'stufful',
+  'bewear',
+  'wooloo',
+  'dubwool',
+  'flareon',
+])
+
+const SLEEPY_SPECIES_SLUGS = new Set<string>([
   'snorlax',
+  'munchlax',
+  'abra',
+  'kadabra',
+  'alakazam',
+  'slowpoke',
+  'slowbro',
+  'slowking',
+  'slakoth',
+  'vigoroth',
+  'slaking',
+  'jigglypuff',
+  'wigglytuff',
+  'igglybuff',
+  'munna',
+  'musharna',
+  'drowzee',
+  'hypno',
+  'komala',
 ])
 
 const LEGENDARY_SPECIES_SLUGS = new Set<string>(
@@ -3699,6 +3775,12 @@ function inferPrimaryCollection(slug: string): SpeciesCollectionSlug | undefined
   if (FISH_COLLECTION_SPECIES_SLUGS.has(slug)) {
     return 'fish'
   }
+  if (COZY_AND_WARM_SPECIES_SLUGS.has(slug)) {
+    return 'cozy-and-warm'
+  }
+  if (SLEEPY_SPECIES_SLUGS.has(slug)) {
+    return 'sleepy'
+  }
 
   return undefined
 }
@@ -3730,7 +3812,9 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   }
   if (
     BIRD_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
-    FISH_COLLECTION_SPECIES_SLUGS.has(next.slug)
+    FISH_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
+    COZY_AND_WARM_SPECIES_SLUGS.has(next.slug) ||
+    SLEEPY_SPECIES_SLUGS.has(next.slug)
   ) {
     next = withoutCollection(next, 'all-other-animals')
   }
@@ -3764,6 +3848,12 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   }
   if (FISH_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'fish')
+  }
+  if (COZY_AND_WARM_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'cozy-and-warm')
+  }
+  if (SLEEPY_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'sleepy')
   }
 
   return next
