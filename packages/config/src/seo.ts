@@ -93,6 +93,16 @@ export const SEO_KEYWORD_GROUPS = {
     'top pokemon fan favorites',
     'iconic pokemon cards all generations',
   ],
+  legendary: [
+    'legendary pokemon cards',
+    'legendary pokemon collection',
+    'pokemon legendary card binder',
+  ],
+  mythical: [
+    'mythical pokemon cards',
+    'mythical pokemon collection',
+    'pokemon mythical card binder',
+  ],
   rarity: [
     'Scarlet & Violet Illustration Rare cards',
     'Art Rare pokemon collection',
@@ -128,6 +138,8 @@ export type SpeciesCollectionSlug =
   | 'spooky-cute'
   | 'eeveelution-core'
   | 'most-popular'
+  | 'legendary'
+  | 'mythical'
 
 export type SpeciesKeywordConfig = {
   slug: string
@@ -266,6 +278,20 @@ export const SPECIES_COLLECTIONS = {
       'The top fan-favorite Pokémon across generations, from mascots and starters to legendary icons.',
     featuredSpecies: ['Pikachu', 'Charizard', 'Mewtwo', 'Lucario', 'Greninja'],
   },
+  legendary: {
+    slug: 'legendary',
+    title: 'Legendary',
+    description:
+      'Legendary Pokémon with iconic lore and premium card demand across eras of the TCG.',
+    featuredSpecies: ['Mewtwo', 'Lugia', 'Rayquaza', 'Cresselia', 'Cosmog'],
+  },
+  mythical: {
+    slug: 'mythical',
+    title: 'Mythical',
+    description:
+      'Rare mythical Pokémon that collectors love for their unique stories and special releases.',
+    featuredSpecies: ['Mew', 'Jirachi', 'Victini', 'Shaymin', 'Diancie'],
+  },
 } as const satisfies Record<
   SpeciesCollectionSlug,
   {
@@ -303,6 +329,8 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   'spooky-cute': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.spookyCute],
   'eeveelution-core': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.eeveelutions],
   'most-popular': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mostPopular],
+  legendary: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.legendary],
+  mythical: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mythical],
 }
 
 const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
@@ -3172,23 +3200,59 @@ const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
   'riolu',
 ])
 
-function withMostPopularCollection(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
-  if (!MOST_POPULAR_SPECIES_SLUGS.has(species.slug)) {
+const LEGENDARY_SPECIES_SLUGS = new Set<string>([
+  'mewtwo',
+  'lugia',
+  'rayquaza',
+  'cresselia',
+  'cosmog',
+])
+
+const MYTHICAL_SPECIES_SLUGS = new Set<string>([
+  'mew',
+  'jirachi',
+  'shaymin',
+  'victini',
+  'meloetta',
+  'diancie',
+])
+
+function withCollection(
+  species: SpeciesKeywordConfig,
+  collection: SpeciesCollectionSlug
+): SpeciesKeywordConfig {
+  if (species.collection === collection) {
     return species
   }
 
   const extraCollections = species.extraCollections ?? []
-  if (species.collection === 'most-popular' || extraCollections.includes('most-popular')) {
+  if (extraCollections.includes(collection)) {
     return species
   }
 
   return {
     ...species,
-    extraCollections: [...extraCollections, 'most-popular'],
+    extraCollections: [...extraCollections, collection],
   }
 }
 
-const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withMostPopularCollection)
+function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
+  let next = species
+
+  if (MOST_POPULAR_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'most-popular')
+  }
+  if (LEGENDARY_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'legendary')
+  }
+  if (MYTHICAL_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'mythical')
+  }
+
+  return next
+}
+
+const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withAutoCollections)
 
 export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
   SPECIES_KEYWORD_CONFIG_LIST.map((species) => [species.slug, species])
@@ -3226,6 +3290,8 @@ export const LANDING_SEO = {
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
     ...SEO_KEYWORD_GROUPS.mostPopular,
+    ...SEO_KEYWORD_GROUPS.legendary,
+    ...SEO_KEYWORD_GROUPS.mythical,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     'pink binder pokemon',
@@ -3258,6 +3324,8 @@ export const BLOG_SEO = {
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
     ...SEO_KEYWORD_GROUPS.mostPopular,
+    ...SEO_KEYWORD_GROUPS.legendary,
+    ...SEO_KEYWORD_GROUPS.mythical,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     ...SEO_KEYWORD_GROUPS.speciesMoats,
