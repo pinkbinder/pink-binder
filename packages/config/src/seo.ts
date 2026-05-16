@@ -70,9 +70,17 @@ export const SEO_KEYWORD_GROUPS = {
   cats: ['cat pokemon cards', 'kitten pokemon cards', 'cute cat pokemon collection'],
   bunnies: ['bunny pokemon cards', 'rabbit pokemon cards', 'cute bunny pokemon collection'],
   mice: ['mouse pokemon cards', 'cute mice pokemon cards', 'pikachu clone pokemon cards'],
+  birds: ['bird pokemon cards', 'owl pokemon cards', 'penguin pokemon cards', 'duck pokemon cards'],
+  fish: [
+    'fish pokemon cards',
+    'koi pokemon cards',
+    'aquatic pokemon cards',
+    'sea life pokemon cards',
+  ],
   allOtherAnimals: [
-    'penguin pokemon cards',
     'seal pokemon cards',
+    'fox pokemon cards',
+    'deer pokemon cards',
     'giraffe pokemon cards',
     'cow pokemon cards',
     'bear pokemon cards',
@@ -132,6 +140,8 @@ export type SpeciesCollectionSlug =
   | 'cats'
   | 'bunny'
   | 'mice'
+  | 'birds'
+  | 'fish'
   | 'all-other-animals'
   | 'dreamy-and-ethereal'
   | 'pink-pastel-icons'
@@ -235,12 +245,26 @@ export const SPECIES_COLLECTIONS = {
       'Mouse and rodent-inspired Pokémon, including mascots, pika-clones, and chinchilla lines.',
     featuredSpecies: ['Pichu', 'Pikachu', 'Raichu', 'Dedenne', 'Cinccino'],
   },
+  birds: {
+    slug: 'birds',
+    title: 'Bird Pokémon',
+    description:
+      'Bird, owl, penguin, duck, and other avian-inspired Pokémon for collectors building feathered lineups.',
+    featuredSpecies: ['Piplup', 'Rowlet', 'Decidueye', 'Togetic', 'Corviknight'],
+  },
+  fish: {
+    slug: 'fish',
+    title: 'Fish & Aquatic Pokémon',
+    description:
+      'Fish and closely related aquatic Pokémon, from tiny swimmers to dramatic sea-serpent evolutions.',
+    featuredSpecies: ['Magikarp', 'Feebas', 'Milotic', 'Finneon', 'Veluza'],
+  },
   'all-other-animals': {
     slug: 'all-other-animals',
     title: 'Other Animal Friends',
     description:
-      'A broad animal mix beyond cats, dogs, rabbits, and rodents: penguins, seals, bears, sheep, and more.',
-    featuredSpecies: ['Piplup', 'Spheal', 'Teddiursa', 'Wooloo', 'Miltank'],
+      'A broad animal mix beyond cats, dogs, rabbits, rodents, birds, and fish: seals, bears, sheep, and more.',
+    featuredSpecies: ['Spheal', 'Teddiursa', 'Wooloo', 'Miltank', 'Deerling'],
   },
   'dreamy-and-ethereal': {
     slug: 'dreamy-and-ethereal',
@@ -320,6 +344,8 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   cats: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.cats],
   bunny: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.bunnies],
   mice: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mice],
+  birds: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.birds],
+  fish: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.fish],
   'all-other-animals': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.allOtherAnimals],
   'dreamy-and-ethereal': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.spaceAndDreams],
   'pink-pastel-icons': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.pinkPalace],
@@ -1834,7 +1860,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'togetic',
     name: 'Togetic',
-    collection: 'spooky-cute',
+    collection: 'birds',
     translations: ['トゲチック', '波克基古'],
     relatedKeywords: ['togetic cards', 'cute togetic pokemon cards'],
     relatedEntities: ['Togepi', 'Togekiss'],
@@ -3438,6 +3464,120 @@ const STARTER_BASE_SPECIES_SLUGS = new Set<string>([
   'gecqua',
 ])
 
+const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'articuno',
+  'zapdos',
+  'moltres',
+  'pidgey',
+  'pidgeotto',
+  'pidgeot',
+  'spearow',
+  'fearow',
+  'farfetchd',
+  'sirfetchd',
+  'doduo',
+  'dodrio',
+  'psyduck',
+  'golduck',
+  'hoothoot',
+  'noctowl',
+  'togetic',
+  'togekiss',
+  'natu',
+  'xatu',
+  'murkrow',
+  'honchkrow',
+  'delibird',
+  'taillow',
+  'swellow',
+  'wingull',
+  'pelipper',
+  'torchic',
+  'combusken',
+  'blaziken',
+  'swablu',
+  'altaria',
+  'starly',
+  'staravia',
+  'staraptor',
+  'piplup',
+  'prinplup',
+  'empoleon',
+  'chatot',
+  'pidove',
+  'tranquill',
+  'unfezant',
+  'ducklett',
+  'swanna',
+  'rufflet',
+  'braviary',
+  'vullaby',
+  'mandibuzz',
+  'fletchling',
+  'fletchinder',
+  'talonflame',
+  'hawlucha',
+  'oricorio',
+  'rowlet',
+  'dartrix',
+  'decidueye',
+  'pikipek',
+  'trumbeak',
+  'toucannon',
+  'cramorant',
+  'rookidee',
+  'corvisquire',
+  'corviknight',
+  'squawkabilly',
+  'bombirdier',
+  'wattrel',
+  'kilowattrel',
+  'espathra',
+  'quaxly',
+  'quaxwell',
+  'quaquaval',
+])
+
+const FISH_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'magikarp',
+  'gyarados',
+  'goldeen',
+  'seaking',
+  'horsea',
+  'seadra',
+  'kingdra',
+  'chinchou',
+  'lanturn',
+  'qwilfish',
+  'remoraid',
+  'octillery',
+  'carvanha',
+  'sharpedo',
+  'barboach',
+  'whiscash',
+  'clamperl',
+  'huntail',
+  'gorebyss',
+  'luvdisc',
+  'feebas',
+  'milotic',
+  'relicanth',
+  'finneon',
+  'lumineon',
+  'basculin',
+  'basculegion',
+  'alomomola',
+  'wishiwashi',
+  'bruxish',
+  'dracovish',
+  'arrokuda',
+  'barraskewda',
+  'wiglett',
+  'wugtrio',
+  'veluza',
+  'tatsugiri',
+])
+
 const FOOD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'bounsweet',
   'steenee',
@@ -3475,8 +3615,20 @@ const NON_ANIMAL_SPECIES_SLUGS = new Set<string>([
   'electabuzz',
   'electivire',
   'magmar',
+  'magmortar',
   'chimecho',
   'hitmonchan',
+  'hitmonlee',
+  'hitmontop',
+  'jynx',
+  'charmeleon',
+  'bayleef',
+  'meganium',
+  'grovyle',
+  'sceptile',
+  'wobbuffet',
+  'sudowoodo',
+  'lucario',
   'mr-mime',
   'snorlax',
 ])
@@ -3541,6 +3693,12 @@ function inferPrimaryCollection(slug: string): SpeciesCollectionSlug | undefined
   if (STARTER_BASE_SPECIES_SLUGS.has(slug)) {
     return 'starter-pokemon'
   }
+  if (BIRD_COLLECTION_SPECIES_SLUGS.has(slug)) {
+    return 'birds'
+  }
+  if (FISH_COLLECTION_SPECIES_SLUGS.has(slug)) {
+    return 'fish'
+  }
 
   return undefined
 }
@@ -3570,6 +3728,19 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   if (NON_ANIMAL_SPECIES_SLUGS.has(next.slug)) {
     next = withoutCollection(next, 'all-other-animals')
   }
+  if (
+    BIRD_COLLECTION_SPECIES_SLUGS.has(next.slug) ||
+    FISH_COLLECTION_SPECIES_SLUGS.has(next.slug)
+  ) {
+    next = withoutCollection(next, 'all-other-animals')
+  }
+  const inferredPrimaryCollection = inferPrimaryCollection(next.slug)
+  if (!next.collection && inferredPrimaryCollection) {
+    next = {
+      ...next,
+      collection: inferredPrimaryCollection,
+    }
+  }
   if (MOST_POPULAR_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'most-popular')
   }
@@ -3587,6 +3758,12 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   }
   if (FOOD_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'food-and-sweet-treats')
+  }
+  if (BIRD_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'birds')
+  }
+  if (FISH_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'fish')
   }
 
   return next
@@ -3636,6 +3813,8 @@ export const LANDING_SEO = {
     ...SEO_KEYWORD_GROUPS.cats,
     ...SEO_KEYWORD_GROUPS.bunnies,
     ...SEO_KEYWORD_GROUPS.mice,
+    ...SEO_KEYWORD_GROUPS.birds,
+    ...SEO_KEYWORD_GROUPS.fish,
     ...SEO_KEYWORD_GROUPS.allOtherAnimals,
     ...SEO_KEYWORD_GROUPS.elegantAndFeminine,
     ...SEO_KEYWORD_GROUPS.spookyCute,
@@ -3670,6 +3849,8 @@ export const BLOG_SEO = {
     ...SEO_KEYWORD_GROUPS.cats,
     ...SEO_KEYWORD_GROUPS.bunnies,
     ...SEO_KEYWORD_GROUPS.mice,
+    ...SEO_KEYWORD_GROUPS.birds,
+    ...SEO_KEYWORD_GROUPS.fish,
     ...SEO_KEYWORD_GROUPS.allOtherAnimals,
     ...SEO_KEYWORD_GROUPS.elegantAndFeminine,
     ...SEO_KEYWORD_GROUPS.spookyCute,
