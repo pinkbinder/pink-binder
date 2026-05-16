@@ -1834,7 +1834,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'togetic',
     name: 'Togetic',
-    collection: 'tiny-and-adorable',
+    collection: 'spooky-cute',
     translations: ['トゲチック', '波克基古'],
     relatedKeywords: ['togetic cards', 'cute togetic pokemon cards'],
     relatedEntities: ['Togepi', 'Togekiss'],
@@ -2047,7 +2047,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'galvantula',
     name: 'Galvantula',
-    collection: 'tiny-and-adorable',
+    collection: 'spooky-cute',
     translations: [],
     relatedKeywords: ['galvantula cards', 'electric spider pokemon cards'],
     relatedEntities: ['Joltik', 'Cutiefly'],
@@ -3197,8 +3197,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'swablu',
     name: 'Swablu',
-    collection: 'cottagecore-and-floral',
-    extraCollections: ['elegant-and-feminine'],
+    collection: 'elegant-and-feminine',
     translations: ['チルット', '云雀鸟'],
     relatedKeywords: ['swablu cards', 'cute cloud bird pokemon cards'],
     relatedEntities: ['Altaria', 'Milotic'],
@@ -3230,7 +3229,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'ralts',
     name: 'Ralts',
-    collection: 'elegant-and-feminine',
+    collection: 'babies',
     translations: ['ラルトス', '拉鲁拉斯'],
     relatedKeywords: ['ralts cards', 'cute psychic fairy pokemon cards'],
     relatedEntities: ['Kirlia', 'Gardevoir'],
@@ -3242,7 +3241,6 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     slug: 'feebas',
     name: 'Feebas',
     collection: 'all-other-animals',
-    extraCollections: ['elegant-and-feminine'],
     translations: ['ヒンバス', '丑丑鱼'],
     relatedKeywords: ['feebas cards', 'ugly duckling pokemon cards'],
     relatedEntities: ['Milotic'],
@@ -3339,7 +3337,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'steenee',
     name: 'Steenee',
-    collection: 'cottagecore-and-floral',
+    collection: 'all-other-animals',
     translations: ['アママイコ', '甜竹娜'],
     relatedKeywords: ['steenee cards', 'graceful fruit pokemon cards'],
     relatedEntities: ['Bounsweet', 'Tsareena'],
@@ -3361,7 +3359,7 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
   {
     slug: 'vulpix',
     name: 'Vulpix',
-    collection: 'cottagecore-and-floral',
+    collection: 'all-other-animals',
     translations: ['ロコン', '六尾'],
     relatedKeywords: ['vulpix cards', 'cute fox fire pokemon cards', 'alolan vulpix cards'],
     relatedEntities: ['Ninetales', 'Growlithe'],
@@ -3405,7 +3403,6 @@ const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
   'zoroark',
   'tyranitar',
   'lugia',
-  'riolu',
 ])
 
 const STARTER_BASE_SPECIES_SLUGS = new Set<string>([
@@ -3472,6 +3469,18 @@ const FOOD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'scovillain',
 ])
 
+const NON_ANIMAL_SPECIES_SLUGS = new Set<string>([
+  'charizard',
+  'chesnaught',
+  'electabuzz',
+  'electivire',
+  'magmar',
+  'chimecho',
+  'hitmonchan',
+  'mr-mime',
+  'snorlax',
+])
+
 const LEGENDARY_SPECIES_SLUGS = new Set<string>(
   POKEMON_CATALOG.filter((entry) => entry.isLegendary).map((entry) => entry.slug)
 )
@@ -3500,6 +3509,28 @@ function withCollection(
   return {
     ...species,
     extraCollections: [...extraCollections, collection],
+  }
+}
+
+function withoutCollection(
+  species: SpeciesKeywordConfig,
+  collection: SpeciesCollectionSlug
+): SpeciesKeywordConfig {
+  const isPrimaryCollection = species.collection === collection
+  const nextExtraCollections = (species.extraCollections ?? []).filter(
+    (slug) => slug !== collection
+  )
+  const hasExtraCollectionChanges =
+    nextExtraCollections.length !== (species.extraCollections ?? []).length
+
+  if (!isPrimaryCollection && !hasExtraCollectionChanges) {
+    return species
+  }
+
+  return {
+    ...species,
+    collection: isPrimaryCollection ? undefined : species.collection,
+    extraCollections: nextExtraCollections.length > 0 ? nextExtraCollections : undefined,
   }
 }
 
@@ -3533,6 +3564,12 @@ function createFallbackSpeciesKeywordConfig(
 function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
   let next = species
 
+  if (!MOST_POPULAR_SPECIES_SLUGS.has(next.slug)) {
+    next = withoutCollection(next, 'most-popular')
+  }
+  if (NON_ANIMAL_SPECIES_SLUGS.has(next.slug)) {
+    next = withoutCollection(next, 'all-other-animals')
+  }
   if (MOST_POPULAR_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'most-popular')
   }
@@ -3651,7 +3688,7 @@ export const BLOG_SEO = {
 export const BLOG_INDEX_SEO = {
   title: 'Cute Pokémon Collector Guide',
   description:
-    'Welcome to your cozy corner for Pokémon cards! This is your guide to the soft, pastel, and art-focused side of the Pokémon TCG—featuring regular updates on the cutest cards, beautiful illustration styles, set previews, and inspiration for your cozy card collection.',
+    'Your guide to the soft, pastel, and art-focused side of the Pokémon TCG—featuring regular updates on the cutest cards, beautiful illustration styles, set previews, news or announcements, and inspiration for your cozy card collection!',
   keywords: uniqueKeywords([
     ...BLOG_SEO.keywords,
     'pokemon card blog',
