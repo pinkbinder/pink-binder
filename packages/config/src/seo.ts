@@ -93,6 +93,16 @@ export const SEO_KEYWORD_GROUPS = {
     'top pokemon fan favorites',
     'iconic pokemon cards all generations',
   ],
+  legendary: [
+    'legendary pokemon cards',
+    'legendary pokemon collection',
+    'pokemon legendary card binder',
+  ],
+  mythical: [
+    'mythical pokemon cards',
+    'mythical pokemon collection',
+    'pokemon mythical card binder',
+  ],
   rarity: [
     'Scarlet & Violet Illustration Rare cards',
     'Art Rare pokemon collection',
@@ -128,6 +138,8 @@ export type SpeciesCollectionSlug =
   | 'spooky-cute'
   | 'eeveelution-core'
   | 'most-popular'
+  | 'legendary'
+  | 'mythical'
 
 export type SpeciesKeywordConfig = {
   slug: string
@@ -266,6 +278,20 @@ export const SPECIES_COLLECTIONS = {
       'The top fan-favorite Pokémon across generations, from mascots and starters to legendary icons.',
     featuredSpecies: ['Pikachu', 'Charizard', 'Mewtwo', 'Lucario', 'Greninja'],
   },
+  legendary: {
+    slug: 'legendary',
+    title: 'Legendary',
+    description:
+      'Legendary Pokémon with iconic lore and premium card demand across eras of the TCG.',
+    featuredSpecies: ['Mewtwo', 'Lugia', 'Rayquaza', 'Cresselia', 'Cosmog'],
+  },
+  mythical: {
+    slug: 'mythical',
+    title: 'Mythical',
+    description:
+      'Rare mythical Pokémon that collectors love for their unique stories and special releases.',
+    featuredSpecies: ['Mew', 'Jirachi', 'Victini', 'Shaymin', 'Diancie'],
+  },
 } as const satisfies Record<
   SpeciesCollectionSlug,
   {
@@ -303,6 +329,8 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   'spooky-cute': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.spookyCute],
   'eeveelution-core': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.eeveelutions],
   'most-popular': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mostPopular],
+  legendary: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.legendary],
+  mythical: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mythical],
 }
 
 const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
@@ -3142,6 +3170,213 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     types: ['Psychic', 'Flying'],
     generation: 2,
   },
+  // ─── Evolution line completions ──────────────────────────────────────────────
+  // Dragonite pre-evolutions
+  {
+    slug: 'dratini',
+    name: 'Dratini',
+    collection: 'most-popular',
+    translations: ['ミニリュウ', '迷你龙'],
+    relatedKeywords: ['dratini cards', 'cute baby dragon pokemon cards'],
+    relatedEntities: ['Dragonair', 'Dragonite'],
+    types: ['Dragon'],
+    generation: 1,
+  },
+  {
+    slug: 'dragonair',
+    name: 'Dragonair',
+    collection: 'most-popular',
+    translations: ['ハクリュー', '哈克龙'],
+    relatedKeywords: ['dragonair cards', 'elegant dragon pokemon cards'],
+    relatedEntities: ['Dratini', 'Dragonite'],
+    types: ['Dragon'],
+    generation: 1,
+  },
+  // Altaria pre-evolution
+  {
+    slug: 'swablu',
+    name: 'Swablu',
+    collection: 'cottagecore-and-floral',
+    extraCollections: ['elegant-and-feminine'],
+    translations: ['チルット', '云雀鸟'],
+    relatedKeywords: ['swablu cards', 'cute cloud bird pokemon cards'],
+    relatedEntities: ['Altaria', 'Milotic'],
+    types: ['Normal', 'Flying'],
+    generation: 3,
+  },
+  // Gengar pre-evolutions
+  {
+    slug: 'gastly',
+    name: 'Gastly',
+    collection: 'spooky-cute',
+    translations: ['ゴース', '鬼斯'],
+    relatedKeywords: ['gastly cards', 'cute poison gas ghost pokemon cards'],
+    relatedEntities: ['Haunter', 'Gengar'],
+    types: ['Ghost', 'Poison'],
+    generation: 1,
+  },
+  {
+    slug: 'haunter',
+    name: 'Haunter',
+    collection: 'spooky-cute',
+    translations: ['ゴースト', '鬼斯通'],
+    relatedKeywords: ['haunter cards', 'spooky cute ghost pokemon cards'],
+    relatedEntities: ['Gastly', 'Gengar'],
+    types: ['Ghost', 'Poison'],
+    generation: 1,
+  },
+  // Gardevoir base evolution
+  {
+    slug: 'ralts',
+    name: 'Ralts',
+    collection: 'elegant-and-feminine',
+    translations: ['ラルトス', '拉鲁拉斯'],
+    relatedKeywords: ['ralts cards', 'cute psychic fairy pokemon cards'],
+    relatedEntities: ['Kirlia', 'Gardevoir'],
+    types: ['Psychic', 'Fairy'],
+    generation: 3,
+  },
+  // Milotic pre-evolution
+  {
+    slug: 'feebas',
+    name: 'Feebas',
+    collection: 'all-other-animals',
+    extraCollections: ['elegant-and-feminine'],
+    translations: ['ヒンバス', '丑丑鱼'],
+    relatedKeywords: ['feebas cards', 'ugly duckling pokemon cards'],
+    relatedEntities: ['Milotic'],
+    types: ['Water'],
+    generation: 3,
+  },
+  // Tyranitar pre-evolutions
+  {
+    slug: 'larvitar',
+    name: 'Larvitar',
+    collection: 'most-popular',
+    translations: ['ヨーギラス', '幼基拉斯'],
+    relatedKeywords: ['larvitar cards', 'cute baby rock pokemon cards'],
+    relatedEntities: ['Pupitar', 'Tyranitar'],
+    types: ['Rock', 'Ground'],
+    generation: 2,
+  },
+  {
+    slug: 'pupitar',
+    name: 'Pupitar',
+    collection: 'most-popular',
+    translations: ['サナギラス', '沙基拉斯'],
+    relatedKeywords: ['pupitar cards', 'cocoon rock pokemon cards'],
+    relatedEntities: ['Larvitar', 'Tyranitar'],
+    types: ['Rock', 'Ground'],
+    generation: 2,
+  },
+  // Zoroark pre-evolution
+  {
+    slug: 'zorua',
+    name: 'Zorua',
+    collection: 'spooky-cute',
+    translations: ['ゾロア', '索罗亚'],
+    relatedKeywords: ['zorua cards', 'cute trickster fox pokemon cards'],
+    relatedEntities: ['Zoroark', 'Mimikyu'],
+    types: ['Dark'],
+    generation: 5,
+  },
+  // Garchomp pre-evolutions
+  {
+    slug: 'gible',
+    name: 'Gible',
+    collection: 'most-popular',
+    translations: ['フカマル', '圆陆鲨'],
+    relatedKeywords: ['gible cards', 'cute land shark baby pokemon cards'],
+    relatedEntities: ['Gabite', 'Garchomp'],
+    types: ['Dragon', 'Ground'],
+    generation: 4,
+  },
+  {
+    slug: 'gabite',
+    name: 'Gabite',
+    collection: 'most-popular',
+    translations: ['ガバイト', '尖牙陆鲨'],
+    relatedKeywords: ['gabite cards', 'land shark evolution pokemon cards'],
+    relatedEntities: ['Gible', 'Garchomp'],
+    types: ['Dragon', 'Ground'],
+    generation: 4,
+  },
+  // Magmar final evolution
+  {
+    slug: 'magmortar',
+    name: 'Magmortar',
+    collection: 'all-other-animals',
+    translations: ['ブーバーン', '鸭嘴火兽'],
+    relatedKeywords: ['magmortar cards', 'fire arm pokemon cards'],
+    relatedEntities: ['Magby', 'Magmar'],
+    types: ['Fire'],
+    generation: 4,
+  },
+  // Electabuzz final evolution
+  {
+    slug: 'electivire',
+    name: 'Electivire',
+    collection: 'all-other-animals',
+    translations: ['エレキブル', '电击魔兽'],
+    relatedKeywords: ['electivire cards', 'electric powerhouse pokemon cards'],
+    relatedEntities: ['Elekid', 'Electabuzz'],
+    types: ['Electric'],
+    generation: 4,
+  },
+  // Tsareena pre-evolutions
+  {
+    slug: 'bounsweet',
+    name: 'Bounsweet',
+    collection: 'food-and-sweet-treats',
+    extraCollections: ['cottagecore-and-floral'],
+    translations: ['アマカジ', '甜竹竹'],
+    relatedKeywords: ['bounsweet cards', 'cute fruit pokemon cards'],
+    relatedEntities: ['Steenee', 'Tsareena'],
+    types: ['Grass'],
+    generation: 7,
+  },
+  {
+    slug: 'steenee',
+    name: 'Steenee',
+    collection: 'cottagecore-and-floral',
+    translations: ['アママイコ', '甜竹娜'],
+    relatedKeywords: ['steenee cards', 'graceful fruit pokemon cards'],
+    relatedEntities: ['Bounsweet', 'Tsareena'],
+    types: ['Grass'],
+    generation: 7,
+  },
+  // Gourgeist (Pumpkaboo evolution)
+  {
+    slug: 'gourgeist',
+    name: 'Gourgeist',
+    collection: 'spooky-cute',
+    translations: ['パンプジン', '南瓜精'],
+    relatedKeywords: ['gourgeist cards', 'halloween pumpkin ghost pokemon cards'],
+    relatedEntities: ['Pumpkaboo', 'Misdreavus'],
+    types: ['Ghost', 'Grass'],
+    generation: 6,
+  },
+  // Vulpix line (cute fox pokémon)
+  {
+    slug: 'vulpix',
+    name: 'Vulpix',
+    collection: 'cottagecore-and-floral',
+    translations: ['ロコン', '六尾'],
+    relatedKeywords: ['vulpix cards', 'cute fox fire pokemon cards', 'alolan vulpix cards'],
+    relatedEntities: ['Ninetales', 'Growlithe'],
+    types: ['Fire'],
+    generation: 1,
+  },
+  {
+    slug: 'ninetales',
+    name: 'Ninetales',
+    collection: 'elegant-and-feminine',
+    translations: ['キュウコン', '九尾'],
+    relatedKeywords: ['ninetales cards', 'elegant fox pokemon cards', 'alolan ninetales cards'],
+    relatedEntities: ['Vulpix', 'Cresselia'],
+    types: ['Fire'],
+    generation: 1,
+  },
 ]
 
 const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
@@ -3172,23 +3407,59 @@ const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
   'riolu',
 ])
 
-function withMostPopularCollection(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
-  if (!MOST_POPULAR_SPECIES_SLUGS.has(species.slug)) {
+const LEGENDARY_SPECIES_SLUGS = new Set<string>([
+  'mewtwo',
+  'lugia',
+  'rayquaza',
+  'cresselia',
+  'cosmog',
+])
+
+const MYTHICAL_SPECIES_SLUGS = new Set<string>([
+  'mew',
+  'jirachi',
+  'shaymin',
+  'victini',
+  'meloetta',
+  'diancie',
+])
+
+function withCollection(
+  species: SpeciesKeywordConfig,
+  collection: SpeciesCollectionSlug
+): SpeciesKeywordConfig {
+  if (species.collection === collection) {
     return species
   }
 
   const extraCollections = species.extraCollections ?? []
-  if (species.collection === 'most-popular' || extraCollections.includes('most-popular')) {
+  if (extraCollections.includes(collection)) {
     return species
   }
 
   return {
     ...species,
-    extraCollections: [...extraCollections, 'most-popular'],
+    extraCollections: [...extraCollections, collection],
   }
 }
 
-const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withMostPopularCollection)
+function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
+  let next = species
+
+  if (MOST_POPULAR_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'most-popular')
+  }
+  if (LEGENDARY_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'legendary')
+  }
+  if (MYTHICAL_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'mythical')
+  }
+
+  return next
+}
+
+const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withAutoCollections)
 
 export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
   SPECIES_KEYWORD_CONFIG_LIST.map((species) => [species.slug, species])
@@ -3226,6 +3497,8 @@ export const LANDING_SEO = {
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
     ...SEO_KEYWORD_GROUPS.mostPopular,
+    ...SEO_KEYWORD_GROUPS.legendary,
+    ...SEO_KEYWORD_GROUPS.mythical,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     'pink binder pokemon',
@@ -3258,6 +3531,8 @@ export const BLOG_SEO = {
     ...SEO_KEYWORD_GROUPS.spookyCute,
     ...SEO_KEYWORD_GROUPS.eeveelutions,
     ...SEO_KEYWORD_GROUPS.mostPopular,
+    ...SEO_KEYWORD_GROUPS.legendary,
+    ...SEO_KEYWORD_GROUPS.mythical,
     ...SEO_KEYWORD_GROUPS.rarity,
     ...SEO_KEYWORD_GROUPS.languages,
     ...SEO_KEYWORD_GROUPS.speciesMoats,
