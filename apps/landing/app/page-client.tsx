@@ -188,6 +188,16 @@ export default function LandingPageClient({
         }}
         onCopy={() => copyShareLink(shareDialogState?.url ?? '', setCopyStatus)}
       />
+
+      <div className="pointer-events-none fixed bottom-6 right-6 hidden md:block">
+        <Image
+          src="/images/QR-Code.svg"
+          alt="Scan to visit Pink Binder"
+          width={120}
+          height={120}
+          className="rounded-xl border border-pink-200/80 bg-white/90 p-2 shadow-md"
+        />
+      </div>
     </main>
   )
 }
