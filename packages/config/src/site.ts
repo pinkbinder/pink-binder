@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://pinkbinder.store'
+export const SITE_URL = 'https://pinkbinder.shop'
 export const CONTACT_EMAIL = 'angel@pinkbinder.store'
 
 export const BRAND = {
