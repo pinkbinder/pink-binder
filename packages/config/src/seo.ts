@@ -3788,10 +3788,10 @@ export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
 
 const GENERATION_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'] as const
 
-/** Returns a human-readable generation label like "Generation VI". */
+/** Returns a human-readable generation label like "Gen VI". */
 export function generationLabel(gen: number): string {
   const roman = GENERATION_ROMAN[gen - 1] ?? String(gen)
-  return `Generation ${roman}`
+  return `Gen ${roman}`
 }
 
 /** Shared SEO defaults for the landing page and sitewide marketing metadata. */

@@ -1,0 +1,14 @@
+<svg width="1200" height="1200" viewBox="0 0 1200 1200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="1200" rx="96" fill="#ecfdf5"/>
+  <rect x="72" y="72" width="1056" height="1056" rx="72" fill="#f0fdf4"/>
+  <circle cx="600" cy="450" r="220" fill="#22c55e" fill-opacity="0.18"/>
+  <path d="M365 450C365 315 471 230 600 230C729 230 835 315 835 450C835 585 729 670 600 670C471 670 365 585 365 450Z" fill="#86efac" fill-opacity="0.4"/>
+  <circle cx="520" cy="390" r="28" fill="#14532d"/>
+  <circle cx="680" cy="390" r="28" fill="#14532d"/>
+  <path d="M470 535C530 600 670 600 730 535" stroke="#166534" stroke-width="28" stroke-linecap="round"/>
+  <path d="M470 255L560 165" stroke="#16a34a" stroke-width="30" stroke-linecap="round"/>
+  <path d="M730 255L640 165" stroke="#16a34a" stroke-width="30" stroke-linecap="round"/>
+  <rect x="176" y="820" width="848" height="180" rx="40" fill="#ffffff" fill-opacity="0.88"/>
+  <text x="600" y="900" text-anchor="middle" font-family="Arial, sans-serif" font-size="104" font-weight="700" fill="#166534">Gecqua</text>
+  <text x="600" y="970" text-anchor="middle" font-family="Arial, sans-serif" font-size="44" fill="#15803d">Gen X placeholder artwork</text>
+</svg>
