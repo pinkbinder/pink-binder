@@ -12,10 +12,11 @@ import {
 import { BRAND, SOCIAL_LINKS } from '@repo/config'
 import Image from 'next/image'
 import { useState } from 'react'
-import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
+import { LANDING_LINKS, SITE_URL as DEFAULT_SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
-const LANDING_PAGE_SHARE_URL = 'https://pinkbinder.shop'
+const LANDING_SITE_URL = process.env.NEXT_PUBLIC_LANDING_URL ?? DEFAULT_SITE_URL
+const LANDING_PAGE_SHARE_URL = LANDING_SITE_URL
 const CENTER_OVERLAY_LAYOUT_CLASSNAME =
   'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem]'
 const CENTER_SPOTLIGHT_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]`
@@ -230,7 +231,7 @@ function resolveShareUrl(link: LandingLink) {
     return link.href
   }
 
-  return new URL(link.href, SITE_URL).toString()
+  return new URL(link.href, LANDING_SITE_URL).toString()
 }
 
 async function copyShareLink(
