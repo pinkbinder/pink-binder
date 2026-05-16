@@ -3435,6 +3435,39 @@ const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
     types: ['Fire'],
     generation: 1,
   },
+  // ─── Gen 10 Starters ─────────────────────────────────────────────────────────
+  {
+    slug: 'browt',
+    name: 'Browt',
+    collection: 'starter-pokemon',
+    extraCollections: ['birds'],
+    translations: [],
+    relatedKeywords: ['browt cards', 'gen 10 grass starter cards', 'bird grass starter pokemon'],
+    relatedEntities: ['Pombon', 'Gecqua'],
+    types: ['Grass', 'Flying'],
+    generation: 10,
+  },
+  {
+    slug: 'pombon',
+    name: 'Pombon',
+    collection: 'starter-pokemon',
+    extraCollections: ['cozy-and-warm'],
+    translations: [],
+    relatedKeywords: ['pombon cards', 'gen 10 fire starter cards', 'fire dog pokemon cards'],
+    relatedEntities: ['Browt', 'Gecqua'],
+    types: ['Fire'],
+    generation: 10,
+  },
+  {
+    slug: 'gecqua',
+    name: 'Gecqua',
+    collection: 'starter-pokemon',
+    translations: [],
+    relatedKeywords: ['gecqua cards', 'gen 10 water starter cards', 'gecko water pokemon cards'],
+    relatedEntities: ['Browt', 'Pombon'],
+    types: ['Water'],
+    generation: 10,
+  },
 ]
 
 const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
@@ -3569,6 +3602,7 @@ const BIRD_COLLECTION_SPECIES_SLUGS = new Set<string>([
   'quaxly',
   'quaxwell',
   'quaquaval',
+  'browt',
 ])
 
 const FISH_COLLECTION_SPECIES_SLUGS = new Set<string>([
@@ -3685,6 +3719,7 @@ const COZY_AND_WARM_SPECIES_SLUGS = new Set<string>([
   'wooloo',
   'dubwool',
   'flareon',
+  'pombon',
 ])
 
 const SLEEPY_SPECIES_SLUGS = new Set<string>([
