@@ -20,14 +20,12 @@ const CENTER_OVERLAY_LAYOUT_CLASSNAME =
   'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem]'
 const CENTER_SPOTLIGHT_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]`
 const CENTER_GLOW_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} bg-white/30 blur-2xl`
-const LANDING_PAGE_DESCRIPTION =
-  'Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and Illustration Rares in English, Japanese, and Chinese!'
 const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
   label: BRAND.name,
   href: LANDING_PAGE_SHARE_URL,
   thumbnail: '/images/logo.png',
   thumbnailAlt: `${BRAND.name} logo`,
-  shareDescription: LANDING_PAGE_DESCRIPTION,
+  shareDescription: BRAND.description,
 }
 
 interface LandingPageClientProps {
@@ -50,14 +48,14 @@ export default function LandingPageClient({
   const socials = SOCIAL_LINKS.filter((social) => social.enabled)
 
   return (
-    <main className="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-16">
+    <main className="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-8 md:py-16">
       <div aria-hidden="true" className="pointer-events-none absolute inset-0">
         <div className={CENTER_SPOTLIGHT_CLASSNAME} />
         <div className={CENTER_GLOW_CLASSNAME} />
       </div>
 
       <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
-        <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6">
+        <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
           <div className="flex w-full justify-end">
             <button
               type="button"
@@ -80,23 +78,23 @@ export default function LandingPageClient({
             <Image
               src="/images/logo.png"
               alt={`${BRAND.name} logo`}
-              className="h-20 w-20 rounded-full border border-pink-100 bg-white object-cover shadow-lg"
-              width={80}
-              height={80}
+              className="h-36 w-36 rounded-full border border-pink-100 bg-transparent object-cover shadow-lg"
+              width={144}
+              height={144}
               priority
             />
-            <h1 className="font-title text-3xl font-bold tracking-tight">{BRAND.name}</h1>
-            <p className="text-primary text-lg font-bold leading-relaxed">
-              <span>{BRAND.subtitleTop}</span>
+            <h1 className="text-primary font-title text-3xl font-bold tracking-tight">
+              {BRAND.name}
+            </h1>
+            <p className="text-lg font-semibold leading-relaxed">
+              <span className="text-muted-foreground/80">{BRAND.subtitleTop}</span>
               <br />
-              <span>{BRAND.subtitleBottom}</span>
+              <span className="text-primary">{BRAND.subtitleBottom}</span>
             </p>
             <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
-              {LANDING_PAGE_DESCRIPTION}
+              {BRAND.description}
             </p>
           </header>
-
-          <SocialBar socials={socials} aria-label="Social media links" />
 
           <nav aria-label={`${BRAND.name} links`} className="flex w-full flex-col gap-3">
             {links.map((link) => {
@@ -119,7 +117,7 @@ export default function LandingPageClient({
                       width={36}
                       height={36}
                     />
-                    <span className="truncate">{link.label}</span>
+                    <span className="text-primary truncate">Shop on {link.marketplace}</span>
                   </a>
 
                   <button
@@ -141,6 +139,8 @@ export default function LandingPageClient({
             })}
           </nav>
 
+          <SocialBar socials={socials} aria-label="Social media links" />
+
           {ebayListings.length > 0 ? (
             <EbayListingsCarousel
               listings={ebayListings}
@@ -155,14 +155,14 @@ export default function LandingPageClient({
         <section className="mx-auto mt-12 flex w-full max-w-md flex-col gap-4">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-primary text-xs font-bold uppercase tracking-[0.3em]">
+              <p className="text-primary text-sm font-bold uppercase tracking-[0.3em]">
                 Latest from the blog
               </p>
               <h2 className="font-title mt-2 text-2xl font-semibold">Fresh from Pink Binder</h2>
             </div>
             <a
               href={blogUrl}
-              className="text-primary hover:text-primary/80 text-sm font-semibold transition-colors"
+              className="text-primary hover:text-primary/80 text-sm font-bold transition-colors"
             >
               Visit blog →
             </a>
@@ -172,7 +172,7 @@ export default function LandingPageClient({
             className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           >
             <PostCard post={latestPost} />
-            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-semibold transition-colors">
+            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-bold transition-colors">
               Read article →
             </span>
           </a>
