@@ -7,13 +7,26 @@ import {
   SocialBar,
   type EbayListing,
   type PostCardPost,
+  type ShareLinkItem,
 } from '@repo/ui'
 import { BRAND, SOCIAL_LINKS } from '@repo/config'
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { LANDING_LINKS, SITE_URL, type LandingLink } from './config/link-in-bio'
 
 const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
+const LANDING_PAGE_SHARE_URL = 'https://pinkbinder.shop'
+const CENTER_OVERLAY_LAYOUT_CLASSNAME =
+  'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem]'
+const CENTER_SPOTLIGHT_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]`
+const CENTER_GLOW_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} bg-white/30 blur-2xl`
+const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
+  label: BRAND.name,
+  href: LANDING_PAGE_SHARE_URL,
+  thumbnail: '/images/logo.png',
+  thumbnailAlt: `${BRAND.name} logo`,
+  shareDescription: BRAND.description,
+}
 
 interface LandingPageClientProps {
   blogUrl: string
@@ -26,101 +39,130 @@ export default function LandingPageClient({
   latestPost,
   ebayListings,
 }: LandingPageClientProps) {
-  const [shareLink, setShareLink] = useState<LandingLink | null>(null)
+  const [shareDialogState, setShareDialogState] = useState<{
+    item: ShareLinkItem
+    url: string
+  } | null>(null)
   const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'failed'>('idle')
   const links = LANDING_LINKS.filter((link) => link.enabled)
   const socials = SOCIAL_LINKS.filter((social) => social.enabled)
-  const shareUrl = useMemo(() => (shareLink ? resolveShareUrl(shareLink) : ''), [shareLink])
 
   return (
-    <main className="flex min-h-screen flex-col px-4 py-16">
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center gap-6">
-        <header className="flex flex-col items-center gap-3 text-center">
-          <Image
-            src="/images/logo.png"
-            alt={`${BRAND.name} logo`}
-            className="h-20 w-20 rounded-full border border-pink-100 bg-white object-cover shadow-lg"
-            width={80}
-            height={80}
-            priority
-          />
-          <h1 className="font-title text-3xl font-bold tracking-tight">{BRAND.name}</h1>
-          <p className="text-primary text-lg font-bold leading-relaxed">
-            <span>{BRAND.subtitleTop}</span>
-            <br />
-            <span>{BRAND.subtitleBottom}</span>
-          </p>
-          <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
-            Shop cute Pokémon cards for sale, build a pink Pokémon card collection, and browse
-            kawaii binder favorites like pastel or fairy cards, baby shinies, reverse holos, and
-            Illustration Rares in English, Japanese, and Chinese!
-          </p>
-        </header>
+    <main className="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-8 md:py-16">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className={CENTER_SPOTLIGHT_CLASSNAME} />
+        <div className={CENTER_GLOW_CLASSNAME} />
+      </div>
 
-        {/* Social icons — above shop links for visibility */}
-        <SocialBar socials={socials} aria-label="Social media links" />
+      <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
+        <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
+          <div className="flex w-full justify-end">
+            <button
+              type="button"
+              aria-label="Share The Pink Binder"
+              onClick={() => {
+                setShareDialogState({
+                  item: LANDING_PAGE_SHARE_ITEM,
+                  url: LANDING_PAGE_SHARE_URL,
+                })
+                setCopyStatus('idle')
+              }}
+              className="text-foreground hover:text-primary focus-visible:ring-ring inline-flex items-center gap-2 rounded-full border border-pink-200/80 bg-white/90 px-4 py-2 text-sm font-semibold shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2"
+            >
+              <ShareIcon />
+              <span>Share</span>
+            </button>
+          </div>
 
-        <nav aria-label={`${BRAND.name} links`} className="flex w-full flex-col gap-3">
-          {links.map((link) => {
-            const shareButtonLabel = `Share ${link.label}`
-            return (
-              <div
-                key={link.href}
-                className="group flex w-full items-center rounded-xl border border-pink-200/70 bg-white shadow-sm transition-colors hover:bg-pink-50/50"
-              >
-                <a
-                  href={link.href}
-                  target={link.external ? '_blank' : undefined}
-                  rel={link.external ? 'noopener noreferrer' : undefined}
-                  className="text-foreground flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold"
+          <header className="flex flex-col items-center gap-3 text-center">
+            <Image
+              src="/images/logo.png"
+              alt={`${BRAND.name} logo`}
+              className="h-36 w-36 rounded-full border border-pink-100 bg-transparent object-cover shadow-lg"
+              width={144}
+              height={144}
+              priority
+            />
+            <h1 className="text-primary font-title text-3xl font-bold tracking-tight">
+              {BRAND.name}
+            </h1>
+            <p className="text-lg font-semibold leading-relaxed">
+              <span className="text-muted-foreground/80">{BRAND.subtitleTop}</span>
+              <br />
+              <span className="text-primary">{BRAND.subtitleBottom}</span>
+            </p>
+            <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
+              {BRAND.description}
+            </p>
+          </header>
+
+          <nav aria-label={`${BRAND.name} links`} className="flex w-full flex-col gap-3">
+            {links.map((link) => {
+              const shareButtonLabel = `Share ${link.label}`
+              return (
+                <div
+                  key={link.href}
+                  className="group flex w-full items-center rounded-xl border border-pink-200/70 bg-white shadow-sm transition-colors hover:bg-pink-50/50"
                 >
-                  <Image
-                    src={link.thumbnail}
-                    alt={link.thumbnailAlt}
-                    className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1 shadow-sm"
-                    width={36}
-                    height={36}
-                  />
-                  <span className="truncate">{link.label}</span>
-                </a>
+                  <a
+                    href={link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener noreferrer' : undefined}
+                    className="text-foreground flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold"
+                  >
+                    <Image
+                      src={link.thumbnail}
+                      alt={link.thumbnailAlt}
+                      className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1 shadow-sm"
+                      width={36}
+                      height={36}
+                    />
+                    <span className="text-primary truncate">Shop on {link.marketplace}</span>
+                  </a>
 
-                <button
-                  type="button"
-                  aria-label={shareButtonLabel}
-                  onClick={() => {
-                    setShareLink(link)
-                    setCopyStatus('idle')
-                  }}
-                  className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mr-2 rounded-full p-2 transition-colors hover:bg-pink-100 focus-visible:outline-none focus-visible:ring-2"
-                >
-                  <ThreeDotsIcon />
-                </button>
-              </div>
-            )
-          })}
-        </nav>
+                  <button
+                    type="button"
+                    aria-label={shareButtonLabel}
+                    onClick={() => {
+                      setShareDialogState({
+                        item: link,
+                        url: resolveShareUrl(link),
+                      })
+                      setCopyStatus('idle')
+                    }}
+                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mr-2 rounded-full p-2 transition-colors hover:bg-pink-100 focus-visible:outline-none focus-visible:ring-2"
+                  >
+                    <ThreeDotsIcon />
+                  </button>
+                </div>
+              )
+            })}
+          </nav>
 
-        {ebayListings.length > 0 ? (
-          <EbayListingsCarousel
-            listings={ebayListings}
-            storeUrl={EBAY_STORE_URL}
-            className="w-full"
-          />
-        ) : null}
+          <SocialBar socials={socials} aria-label="Social media links" />
+
+          {ebayListings.length > 0 ? (
+            <EbayListingsCarousel
+              listings={ebayListings}
+              storeUrl={EBAY_STORE_URL}
+              className="w-full"
+            />
+          ) : null}
+        </div>
       </div>
 
       {latestPost ? (
         <section className="mx-auto mt-12 flex w-full max-w-md flex-col gap-4">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <p className="text-primary text-xs font-bold uppercase tracking-[0.3em]">
+              <p className="text-primary text-sm font-bold uppercase tracking-[0.3em]">
                 Latest from the blog
               </p>
               <h2 className="font-title mt-2 text-2xl font-semibold">Fresh from Pink Binder</h2>
             </div>
             <a
               href={blogUrl}
-              className="text-primary hover:text-primary/80 text-sm font-semibold transition-colors"
+              className="text-primary hover:text-primary/80 text-sm font-bold transition-colors"
             >
               Visit blog →
             </a>
@@ -130,7 +172,7 @@ export default function LandingPageClient({
             className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
           >
             <PostCard post={latestPost} />
-            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-semibold transition-colors">
+            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-bold transition-colors">
               Read article →
             </span>
           </a>
@@ -138,15 +180,28 @@ export default function LandingPageClient({
       ) : null}
 
       <ShareLinkDialog
-        item={shareLink}
-        shareUrl={shareUrl}
+        item={shareDialogState?.item ?? null}
+        shareUrl={shareDialogState?.url ?? ''}
         copyStatus={copyStatus}
         onOpenChange={(open) => {
-          if (!open) setShareLink(null)
+          if (!open) setShareDialogState(null)
         }}
-        onCopy={() => copyShareLink(shareUrl, setCopyStatus)}
+        onCopy={() => copyShareLink(shareDialogState?.url ?? '', setCopyStatus)}
       />
     </main>
+  )
+}
+
+function ShareIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4 fill-none stroke-current">
+      <path
+        d="M14 5l6 0 0 6M20 4l-9 9M20 14v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h3"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
   )
 }
 

@@ -32,6 +32,11 @@ const SHARE_PLATFORMS: {
     buildUrl: (url) => `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
   },
   {
+    id: 'messenger',
+    label: 'Share on Messenger',
+    buildUrl: (url) => `fb-messenger://share/?link=${encodeURIComponent(url)}`,
+  },
+  {
     id: 'x',
     label: 'Share on X',
     buildUrl: (url, text) =>
@@ -82,6 +87,19 @@ function SharePlatformIcon({ id, label }: { id: string; label: string }) {
         >
           <title>{label}</title>
           <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+        </svg>
+      )
+    case 'messenger':
+      return (
+        <svg
+          role="img"
+          aria-label={label}
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          className="size-5"
+        >
+          <title>{label}</title>
+          <path d="M12 0C5.373 0 0 4.974 0 11.679c0 3.819 1.743 7.226 4.466 9.433V24l2.73-1.5a12.44 12.44 0 0 0 4.804.966c6.627 0 12-4.974 12-11.679C24 4.974 18.627 0 12 0Zm1.193 15.73-3.056-3.26-5.96 3.26 6.55-6.957 3.136 3.258 5.88-3.258-6.55 6.957Z" />
         </svg>
       )
     case 'whatsapp':
@@ -225,9 +243,12 @@ export function ShareLinkDialog({
               <p className="text-muted-foreground mb-3 text-xs font-medium uppercase tracking-widest">
                 Share via
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap justify-center gap-3">
                 {SHARE_PLATFORMS.map((platform) => (
-                  <div key={platform.id} className="flex flex-col items-center gap-1.5">
+                  <div
+                    key={platform.id}
+                    className="flex w-16 flex-col items-center gap-1.5 text-center"
+                  >
                     <IconButton
                       label={platform.label}
                       external
@@ -247,7 +268,7 @@ export function ShareLinkDialog({
                 ))}
 
                 {/* Copy link */}
-                <div className="flex flex-col items-center gap-1.5">
+                <div className="flex w-16 flex-col items-center gap-1.5 text-center">
                   <IconButton
                     label="Copy link"
                     className={
@@ -267,7 +288,7 @@ export function ShareLinkDialog({
 
                 {/* Native share (only shown when supported) */}
                 {'share' in navigator ? (
-                  <div className="flex flex-col items-center gap-1.5">
+                  <div className="flex w-16 flex-col items-center gap-1.5 text-center">
                     <IconButton
                       label="More options"
                       onClick={(e) => {
