@@ -3177,12 +3177,8 @@ function withMostPopularCollection(species: SpeciesKeywordConfig): SpeciesKeywor
     return species
   }
 
-  if (species.collection === 'most-popular') {
-    return species
-  }
-
   const extraCollections = species.extraCollections ?? []
-  if (extraCollections.includes('most-popular')) {
+  if (species.collection === 'most-popular' || extraCollections.includes('most-popular')) {
     return species
   }
 
