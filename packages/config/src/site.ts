@@ -4,9 +4,9 @@ export const CONTACT_EMAIL = 'angel@pinkbinder.store'
 export const BRAND = {
   name: 'The Pink Binder',
   subtitleTop: 'Puerto Rico, USA 🇵🇷🇺🇸',
-  subtitleBottom: 'Pokémon TCG online shop!',
+  subtitleBottom: 'Pokémon TCG online shop! ✨',
   description:
-    'The Pink Binder is a Puerto Rico based Pokémon TCG collector and online shop sharing products, content, and updates.',
+    "We hunt down the cutest cards so you don't have to! Shop authentic English, Japanese, and Chinese singles curated specially for your cozy binder. 💕",
   logoText: 'PB',
 }
 
@@ -53,18 +53,22 @@ export const SOCIAL_LINKS: SocialLink[] = [
 ]
 
 export type ShopLink = {
-  label: string
   href: string
+  label: string
   thumbnail: string
   thumbnailAlt: string
   shareDescription: string
   enabled: boolean
   external?: boolean
+  storeName?: string
+  marketplace?: string
 }
 
 export const SHOP_LINKS: ShopLink[] = [
   {
-    label: 'Shop on Whatnot',
+    marketplace: 'Whatnot',
+    storeName: 'thepinkbinder',
+    label: `Shop thepinkbinder on Whatnot`,
     href: 'https://whatnot.pxf.io/xJJMAy',
     thumbnail: 'https://www.google.com/s2/favicons?domain=whatnot.com&sz=128',
     thumbnailAlt: 'Whatnot logo',
@@ -73,7 +77,9 @@ export const SHOP_LINKS: ShopLink[] = [
     external: true,
   },
   {
-    label: 'Shop on TCGPlayer',
+    marketplace: 'TCGPlayer',
+    storeName: 'Pink-Binder-Store',
+    label: `Shop Pink-Binder-Store on TCGPlayer`,
     href: 'https://www.tcgplayer.com/sellers/Pink-Binder-Store/eee48140',
     thumbnail: 'https://www.google.com/s2/favicons?domain=tcgplayer.com&sz=128',
     thumbnailAlt: 'TCGPlayer logo',
@@ -82,7 +88,9 @@ export const SHOP_LINKS: ShopLink[] = [
     external: true,
   },
   {
-    label: 'Shop on eBay',
+    marketplace: 'eBay',
+    storeName: 'thepinkbinder',
+    label: `Shop thepinkbinder on eBay`,
     href: 'https://www.ebay.com/usr/thepinkbinder',
     thumbnail: 'https://www.google.com/s2/favicons?domain=ebay.com&sz=128',
     thumbnailAlt: 'eBay logo',
@@ -91,7 +99,9 @@ export const SHOP_LINKS: ShopLink[] = [
     external: true,
   },
   {
-    label: 'Shop on Etsy',
+    marketplace: 'Etsy',
+    storeName: 'CutePkmn',
+    label: `Shop CutePkmn on Etsy`,
     href: 'https://www.etsy.com/shop/cutepkmn',
     thumbnail: 'https://www.google.com/s2/favicons?domain=etsy.com&sz=128',
     thumbnailAlt: 'Etsy logo',
