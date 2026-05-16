@@ -141,6 +141,20 @@ export const SEO_KEYWORD_GROUPS = {
     'pokemon card live shopping',
   ],
   blog: ['pokemon card blog', 'pokemon tcg updates', 'pokemon collecting tips'],
+  yukaMorii: [
+    'yuka morii pokemon cards',
+    'clay art pokemon tcg',
+    'yuka morii collection',
+    'clay sculpture pokemon cards',
+    'yuka morii clay style cards',
+  ],
+  asakoIto: [
+    'asako ito pokemon cards',
+    'crochet amigurumi pokemon cards',
+    'asako ito tcg',
+    'knitted pokemon cards',
+    'amigurumi style pokemon tcg',
+  ],
 } as const
 
 export type SpeciesCollectionSlug =
@@ -167,6 +181,8 @@ export type SpeciesCollectionSlug =
   | 'most-popular'
   | 'legendary'
   | 'mythical'
+  | 'yuka-morii'
+  | 'asako-ito'
 
 export type SpeciesKeywordConfig = {
   slug: string
@@ -347,6 +363,20 @@ export const SPECIES_COLLECTIONS = {
       'Rare mythical Pokémon that collectors love for their unique stories and special releases.',
     featuredSpecies: ['Mew', 'Jirachi', 'Victini', 'Shaymin', 'Diancie'],
   },
+  'yuka-morii': {
+    slug: 'yuka-morii',
+    title: 'Yuka Morii Art',
+    description:
+      "Pokémon illustrated in Yuka Morii's signature clay-sculpture style — hand-crafted models photographed to create her iconic 3D card artwork.",
+    featuredSpecies: ['Clefairy', 'Jigglypuff', 'Pikachu', 'Chansey', 'Froakie'],
+  },
+  'asako-ito': {
+    slug: 'asako-ito',
+    title: 'Asako Ito Art',
+    description:
+      "Pokémon illustrated in Asako Ito's distinctive crochet amigurumi style — hand-knitted fabric models that give each Pokémon a soft, tactile charm.",
+    featuredSpecies: ['Espurr', 'Swirlix', 'Goomy', 'Munna', 'Audino'],
+  },
 } as const satisfies Record<
   SpeciesCollectionSlug,
   {
@@ -390,6 +420,8 @@ const SPECIES_COLLECTION_KEYWORDS: Record<SpeciesCollectionSlug, string[]> = {
   'most-popular': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mostPopular],
   legendary: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.legendary],
   mythical: [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.mythical],
+  'yuka-morii': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.yukaMorii],
+  'asako-ito': [...SEO_KEYWORD_GROUPS.cuteBrand, ...SEO_KEYWORD_GROUPS.asakoIto],
 }
 
 const SPECIES_KEYWORD_SEEDS: SpeciesKeywordConfig[] = [
@@ -3744,6 +3776,205 @@ const SLEEPY_SPECIES_SLUGS = new Set<string>([
   'komala',
 ])
 
+/**
+ * Pokémon illustrated in Yuka Morii's clay-sculpture style.
+ * Source: TCG card database (pokemontcg.io, Serebii artist index).
+ */
+const YUKA_MORII_SPECIES_SLUGS = new Set<string>([
+  // Kanto
+  'clefairy',
+  'cleffa',
+  'jigglypuff',
+  'pikachu',
+  'raichu',
+  'chansey',
+  'blissey',
+  'happiny',
+  'togepi',
+  'togetic',
+  'snorlax',
+  'lickitung',
+  'geodude',
+  'graveler',
+  'golem',
+  'vulpix',
+  'growlithe',
+  'arcanine',
+  'poliwag',
+  'poliwhirl',
+  'poliwrath',
+  'politoed',
+  'dratini',
+  'dragonair',
+  'goldeen',
+  'seaking',
+  'corsola',
+  'shuckle',
+  'snubbull',
+  'granbull',
+  'girafarig',
+  'dunsparce',
+  'aipom',
+  'ambipom',
+  'wooper',
+  'quagsire',
+  'hoppip',
+  'skiploom',
+  'jumpluff',
+  'chinchou',
+  'lanturn',
+  'swinub',
+  'piloswine',
+  'sentret',
+  'furret',
+  'natu',
+  'xatu',
+  'wobbuffet',
+  'wynaut',
+  'slowbro',
+  'slowpoke',
+  'heracross',
+  'sudowoodo',
+  'bonsly',
+  'mareep',
+  'flaaffy',
+  'ampharos',
+  'yanma',
+  'miltank',
+  'smeargle',
+  'bellossom',
+  'gloom',
+  'oddish',
+  'grimer',
+  'muk',
+  'tangela',
+  'parasect',
+  'delibird',
+  'mawile',
+  'barboach',
+  'whiscash',
+  'wingull',
+  'pelipper',
+  'spoink',
+  'grumpig',
+  'spinda',
+  'numel',
+  'camerupt',
+  'sableye',
+  'beldum',
+  'cacnea',
+  'cacturne',
+  // Modern sets (confirmed via Serebii/TCG API)
+  'skitty',
+  'delcatty',
+  'applin',
+  'dipplin',
+  'chewtle',
+  'drednaw',
+  'meltan',
+  'melmetal',
+  'minccino',
+  'cinccino',
+  'froakie',
+  'frogadier',
+  'greninja',
+  'octillery',
+  'magnemite',
+  'magneton',
+  'magnezone',
+  'pincurchin',
+  'drapion',
+  'baltoy',
+  'claydol',
+  'seedot',
+  'nuzleaf',
+  'shiftry',
+  'machop',
+  'machoke',
+  'machamp',
+  'spinarak',
+  'ariados',
+  'mankey',
+  'primeape',
+  'nymble',
+  'lokix',
+  'durant',
+  'klang',
+  'klinklang',
+  'smoliv',
+  'dolliv',
+  'arboliva',
+  'pawniard',
+  'bisharp',
+  'lillipup',
+  'herdier',
+  'stoutland',
+  'sinistea',
+  'polteageist',
+  'litwick',
+  'lampent',
+  'chandelure',
+  'larvesta',
+  'volcarona',
+  'murkrow',
+  'honchkrow',
+  'starly',
+  'staravia',
+  'staraptor',
+  'stonjourner',
+  'ducklett',
+  'swanna',
+  'helioptile',
+  'heliolisk',
+  'karrablast',
+  'escavalier',
+  'wormadam',
+  'toxel',
+  'toxtricity',
+])
+
+/**
+ * Pokémon illustrated in Asako Ito's crochet amigurumi style.
+ * Source: TCG card database (pokemontcg.io, Serebii artist index, Bulbapedia).
+ */
+const ASAKO_ITO_SPECIES_SLUGS = new Set<string>([
+  'audino',
+  'dunsparce',
+  'sandygast',
+  'seedot',
+  'snorlax',
+  'altaria',
+  'espurr',
+  'swirlix',
+  'blipbug',
+  'grubbin',
+  'wigglytuff',
+  'castform',
+  'zubat',
+  'chimecho',
+  'trapinch',
+  'metapod',
+  'munna',
+  'tympole',
+  'azurill',
+  'gible',
+  'cottonee',
+  'oddish',
+  'pyukumuku',
+  'electrode',
+  'litwick',
+  'phanpy',
+  'luvdisc',
+  'shelgon',
+  'whismur',
+  'cherubi',
+  'drifloon',
+  'marill',
+  'tynamo',
+  'goomy',
+  'poliwag',
+])
+
 const LEGENDARY_SPECIES_SLUGS = new Set<string>(
   POKEMON_CATALOG.filter((entry) => entry.isLegendary).map((entry) => entry.slug)
 )
@@ -3889,6 +4120,12 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   }
   if (SLEEPY_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'sleepy')
+  }
+  if (YUKA_MORII_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'yuka-morii')
+  }
+  if (ASAKO_ITO_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'asako-ito')
   }
 
   return next
