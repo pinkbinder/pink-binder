@@ -1,4 +1,5 @@
 import { BRAND } from './site'
+import { POKEMON_CATALOG } from './pokemon-catalog'
 
 export const SEO_KEYWORD_GROUPS = {
   cuteBrand: [
@@ -145,7 +146,7 @@ export type SpeciesKeywordConfig = {
   slug: string
   name: string
   titleName?: string
-  collection: SpeciesCollectionSlug
+  collection?: SpeciesCollectionSlug
   extraCollections?: SpeciesCollectionSlug[]
   translations: string[]
   relatedKeywords: string[]
@@ -3407,22 +3408,81 @@ const MOST_POPULAR_SPECIES_SLUGS = new Set<string>([
   'riolu',
 ])
 
-const LEGENDARY_SPECIES_SLUGS = new Set<string>([
-  'mewtwo',
-  'lugia',
-  'rayquaza',
-  'cresselia',
-  'cosmog',
+const STARTER_BASE_SPECIES_SLUGS = new Set<string>([
+  'bulbasaur',
+  'charmander',
+  'squirtle',
+  'chikorita',
+  'cyndaquil',
+  'totodile',
+  'treecko',
+  'torchic',
+  'mudkip',
+  'turtwig',
+  'chimchar',
+  'piplup',
+  'snivy',
+  'tepig',
+  'oshawott',
+  'chespin',
+  'fennekin',
+  'froakie',
+  'rowlet',
+  'litten',
+  'popplio',
+  'grookey',
+  'scorbunny',
+  'sobble',
+  'sprigatito',
+  'fuecoco',
+  'quaxly',
+  'browt',
+  'pombon',
+  'gecqua',
 ])
 
-const MYTHICAL_SPECIES_SLUGS = new Set<string>([
-  'mew',
-  'jirachi',
-  'shaymin',
-  'victini',
-  'meloetta',
-  'diancie',
+const FOOD_COLLECTION_SPECIES_SLUGS = new Set<string>([
+  'bounsweet',
+  'steenee',
+  'tsareena',
+  'cherubi',
+  'cherrim',
+  'vanillite',
+  'vanillish',
+  'vanilluxe',
+  'swirlix',
+  'slurpuff',
+  'milcery',
+  'alcremie',
+  'applin',
+  'flapple',
+  'appletun',
+  'dipplin',
+  'hydrapple',
+  'fidough',
+  'dachsbun',
+  'smoliv',
+  'dolliv',
+  'arboliva',
+  'sinistea',
+  'polteageist',
+  'poltchageist',
+  'sinistcha',
+  'capsakid',
+  'scovillain',
 ])
+
+const LEGENDARY_SPECIES_SLUGS = new Set<string>(
+  POKEMON_CATALOG.filter((entry) => entry.isLegendary).map((entry) => entry.slug)
+)
+
+const MYTHICAL_SPECIES_SLUGS = new Set<string>(
+  POKEMON_CATALOG.filter((entry) => entry.isMythical).map((entry) => entry.slug)
+)
+
+const BABY_SPECIES_SLUGS = new Set<string>(
+  POKEMON_CATALOG.filter((entry) => entry.isBaby).map((entry) => entry.slug)
+)
 
 function withCollection(
   species: SpeciesKeywordConfig,
@@ -3443,6 +3503,33 @@ function withCollection(
   }
 }
 
+function inferPrimaryCollection(slug: string): SpeciesCollectionSlug | undefined {
+  if (FOOD_COLLECTION_SPECIES_SLUGS.has(slug)) {
+    return 'food-and-sweet-treats'
+  }
+  if (STARTER_BASE_SPECIES_SLUGS.has(slug)) {
+    return 'starter-pokemon'
+  }
+
+  return undefined
+}
+
+function createFallbackSpeciesKeywordConfig(
+  entry: (typeof POKEMON_CATALOG)[number]
+): SpeciesKeywordConfig {
+  const collection = inferPrimaryCollection(entry.slug)
+
+  return {
+    slug: entry.slug,
+    name: entry.name,
+    collection,
+    translations: [],
+    relatedKeywords: [`${entry.name.toLowerCase()} cards`],
+    relatedEntities: [],
+    generation: entry.generation,
+  }
+}
+
 function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfig {
   let next = species
 
@@ -3455,17 +3542,37 @@ function withAutoCollections(species: SpeciesKeywordConfig): SpeciesKeywordConfi
   if (MYTHICAL_SPECIES_SLUGS.has(next.slug)) {
     next = withCollection(next, 'mythical')
   }
+  if (BABY_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'babies')
+  }
+  if (STARTER_BASE_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'starter-pokemon')
+  }
+  if (FOOD_COLLECTION_SPECIES_SLUGS.has(next.slug)) {
+    next = withCollection(next, 'food-and-sweet-treats')
+  }
 
   return next
 }
 
-const SPECIES_KEYWORD_CONFIG_LIST = SPECIES_KEYWORD_SEEDS.map(withAutoCollections)
+const speciesSeedsBySlug = Object.fromEntries(
+  SPECIES_KEYWORD_SEEDS.map((species) => [species.slug, species])
+) as Record<string, SpeciesKeywordConfig>
+
+const generatedFallbackSpeciesSeeds = POKEMON_CATALOG.filter(
+  (entry) => !speciesSeedsBySlug[entry.slug]
+).map(createFallbackSpeciesKeywordConfig)
+
+const SPECIES_KEYWORD_CONFIG_LIST = [
+  ...SPECIES_KEYWORD_SEEDS,
+  ...generatedFallbackSpeciesSeeds,
+].map(withAutoCollections)
 
 export const SPECIES_KEYWORD_CONFIGS = Object.fromEntries(
   SPECIES_KEYWORD_CONFIG_LIST.map((species) => [species.slug, species])
 ) as Record<string, SpeciesKeywordConfig>
 
-const GENERATION_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'] as const
+const GENERATION_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'] as const
 
 /** Returns a human-readable generation label like "Generation VI". */
 export function generationLabel(gen: number): string {
@@ -3586,15 +3693,19 @@ export function createSpeciesPageSeoConfig(
       ? (getSpeciesKeywordConfig(species) ?? {
           slug: slugifySpecies(species),
           name: species,
-          collection: 'dreamy-and-ethereal' as const,
           translations: [],
           relatedKeywords: [],
         })
       : species
 
   const siteName = options.siteName ?? BRAND.name
-  const collection = SPECIES_COLLECTIONS[resolved.collection]
-  const collectionSlugs = [...new Set([resolved.collection, ...(resolved.extraCollections ?? [])])]
+  const collectionSlugs = [
+    ...new Set([
+      ...(resolved.collection ? [resolved.collection] : []),
+      ...(resolved.extraCollections ?? []),
+    ] as SpeciesCollectionSlug[]),
+  ]
+  const collection = collectionSlugs[0] ? SPECIES_COLLECTIONS[collectionSlugs[0]] : null
   const collectionTitles = collectionSlugs.map((slug) => SPECIES_COLLECTIONS[slug].title)
   const titleLead = resolved.titleName ?? resolved.name
   const collectionKeywords = collectionSlugs.flatMap(
