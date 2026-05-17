@@ -17,7 +17,8 @@
     "enrich-abilities": "node scripts/enrich-ability-descriptions.mjs",
     "generate-facts": "node scripts/generate-pokemon-facts.mjs",
     "enrich-competitive": "node scripts/enrich-competitive-snippet.mjs",
-    "backfill-artwork": "node scripts/backfill-artwork-urls.mjs"
+    "backfill-artwork": "node scripts/backfill-artwork-urls.mjs",
+    "enrich-michi-scene-art": "node scripts/enrich-michi-scene-art.mjs"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
