@@ -1,6 +1,6 @@
 import path from 'path'
 import { formatPostDate } from '@repo/ui'
-import { getAuthoredPosts, getPostHref } from '../../blog/lib/posts'
+import { getAuthoredPosts, getPostHref } from '@repo/data'
 import { getEbayListings } from '@repo/marketplaces'
 import LandingPageClient from './page-client'
 

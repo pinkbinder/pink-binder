@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from 'react'
 import { cn } from '../lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
@@ -18,7 +20,12 @@ interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function PostCard({ post, className, ...props }: PostCardProps) {
   const thumbnailFit = post.thumbnailFit ?? 'cover'
-  const thumbnailSrc = post.thumbnail ?? post.thumbnailFallback
+  const primaryThumbnail = post.thumbnail ?? post.thumbnailFallback
+  const [thumbnailSrc, setThumbnailSrc] = React.useState(primaryThumbnail)
+
+  React.useEffect(() => {
+    setThumbnailSrc(primaryThumbnail)
+  }, [primaryThumbnail])
 
   return (
     <Card
@@ -34,6 +41,11 @@ function PostCard({ post, className, ...props }: PostCardProps) {
               'h-full w-full',
               thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
             )}
+            onError={() => {
+              if (post.thumbnailFallback && thumbnailSrc !== post.thumbnailFallback) {
+                setThumbnailSrc(post.thumbnailFallback)
+              }
+            }}
           />
         ) : (
           <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br px-6 text-center">

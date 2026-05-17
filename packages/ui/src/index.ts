@@ -1,6 +1,3 @@
-// Config
-export * from '@repo/config'
-
 // Components
 export * from './components/badge'
 export * from './components/button'
@@ -13,6 +10,8 @@ export * from './components/input'
 export * from './components/post-card'
 export * from './components/separator'
 export * from './components/share-link-dialog'
+
+export * from './components/pokemon-type-logo'
 
 // Utilities
 export * from './lib/format-post-date'

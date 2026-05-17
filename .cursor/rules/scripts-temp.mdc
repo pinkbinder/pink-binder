@@ -1,0 +1,16 @@
+---
+description: Rule for writing temporary/throwaway scripts
+globs: scripts/**,packages/data/scripts/**
+alwaysApply: false
+---
+
+# Temporary Scripts
+
+When creating one-off, exploratory, or debugging scripts, write them to `packages/data/scripts/temp/` instead of `packages/data/scripts/`. The `packages/data/scripts/temp/` directory is gitignored and will not be committed.
+
+Only scripts that are meant to be long-lived and re-run regularly should live in `packages/data/scripts/` directly. Current permanent scripts:
+
+- `sync-pokemon-catalog-collections.mjs` — Rebuilds collection tags on all catalog entries
+- `build-pokemon-data-cache.mjs` — Fetches and caches enriched Pokemon data from PokeAPI
+- `audit-collection-tags.mjs` — Audits collection tagging accuracy
+- `species-collection-slug-sets.json` — Data file used by sync script
