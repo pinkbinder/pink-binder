@@ -1,6 +1,15 @@
+import { fileURLToPath } from 'node:url'
+import { loadMonorepoEnv } from '../../scripts/load-monorepo-env.mjs'
+
+// Fallback when Next is started directly from apps/landing (not via root `pnpm dev`).
+loadMonorepoEnv({ startDir: fileURLToPath(new URL('.', import.meta.url)) })
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@repo/ui'],
+  experimental: {
+    optimizePackageImports: ['@repo/ui'],
+  },
   images: {
     remotePatterns: [
       {
@@ -20,4 +29,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig;
+export default nextConfig

@@ -8,7 +8,7 @@ This monorepo shares configuration and API keys across all Next.js apps (landing
 
 Shared configuration is stored in the root `.env.local`, accessible to all apps:
 
-- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`
+- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`, `EBAY_CLIENT_SECRET`
 - **Whatnot Scraper**: `WHATNOT_USERNAME`, `WHATNOT_USER_AGENT`, `WHATNOT_SCRAPE_CACHE_TTL_MS`, `LIVE_SHOWS_SOURCE_URL`, `LIVE_SHOWS_SOURCE_TOKEN`
 - **Client-Side Polling**: `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` (requires `NEXT_PUBLIC_` prefix)
 - **Site URLs**: `NEXT_PUBLIC_SITE_URL` (requires `NEXT_PUBLIC_` prefix)
@@ -25,23 +25,25 @@ Each app can have its own `.env.example` documenting available variables:
 
 ## Accessing Shared Keys in Each App
 
-### Option 1: Load Root `.env.local` in Each App (Recommended)
+### How root env reaches every app (recommended)
 
-Update each app's `next.config.mjs` to load parent env vars:
+1. Put secrets in the **repo root** `.env.local`.
+2. Run apps via root scripts — they load env once, then start Turbo:
 
-```javascript
-// apps/landing/next.config.mjs
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Next.js will automatically load .env.local from the root
-  // when running dev/build from the monorepo root
-}
-export default nextConfig
+```bash
+pnpm dev      # node scripts/with-env.mjs turbo run dev
+pnpm build    # node scripts/with-env.mjs turbo run build
 ```
 
-### Option 2: Duplicate Keys in Each App's `.env.local` (Not Recommended)
+`scripts/with-env.mjs` merges root `.env` / `.env.local` into `process.env` before Turbo spawns each app. Turbo passes those variables to tasks via `globalPassThroughEnv` / `globalEnv` in `turbo.json`.
 
-If you need isolation, duplicate the API keys in each app's `.env.local`.
+The landing app's `next.config.mjs` also calls `loadMonorepoEnv()` as a fallback when you run `next dev` directly inside `apps/landing`.
+
+**Do not** use `instrumentation.ts` with `@next/env` — it bundles Node-only code and breaks the client build (`Can't resolve 'crypto'`).
+
+### Per-app overrides (optional)
+
+Add `apps/<app>/.env.local` for app-specific values. Next.js loads app-level env files in addition to inherited process env.
 
 ## Environment Variable Naming
 
@@ -52,7 +54,8 @@ ETSY_SHOP_ID=cutepkmn
 ETSY_KEYSTRING=xxx
 ETSY_SECRET=xxx
 EBAY_APP_ID=xxx
-EBAY_AUTH_TOKEN=xxx
+EBAY_CLIENT_SECRET=xxx
+EBAY_VERIFICATION_TOKEN=xxx
 WHATNOT_USERNAME=thepinkbinder
 WHATNOT_USER_AGENT=custom-ua
 WHATNOT_SCRAPE_CACHE_TTL_MS=60000
@@ -83,6 +86,7 @@ NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_...
 // Can access both server-side and NEXT_PUBLIC_ vars
 const etsyShopId = process.env.ETSY_SHOP_ID // ✅ Available
 const ebayAppId = process.env.EBAY_APP_ID // ✅ Available
+const ebayClientSecret = process.env.EBAY_CLIENT_SECRET // ✅ Available
 const whatnotUser = process.env.WHATNOT_USERNAME // ✅ Available
 const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
 ```

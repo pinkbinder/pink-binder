@@ -1,10 +1,29 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": [".env", ".env.local"],
+  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"],
+  "globalPassThroughEnv": [
+    "EBAY_*",
+    "ETSY_*",
+    "WHATNOT_*",
+    "LIVE_SHOWS_*",
+    "BLOG_*",
+    "NEXT_PUBLIC_*",
+    "NODE_ENV",
+    "VERCEL_ENV"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "inputs": [
+        "$TURBO_DEFAULT$",
+        ".env",
+        ".env.local",
+        ".env.production",
+        ".env.production.local"
+      ],
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"]
     },
     "lint": {
       "dependsOn": ["^lint"]
@@ -12,9 +31,14 @@
     "type-check": {
       "dependsOn": ["^type-check"]
     },
+    "format": {},
+    "format:fix": {
+      "cache": false
+    },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "inputs": [".env", ".env.local", ".env.development", ".env.development.local"]
     }
   }
 }
