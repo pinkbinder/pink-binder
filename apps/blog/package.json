@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@repo/config": "workspace:*",
+    "@repo/data": "workspace:*",
     "@repo/ui": "workspace:*",
-    "gray-matter": "^4.0.3",
     "next": "15.5.18",
     "next-mdx-remote": "^6.0.0",
     "react": "^19.0.0",

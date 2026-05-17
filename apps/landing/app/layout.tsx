@@ -1,6 +1,7 @@
 import '@repo/ui/globals.css'
 import type { Metadata } from 'next'
-import { BRAND, CONTACT_EMAIL, LANDING_SEO, SITE_URL, SOCIAL_LINKS } from '@repo/config'
+import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from '@repo/config'
+import { LANDING_SEO } from '@repo/data'
 
 const SITE_NAME = BRAND.name
 const SITE_DESCRIPTION = LANDING_SEO.description

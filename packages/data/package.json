@@ -1,0 +1,32 @@
+{
+  "name": "@repo/data",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts"
+  },
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "merge-data": "node scripts/merge-pokemon-data.mjs",
+    "sync-api": "node scripts/build-pokemon-data-cache.mjs",
+    "audit-tags": "node scripts/audit-collection-tags.mjs",
+    "enrich-abilities": "node scripts/enrich-ability-descriptions.mjs",
+    "generate-facts": "node scripts/generate-pokemon-facts.mjs",
+    "enrich-competitive": "node scripts/enrich-competitive-snippet.mjs",
+    "backfill-artwork": "node scripts/backfill-artwork-urls.mjs"
+  },
+  "dependencies": {
+    "@repo/config": "workspace:*",
+    "gray-matter": "^4.0.3",
+    "server-only": "^0.0.1"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3",
+    "typescript": "5.8.3"
+  }
+}
