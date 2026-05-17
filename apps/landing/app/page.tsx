@@ -1,6 +1,6 @@
 import path from 'path'
 import { formatPostDate } from '@repo/ui'
-import { getAuthoredPosts, getPostHref } from '@repo/data'
+import { getAuthoredPosts, getPostHref, getRandomCollectionRoundupPost } from '@repo/data'
 import { getEbayListings } from '@repo/marketplaces'
 import LandingPageClient from './page-client'
 
@@ -8,11 +8,16 @@ const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
 const BLOG_CONTENT_DIR =
   process.env.BLOG_CONTENT_DIR ?? path.resolve(process.cwd(), '..', 'blog', 'content')
 
+/** Pick a fresh collection roundup on each request (species posts stay off the landing). */
+export const dynamic = 'force-dynamic'
+
 export default async function LandingPage() {
-  const latestPost =
-    getAuthoredPosts(BLOG_CONTENT_DIR).sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    )[0] ?? null
+  const collectionRoundup = getRandomCollectionRoundupPost()
+  const latestAuthoredPost = getAuthoredPosts(BLOG_CONTENT_DIR).sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )[0]
+
+  const featuredPost = collectionRoundup ?? latestAuthoredPost ?? null
   const ebayListings = await getEbayListings()
 
   return (
@@ -20,13 +25,14 @@ export default async function LandingPage() {
       blogUrl={BLOG_URL}
       ebayListings={ebayListings}
       latestPost={
-        latestPost
+        featuredPost
           ? {
-              title: latestPost.title,
-              excerpt: latestPost.description,
-              thumbnail: resolveBlogImageUrl(latestPost.image),
-              href: getPostHref(latestPost.slug, BLOG_URL),
-              meta: formatPostDate(latestPost.date),
+              title: featuredPost.title,
+              excerpt: featuredPost.description,
+              thumbnail: resolveBlogImageUrl(featuredPost.image),
+              thumbnailFit: collectionRoundup ? 'contain' : 'cover',
+              href: getPostHref(featuredPost.slug, BLOG_URL),
+              meta: formatPostDate(featuredPost.date),
             }
           : null
       }
