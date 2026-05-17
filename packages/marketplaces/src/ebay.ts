@@ -1,90 +1,175 @@
-export interface EbayListing {
-  id: string
-  title: string
-  price: string
-  currency: string
-  imageUrl: string
-  listingUrl: string
+import { getEbayApplicationAccessToken, getEbayClientCredentials } from './ebay-auth'
+import type { MarketplaceListing } from './types'
+
+export type { MarketplaceListing }
+
+export interface EbayListing extends MarketplaceListing {
+  /** Always "eBay" */
+  source: 'eBay'
+}
+
+const EBAY_BROWSE_SEARCH_URL = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
+const EBAY_SELLER_USERNAME = process.env.EBAY_SELLER_USERNAME?.trim() || 'thepinkbinder'
+const EBAY_SEARCH_QUERY = process.env.EBAY_SEARCH_QUERY?.trim() || 'pokemon'
+const EBAY_MARKETPLACE_ID = process.env.EBAY_MARKETPLACE_ID?.trim() || 'EBAY_US'
+const EBAY_LISTINGS_PER_PAGE = 10
+const CACHE_REVALIDATE_SECONDS = 3600 // 1 hour
+const IS_EBAY_DEBUG_ENABLED = process.env.EBAY_DEBUG === '1' || process.env.VERCEL_ENV === 'preview'
+
+interface BrowseItemSummary {
+  itemId?: string
+  title?: string
+  itemWebUrl?: string
+  image?: { imageUrl?: string }
+  thumbnailImages?: Array<{ imageUrl?: string }>
+  price?: { value?: string; currency?: string }
   condition?: string
 }
 
-const EBAY_FINDING_API_URL = 'https://svcs.ebay.com/services/search/FindingService/v1'
-const EBAY_STORE_NAME = 'thepinkbinder'
-const EBAY_LISTINGS_PER_PAGE = 10
-const CACHE_REVALIDATE_SECONDS = 3600 // 1 hour
-
-// eBay Finding API JSON response shapes (abbreviated to what we use)
-interface EbayFindingItem {
-  itemId: [string]
-  title: [string]
-  viewItemURL: [string]
-  galleryURL?: [string]
-  sellingStatus: [
-    {
-      currentPrice: [{ __value__: string; '@currencyId': string }]
-    },
-  ]
-  condition?: [{ conditionDisplayName: [string] }]
+interface BrowseSearchResponse {
+  itemSummaries?: BrowseItemSummary[]
+  total?: number
+  errors?: Array<{ message?: string; errorId?: number }>
 }
 
-interface EbayFindingResponse {
-  findItemsIneBayStoresResponse: [
-    {
-      ack: [string]
-      searchResult: [{ item?: EbayFindingItem[] }]
-    },
-  ]
+/** Next.js extends `fetch` with ISR options when called from App Router code. */
+type CachedFetchInit = RequestInit & {
+  next?: {
+    revalidate?: number | false
+  }
 }
 
 export async function getEbayListings(): Promise<EbayListing[]> {
-  const appId = process.env.EBAY_APP_ID
-  if (!appId) {
+  const credentials = getEbayClientCredentials()
+  if (!credentials) {
+    const hasAppId = Boolean(process.env.EBAY_APP_ID?.trim())
+    const hasClientSecret = Boolean(
+      process.env.EBAY_CLIENT_SECRET?.trim() ?? process.env.EBAY_CERT_ID?.trim()
+    )
+    const missing: string[] = []
+    if (!hasAppId) missing.push('EBAY_APP_ID')
+    if (!hasClientSecret) missing.push('EBAY_CLIENT_SECRET (Cert ID)')
+
+    console.warn(
+      `eBay Browse API: missing ${missing.join(' and ')}. ` +
+        'Add them to the repo root `.env.local` (local) or Vercel project env (deployed). ' +
+        'Restart the dev server after changing env files.'
+    )
     return []
   }
 
-  const url = new URL(EBAY_FINDING_API_URL)
-  url.searchParams.set('OPERATION-NAME', 'findItemsIneBayStores')
-  url.searchParams.set('SERVICE-VERSION', '1.0.0')
-  url.searchParams.set('SECURITY-APPNAME', appId)
-  url.searchParams.set('RESPONSE-DATA-FORMAT', 'JSON')
-  url.searchParams.set('storeName', EBAY_STORE_NAME)
-  url.searchParams.set('sortOrder', 'BestMatch')
-  url.searchParams.set('paginationInput.entriesPerPage', String(EBAY_LISTINGS_PER_PAGE))
+  const accessToken = await getEbayApplicationAccessToken(credentials)
+  if (!accessToken) {
+    return []
+  }
+
+  const url = new URL(EBAY_BROWSE_SEARCH_URL)
+  url.searchParams.set('q', EBAY_SEARCH_QUERY)
+  url.searchParams.set('filter', `sellers:{${EBAY_SELLER_USERNAME}}`)
+  url.searchParams.set('limit', String(EBAY_LISTINGS_PER_PAGE))
+  url.searchParams.set('sort', 'newlyListed')
+
+  if (IS_EBAY_DEBUG_ENABLED) {
+    console.info('[eBay] Starting Browse API listings fetch', {
+      sellerUsername: EBAY_SELLER_USERNAME,
+      searchQuery: EBAY_SEARCH_QUERY,
+      marketplaceId: EBAY_MARKETPLACE_ID,
+      entriesPerPage: EBAY_LISTINGS_PER_PAGE,
+      vercelEnv: process.env.VERCEL_ENV ?? null,
+      nodeEnv: process.env.NODE_ENV ?? null,
+      hasCredentials: true,
+      requestUrl: url.toString(),
+    })
+  }
 
   try {
-    // The `next` option is a Next.js extension to the standard fetch API for ISR cache control.
-    // In non-Next.js environments it is safely ignored.
-    const response = await fetch(url.toString(), {
+    const fetchOptions: CachedFetchInit = {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'X-EBAY-C-MARKETPLACE-ID': EBAY_MARKETPLACE_ID,
+        Accept: 'application/json',
+      },
       next: { revalidate: CACHE_REVALIDATE_SECONDS },
-    } as RequestInit)
+    }
+
+    const response = await fetch(url.toString(), fetchOptions)
 
     if (!response.ok) {
-      console.error(`eBay API error: ${response.status} ${response.statusText}`)
+      const body = await response.text().catch(() => '')
+      console.error(
+        `eBay Browse API HTTP error: ${response.status} ${response.statusText}`,
+        body.slice(0, 500)
+      )
       return []
     }
 
-    const data = (await response.json()) as EbayFindingResponse
-    const root = data?.findItemsIneBayStoresResponse?.[0]
+    const data = (await response.json()) as BrowseSearchResponse
+    const items = data.itemSummaries ?? []
 
-    if (root?.ack?.[0] !== 'Success') {
-      console.error('eBay API returned non-success ack:', root?.ack?.[0])
-      return []
+    if (IS_EBAY_DEBUG_ENABLED) {
+      console.info('[eBay] Browse API listings response', {
+        status: response.status,
+        total: data.total ?? null,
+        parsedItems: items.length,
+        requestId: response.headers.get('x-ebay-c-request-id'),
+        errors: data.errors?.map((error) => error.message).filter(Boolean) ?? [],
+      })
     }
 
-    const items = root?.searchResult?.[0]?.item ?? []
+    if (data.errors?.length) {
+      console.error(
+        'eBay Browse API returned errors:',
+        data.errors.map((error) => error.message ?? error.errorId).join('; ')
+      )
+    }
 
-    return items.map((item): EbayListing => {
-      const priceEntry = item.sellingStatus?.[0]?.currentPrice?.[0]
-      return {
-        id: item.itemId?.[0] ?? '',
-        title: item.title?.[0] ?? '',
-        listingUrl: item.viewItemURL?.[0] ?? '',
-        imageUrl: item.galleryURL?.[0] ?? '',
-        price: priceEntry?.__value__ ?? '',
-        currency: priceEntry?.['@currencyId'] ?? 'USD',
-        condition: item.condition?.[0]?.conditionDisplayName?.[0],
-      }
-    })
+    if (IS_EBAY_DEBUG_ENABLED && items.length === 0) {
+      console.warn('[eBay] Browse API returned zero listings', {
+        sellerUsername: EBAY_SELLER_USERNAME,
+        searchQuery: EBAY_SEARCH_QUERY,
+        total: data.total ?? 0,
+      })
+    }
+
+    const listings = items
+      .map((item): EbayListing | null => {
+        const id = item.itemId?.trim()
+        const title = item.title?.trim()
+        const listingUrl = item.itemWebUrl?.trim()
+        const price = item.price?.value?.trim()
+        const currency = item.price?.currency?.trim()
+
+        if (!id || !title || !listingUrl || !price || !currency) {
+          return null
+        }
+
+        return {
+          id,
+          title,
+          listingUrl,
+          imageUrl: item.image?.imageUrl ?? item.thumbnailImages?.[0]?.imageUrl ?? '',
+          price,
+          currency,
+          condition: item.condition,
+          source: 'eBay',
+        }
+      })
+      .filter((listing): listing is EbayListing => listing !== null)
+
+    if (IS_EBAY_DEBUG_ENABLED) {
+      console.info('[eBay] Normalized listings', {
+        count: listings.length,
+        sample: listings.slice(0, 3).map((listing) => ({
+          id: listing.id,
+          title: listing.title,
+          hasImage: Boolean(listing.imageUrl),
+          price: listing.price,
+          currency: listing.currency,
+        })),
+      })
+    }
+
+    return listings
   } catch (error) {
     console.error('Failed to fetch eBay listings:', error)
     return []
