@@ -20,10 +20,19 @@
         ".env",
         ".env.local",
         ".env.production",
-        ".env.production.local"
+        ".env.production.local",
+        "../../packages/data/cache/pokemon/**"
       ],
       "outputs": [".next/**", "!.next/cache/**"],
-      "env": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"]
+      "env": [
+        "EBAY_*",
+        "ETSY_*",
+        "WHATNOT_*",
+        "LIVE_SHOWS_*",
+        "BLOG_*",
+        "NEXT_PUBLIC_*",
+        "POKEMON_CACHE_DIR"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"]
