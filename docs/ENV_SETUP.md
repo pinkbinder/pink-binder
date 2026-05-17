@@ -25,23 +25,25 @@ Each app can have its own `.env.example` documenting available variables:
 
 ## Accessing Shared Keys in Each App
 
-### Option 1: Load Root `.env.local` in Each App (Recommended)
+### How root env reaches every app (recommended)
 
-Update each app's `next.config.mjs` to load parent env vars:
+1. Put secrets in the **repo root** `.env.local`.
+2. Run apps via root scripts — they load env once, then start Turbo:
 
-```javascript
-// apps/landing/next.config.mjs
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  // Next.js will automatically load .env.local from the root
-  // when running dev/build from the monorepo root
-}
-export default nextConfig
+```bash
+pnpm dev      # node scripts/with-env.mjs turbo run dev
+pnpm build    # node scripts/with-env.mjs turbo run build
 ```
 
-### Option 2: Duplicate Keys in Each App's `.env.local` (Not Recommended)
+`scripts/with-env.mjs` merges root `.env` / `.env.local` into `process.env` before Turbo spawns each app. Turbo passes those variables to tasks via `globalPassThroughEnv` / `globalEnv` in `turbo.json`.
 
-If you need isolation, duplicate the API keys in each app's `.env.local`.
+The landing app's `next.config.mjs` also calls `loadMonorepoEnv()` as a fallback when you run `next dev` directly inside `apps/landing`.
+
+**Do not** use `instrumentation.ts` with `@next/env` — it bundles Node-only code and breaks the client build (`Can't resolve 'crypto'`).
+
+### Per-app overrides (optional)
+
+Add `apps/<app>/.env.local` for app-specific values. Next.js loads app-level env files in addition to inherited process env.
 
 ## Environment Variable Naming
 

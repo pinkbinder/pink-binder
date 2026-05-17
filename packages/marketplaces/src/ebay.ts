@@ -40,14 +40,25 @@ type CachedFetchInit = RequestInit & {
 }
 
 export async function getEbayListings(): Promise<EbayListing[]> {
-  if (!getEbayClientCredentials()) {
+  const credentials = getEbayClientCredentials()
+  if (!credentials) {
+    const hasAppId = Boolean(process.env.EBAY_APP_ID?.trim())
+    const hasClientSecret = Boolean(
+      process.env.EBAY_CLIENT_SECRET?.trim() ?? process.env.EBAY_CERT_ID?.trim()
+    )
+    const missing: string[] = []
+    if (!hasAppId) missing.push('EBAY_APP_ID')
+    if (!hasClientSecret) missing.push('EBAY_CLIENT_SECRET (Cert ID)')
+
     console.warn(
-      'EBAY_APP_ID and EBAY_CLIENT_SECRET (Cert ID) are required for eBay Browse API listing fetches.'
+      `eBay Browse API: missing ${missing.join(' and ')}. ` +
+        'Add them to the repo root `.env.local` (local) or Vercel project env (deployed). ' +
+        'Restart the dev server after changing env files.'
     )
     return []
   }
 
-  const accessToken = await getEbayApplicationAccessToken()
+  const accessToken = await getEbayApplicationAccessToken(credentials)
   if (!accessToken) {
     return []
   }

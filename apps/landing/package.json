@@ -21,7 +21,6 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@next/env": "15.5.18",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",

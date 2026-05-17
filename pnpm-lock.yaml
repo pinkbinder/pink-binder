@@ -164,9 +164,6 @@ importers:
         specifier: ^19.0.0
         version: 19.2.6(react@19.2.6)
     devDependencies:
-      '@next/env':
-        specifier: 15.5.18
-        version: 15.5.18
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config

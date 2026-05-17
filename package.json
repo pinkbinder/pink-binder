@@ -2,13 +2,13 @@
   "name": "pink-binder",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev",
+    "build": "node scripts/with-env.mjs turbo run build",
+    "dev": "node scripts/with-env.mjs turbo run dev",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "format": "turbo run format",
     "format:fix": "turbo run format:fix",
-    "validate": "turbo run lint type-check format",
+    "validate": "node scripts/with-env.mjs turbo run lint type-check format",
     "prepare": "husky"
   },
   "devDependencies": {
