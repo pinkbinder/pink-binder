@@ -1,14 +1,15 @@
-import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import nextEnv from '@next/env'
+import { loadMonorepoEnv } from '../../scripts/load-monorepo-env.mjs'
 
-// Load shared monorepo env (root .env.local) for marketplace API keys.
-const monorepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '../..')
-nextEnv.loadEnvConfig(monorepoRoot)
+// Fallback when Next is started directly from apps/landing (not via root `pnpm dev`).
+loadMonorepoEnv({ startDir: fileURLToPath(new URL('.', import.meta.url)) })
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@repo/ui'],
+  experimental: {
+    optimizePackageImports: ['@repo/ui'],
+  },
   images: {
     remotePatterns: [
       {

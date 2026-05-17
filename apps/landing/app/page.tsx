@@ -1,6 +1,7 @@
 import path from 'path'
-import { formatPostDate } from '@repo/ui'
+import { formatPostDate } from '@repo/ui/server'
 import { getAuthoredPosts, getPostHref, getRandomCollectionRoundupPost } from '@repo/data'
+import { getMarketplaceDisplay } from '@repo/config'
 import { getEbayListings } from '@repo/marketplaces'
 import LandingPageClient from './page-client'
 
@@ -19,22 +20,24 @@ export default async function LandingPage() {
   )[0]
 
   const featuredPost = collectionRoundup ?? latestAuthoredPost ?? null
-  const ebayListings = await getEbayListings()
+  const ebayMarketplace = getMarketplaceDisplay('ebay')
+  const featuredListings = await getEbayListings()
 
   if (IS_EBAY_DEBUG_ENABLED) {
     console.info('[LandingPage] eBay listings loaded', {
-      count: ebayListings.length,
-      willRenderCarousel: ebayListings.length > 0,
+      count: featuredListings.length,
+      willRenderCarousel: featuredListings.length > 0,
       vercelEnv: process.env.VERCEL_ENV ?? null,
       nodeEnv: process.env.NODE_ENV ?? null,
-      sampleIds: ebayListings.slice(0, 5).map((listing) => listing.id),
+      sampleIds: featuredListings.slice(0, 5).map((listing) => listing.id),
     })
   }
 
   return (
     <LandingPageClient
       blogUrl={BLOG_URL}
-      ebayListings={ebayListings}
+      featuredListings={featuredListings}
+      featuredListingsMarketplace={ebayMarketplace}
       latestPost={
         featuredPost
           ? {

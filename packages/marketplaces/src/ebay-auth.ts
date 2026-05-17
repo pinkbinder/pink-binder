@@ -15,9 +15,12 @@ export function getEbayClientCredentials(): { clientId: string; clientSecret: st
   return { clientId, clientSecret }
 }
 
-export async function getEbayApplicationAccessToken(): Promise<string | null> {
-  const credentials = getEbayClientCredentials()
-  if (!credentials) {
+export async function getEbayApplicationAccessToken(credentials?: {
+  clientId: string
+  clientSecret: string
+}): Promise<string | null> {
+  const resolved = credentials ?? getEbayClientCredentials()
+  if (!resolved) {
     return null
   }
 
@@ -26,9 +29,7 @@ export async function getEbayApplicationAccessToken(): Promise<string | null> {
     return cachedAccessToken.value
   }
 
-  const basicAuth = Buffer.from(`${credentials.clientId}:${credentials.clientSecret}`).toString(
-    'base64'
-  )
+  const basicAuth = Buffer.from(`${resolved.clientId}:${resolved.clientSecret}`).toString('base64')
 
   const response = await fetch(EBAY_OAUTH_URL, {
     method: 'POST',

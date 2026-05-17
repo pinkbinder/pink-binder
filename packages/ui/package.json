@@ -5,6 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
+    "./server": "./src/server.ts",
+    "./format-post-date": "./src/lib/format-post-date.ts",
     "./globals.css": "./src/globals.css",
     "./tailwind.config": "./tailwind.config.ts"
   },

@@ -1,20 +1,19 @@
 'use client'
 
 import {
-  EbayListingsCarousel,
+  MarketplaceListingsCarousel,
   PostCard,
   ShareLinkDialog,
   SocialBar,
-  type EbayListing,
+  type MarketplaceListing,
   type PostCardPost,
   type ShareLinkItem,
 } from '@repo/ui'
-import { BRAND, SOCIAL_LINKS } from '@repo/config'
+import { BRAND, type MarketplaceDisplay, SOCIAL_LINKS } from '@repo/config'
 import Image from 'next/image'
 import { useState } from 'react'
 import { LANDING_LINKS, SITE_URL as DEFAULT_SITE_URL, type LandingLink } from './config/link-in-bio'
 
-const EBAY_STORE_URL = 'https://www.ebay.com/usr/thepinkbinder'
 const LANDING_SITE_URL = process.env.NEXT_PUBLIC_LANDING_URL ?? DEFAULT_SITE_URL
 const LANDING_PAGE_SHARE_URL = LANDING_SITE_URL
 const CENTER_OVERLAY_LAYOUT_CLASSNAME =
@@ -32,13 +31,15 @@ const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
 interface LandingPageClientProps {
   blogUrl: string
   latestPost: (PostCardPost & { href: string }) | null
-  ebayListings: EbayListing[]
+  featuredListings: MarketplaceListing[]
+  featuredListingsMarketplace: MarketplaceDisplay
 }
 
 export default function LandingPageClient({
   blogUrl,
   latestPost,
-  ebayListings,
+  featuredListings,
+  featuredListingsMarketplace,
 }: LandingPageClientProps) {
   const [shareDialogState, setShareDialogState] = useState<{
     item: ShareLinkItem
@@ -82,7 +83,8 @@ export default function LandingPageClient({
               className="h-36 w-36 rounded-full border border-pink-100 bg-transparent object-cover shadow-lg"
               width={144}
               height={144}
-              priority
+              loading="eager"
+              fetchPriority="high"
             />
             <h1 className="text-primary font-title text-3xl font-bold tracking-tight">
               {BRAND.name}
@@ -142,10 +144,10 @@ export default function LandingPageClient({
 
           <SocialBar socials={socials} aria-label="Social media links" />
 
-          {ebayListings.length > 0 ? (
-            <EbayListingsCarousel
-              listings={ebayListings}
-              storeUrl={EBAY_STORE_URL}
+          {featuredListings.length > 0 ? (
+            <MarketplaceListingsCarousel
+              listings={featuredListings}
+              marketplace={featuredListingsMarketplace}
               className="w-full"
             />
           ) : null}

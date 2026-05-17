@@ -1,22 +1,32 @@
+'use client'
+
 import * as React from 'react'
+import type { MarketplaceDisplay } from '@repo/config'
 import { cn } from '../lib/utils'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel'
 import { MarketplaceListingCard, type MarketplaceListing } from './marketplace-listing-card'
 
-interface EbayListingsCarouselProps extends React.HTMLAttributes<HTMLElement> {
+type MarketplaceListingsCarouselMarketplace = Pick<
+  MarketplaceDisplay,
+  'name' | 'storeUrl' | 'listingImageAspectRatio'
+>
+
+interface MarketplaceListingsCarouselProps extends React.HTMLAttributes<HTMLElement> {
   listings: MarketplaceListing[]
-  storeUrl?: string
+  marketplace: MarketplaceListingsCarouselMarketplace
 }
 
-function EbayListingsCarousel({
+function MarketplaceListingsCarousel({
   listings,
-  storeUrl,
+  marketplace,
   className,
   ...props
-}: EbayListingsCarouselProps) {
+}: MarketplaceListingsCarouselProps) {
   if (listings.length === 0) {
     return null
   }
+
+  const { name, storeUrl, listingImageAspectRatio } = marketplace
 
   return (
     <section className={cn('flex flex-col gap-4', className)} {...props}>
@@ -25,7 +35,7 @@ function EbayListingsCarousel({
           <p className="text-primary text-xs font-semibold uppercase tracking-[0.3em]">
             Featured listings
           </p>
-          <h2 className="font-title mt-2 text-2xl font-semibold">Shop on eBay</h2>
+          <h2 className="font-title mt-2 text-2xl font-semibold">Shop on {name}</h2>
         </div>
         {storeUrl ? (
           <a
@@ -40,13 +50,16 @@ function EbayListingsCarousel({
       </div>
       <Carousel
         opts={{ align: 'start', loop: false }}
-        aria-label="eBay listings carousel"
+        aria-label={`${name} listings carousel`}
         className="w-full"
       >
         <CarouselContent className="-ml-3">
           {listings.map((listing) => (
             <CarouselItem key={listing.id} className="basis-auto pl-3">
-              <MarketplaceListingCard listing={listing} />
+              <MarketplaceListingCard
+                listing={listing}
+                imageAspectRatio={listingImageAspectRatio}
+              />
             </CarouselItem>
           ))}
         </CarouselContent>
@@ -57,5 +70,5 @@ function EbayListingsCarousel({
   )
 }
 
-export { EbayListingsCarousel }
-export type { EbayListingsCarouselProps }
+export { MarketplaceListingsCarousel }
+export type { MarketplaceListingsCarouselProps, MarketplaceListingsCarouselMarketplace }
