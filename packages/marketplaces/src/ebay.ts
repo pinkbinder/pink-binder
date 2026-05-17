@@ -166,9 +166,9 @@ function getDebugUrl(url: URL) {
 }
 
 function maskSecret(value: string) {
-  if (value.length <= 8) {
-    return '*'.repeat(value.length)
+  if (!value) {
+    return '****'
   }
 
-  return `${value.slice(0, 4)}...${value.slice(-4)}`
+  return '****'
 }
