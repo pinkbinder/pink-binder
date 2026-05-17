@@ -29,6 +29,23 @@ export type SpeciesCollectionSlug =
   | 'monkeys-chimps-and-apes'
   | 'farm-animals'
   | 'safari-animals'
+  | 'bugs-and-insects'
+  | 'bears'
+  | 'dragons'
+  | 'sea-creatures'
+  | 'ice-and-snow'
+  | 'electric-cuties'
+  | 'fairy-tale'
+  | 'round-and-squishy'
+  | 'dark-and-edgy'
+  | 'fighting-spirit'
+  | 'dinosaurs-and-fossils'
+  | 'ocean-and-beach'
+  | 'valentines-and-love'
+  | 'halloween'
+  | 'christmas-and-winter'
+  | 'regional-variants'
+  | 'pseudo-legendaries'
 
 export const SPECIES_COLLECTIONS = {
   'amphibians-and-reptiles': {
@@ -226,6 +243,123 @@ export const SPECIES_COLLECTIONS = {
       "Pokémon illustrated in Asako Ito's distinctive crochet amigurumi style — hand-knitted fabric models that give each Pokémon a soft, tactile charm.",
     featuredSpecies: ['Espurr', 'Swirlix', 'Goomy', 'Munna', 'Audino'],
   },
+  'bugs-and-insects': {
+    slug: 'bugs-and-insects',
+    title: '🐛 Bugs & Insects',
+    description:
+      'Bug-type and insect-inspired Pokémon — butterflies, beetles, spiders, and mantids that bring nature vibes to any binder.',
+    featuredSpecies: ['Butterfree', 'Scizor', 'Snom', 'Ribombee', 'Heracross'],
+  },
+  bears: {
+    slug: 'bears',
+    title: '🐻 Bears',
+    description: 'Bear-inspired Pokémon from cuddly cubs to mighty ursine evolutions.',
+    featuredSpecies: ['Teddiursa', 'Bewear', 'Cubchoo', 'Pancham', 'Snorlax'],
+  },
+  dragons: {
+    slug: 'dragons',
+    title: '🐉 Dragons',
+    description:
+      'Dragon-type Pokémon — from tiny hatchlings like Dreepy to iconic legendaries like Rayquaza.',
+    featuredSpecies: ['Dragonite', 'Garchomp', 'Goodra', 'Dreepy', 'Altaria'],
+  },
+  'sea-creatures': {
+    slug: 'sea-creatures',
+    title: '🐙 Sea Creatures',
+    description:
+      'Non-fish aquatic Pokémon: jellyfish, seahorses, seals, crabs, octopi, and other ocean dwellers.',
+    featuredSpecies: ['Lapras', 'Tentacool', 'Corsola', 'Staryu', 'Dewgong'],
+  },
+  'ice-and-snow': {
+    slug: 'ice-and-snow',
+    title: '❄️ Ice & Snow',
+    description: 'Ice-type and winter-themed Pokémon that bring frosty charm to any collection.',
+    featuredSpecies: ['Snom', 'Glaceon', 'Articuno', 'Cubchoo', 'Eiscue'],
+  },
+  'electric-cuties': {
+    slug: 'electric-cuties',
+    title: '⚡ Electric Cuties',
+    description:
+      'Electric-type mascots, Pikachu clones, and other charged-up cuties that spark joy in any binder.',
+    featuredSpecies: ['Pikachu', 'Dedenne', 'Pachirisu', 'Pawmi', 'Yamper'],
+  },
+  'fairy-tale': {
+    slug: 'fairy-tale',
+    title: '🧚 Fairy-Tale',
+    description:
+      'Fairy-type Pokémon with enchanting, magical designs — from whimsical sprites to mythical guardians.',
+    featuredSpecies: ['Sylveon', 'Gardevoir', 'Mimikyu', 'Xerneas', 'Togekiss'],
+  },
+  'round-and-squishy': {
+    slug: 'round-and-squishy',
+    title: '🫧 Round & Squishy',
+    description:
+      'Pokémon whose charm is in their round, blob-like, or squishy design — pure comfort creatures.',
+    featuredSpecies: ['Spheal', 'Goomy', 'Rowlet', 'Lechonk', 'Ditto'],
+  },
+  'dark-and-edgy': {
+    slug: 'dark-and-edgy',
+    title: '🌑 Dark & Edgy',
+    description:
+      'Dark-type Pokémon with moody, mysterious aesthetics that collectors love for contrast pages.',
+    featuredSpecies: ['Umbreon', 'Absol', 'Zorua', 'Houndoom', 'Darkrai'],
+  },
+  'fighting-spirit': {
+    slug: 'fighting-spirit',
+    title: '🥊 Fighting Spirit',
+    description:
+      'Fighting-type Pokémon with warrior energy — martial artists, brawlers, and heroic fighters.',
+    featuredSpecies: ['Lucario', 'Hawlucha', 'Riolu', 'Blaziken', 'Gallade'],
+  },
+  'dinosaurs-and-fossils': {
+    slug: 'dinosaurs-and-fossils',
+    title: '🦕 Dinosaurs & Fossils',
+    description:
+      'Fossil Pokémon and dinosaur-inspired species — prehistoric creatures revived for the modern collector.',
+    featuredSpecies: ['Aerodactyl', 'Tyrantrum', 'Aurorus', 'Cranidos', 'Bastiodon'],
+  },
+  'ocean-and-beach': {
+    slug: 'ocean-and-beach',
+    title: '🏖️ Ocean & Beach',
+    description:
+      'Coastal and ocean-dwelling Pokémon that bring beach vibes and wave-rider energy to binder pages.',
+    featuredSpecies: ['Wingull', 'Palossand', 'Corsola', 'Pyukumuku', 'Staryu'],
+  },
+  'valentines-and-love': {
+    slug: 'valentines-and-love',
+    title: '💕 Valentines & Love',
+    description:
+      'Heart-themed, love-inspired, and romantically designed Pokémon perfect for Valentine binder spreads.',
+    featuredSpecies: ['Luvdisc', 'Sylveon', 'Chansey', 'Togekiss', 'Alomomola'],
+  },
+  halloween: {
+    slug: 'halloween',
+    title: '🎃 Halloween',
+    description:
+      'Ghost-type headliners and creepy-cute Pokémon that make Halloween binder pages unforgettable.',
+    featuredSpecies: ['Gengar', 'Mimikyu', 'Chandelure', 'Pumpkaboo', 'Banette'],
+  },
+  'christmas-and-winter': {
+    slug: 'christmas-and-winter',
+    title: '🎄 Christmas & Winter',
+    description:
+      'Holiday and winter-themed Pokémon — snowy creatures, gift-givers, and festive favorites.',
+    featuredSpecies: ['Delibird', 'Stantler', 'Snom', 'Glaceon', 'Eiscue'],
+  },
+  'regional-variants': {
+    slug: 'regional-variants',
+    title: '🗺️ Regional Variants',
+    description:
+      'Pokémon with Alolan, Galarian, Hisuian, or Paldean regional forms — collecting every variant is its own rewarding quest.',
+    featuredSpecies: ['Vulpix', 'Ponyta', 'Meowth', 'Zorua', 'Growlithe'],
+  },
+  'pseudo-legendaries': {
+    slug: 'pseudo-legendaries',
+    title: '⭐ Pseudo-Legendaries',
+    description:
+      'The elite fan-favorite group with 600 base stat totals — not quite Legendary, but just as collectible.',
+    featuredSpecies: ['Dragonite', 'Tyranitar', 'Garchomp', 'Dragapult', 'Goodra'],
+  },
 } as const satisfies Record<
   SpeciesCollectionSlug,
   {
@@ -235,3 +369,69 @@ export const SPECIES_COLLECTIONS = {
     featuredSpecies: string[]
   }
 >
+
+/** Lower index = higher priority when sorting `collections` (primary = first entry). */
+export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
+  'dogs',
+  'cats',
+  'bunny',
+  'mice',
+  'bears',
+  'foxes-and-weasels',
+  'safari-animals',
+  'birds',
+  'fish',
+  'sea-creatures',
+  'farm-animals',
+  'monkeys-chimps-and-apes',
+  'amphibians-and-reptiles',
+  'bugs-and-insects',
+  'all-other-animals',
+  'dragons',
+  'dinosaurs-and-fossils',
+  'ocean-and-beach',
+  'food-and-sweet-treats',
+  'cottagecore-and-floral',
+  'cozy-and-warm',
+  'ice-and-snow',
+  'christmas-and-winter',
+  'sleepy',
+  'tiny-and-adorable',
+  'round-and-squishy',
+  'spooky-cute',
+  'halloween',
+  'dreamy-and-ethereal',
+  'fairy-tale',
+  'valentines-and-love',
+  'elegant-and-feminine',
+  'electric-cuties',
+  'dark-and-edgy',
+  'fighting-spirit',
+  'pink-pastel-icons',
+  'pink-brigade',
+  'starter-pokemon',
+  'babies',
+  'eeveelution-core',
+  'most-popular',
+  'pseudo-legendaries',
+  'legendary',
+  'mythical',
+  'regional-variants',
+  'yuka-morii',
+  'asako-ito',
+]
+
+const SORT_INDEX = new Map(SPECIES_COLLECTION_SORT_ORDER.map((slug, index) => [slug, index]))
+
+export function sortSpeciesCollections(
+  collections: SpeciesCollectionSlug[]
+): SpeciesCollectionSlug[] {
+  return [...collections].sort((a, b) => {
+    const aIndex = SORT_INDEX.get(a) ?? Number.MAX_SAFE_INTEGER
+    const bIndex = SORT_INDEX.get(b) ?? Number.MAX_SAFE_INTEGER
+    if (aIndex !== bIndex) {
+      return aIndex - bIndex
+    }
+    return a.localeCompare(b)
+  })
+}
