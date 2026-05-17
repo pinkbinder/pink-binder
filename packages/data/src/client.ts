@@ -4,6 +4,12 @@
  */
 export * from './ui'
 export * from './blog/post-filters'
+export type {
+  BlogFilterPost,
+  BlogIndexInitialPayload,
+  EnrichedPostForGrid,
+} from './blog/blog-grid-types'
+export type { LandingBlogFeaturedPayload, LandingBlogFeaturedPost } from './landing/types'
 export * from './utils'
 export type { PokemonTcgCard } from './pokemon/tcg-card'
 export { tcgCardImageCandidates } from './pokemon/tcg-images'

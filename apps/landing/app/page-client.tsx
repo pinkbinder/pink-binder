@@ -1,10 +1,11 @@
 'use client'
 
-import { LazyWhenVisible, ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
+import { ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
 import { BRAND, SOCIAL_LINKS, getPublicLandingUrl } from '@repo/config'
 import Image from 'next/image'
 import { useState, type ReactNode } from 'react'
 import { LANDING_LINKS, type LandingLink } from './config/link-in-bio'
+import { LandingBlogLazy, LandingMarketplaceLazy, type LandingMarketplacePayload } from '@repo/ui'
 
 const LANDING_SITE_URL = getPublicLandingUrl()
 const LANDING_PAGE_SHARE_URL = LANDING_SITE_URL
@@ -22,12 +23,12 @@ const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
 }
 
 interface LandingPageClientProps {
-  marketplaceSection: ReactNode
+  loadMarketplace: () => Promise<LandingMarketplacePayload>
   blogSection: ReactNode
 }
 
 export default function LandingPageClient({
-  marketplaceSection,
+  loadMarketplace,
   blogSection,
 }: LandingPageClientProps) {
   const [shareDialogState, setShareDialogState] = useState<{
@@ -133,15 +134,11 @@ export default function LandingPageClient({
 
           <SocialBar socials={socials} aria-label="Social media links" />
 
-          <LazyWhenVisible className="w-full" rootMargin="320px">
-            {marketplaceSection}
-          </LazyWhenVisible>
+          <LandingMarketplaceLazy loadMarketplace={loadMarketplace} />
         </div>
       </div>
 
-      <LazyWhenVisible className="relative z-10 mx-auto w-full max-w-md" rootMargin="320px">
-        {blogSection}
-      </LazyWhenVisible>
+      <LandingBlogLazy>{blogSection}</LandingBlogLazy>
 
       <ShareLinkDialog
         item={shareDialogState?.item ?? null}

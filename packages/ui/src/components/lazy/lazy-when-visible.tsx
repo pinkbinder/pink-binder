@@ -1,20 +1,30 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '../lib/utils'
+import { cn } from '../../lib/utils'
 
 interface LazyWhenVisibleProps {
   children: React.ReactNode
   className?: string
   /** IntersectionObserver rootMargin — load slightly before entering the viewport. */
   rootMargin?: string
+  /**
+   * Placeholder while deferred. Use a skeleton with real min-height so the observer
+   * can fire (zero-height wrappers never intersect).
+   */
+  placeholder?: React.ReactNode
 }
 
 /**
  * Defers mounting children until the placeholder nears the viewport.
  * Use for below-the-fold sections so hero content gets priority.
  */
-function LazyWhenVisible({ children, className, rootMargin = '240px' }: LazyWhenVisibleProps) {
+function LazyWhenVisible({
+  children,
+  className,
+  rootMargin = '240px',
+  placeholder,
+}: LazyWhenVisibleProps) {
   const placeholderRef = React.useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = React.useState(false)
 
@@ -44,9 +54,10 @@ function LazyWhenVisible({ children, className, rootMargin = '240px' }: LazyWhen
 
   return (
     <div ref={placeholderRef} className={cn('w-full', className)}>
-      {isVisible ? children : null}
+      {isVisible ? children : (placeholder ?? <div aria-hidden className="min-h-px w-full" />)}
     </div>
   )
 }
 
 export { LazyWhenVisible }
+export type { LazyWhenVisibleProps }

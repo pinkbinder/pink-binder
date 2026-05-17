@@ -32,6 +32,8 @@ export function RoundupPostCard({
             <img
               src={url}
               alt=""
+              loading="lazy"
+              decoding="async"
               className="max-h-full max-w-full object-contain"
               onError={(event) => {
                 if (fallback && event.currentTarget.src !== fallback) {
