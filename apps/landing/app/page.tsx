@@ -7,6 +7,7 @@ import LandingPageClient from './page-client'
 const BLOG_URL = process.env.NEXT_PUBLIC_BLOG_URL ?? 'http://localhost:3002'
 const BLOG_CONTENT_DIR =
   process.env.BLOG_CONTENT_DIR ?? path.resolve(process.cwd(), '..', 'blog', 'content')
+const IS_EBAY_DEBUG_ENABLED = process.env.EBAY_DEBUG === '1' || process.env.VERCEL_ENV === 'preview'
 
 /** Pick a fresh collection roundup on each request (species posts stay off the landing). */
 export const dynamic = 'force-dynamic'
@@ -19,6 +20,16 @@ export default async function LandingPage() {
 
   const featuredPost = collectionRoundup ?? latestAuthoredPost ?? null
   const ebayListings = await getEbayListings()
+
+  if (IS_EBAY_DEBUG_ENABLED) {
+    console.info('[LandingPage] eBay listings loaded', {
+      count: ebayListings.length,
+      willRenderCarousel: ebayListings.length > 0,
+      vercelEnv: process.env.VERCEL_ENV ?? null,
+      nodeEnv: process.env.NODE_ENV ?? null,
+      sampleIds: ebayListings.slice(0, 5).map((listing) => listing.id),
+    })
+  }
 
   return (
     <LandingPageClient
