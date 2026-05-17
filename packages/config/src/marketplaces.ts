@@ -26,7 +26,11 @@ export interface MarketplaceDisplay {
   /** Display name, e.g. "eBay" */
   name: string
   storeName: string
+  /** Human title for shop CTAs, e.g. "Shop thepinkbinder on eBay" */
+  shopTitle: string
   storeUrl: string
+  /** Favicon or logo URL for listing badges */
+  logoUrl: string
   /** CSS `aspect-ratio` value for listing card images */
   listingImageAspectRatio: string
 }
@@ -45,7 +49,9 @@ function shopLinkToDisplay(link: ShopLink): MarketplaceDisplay | null {
     slug,
     name: link.marketplace,
     storeName: link.storeName ?? '',
+    shopTitle: link.label,
     storeUrl: link.href,
+    logoUrl: link.thumbnail,
     listingImageAspectRatio: LISTING_IMAGE_ASPECT[slug],
   }
 }

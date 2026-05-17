@@ -8,11 +8,16 @@ interface MarketplaceListingCardProps extends React.HTMLAttributes<HTMLAnchorEle
   listing: MarketplaceListing
   /** CSS `aspect-ratio` for the image frame (from marketplace config). */
   imageAspectRatio: string
+  /** Small badge shown on the listing image (from marketplace config). */
+  marketplaceLogoUrl?: string
+  marketplaceName?: string
 }
 
 function MarketplaceListingCard({
   listing,
   imageAspectRatio,
+  marketplaceLogoUrl,
+  marketplaceName,
   className,
   ...props
 }: MarketplaceListingCardProps) {
@@ -39,14 +44,31 @@ function MarketplaceListingCard({
       {...props}
     >
       <div
-        className="bg-muted flex w-full items-center justify-center overflow-hidden"
+        className="bg-muted relative flex w-full items-center justify-center overflow-hidden"
         style={{ aspectRatio: imageAspectRatio }}
       >
+        {marketplaceLogoUrl ? (
+          <span
+            className="absolute right-1.5 top-1.5 z-10 flex h-7 w-7 items-center justify-center overflow-hidden rounded-full border border-pink-200/80 bg-white p-1 shadow-sm"
+            aria-hidden={!marketplaceName}
+            title={marketplaceName}
+          >
+            <img
+              src={marketplaceLogoUrl}
+              alt={marketplaceName ? `${marketplaceName} logo` : ''}
+              className="h-full w-full object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </span>
+        ) : null}
         {listing.imageUrl ? (
           <img
             src={listing.imageUrl}
             alt={listing.title}
             className="max-h-full max-w-full object-contain"
+            loading="lazy"
+            decoding="async"
           />
         ) : (
           <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br">

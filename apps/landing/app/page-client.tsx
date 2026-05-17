@@ -1,21 +1,14 @@
 'use client'
 
-import {
-  MarketplaceListingsCarousel,
-  PostCard,
-  ShareLinkDialog,
-  SocialBar,
-  type MarketplaceListing,
-  type PostCardPost,
-  type ShareLinkItem,
-} from '@repo/ui'
-import { BRAND, type MarketplaceDisplay, SOCIAL_LINKS } from '@repo/config'
+import { LazyWhenVisible, ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
+import { BRAND, SOCIAL_LINKS, getPublicLandingUrl } from '@repo/config'
 import Image from 'next/image'
-import { useState } from 'react'
-import { LANDING_LINKS, SITE_URL as DEFAULT_SITE_URL, type LandingLink } from './config/link-in-bio'
+import { useState, type ReactNode } from 'react'
+import { LANDING_LINKS, type LandingLink } from './config/link-in-bio'
 
-const LANDING_SITE_URL = process.env.NEXT_PUBLIC_LANDING_URL ?? DEFAULT_SITE_URL
+const LANDING_SITE_URL = getPublicLandingUrl()
 const LANDING_PAGE_SHARE_URL = LANDING_SITE_URL
+/** Spotlight frame — scoped to the center column; content uses z-10 to sit above these layers. */
 const CENTER_OVERLAY_LAYOUT_CLASSNAME =
   'absolute left-1/2 top-3 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem]'
 const CENTER_SPOTLIGHT_CLASSNAME = `${CENTER_OVERLAY_LAYOUT_CLASSNAME} shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]`
@@ -29,17 +22,13 @@ const LANDING_PAGE_SHARE_ITEM: ShareLinkItem = {
 }
 
 interface LandingPageClientProps {
-  blogUrl: string
-  latestPost: (PostCardPost & { href: string }) | null
-  featuredListings: MarketplaceListing[]
-  featuredListingsMarketplace: MarketplaceDisplay
+  marketplaceSection: ReactNode
+  blogSection: ReactNode
 }
 
 export default function LandingPageClient({
-  blogUrl,
-  latestPost,
-  featuredListings,
-  featuredListingsMarketplace,
+  marketplaceSection,
+  blogSection,
 }: LandingPageClientProps) {
   const [shareDialogState, setShareDialogState] = useState<{
     item: ShareLinkItem
@@ -56,8 +45,8 @@ export default function LandingPageClient({
         <div className={CENTER_GLOW_CLASSNAME} />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-md flex-1 items-center justify-center">
-        <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
+      <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center justify-center">
+        <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
           <div className="flex w-full justify-end">
             <button
               type="button"
@@ -83,7 +72,7 @@ export default function LandingPageClient({
               className="h-36 w-36 rounded-full border border-pink-100 bg-transparent object-cover shadow-lg"
               width={144}
               height={144}
-              loading="eager"
+              priority
               fetchPriority="high"
             />
             <h1 className="text-primary font-title text-3xl font-bold tracking-tight">
@@ -144,43 +133,15 @@ export default function LandingPageClient({
 
           <SocialBar socials={socials} aria-label="Social media links" />
 
-          {featuredListings.length > 0 ? (
-            <MarketplaceListingsCarousel
-              listings={featuredListings}
-              marketplace={featuredListingsMarketplace}
-              className="w-full"
-            />
-          ) : null}
+          <LazyWhenVisible className="w-full" rootMargin="320px">
+            {marketplaceSection}
+          </LazyWhenVisible>
         </div>
       </div>
 
-      {latestPost ? (
-        <section className="mx-auto mt-12 flex w-full max-w-md flex-col gap-4">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <p className="text-primary text-sm font-bold uppercase tracking-[0.3em]">
-                Latest from the blog
-              </p>
-              <h2 className="font-title mt-2 text-2xl font-semibold">Fresh from Pink Binder</h2>
-            </div>
-            <a
-              href={blogUrl}
-              className="text-primary hover:text-primary/80 text-sm font-bold transition-colors"
-            >
-              Visit blog →
-            </a>
-          </div>
-          <a
-            href={latestPost.href}
-            className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
-          >
-            <PostCard post={latestPost} />
-            <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-bold transition-colors">
-              Read article →
-            </span>
-          </a>
-        </section>
-      ) : null}
+      <LazyWhenVisible className="relative z-10 mx-auto w-full max-w-md" rootMargin="320px">
+        {blogSection}
+      </LazyWhenVisible>
 
       <ShareLinkDialog
         item={shareDialogState?.item ?? null}
@@ -199,6 +160,7 @@ export default function LandingPageClient({
           width={120}
           height={120}
           className="rounded-xl border border-pink-200/80 bg-white/90 p-2 shadow-md"
+          loading="lazy"
         />
       </div>
     </main>

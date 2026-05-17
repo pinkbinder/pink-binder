@@ -5,6 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3000",
+    "dev:webpack": "next dev --port 3000 --webpack",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
