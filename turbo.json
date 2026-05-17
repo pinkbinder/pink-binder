@@ -1,5 +1,15 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "globalEnv": [
+    "EBAY_APP_ID",
+    "EBAY_CLIENT_SECRET",
+    "EBAY_CERT_ID",
+    "EBAY_VERIFICATION_TOKEN",
+    "EBAY_DEBUG",
+    "EBAY_SELLER_USERNAME",
+    "EBAY_SEARCH_QUERY",
+    "EBAY_MARKETPLACE_ID"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

@@ -1,3 +1,11 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import nextEnv from '@next/env'
+
+// Load shared monorepo env (root .env.local) for marketplace API keys.
+const monorepoRoot = path.join(path.dirname(fileURLToPath(import.meta.url)), '../..')
+nextEnv.loadEnvConfig(monorepoRoot)
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   transpilePackages: ['@repo/ui'],

@@ -8,7 +8,7 @@ This monorepo shares configuration and API keys across all Next.js apps (landing
 
 Shared configuration is stored in the root `.env.local`, accessible to all apps:
 
-- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`
+- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`, `EBAY_CLIENT_SECRET`
 - **Whatnot Scraper**: `WHATNOT_USERNAME`, `WHATNOT_USER_AGENT`, `WHATNOT_SCRAPE_CACHE_TTL_MS`, `LIVE_SHOWS_SOURCE_URL`, `LIVE_SHOWS_SOURCE_TOKEN`
 - **Client-Side Polling**: `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` (requires `NEXT_PUBLIC_` prefix)
 - **Site URLs**: `NEXT_PUBLIC_SITE_URL` (requires `NEXT_PUBLIC_` prefix)
@@ -52,7 +52,8 @@ ETSY_SHOP_ID=cutepkmn
 ETSY_KEYSTRING=xxx
 ETSY_SECRET=xxx
 EBAY_APP_ID=xxx
-EBAY_AUTH_TOKEN=xxx
+EBAY_CLIENT_SECRET=xxx
+EBAY_VERIFICATION_TOKEN=xxx
 WHATNOT_USERNAME=thepinkbinder
 WHATNOT_USER_AGENT=custom-ua
 WHATNOT_SCRAPE_CACHE_TTL_MS=60000
@@ -83,6 +84,7 @@ NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_...
 // Can access both server-side and NEXT_PUBLIC_ vars
 const etsyShopId = process.env.ETSY_SHOP_ID // ✅ Available
 const ebayAppId = process.env.EBAY_APP_ID // ✅ Available
+const ebayClientSecret = process.env.EBAY_CLIENT_SECRET // ✅ Available
 const whatnotUser = process.env.WHATNOT_USERNAME // ✅ Available
 const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
 ```
