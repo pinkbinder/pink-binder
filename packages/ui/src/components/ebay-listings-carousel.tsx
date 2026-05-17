@@ -1,9 +1,10 @@
 import * as React from 'react'
 import { cn } from '../lib/utils'
-import { EbayListingCard, type EbayListing } from './ebay-listing-card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './carousel'
+import { MarketplaceListingCard, type MarketplaceListing } from './marketplace-listing-card'
 
 interface EbayListingsCarouselProps extends React.HTMLAttributes<HTMLElement> {
-  listings: EbayListing[]
+  listings: MarketplaceListing[]
   storeUrl?: string
 }
 
@@ -37,18 +38,21 @@ function EbayListingsCarousel({
           </a>
         ) : null}
       </div>
-      <div
-        className="flex gap-3 overflow-x-auto pb-2"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' } as React.CSSProperties}
-        role="list"
+      <Carousel
+        opts={{ align: 'start', loop: false }}
         aria-label="eBay listings carousel"
+        className="w-full"
       >
-        {listings.map((listing) => (
-          <div key={listing.id} role="listitem">
-            <EbayListingCard listing={listing} />
-          </div>
-        ))}
-      </div>
+        <CarouselContent className="-ml-3">
+          {listings.map((listing) => (
+            <CarouselItem key={listing.id} className="basis-auto pl-3">
+              <MarketplaceListingCard listing={listing} />
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="-left-10 border-pink-200/70 bg-white/90 hover:bg-pink-50" />
+        <CarouselNext className="-right-10 border-pink-200/70 bg-white/90 hover:bg-pink-50" />
+      </Carousel>
     </section>
   )
 }

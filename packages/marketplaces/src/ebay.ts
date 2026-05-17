@@ -1,11 +1,10 @@
-export interface EbayListing {
-  id: string
-  title: string
-  price: string
-  currency: string
-  imageUrl: string
-  listingUrl: string
-  condition?: string
+import type { MarketplaceListing } from './types'
+
+export type { MarketplaceListing }
+
+export interface EbayListing extends MarketplaceListing {
+  /** Always "eBay" */
+  source: 'eBay'
 }
 
 const EBAY_FINDING_API_URL = 'https://svcs.ebay.com/services/search/FindingService/v1'
@@ -31,7 +30,8 @@ interface EbayFindingResponse {
   findItemsIneBayStoresResponse: [
     {
       ack: [string]
-      searchResult: [{ item?: EbayFindingItem[] }]
+      errorMessage?: [{ error: [{ message: [string]; errorId: [string] }] }]
+      searchResult: [{ '@count': string; item?: EbayFindingItem[] }]
     },
   ]
 }
@@ -39,6 +39,7 @@ interface EbayFindingResponse {
 export async function getEbayListings(): Promise<EbayListing[]> {
   const appId = process.env.EBAY_APP_ID
   if (!appId) {
+    console.warn('EBAY_APP_ID is not set — skipping eBay listings fetch.')
     return []
   }
 
@@ -47,9 +48,14 @@ export async function getEbayListings(): Promise<EbayListing[]> {
   url.searchParams.set('SERVICE-VERSION', '1.0.0')
   url.searchParams.set('SECURITY-APPNAME', appId)
   url.searchParams.set('RESPONSE-DATA-FORMAT', 'JSON')
+  url.searchParams.set('REST-PAYLOAD', '')
   url.searchParams.set('storeName', EBAY_STORE_NAME)
   url.searchParams.set('sortOrder', 'BestMatch')
   url.searchParams.set('paginationInput.entriesPerPage', String(EBAY_LISTINGS_PER_PAGE))
+  url.searchParams.set('paginationInput.pageNumber', '1')
+  // Explicitly request gallery images and listing details
+  url.searchParams.set('outputSelector(0)', 'GalleryInfo')
+  url.searchParams.set('outputSelector(1)', 'SellerInfo')
 
   try {
     // The `next` option is a Next.js extension to the standard fetch API for ISR cache control.
@@ -59,15 +65,18 @@ export async function getEbayListings(): Promise<EbayListing[]> {
     } as RequestInit)
 
     if (!response.ok) {
-      console.error(`eBay API error: ${response.status} ${response.statusText}`)
+      console.error(`eBay Finding API HTTP error: ${response.status} ${response.statusText}`)
       return []
     }
 
     const data = (await response.json()) as EbayFindingResponse
     const root = data?.findItemsIneBayStoresResponse?.[0]
+    const ack = root?.ack?.[0]
 
-    if (root?.ack?.[0] !== 'Success') {
-      console.error('eBay API returned non-success ack:', root?.ack?.[0])
+    // Accept both 'Success' and 'Warning' (warnings still return results)
+    if (ack !== 'Success' && ack !== 'Warning') {
+      const errorMsg = root?.errorMessage?.[0]?.error?.[0]?.message?.[0] ?? ack
+      console.error('eBay Finding API returned non-success ack:', ack, '—', errorMsg)
       return []
     }
 
@@ -83,6 +92,7 @@ export async function getEbayListings(): Promise<EbayListing[]> {
         price: priceEntry?.__value__ ?? '',
         currency: priceEntry?.['@currencyId'] ?? 'USD',
         condition: item.condition?.[0]?.conditionDisplayName?.[0],
+        source: 'eBay',
       }
     })
   } catch (error) {
