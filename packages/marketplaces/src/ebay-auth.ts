@@ -4,12 +4,9 @@ const TOKEN_REFRESH_BUFFER_MS = 60_000
 
 let cachedAccessToken: { value: string; expiresAt: number } | null = null
 
-export function getEbayClientCredentials():
-  | { clientId: string; clientSecret: string }
-  | null {
+export function getEbayClientCredentials(): { clientId: string; clientSecret: string } | null {
   const clientId = process.env.EBAY_APP_ID?.trim()
-  const clientSecret =
-    process.env.EBAY_CLIENT_SECRET?.trim() ?? process.env.EBAY_CERT_ID?.trim()
+  const clientSecret = process.env.EBAY_CLIENT_SECRET?.trim() ?? process.env.EBAY_CERT_ID?.trim()
 
   if (!clientId || !clientSecret) {
     return null
@@ -29,9 +26,9 @@ export async function getEbayApplicationAccessToken(): Promise<string | null> {
     return cachedAccessToken.value
   }
 
-  const basicAuth = Buffer.from(
-    `${credentials.clientId}:${credentials.clientSecret}`
-  ).toString('base64')
+  const basicAuth = Buffer.from(`${credentials.clientId}:${credentials.clientSecret}`).toString(
+    'base64'
+  )
 
   const response = await fetch(EBAY_OAUTH_URL, {
     method: 'POST',

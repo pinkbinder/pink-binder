@@ -5,23 +5,23 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "lint": "turbo run lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "type-check": "turbo run type-check",
+    "format": "turbo run format",
+    "format:fix": "turbo run format:fix",
+    "validate": "turbo run lint type-check format",
     "prepare": "husky"
   },
   "devDependencies": {
-    "turbo": "latest",
-    "prettier": "^3.5.3",
+    "eslint": "^9.26.0",
     "husky": "^9.1.7",
     "lint-staged": "^15.5.0",
-    "prettier-plugin-tailwindcss": "^0.6.11"
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11",
+    "turbo": "latest"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write"
-    ],
-    "*.{json,md,css}": [
-      "prettier --write"
+    "*.{ts,tsx,js,jsx,mjs,cjs,json,md,css}": [
+      "prettier --write --ignore-unknown --ignore-path .prettierignore"
     ]
   },
   "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"

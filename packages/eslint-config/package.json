@@ -2,6 +2,10 @@
   "name": "@repo/eslint-config",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "format": "prettier --check . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
+  },
   "files": [
     "*.js",
     "*.cjs"
@@ -9,9 +13,11 @@
   "exports": {
     "./next": "./next.js",
     "./react-internal": "./react-internal.js",
+    "./library": "./library.js",
     "./base": "./base.js"
   },
   "devDependencies": {
+    "prettier": "^3.5.3",
     "@typescript-eslint/eslint-plugin": "^8.32.0",
     "@typescript-eslint/parser": "^8.32.0",
     "eslint-config-next": "15.5.18",
