@@ -3,6 +3,13 @@
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
+  "scripts": {
+    "format": "prettier --check . --ignore-path ../../.prettierignore",
+    "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
+  },
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
   "publishConfig": {
     "access": "public"
   }

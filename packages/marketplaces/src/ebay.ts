@@ -32,6 +32,13 @@ interface BrowseSearchResponse {
   errors?: Array<{ message?: string; errorId?: number }>
 }
 
+/** Next.js extends `fetch` with ISR options when called from App Router code. */
+type CachedFetchInit = RequestInit & {
+  next?: {
+    revalidate?: number | false
+  }
+}
+
 export async function getEbayListings(): Promise<EbayListing[]> {
   if (!getEbayClientCredentials()) {
     console.warn(
@@ -65,14 +72,16 @@ export async function getEbayListings(): Promise<EbayListing[]> {
   }
 
   try {
-    const response = await fetch(url.toString(), {
+    const fetchOptions: CachedFetchInit = {
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'X-EBAY-C-MARKETPLACE-ID': EBAY_MARKETPLACE_ID,
         Accept: 'application/json',
       },
       next: { revalidate: CACHE_REVALIDATE_SECONDS },
-    } as RequestInit)
+    }
+
+    const response = await fetch(url.toString(), fetchOptions)
 
     if (!response.ok) {
       const body = await response.text().catch(() => '')
