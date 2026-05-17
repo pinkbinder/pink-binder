@@ -49,12 +49,14 @@ export async function getEbayListings(): Promise<EbayListing[]> {
   url.searchParams.set('SERVICE-VERSION', '1.0.0')
   url.searchParams.set('SECURITY-APPNAME', appId)
   url.searchParams.set('RESPONSE-DATA-FORMAT', 'JSON')
-  url.searchParams.set('REST-PAYLOAD', '')
+  url.searchParams.set('REST-PAYLOAD', 'true')
   url.searchParams.set('storeName', EBAY_STORE_NAME)
   url.searchParams.set('sortOrder', 'BestMatch')
   url.searchParams.set('paginationInput.entriesPerPage', String(EBAY_LISTINGS_PER_PAGE))
   url.searchParams.set('paginationInput.pageNumber', '1')
-  // Explicitly request gallery images and listing details
+  // eBay's Finding API expects repeated selectors to use numbered keys.
+  // See: outputSelector(0)=..., outputSelector(1)=...
+  // Explicitly request gallery images and listing details.
   url.searchParams.set('outputSelector(0)', 'GalleryInfo')
   url.searchParams.set('outputSelector(1)', 'SellerInfo')
 
