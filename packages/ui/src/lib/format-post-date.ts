@@ -9,5 +9,6 @@ export function formatPostDate(date: string) {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(parsedDate)
 }
