@@ -37,6 +37,8 @@ function PostCard({ post, className, ...props }: PostCardProps) {
           <img
             src={thumbnailSrc}
             alt={post.thumbnailAlt ?? post.title}
+            loading="lazy"
+            decoding="async"
             className={cn(
               'h-full w-full',
               thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'

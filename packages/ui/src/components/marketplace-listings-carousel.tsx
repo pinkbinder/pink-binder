@@ -38,7 +38,7 @@ function MarketplaceListingsCarousel({
       <Carousel
         opts={{ align: 'start', loop: false }}
         aria-label={`${name} listings carousel`}
-        className="w-full"
+        className="relative w-full"
       >
         <CarouselContent className="-ml-3">
           {listings.map((listing) => (
@@ -52,8 +52,8 @@ function MarketplaceListingsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="-left-10 border-pink-200/70 bg-white/90 hover:bg-pink-50" />
-        <CarouselNext className="-right-10 border-pink-200/70 bg-white/90 hover:bg-pink-50" />
+        <CarouselPrevious className="left-1 z-10 border-pink-200/70 bg-white/90 shadow-sm hover:bg-pink-50 sm:left-2" />
+        <CarouselNext className="right-1 z-10 border-pink-200/70 bg-white/90 shadow-sm hover:bg-pink-50 sm:right-2" />
       </Carousel>
     </LandingSection>
   )
