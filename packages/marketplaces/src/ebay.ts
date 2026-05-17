@@ -39,7 +39,7 @@ interface EbayFindingResponse {
 export async function getEbayListings(): Promise<EbayListing[]> {
   const appId = process.env.EBAY_APP_ID
   if (!appId) {
-    console.warn('EBAY_APP_ID is not set — skipping eBay listings fetch.')
+    console.warn('EBAY_APP_ID is not set - skipping eBay listings fetch.')
     return []
   }
 
@@ -76,7 +76,7 @@ export async function getEbayListings(): Promise<EbayListing[]> {
     // Accept both 'Success' and 'Warning' (warnings still return results)
     if (ack !== 'Success' && ack !== 'Warning') {
       const errorMsg = root?.errorMessage?.[0]?.error?.[0]?.message?.[0] ?? ack
-      console.error('eBay Finding API returned non-success ack:', ack, '—', errorMsg)
+      console.error('eBay Finding API returned non-success ack:', ack, '-', errorMsg)
       return []
     }
 
