@@ -2,7 +2,7 @@ import type { Config } from 'tailwindcss'
 import animate from 'tailwindcss-animate'
 
 const config: Config = {
-  darkMode: ['class'],
+  darkMode: 'class',
   // Content paths must be defined in each app's tailwind.config.ts.
   // Preset paths resolve relative to the consuming app, not this file, so this
   // stays empty on purpose and each app provides its own content globs.

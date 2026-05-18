@@ -24,7 +24,7 @@ function IconButton({
       target={external ? '_blank' : target}
       rel={external ? 'noopener noreferrer' : rel}
       className={cn(
-        'bg-primary text-primary-foreground ring-primary/20 hover:bg-primary/90 focus-visible:ring-ring inline-flex rounded-full p-2 ring-1 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+        'inline-flex rounded-full bg-primary p-2 text-primary-foreground ring-1 ring-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
         className
       )}
       {...props}

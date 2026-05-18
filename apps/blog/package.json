@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev --port 3002",
-    "lint": "next lint",
+    "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore",
@@ -16,23 +16,26 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "next": "15.5.18",
+    "next": "16.2.6",
     "next-mdx-remote": "^6.0.0",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.15.3",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "autoprefixer": "^10.4.21",
-    "eslint": "^9.26.0",
-    "eslint-config-next": "15.5.18",
-    "postcss": "^8.5.3",
-    "prettier": "^3.5.3",
-    "tailwindcss": "^3.4.17",
-    "typescript": "5.8.3"
+    "@types/node": "^25.8.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/parser": "^8.59.3",
+    "autoprefixer": "^10.5.0",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "16.2.6",
+    "postcss": "^8.5.14",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^3.4.19",
+    "typescript": "6.0.3"
   }
 }

@@ -25,7 +25,7 @@ export function BinderSpriteReferencePanel({
       {!compact ? (
         <>
           <h3 className="text-sm font-semibold tracking-tight">Species art references</h3>
-          <p className="text-muted-foreground mt-1 text-sm">
+          <p className="mt-1 text-sm text-muted-foreground">
             Character renders for colour matching, pose ideas, and silhouette checks.
           </p>
         </>
@@ -42,15 +42,15 @@ export function BinderSpriteReferencePanel({
             key={item.url}
             className={
               compact
-                ? 'bg-muted/20 flex flex-col items-center gap-1.5 rounded-lg border p-2'
-                : 'bg-muted/20 flex flex-col gap-3 rounded-xl border p-3 sm:flex-row'
+                ? 'flex flex-col items-center gap-1.5 rounded-lg border bg-muted/20 p-2'
+                : 'flex flex-col gap-3 rounded-xl border bg-muted/20 p-3 sm:flex-row'
             }
           >
             <div
               className={
                 compact
-                  ? 'bg-muted/30 relative flex aspect-square w-full max-w-[72px] items-center justify-center rounded-md p-1'
-                  : 'bg-muted/30 relative mx-auto flex aspect-square w-full max-w-[120px] shrink-0 items-center justify-center rounded-lg border p-2 sm:mx-0'
+                  ? 'relative flex aspect-square w-full max-w-[72px] items-center justify-center rounded-md bg-muted/30 p-1'
+                  : 'relative mx-auto flex aspect-square w-full max-w-[120px] shrink-0 items-center justify-center rounded-lg border bg-muted/30 p-2 sm:mx-0'
               }
             >
               <Image
@@ -65,7 +65,7 @@ export function BinderSpriteReferencePanel({
             {!compact ? (
               <figcaption className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{item.label}</p>
-                <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{item.usage}</p>
+                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.usage}</p>
               </figcaption>
             ) : (
               <figcaption className="text-center">
@@ -76,7 +76,7 @@ export function BinderSpriteReferencePanel({
         ))}
       </div>
       {!compact ? (
-        <p className="text-muted-foreground mt-4 text-xs">
+        <p className="mt-4 text-xs text-muted-foreground">
           Art via{' '}
           <a
             href="https://github.com/PokeAPI/sprites"

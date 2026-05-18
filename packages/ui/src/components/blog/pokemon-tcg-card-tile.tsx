@@ -15,7 +15,7 @@ export function PokemonTcgCardTile({ card }: { card: PokemonTcgCard }) {
       <div className="space-y-0.5 px-0.5">
         <p className="truncate text-xs font-medium">{card.setName}</p>
         {card.rarity ? (
-          <p className="text-muted-foreground truncate text-xs">{card.rarity}</p>
+          <p className="truncate text-xs text-muted-foreground">{card.rarity}</p>
         ) : null}
       </div>
     </div>

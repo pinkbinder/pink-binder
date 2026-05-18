@@ -77,7 +77,7 @@ export default function AdminDashboard() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-muted-foreground border-b">
+                <tr className="border-b text-muted-foreground">
                   <th className="pb-2 text-left font-medium">Order</th>
                   <th className="pb-2 text-left font-medium">Customer</th>
                   <th className="pb-2 text-left font-medium">Product</th>

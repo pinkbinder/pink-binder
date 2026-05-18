@@ -23,7 +23,7 @@ export function PokemonTcgCardGallery({
 
   return (
     <>
-      <p className="text-muted-foreground mt-2 text-sm">
+      <p className="mt-2 text-sm text-muted-foreground">
         Recent cards featuring {displayName} from the Trading Card Game, newest first.
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
@@ -35,12 +35,12 @@ export function PokemonTcgCardGallery({
         <button
           type="button"
           onClick={() => setShowAll(true)}
-          className="bg-background hover:bg-muted mt-4 w-full rounded-xl border px-4 py-2.5 text-sm font-medium transition-colors"
+          className="mt-4 w-full rounded-xl border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
         >
           Show remaining ({hiddenCount})
         </button>
       ) : null}
-      <p className="text-muted-foreground mt-4 text-xs">
+      <p className="mt-4 text-xs text-muted-foreground">
         Showing {visibleCards.length} of {cards.length} loaded cards · card data from{' '}
         <a
           href={primarySource.href}

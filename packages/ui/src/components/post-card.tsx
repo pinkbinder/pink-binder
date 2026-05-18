@@ -21,18 +21,19 @@ interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
 function PostCard({ post, className, ...props }: PostCardProps) {
   const thumbnailFit = post.thumbnailFit ?? 'cover'
   const primaryThumbnail = post.thumbnail ?? post.thumbnailFallback
-  const [thumbnailSrc, setThumbnailSrc] = React.useState(primaryThumbnail)
-
-  React.useEffect(() => {
-    setThumbnailSrc(primaryThumbnail)
-  }, [primaryThumbnail])
+  const thumbnailKey = primaryThumbnail ?? ''
+  const [failedThumbnailKey, setFailedThumbnailKey] = React.useState<string | null>(null)
+  const thumbnailSrc =
+    failedThumbnailKey === thumbnailKey && post.thumbnailFallback
+      ? post.thumbnailFallback
+      : primaryThumbnail
 
   return (
     <Card
       className={cn('overflow-hidden rounded-3xl border-pink-200/70 shadow-sm', className)}
       {...props}
     >
-      <div className="bg-muted aspect-[16/10] overflow-hidden">
+      <div className="aspect-[16/10] overflow-hidden bg-muted">
         {thumbnailSrc ? (
           <img
             src={thumbnailSrc}
@@ -44,27 +45,27 @@ function PostCard({ post, className, ...props }: PostCardProps) {
               thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
             )}
             onError={() => {
-              if (post.thumbnailFallback && thumbnailSrc !== post.thumbnailFallback) {
-                setThumbnailSrc(post.thumbnailFallback)
+              if (post.thumbnailFallback && failedThumbnailKey !== thumbnailKey) {
+                setFailedThumbnailKey(thumbnailKey)
               }
             }}
           />
         ) : (
-          <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br px-6 text-center">
-            <span className="font-title text-foreground text-lg font-semibold">{post.title}</span>
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-secondary px-6 text-center">
+            <span className="font-title text-lg font-semibold text-foreground">{post.title}</span>
           </div>
         )}
       </div>
       <CardHeader className="space-y-3">
         {post.meta ? (
-          <p className="text-primary text-xs font-semibold uppercase tracking-[0.25em]">
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-primary">
             {post.meta}
           </p>
         ) : null}
         <CardTitle className="font-title text-2xl leading-tight">{post.title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground text-sm leading-6">{post.excerpt}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
       </CardContent>
     </Card>
   )

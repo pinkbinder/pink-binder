@@ -59,7 +59,7 @@ export default function LandingPageClient({
                 })
                 setCopyStatus('idle')
               }}
-              className="text-foreground hover:text-primary focus-visible:ring-ring inline-flex items-center gap-2 rounded-full border border-pink-200/80 bg-white/90 px-4 py-2 text-sm font-semibold shadow-sm transition-colors hover:bg-white focus-visible:outline-none focus-visible:ring-2"
+              className="inline-flex items-center gap-2 rounded-full border border-pink-200/80 bg-white/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <ShareIcon />
               <span>Share</span>
@@ -76,7 +76,7 @@ export default function LandingPageClient({
               priority
               fetchPriority="high"
             />
-            <h1 className="text-primary font-title text-3xl font-bold tracking-tight">
+            <h1 className="font-title text-3xl font-bold tracking-tight text-primary">
               {BRAND.name}
             </h1>
             <p className="text-lg font-semibold leading-relaxed">
@@ -84,7 +84,7 @@ export default function LandingPageClient({
               <br />
               <span className="text-primary">{BRAND.subtitleBottom}</span>
             </p>
-            <p className="text-muted-foreground max-w-sm text-sm font-semibold leading-relaxed">
+            <p className="max-w-sm text-sm font-semibold leading-relaxed text-muted-foreground">
               {BRAND.description}
             </p>
           </header>
@@ -101,7 +101,7 @@ export default function LandingPageClient({
                     href={link.href}
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noopener noreferrer' : undefined}
-                    className="text-foreground flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold"
+                    className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold text-foreground"
                   >
                     <Image
                       src={link.thumbnail}
@@ -110,7 +110,7 @@ export default function LandingPageClient({
                       width={36}
                       height={36}
                     />
-                    <span className="text-primary truncate">Shop on {link.marketplace}</span>
+                    <span className="truncate text-primary">Shop on {link.marketplace}</span>
                   </a>
 
                   <button
@@ -123,7 +123,7 @@ export default function LandingPageClient({
                       })
                       setCopyStatus('idle')
                     }}
-                    className="text-muted-foreground hover:text-foreground focus-visible:ring-ring mr-2 rounded-full p-2 transition-colors hover:bg-pink-100 focus-visible:outline-none focus-visible:ring-2"
+                    className="mr-2 rounded-full p-2 text-muted-foreground transition-colors hover:bg-pink-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <ThreeDotsIcon />
                   </button>
