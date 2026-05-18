@@ -1,10 +1,10 @@
-import { getPublicBlogUrl, getPublicLandingUrl } from '@repo/config'
+import { getSitemapBlogUrl, getSitemapLandingUrl } from '@repo/config'
 import type { MetadataRoute } from 'next'
 
 /** Served automatically at `/sitemap.xml` (Next.js MetadataRoute). */
 export default function sitemap(): MetadataRoute.Sitemap {
-  const landingUrl = getPublicLandingUrl().replace(/\/$/, '')
-  const blogUrl = getPublicBlogUrl().replace(/\/$/, '')
+  const landingUrl = getSitemapLandingUrl()
+  const blogUrl = getSitemapBlogUrl()
   const lastModified = new Date()
 
   const entries: MetadataRoute.Sitemap = [
