@@ -10,7 +10,7 @@
     "type-check": "turbo run type-check",
     "format": "turbo run format",
     "format:fix": "turbo run format:fix",
-    "validate": "node scripts/with-env.mjs turbo run lint type-check format",
+    "validate": "node scripts/with-env.mjs turbo run format lint type-check",
     "prepare": "husky"
   },
   "pnpm": {
@@ -23,15 +23,9 @@
   "devDependencies": {
     "eslint": "^9.39.4",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "latest"
-  },
-  "lint-staged": {
-    "*.{ts,tsx,js,jsx,mjs,cjs,json,md,css}": [
-      "prettier --write --ignore-unknown --ignore-path .prettierignore"
-    ]
   },
   "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499"
 }
