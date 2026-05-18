@@ -23,6 +23,7 @@ import { formatPostDate } from '../../lib/format-post-date'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../select'
 
 export type { EnrichedPostForGrid }
 
@@ -124,11 +125,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
 
     setGroupedFilters({
       type: nextType && typeFilterSet.has(nextType) ? nextType : null,
-      generation:
-        nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
+      generation: nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
       list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
-      collection:
-        nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
+      collection: nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
     })
     setDirectFilter(nextDirect)
   }, [
@@ -342,68 +341,122 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <div className="grid gap-3 md:hidden">
-          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
-            <span>Type</span>
-            <select
+          <div className="grid gap-1.5">
+            <span className="text-sm font-medium text-muted-foreground">Type</span>
+            <Select
               value={groupedFilters.type ?? ''}
-              onChange={(event) => applyGroupedFilter('type', event.target.value || null)}
-              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+              onValueChange={(value) => applyGroupedFilter('type', value || null)}
             >
-              <option value="">All</option>
-              {typeFilters.map((type) => (
-                <option key={`mobile-type-${type}`} value={type}>
-                  {type}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
-            <span>Generation</span>
-            <select
+              <SelectTrigger className="rounded-xl">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All</SelectItem>
+                {typeFilters.map((type) => {
+                  const visuals = typeVisuals[type]
+                  const colors = visuals?.colors ?? getPokemonTypeColors(type)
+                  const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
+                  const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
+                  return (
+                    <SelectItem key={`mobile-type-${type}`} value={type}>
+                      <span
+                        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
+                        style={{
+                          backgroundColor: lightColors.bg,
+                          color: lightColors.text,
+                          borderColor: lightColors.border,
+                          border: '1px solid',
+                        }}
+                      >
+                        {logoUrl ? (
+                          <PokemonTypeLogo
+                            logoUrl={logoUrl}
+                            color={getPokemonTypeLogoColor(type)}
+                          />
+                        ) : null}
+                        {type}
+                      </span>
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="grid gap-1.5">
+            <span className="text-sm font-medium text-muted-foreground">Generation</span>
+            <Select
               value={groupedFilters.generation ?? ''}
-              onChange={(event) => applyGroupedFilter('generation', event.target.value || null)}
-              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+              onValueChange={(value) => applyGroupedFilter('generation', value || null)}
             >
-              <option value="">All</option>
-              {generationFilters.map((generation) => (
-                <option key={`mobile-generation-${generation}`} value={generation}>
-                  {generation}
-                </option>
-              ))}
-            </select>
-          </label>
-          {roundupListFilters.length > 0 ? (
-            <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
-              <span>Lists</span>
-              <select
-                value={groupedFilters.list ?? ''}
-                onChange={(event) => applyGroupedFilter('list', event.target.value || null)}
-                className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
-              >
-                <option value="">All</option>
-                {roundupListFilters.map((listType) => (
-                  <option key={`mobile-list-${listType}`} value={listType}>
-                    {listType}
-                  </option>
+              <SelectTrigger className="rounded-xl">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All</SelectItem>
+                {generationFilters.map((generation) => (
+                  <SelectItem key={`mobile-generation-${generation}`} value={generation}>
+                    <span
+                      className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                    >
+                      {generation}
+                    </span>
+                  </SelectItem>
                 ))}
-              </select>
-            </label>
+              </SelectContent>
+            </Select>
+          </div>
+          {roundupListFilters.length > 0 ? (
+            <div className="grid gap-1.5">
+              <span className="text-sm font-medium text-muted-foreground">Lists</span>
+              <Select
+                value={groupedFilters.list ?? ''}
+                onValueChange={(value) => applyGroupedFilter('list', value || null)}
+              >
+                <SelectTrigger className="rounded-xl">
+                  <SelectValue placeholder="All" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="">All</SelectItem>
+                  {roundupListFilters.map((listType) => (
+                    <SelectItem key={`mobile-list-${listType}`} value={listType}>
+                      <span
+                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                      >
+                        {listType}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           ) : null}
-          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
-            <span>Collection</span>
-            <select
+          <div className="grid gap-1.5">
+            <span className="text-sm font-medium text-muted-foreground">Collection</span>
+            <Select
               value={groupedFilters.collection ?? ''}
-              onChange={(event) => applyGroupedFilter('collection', event.target.value || null)}
-              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+              onValueChange={(value) => applyGroupedFilter('collection', value || null)}
             >
-              <option value="">All</option>
-              {collectionFilters.map((collection) => (
-                <option key={`mobile-collection-${collection}`} value={collection}>
-                  {collection}
-                </option>
-              ))}
-            </select>
-          </label>
+              <SelectTrigger className="rounded-xl">
+                <SelectValue placeholder="All" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">All</SelectItem>
+                {collectionFilters.map((collection) => {
+                  const icon = getCollectionBadgeIcon(collection)
+                  return (
+                    <SelectItem key={`mobile-collection-${collection}`} value={collection}>
+                      <span
+                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                      >
+                        {icon ? <span aria-hidden>{icon}</span> : null}
+                        {collection}
+                      </span>
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <div className="hidden flex-col gap-4 md:flex">
           <div className="flex flex-wrap items-start gap-2">
