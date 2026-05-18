@@ -19,6 +19,7 @@ export function PopularityRankBadge({
   surveyYear2019 = 2019,
   surveyAuthor2019 = 'mamamia1001',
 }: PopularityRankBadgeProps) {
+  const tooltipId = `pop-rank-tooltip-${globalRank}`
   const tooltipLines: string[] = [
     `Blended rank from two r/pokemon "favourite Pokémon" surveys, weighted 60/40 toward the ${surveyYear2025} results (u/${surveyAuthor2025}; u/${surveyAuthor2019} ${surveyYear2019}).`,
   ]
@@ -31,24 +32,26 @@ export function PopularityRankBadge({
 
   return (
     <div className="group relative inline-block">
-      <button
-        type="button"
+      <span
         tabIndex={0}
+        role="note"
+        aria-describedby={tooltipId}
         aria-label={`Popularity rank #${globalRank} out of ${totalCount} in blended r/pokemon surveys`}
-        className="inline-flex cursor-default items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors group-hover:bg-muted/80 group-focus:outline-none"
+        className="inline-flex cursor-default items-center gap-1 rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1 group-hover:bg-muted/80"
       >
         <span>Popularity Rank: #{globalRank}</span>
         <span aria-hidden className="text-[10px] opacity-60">
           ℹ
         </span>
-      </button>
+      </span>
       <div
+        id={tooltipId}
         role="tooltip"
         className="invisible absolute right-0 top-full z-20 mt-1.5 w-64 rounded-xl border bg-popover p-3 text-xs leading-relaxed text-popover-foreground shadow-md opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
       >
         <p className="font-medium text-foreground">Fan survey data</p>
-        {tooltipLines.map((line, i) => (
-          <p key={i} className="mt-1 text-muted-foreground">
+        {tooltipLines.map((line) => (
+          <p key={line} className="mt-1 text-muted-foreground">
             {line}
           </p>
         ))}
