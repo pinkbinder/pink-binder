@@ -6,6 +6,11 @@ export { PokemonTcgCardGallery } from './pokemon-tcg-card-gallery'
 export { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 export { TcgCardImage } from './tcg-card-image'
 export {
+  MiniBinderSpread,
+  type BinderSpreadSlot,
+  type PositionedBinderSpreadSlot,
+} from './mini-binder-spread'
+export {
   BinderSpriteReferencePanel,
   type BinderSpriteReference,
 } from './binder-sprite-reference-panel'
