@@ -30,6 +30,23 @@ export type { EnrichedPostForGrid }
 const INITIAL_VISIBLE_POSTS = 9
 const VISIBLE_POST_BATCH = 24
 const LOAD_MORE_ROOT_MARGIN = '480px'
+const INITIAL_VISIBLE_FILTER_CHIPS = 10
+
+type FilterGroupKey = 'type' | 'generation' | 'list' | 'collection'
+
+interface GroupedFilters {
+  type: string | null
+  generation: string | null
+  list: string | null
+  collection: string | null
+}
+
+const EMPTY_GROUPED_FILTERS: GroupedFilters = {
+  type: null,
+  generation: null,
+  list: null,
+  collection: null,
+}
 
 interface BlogGridProps {
   posts: EnrichedPostForGrid[]
@@ -40,7 +57,14 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
-  const [activeFilter, setActiveFilter] = useState<string | null>(null)
+  const [groupedFilters, setGroupedFilters] = useState<GroupedFilters>(EMPTY_GROUPED_FILTERS)
+  const [directFilter, setDirectFilter] = useState<string | null>(null)
+  const [expandedGroups, setExpandedGroups] = useState<Record<FilterGroupKey, boolean>>({
+    type: false,
+    generation: false,
+    list: false,
+    collection: false,
+  })
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS)
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
@@ -49,7 +73,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const collectionFilters = useMemo(() => extractCollectionFilters(posts), [posts])
   const roundupListFilters = useMemo(() => extractRoundupListFilters(posts), [posts])
 
-  const allFilterValues = useMemo(
+  const allGroupedFilterValues = useMemo(
     () =>
       new Set<string>([
         ...typeFilters,
@@ -59,6 +83,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       ]),
     [typeFilters, generationFilters, collectionFilters, roundupListFilters]
   )
+  const typeFilterSet = useMemo(() => new Set(typeFilters), [typeFilters])
+  const generationFilterSet = useMemo(() => new Set(generationFilters), [generationFilters])
+  const collectionFilterSet = useMemo(() => new Set(collectionFilters), [collectionFilters])
+  const roundupListFilterSet = useMemo(() => new Set(roundupListFilters), [roundupListFilters])
   const typeVisuals = useMemo(
     () =>
       Object.fromEntries(
@@ -75,42 +103,94 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   )
 
   useEffect(() => {
-    const next = searchParams.get('filter')
-    if (!next) {
-      setActiveFilter(null)
-      return
+    let nextType = searchParams.get('type')
+    let nextGeneration = searchParams.get('generation')
+    let nextList = searchParams.get('list')
+    let nextCollection = searchParams.get('collection')
+    let nextDirect = searchParams.get('filter')
+
+    if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
+      if (typeFilterSet.has(nextDirect)) {
+        nextType = nextDirect
+      } else if (generationFilterSet.has(nextDirect)) {
+        nextGeneration = nextDirect
+      } else if (roundupListFilterSet.has(nextDirect)) {
+        nextList = nextDirect
+      } else if (collectionFilterSet.has(nextDirect)) {
+        nextCollection = nextDirect
+      }
+      nextDirect = null
     }
 
-    setActiveFilter(allFilterValues.has(next) ? next : null)
-  }, [searchParams, allFilterValues])
+    setGroupedFilters({
+      type: nextType && typeFilterSet.has(nextType) ? nextType : null,
+      generation:
+        nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
+      list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
+      collection:
+        nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
+    })
+    setDirectFilter(nextDirect)
+  }, [
+    searchParams,
+    allGroupedFilterValues,
+    typeFilterSet,
+    generationFilterSet,
+    roundupListFilterSet,
+    collectionFilterSet,
+  ])
+
+  const hasActiveFilters = useMemo(
+    () =>
+      directFilter !== null ||
+      groupedFilters.type !== null ||
+      groupedFilters.generation !== null ||
+      groupedFilters.list !== null ||
+      groupedFilters.collection !== null,
+    [groupedFilters, directFilter]
+  )
 
   useEffect(() => {
-    if (activeFilter) {
+    if (hasActiveFilters) {
       return
     }
     setVisibleCount(INITIAL_VISIBLE_POSTS)
-  }, [activeFilter])
+  }, [hasActiveFilters])
 
   const filteredPosts = useMemo(() => {
-    if (!activeFilter) return posts
-    const needle = activeFilter.toLowerCase()
     return posts.filter((post) => {
-      if (post.categories.includes(`${activeFilter} Type`)) return true
-      if (post.categories.includes(activeFilter)) return true
+      if (groupedFilters.type && !post.categories.includes(`${groupedFilters.type} Type`)) {
+        return false
+      }
+      if (groupedFilters.generation && !post.categories.includes(groupedFilters.generation)) {
+        return false
+      }
+      if (groupedFilters.list && !post.categories.includes(groupedFilters.list)) {
+        return false
+      }
+      if (groupedFilters.collection && !post.categories.includes(groupedFilters.collection)) {
+        return false
+      }
+      if (!directFilter) {
+        return true
+      }
+      const needle = directFilter.toLowerCase()
+      if (post.categories.includes(`${directFilter} Type`)) return true
+      if (post.categories.includes(directFilter)) return true
       if (post.speciesFilterTags.some((slug) => slug.toLowerCase() === needle)) return true
       if (post.tags.some((tag) => tag.toLowerCase() === needle)) return true
       return false
     })
-  }, [posts, activeFilter])
+  }, [posts, groupedFilters, directFilter])
 
   const postsToRender = useMemo(() => {
-    if (activeFilter) {
+    if (hasActiveFilters) {
       return filteredPosts
     }
     return filteredPosts.slice(0, visibleCount)
-  }, [activeFilter, filteredPosts, visibleCount])
+  }, [hasActiveFilters, filteredPosts, visibleCount])
 
-  const hasMoreToRender = !activeFilter && visibleCount < filteredPosts.length
+  const hasMoreToRender = !hasActiveFilters && visibleCount < filteredPosts.length
 
   const showMore = useCallback(() => {
     setVisibleCount((count) => Math.min(count + VISIBLE_POST_BATCH, filteredPosts.length))
@@ -139,143 +219,388 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     return () => observer.disconnect()
   }, [hasMoreToRender, showMore])
 
-  function applyFilter(nextFilter: string | null) {
-    setActiveFilter(nextFilter)
+  function pushFilterParams(nextGroupedFilters: GroupedFilters, nextDirectFilter: string | null) {
     const params = new URLSearchParams(searchParams.toString())
-    if (nextFilter) {
-      params.set('filter', nextFilter)
-    } else {
-      params.delete('filter')
-    }
+    nextGroupedFilters.type ? params.set('type', nextGroupedFilters.type) : params.delete('type')
+    nextGroupedFilters.generation
+      ? params.set('generation', nextGroupedFilters.generation)
+      : params.delete('generation')
+    nextGroupedFilters.list ? params.set('list', nextGroupedFilters.list) : params.delete('list')
+    nextGroupedFilters.collection
+      ? params.set('collection', nextGroupedFilters.collection)
+      : params.delete('collection')
+    nextDirectFilter ? params.set('filter', nextDirectFilter) : params.delete('filter')
 
     const query = params.toString()
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }
 
+  function applyGroupedFilter(group: FilterGroupKey, nextValue: string | null) {
+    const nextGroupedFilters = {
+      ...groupedFilters,
+      [group]: nextValue,
+    }
+    setGroupedFilters(nextGroupedFilters)
+    setDirectFilter(null)
+    pushFilterParams(nextGroupedFilters, null)
+  }
+
+  function applyDirectFilter(nextFilter: string | null) {
+    setDirectFilter(nextFilter)
+    pushFilterParams(groupedFilters, nextFilter)
+  }
+
+  function clearAllFilters() {
+    setGroupedFilters(EMPTY_GROUPED_FILTERS)
+    setDirectFilter(null)
+    pushFilterParams(EMPTY_GROUPED_FILTERS, null)
+  }
+
+  function toggleExpandedGroup(group: FilterGroupKey) {
+    setExpandedGroups((current) => ({
+      ...current,
+      [group]: !current[group],
+    }))
+  }
+
+  function getGroupOptionState<T extends string>(group: FilterGroupKey, values: T[]) {
+    const expanded = expandedGroups[group]
+    if (expanded || values.length <= INITIAL_VISIBLE_FILTER_CHIPS) {
+      return { options: values, hasMore: false, expanded }
+    }
+    return {
+      options: values.slice(0, INITIAL_VISIBLE_FILTER_CHIPS),
+      hasMore: true,
+      expanded,
+    }
+  }
+
+  function applyCategoryFilter(filterValue: string) {
+    if (typeFilterSet.has(filterValue)) {
+      applyGroupedFilter('type', groupedFilters.type === filterValue ? null : filterValue)
+      return
+    }
+    if (generationFilterSet.has(filterValue)) {
+      applyGroupedFilter(
+        'generation',
+        groupedFilters.generation === filterValue ? null : filterValue
+      )
+      return
+    }
+    if (roundupListFilterSet.has(filterValue)) {
+      applyGroupedFilter('list', groupedFilters.list === filterValue ? null : filterValue)
+      return
+    }
+    if (collectionFilterSet.has(filterValue)) {
+      applyGroupedFilter(
+        'collection',
+        groupedFilters.collection === filterValue ? null : filterValue
+      )
+      return
+    }
+    applyDirectFilter(directFilter === filterValue ? null : filterValue)
+  }
+
   function buildPostHref(slug: string): string {
     const base = `/posts/${encodeURIComponent(slug)}`
-    if (!activeFilter) {
+    const params = new URLSearchParams()
+    if (groupedFilters.type) {
+      params.set('type', groupedFilters.type)
+    }
+    if (groupedFilters.generation) {
+      params.set('generation', groupedFilters.generation)
+    }
+    if (groupedFilters.list) {
+      params.set('list', groupedFilters.list)
+    }
+    if (groupedFilters.collection) {
+      params.set('collection', groupedFilters.collection)
+    }
+    if (directFilter) {
+      params.set('filter', directFilter)
+    }
+    const query = params.toString()
+    if (!query) {
       return base
     }
-    return `${base}?filter=${encodeURIComponent(activeFilter)}`
+    return `${base}?${query}`
   }
+
+  const typeChipState = getGroupOptionState('type', typeFilters)
+  const generationChipState = getGroupOptionState('generation', generationFilters)
+  const listChipState = getGroupOptionState('list', roundupListFilters)
+  const collectionChipState = getGroupOptionState('collection', collectionFilters)
+  const activeFilterLabels = [
+    groupedFilters.type,
+    groupedFilters.generation,
+    groupedFilters.list,
+    groupedFilters.collection,
+    directFilter,
+  ].filter((value): value is string => Boolean(value))
 
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="shrink-0 text-sm font-medium text-muted-foreground">Type:</span>
-          <button
-            type="button"
-            onClick={() => applyFilter(null)}
-            className={`${CLICKABLE_BADGE_CLASS} ${
-              activeFilter === null
-                ? 'bg-primary text-primary-foreground'
-                : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-            }`}
-          >
-            All
-          </button>
-          {typeFilters.map((type) => {
-            const visuals = typeVisuals[type]
-            const colors = visuals?.colors ?? getPokemonTypeColors(type)
-            const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-            const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-            const isActive = activeFilter === type
-
-            return (
-              <button
-                type="button"
-                key={type}
-                onClick={() => applyFilter(isActive ? null : type)}
-                className={CLICKABLE_BADGE_CLASS}
-                style={{
-                  borderColor: isActive ? colors.bg : lightColors.border,
-                  backgroundColor: isActive ? colors.bg : lightColors.bg,
-                  color: isActive ? colors.text : lightColors.text,
-                }}
+        <div className="grid gap-3 md:hidden">
+          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
+            <span>Type</span>
+            <select
+              value={groupedFilters.type ?? ''}
+              onChange={(event) => applyGroupedFilter('type', event.target.value || null)}
+              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+            >
+              <option value="">All</option>
+              {typeFilters.map((type) => (
+                <option key={`mobile-type-${type}`} value={type}>
+                  {type}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
+            <span>Generation</span>
+            <select
+              value={groupedFilters.generation ?? ''}
+              onChange={(event) => applyGroupedFilter('generation', event.target.value || null)}
+              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+            >
+              <option value="">All</option>
+              {generationFilters.map((generation) => (
+                <option key={`mobile-generation-${generation}`} value={generation}>
+                  {generation}
+                </option>
+              ))}
+            </select>
+          </label>
+          {roundupListFilters.length > 0 ? (
+            <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
+              <span>Lists</span>
+              <select
+                value={groupedFilters.list ?? ''}
+                onChange={(event) => applyGroupedFilter('list', event.target.value || null)}
+                className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
               >
-                <span className="inline-flex items-center gap-1.5">
-                  {logoUrl ? (
-                    <PokemonTypeLogo
-                      logoUrl={logoUrl}
-                      color={isActive ? colors.text : getPokemonTypeLogoColor(type)}
-                    />
-                  ) : null}
-                  <span>{type}</span>
-                </span>
-              </button>
-            )
-          })}
+                <option value="">All</option>
+                {roundupListFilters.map((listType) => (
+                  <option key={`mobile-list-${listType}`} value={listType}>
+                    {listType}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+          <label className="grid gap-1.5 text-sm font-medium text-muted-foreground">
+            <span>Collection</span>
+            <select
+              value={groupedFilters.collection ?? ''}
+              onChange={(event) => applyGroupedFilter('collection', event.target.value || null)}
+              className="rounded-xl border bg-background px-3 py-2 text-sm text-foreground"
+            >
+              <option value="">All</option>
+              {collectionFilters.map((collection) => (
+                <option key={`mobile-collection-${collection}`} value={collection}>
+                  {collection}
+                </option>
+              ))}
+            </select>
+          </label>
         </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="shrink-0 text-sm font-medium text-muted-foreground">Generation:</span>
-          {generationFilters.map((generation) => (
+        <div className="hidden flex-col gap-4 md:flex">
+          <div className="flex flex-wrap items-start gap-2">
+            <span className="pt-1 text-sm font-medium text-muted-foreground">Type:</span>
             <button
               type="button"
-              key={generation}
-              onClick={() => applyFilter(activeFilter === generation ? null : generation)}
+              onClick={() => applyGroupedFilter('type', null)}
               className={`${CLICKABLE_BADGE_CLASS} ${
-                activeFilter === generation
+                groupedFilters.type === null
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
-              {generation}
+              All
             </button>
-          ))}
-        </div>
-        {roundupListFilters.length > 0 ? (
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="shrink-0 text-sm font-medium text-muted-foreground">Lists:</span>
-            {roundupListFilters.map((listType) => (
+            {typeChipState.options.map((type) => {
+              const visuals = typeVisuals[type]
+              const colors = visuals?.colors ?? getPokemonTypeColors(type)
+              const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
+              const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
+              const isActive = groupedFilters.type === type
+
+              return (
+                <button
+                  type="button"
+                  key={type}
+                  onClick={() => applyGroupedFilter('type', isActive ? null : type)}
+                  className={CLICKABLE_BADGE_CLASS}
+                  style={{
+                    borderColor: isActive ? colors.bg : lightColors.border,
+                    backgroundColor: isActive ? colors.bg : lightColors.bg,
+                    color: isActive ? colors.text : lightColors.text,
+                  }}
+                >
+                  <span className="inline-flex items-center gap-1.5">
+                    {logoUrl ? (
+                      <PokemonTypeLogo
+                        logoUrl={logoUrl}
+                        color={isActive ? colors.text : getPokemonTypeLogoColor(type)}
+                      />
+                    ) : null}
+                    <span>{type}</span>
+                  </span>
+                </button>
+              )
+            })}
+            {typeChipState.hasMore ? (
               <button
                 type="button"
-                key={listType}
-                onClick={() => applyFilter(activeFilter === listType ? null : listType)}
+                onClick={() => toggleExpandedGroup('type')}
+                className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground hover:bg-secondary/80`}
+              >
+                Show {typeChipState.expanded ? 'less' : 'more'}
+              </button>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-start gap-2">
+            <span className="pt-1 text-sm font-medium text-muted-foreground">Generation:</span>
+            <button
+              type="button"
+              onClick={() => applyGroupedFilter('generation', null)}
+              className={`${CLICKABLE_BADGE_CLASS} ${
+                groupedFilters.generation === null
+                  ? 'bg-primary text-primary-foreground'
+                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+              }`}
+            >
+              All
+            </button>
+            {generationChipState.options.map((generation) => (
+              <button
+                type="button"
+                key={generation}
+                onClick={() =>
+                  applyGroupedFilter(
+                    'generation',
+                    groupedFilters.generation === generation ? null : generation
+                  )
+                }
                 className={`${CLICKABLE_BADGE_CLASS} ${
-                  activeFilter === listType
+                  groupedFilters.generation === generation
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                 }`}
               >
-                {listType}
+                {generation}
               </button>
             ))}
+            {generationChipState.hasMore ? (
+              <button
+                type="button"
+                onClick={() => toggleExpandedGroup('generation')}
+                className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground hover:bg-secondary/80`}
+              >
+                Show {generationChipState.expanded ? 'less' : 'more'}
+              </button>
+            ) : null}
           </div>
-        ) : null}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="shrink-0 text-sm font-medium text-muted-foreground">Collection:</span>
-          {collectionFilters.map((collection) => (
+          {roundupListFilters.length > 0 ? (
+            <div className="flex flex-wrap items-start gap-2">
+              <span className="pt-1 text-sm font-medium text-muted-foreground">Lists:</span>
+              <button
+                type="button"
+                onClick={() => applyGroupedFilter('list', null)}
+                className={`${CLICKABLE_BADGE_CLASS} ${
+                  groupedFilters.list === null
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                All
+              </button>
+              {listChipState.options.map((listType) => (
+                <button
+                  type="button"
+                  key={listType}
+                  onClick={() =>
+                    applyGroupedFilter('list', groupedFilters.list === listType ? null : listType)
+                  }
+                  className={`${CLICKABLE_BADGE_CLASS} ${
+                    groupedFilters.list === listType
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  }`}
+                >
+                  {listType}
+                </button>
+              ))}
+              {listChipState.hasMore ? (
+                <button
+                  type="button"
+                  onClick={() => toggleExpandedGroup('list')}
+                  className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground hover:bg-secondary/80`}
+                >
+                  Show {listChipState.expanded ? 'less' : 'more'}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+          <div className="flex flex-wrap items-start gap-2">
+            <span className="pt-1 text-sm font-medium text-muted-foreground">Collection:</span>
             <button
               type="button"
-              key={collection}
-              onClick={() => applyFilter(activeFilter === collection ? null : collection)}
+              onClick={() => applyGroupedFilter('collection', null)}
               className={`${CLICKABLE_BADGE_CLASS} ${
-                activeFilter === collection
+                groupedFilters.collection === null
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
-              <span className="inline-flex items-center gap-1.5">
-                {getCollectionBadgeIcon(collection) ? (
-                  <span aria-hidden>{getCollectionBadgeIcon(collection)}</span>
-                ) : null}
-                <span>{collection}</span>
-              </span>
+              All
             </button>
-          ))}
+            {collectionChipState.options.map((collection) => (
+              <button
+                type="button"
+                key={collection}
+                onClick={() =>
+                  applyGroupedFilter(
+                    'collection',
+                    groupedFilters.collection === collection ? null : collection
+                  )
+                }
+                className={`${CLICKABLE_BADGE_CLASS} ${
+                  groupedFilters.collection === collection
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getCollectionBadgeIcon(collection) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(collection)}</span>
+                  ) : null}
+                  <span>{collection}</span>
+                </span>
+              </button>
+            ))}
+            {collectionChipState.hasMore ? (
+              <button
+                type="button"
+                onClick={() => toggleExpandedGroup('collection')}
+                className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground hover:bg-secondary/80`}
+              >
+                Show {collectionChipState.expanded ? 'less' : 'more'}
+              </button>
+            ) : null}
+          </div>
         </div>
       </div>
 
-      {activeFilter ? (
+      {activeFilterLabels.length > 0 ? (
         <p className="text-sm text-muted-foreground">
           Showing <span className="font-semibold text-foreground">{filteredPosts.length}</span>{' '}
           {`post${filteredPosts.length !== 1 ? 's' : ''}`} matching{' '}
-          <span className="font-medium text-primary">{activeFilter}</span>
+          <span className="font-medium text-primary">{activeFilterLabels.join(' + ')}</span>
           <button
             type="button"
-            onClick={() => applyFilter(null)}
+            onClick={clearAllFilters}
             className="ml-2 text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
             Clear
@@ -325,9 +650,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                         <button
                           type="button"
                           key={`${post.slug}-${category}`}
-                          onClick={() =>
-                            applyFilter(activeFilter === filterValue ? null : filterValue)
-                          }
+                          onClick={() => applyCategoryFilter(filterValue)}
                           className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
                         >
                           <span className="inline-flex items-center gap-1.5">
@@ -344,9 +667,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       <button
                         type="button"
                         key={`${post.slug}-${category}`}
-                        onClick={() =>
-                          applyFilter(activeFilter === filterValue ? null : filterValue)
-                        }
+                        onClick={() => applyCategoryFilter(filterValue)}
                         className={CLICKABLE_BADGE_CLASS}
                         style={{
                           borderColor: lightColors.border,
@@ -381,7 +702,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     <button
                       type="button"
                       key={`${post.slug}-${speciesSlug}`}
-                      onClick={() => applyFilter(activeFilter === speciesSlug ? null : speciesSlug)}
+                      onClick={() =>
+                        applyDirectFilter(directFilter === speciesSlug ? null : speciesSlug)
+                      }
                       className={`${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground hover:bg-muted/80`}
                     >
                       #{speciesSlug}
@@ -400,7 +723,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
             No posts match the selected filter. Try a different category or{' '}
             <button
               type="button"
-              onClick={() => applyFilter(null)}
+              onClick={clearAllFilters}
               className="text-primary underline underline-offset-2"
             >
               view all
