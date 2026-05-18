@@ -42,7 +42,7 @@ export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteSh
   return (
     <div className="mt-8 border-t pt-6">
       <h3 className="text-sm font-semibold tracking-tight">3D battle sprites</h3>
-      <p className="text-muted-foreground mt-1 text-sm">
+      <p className="mt-1 text-sm text-muted-foreground">
         Animated Showdown-style models for {displayName} — normal and shiny.
       </p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -59,7 +59,7 @@ export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteSh
           onFailed={handleSpriteError}
         />
       </div>
-      <p className="text-muted-foreground mt-4 text-xs">
+      <p className="mt-4 text-xs text-muted-foreground">
         Sprites via{' '}
         <a
           href="https://projectpokemon.org/home/docs/Sprite_Resource_148"
@@ -92,8 +92,8 @@ function SpriteTile({
   onFailed: () => void
 }) {
   return (
-    <figure className="bg-muted/30 flex flex-col items-center overflow-visible rounded-xl border px-3 pb-3 pt-2.5">
-      <figcaption className="text-muted-foreground mb-1.5 text-xs font-medium uppercase tracking-wide">
+    <figure className="flex flex-col items-center overflow-visible rounded-xl border bg-muted/30 px-3 pb-3 pt-2.5">
+      <figcaption className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {label}
       </figcaption>
       <div

@@ -32,7 +32,7 @@ export function RoundupHeroArtworkGrid({
   return (
     <div
       className={cn(
-        'bg-muted grid aspect-[16/10] grid-rows-1 divide-x divide-pink-100/80',
+        'grid aspect-[16/10] grid-rows-1 divide-x divide-pink-100/80 bg-muted',
         gridColumnClass(urls.length),
         className
       )}

@@ -23,8 +23,8 @@ function BinderPage({
   pageLabel: string
 }) {
   return (
-    <div className="bg-muted/15 rounded-xl border p-3">
-      <p className="text-muted-foreground mb-2 text-center text-xs font-medium uppercase tracking-wide">
+    <div className="rounded-xl border bg-muted/15 p-3">
+      <p className="mb-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {pageLabel}
       </p>
       <div className="grid grid-cols-3 grid-rows-3 gap-2" style={{ minHeight: 'min(420px, 52vw)' }}>
@@ -33,7 +33,7 @@ function BinderPage({
           return (
             <div
               key={`${pageLabel}-${row}-${col}-${index}`}
-              className={`bg-card overflow-hidden rounded-md border shadow-sm ${
+              className={`overflow-hidden rounded-md border bg-card shadow-sm ${
                 colSpan === 2 ? 'aspect-[10/7] min-h-0' : 'aspect-[5/7] min-h-0'
               }`}
               style={{
@@ -57,7 +57,7 @@ function BinderPage({
                   />
                 </div>
               ) : (
-                <div className="bg-muted/30 relative flex h-full w-full items-center justify-center p-1 opacity-40">
+                <div className="relative flex h-full w-full items-center justify-center bg-muted/30 p-1 opacity-40">
                   <Image
                     src={slot.url}
                     alt={slot.alt}
@@ -88,9 +88,9 @@ export function RoundupMiniBinderSpread({
   }
 
   return (
-    <section className="bg-card rounded-2xl border p-5">
+    <section className="rounded-2xl border bg-card p-5">
       <h2 className="text-xl font-semibold tracking-tight">Mini binder spread</h2>
-      <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
+      <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         A 3×3 spread across two pages — four Michi Method scenes (two per page, random wide slots;
         each spans two side-by-side pockets) plus one chase card per ranked Pokémon in the open
         singles. Layout is seeded per post so it stays consistent on rebuild; not print-ready.

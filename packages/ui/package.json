@@ -19,15 +19,15 @@
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.1.14",
+    "@radix-ui/react-dialog": "^1.1.15",
     "@repo/config": "workspace:*",
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",
-    "lucide-react": "^0.511.0",
-    "tailwind-merge": "^3.3.0",
+    "lucide-react": "^1.16.0",
+    "tailwind-merge": "^3.6.0",
     "tailwindcss-animate": "^1.0.7"
   },
   "peerDependencies": {
@@ -40,12 +40,12 @@
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.15.3",
-    "@types/react": "^19.1.2",
-    "@types/react-dom": "^19.1.2",
-    "eslint": "^9.26.0",
-    "prettier": "^3.5.3",
-    "tailwindcss": "^3.4.17",
-    "typescript": "5.8.3"
+    "@types/node": "^25.8.0",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "tailwindcss": "^3.4.19",
+    "typescript": "6.0.3"
   }
 }

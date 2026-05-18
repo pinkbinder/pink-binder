@@ -164,7 +164,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted-foreground shrink-0 text-sm font-medium">Type:</span>
+          <span className="shrink-0 text-sm font-medium text-muted-foreground">Type:</span>
           <button
             type="button"
             onClick={() => applyFilter(null)}
@@ -209,7 +209,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           })}
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted-foreground shrink-0 text-sm font-medium">Generation:</span>
+          <span className="shrink-0 text-sm font-medium text-muted-foreground">Generation:</span>
           {generationFilters.map((generation) => (
             <button
               type="button"
@@ -227,7 +227,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         </div>
         {roundupListFilters.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-muted-foreground shrink-0 text-sm font-medium">Lists:</span>
+            <span className="shrink-0 text-sm font-medium text-muted-foreground">Lists:</span>
             {roundupListFilters.map((listType) => (
               <button
                 type="button"
@@ -245,7 +245,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           </div>
         ) : null}
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-muted-foreground shrink-0 text-sm font-medium">Collection:</span>
+          <span className="shrink-0 text-sm font-medium text-muted-foreground">Collection:</span>
           {collectionFilters.map((collection) => (
             <button
               type="button"
@@ -269,14 +269,14 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       </div>
 
       {activeFilter ? (
-        <p className="text-muted-foreground text-sm">
-          Showing <span className="text-foreground font-semibold">{filteredPosts.length}</span>{' '}
+        <p className="text-sm text-muted-foreground">
+          Showing <span className="font-semibold text-foreground">{filteredPosts.length}</span>{' '}
           {`post${filteredPosts.length !== 1 ? 's' : ''}`} matching{' '}
-          <span className="text-primary font-medium">{activeFilter}</span>
+          <span className="font-medium text-primary">{activeFilter}</span>
           <button
             type="button"
             onClick={() => applyFilter(null)}
-            className="text-muted-foreground hover:text-foreground ml-2 underline underline-offset-2"
+            className="ml-2 text-muted-foreground underline underline-offset-2 hover:text-foreground"
           >
             Clear
           </button>
@@ -290,7 +290,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
               <article key={post.slug} className="block rounded-3xl">
                 <Link
                   href={buildPostHref(post.slug)}
-                  className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+                  className="block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                 >
                   {post.heroArtworkUrls && post.heroArtworkUrls.length > 0 ? (
                     <RoundupPostCard
@@ -394,9 +394,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           {hasMoreToRender ? <div ref={loadMoreRef} className="h-8" aria-hidden /> : null}
         </>
       ) : (
-        <div className="bg-card text-card-foreground rounded-3xl border px-6 py-10 text-center shadow-sm">
+        <div className="rounded-3xl border bg-card px-6 py-10 text-center text-card-foreground shadow-sm">
           <h2 className="font-title text-2xl font-semibold">No posts found</h2>
-          <p className="text-muted-foreground mt-3">
+          <p className="mt-3 text-muted-foreground">
             No posts match the selected filter. Try a different category or{' '}
             <button
               type="button"
@@ -419,25 +419,25 @@ export function BlogGridSkeleton() {
     <div className="flex flex-col gap-8" aria-busy="true" aria-label="Loading blog posts">
       <div className="flex flex-col gap-4">
         <div className="flex flex-wrap gap-2">
-          <div className="bg-muted h-8 w-14 animate-pulse rounded-full" />
-          <div className="bg-muted h-8 w-16 animate-pulse rounded-full" />
-          <div className="bg-muted h-8 w-20 animate-pulse rounded-full" />
-          <div className="bg-muted h-8 w-16 animate-pulse rounded-full" />
+          <div className="h-8 w-14 animate-pulse rounded-full bg-muted" />
+          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
+          <div className="h-8 w-20 animate-pulse rounded-full bg-muted" />
+          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
         </div>
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className="bg-muted h-8 w-24 animate-pulse rounded-full" />
+            <div key={index} className="h-8 w-24 animate-pulse rounded-full bg-muted" />
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
           {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="bg-muted h-8 w-28 animate-pulse rounded-full" />
+            <div key={index} className="h-8 w-28 animate-pulse rounded-full bg-muted" />
           ))}
         </div>
       </div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
         {Array.from({ length: 9 }, (_, index) => (
-          <div key={index} className="bg-muted h-80 animate-pulse rounded-3xl" aria-hidden />
+          <div key={index} className="h-80 animate-pulse rounded-3xl bg-muted" aria-hidden />
         ))}
       </div>
     </div>

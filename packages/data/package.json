@@ -36,10 +36,10 @@
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^22.15.3",
-    "tsx": "^4.19.4",
-    "eslint": "^9.26.0",
-    "prettier": "^3.5.3",
-    "typescript": "5.8.3"
+    "@types/node": "^25.8.0",
+    "eslint": "^9.39.4",
+    "prettier": "^3.8.3",
+    "tsx": "^4.22.0",
+    "typescript": "6.0.3"
   }
 }

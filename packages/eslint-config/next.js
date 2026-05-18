@@ -1,25 +1,13 @@
-const { resolve } = require('node:path')
+const nextCoreWebVitals = require('eslint-config-next/core-web-vitals')
+const eslintConfigPrettier = require('eslint-config-prettier')
 
-const project = resolve(process.cwd(), 'tsconfig.json')
-
-/** @type {import("eslint").Linter.Config} */
-module.exports = {
-  extends: ['eslint:recommended', 'next/core-web-vitals', 'next/typescript', 'prettier'],
-  globals: {
-    React: true,
-    JSX: true,
-  },
-  settings: {
-    'import/resolver': {
-      typescript: {
-        project,
-      },
+/** @type {import('eslint').Linter.Config[]} */
+module.exports = [
+  ...nextCoreWebVitals,
+  eslintConfigPrettier,
+  {
+    rules: {
+      'react-hooks/set-state-in-effect': 'off',
     },
   },
-  ignorePatterns: ['node_modules/', 'dist/', '.*.js'],
-  overrides: [
-    {
-      files: ['*.js?(x)', '*.ts?(x)'],
-    },
-  ],
-}
+]

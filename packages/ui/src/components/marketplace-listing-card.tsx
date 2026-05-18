@@ -44,7 +44,7 @@ function MarketplaceListingCard({
       {...props}
     >
       <div
-        className="bg-muted relative flex w-full items-center justify-center overflow-hidden"
+        className="relative flex w-full items-center justify-center overflow-hidden bg-muted"
         style={{ aspectRatio: imageAspectRatio }}
       >
         {marketplaceLogoUrl ? (
@@ -71,16 +71,16 @@ function MarketplaceListingCard({
             decoding="async"
           />
         ) : (
-          <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br">
-            <span className="text-muted-foreground text-xs">No image</span>
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 to-secondary">
+            <span className="text-xs text-muted-foreground">No image</span>
           </div>
         )}
       </div>
       <div className="flex flex-col gap-1 p-2.5">
-        <p className="text-foreground line-clamp-2 text-xs font-medium leading-tight">
+        <p className="line-clamp-2 text-xs font-medium leading-tight text-foreground">
           {listing.title}
         </p>
-        {formattedPrice ? <p className="text-primary text-sm font-bold">{formattedPrice}</p> : null}
+        {formattedPrice ? <p className="text-sm font-bold text-primary">{formattedPrice}</p> : null}
       </div>
     </a>
   )

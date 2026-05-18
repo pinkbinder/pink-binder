@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "build": "node scripts/with-env.mjs turbo run build",
-    "dev": "node scripts/with-env.mjs turbo run dev",
+    "dev": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
+    "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
+    "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "format": "turbo run format",
@@ -11,12 +13,19 @@
     "validate": "node scripts/with-env.mjs turbo run lint type-check format",
     "prepare": "husky"
   },
+  "pnpm": {
+    "overrides": {
+      "eslint": "^9.39.4",
+      "@eslint/js": "^9.39.4",
+      "tailwindcss": "^3.4.19"
+    }
+  },
   "devDependencies": {
-    "eslint": "^9.26.0",
+    "eslint": "^9.39.4",
     "husky": "^9.1.7",
-    "lint-staged": "^15.5.0",
-    "prettier": "^3.5.3",
-    "prettier-plugin-tailwindcss": "^0.6.11",
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.8.3",
+    "prettier-plugin-tailwindcss": "^0.8.0",
     "turbo": "latest"
   },
   "lint-staged": {

@@ -28,6 +28,10 @@ module.exports = {
     },
   },
   ignorePatterns: ['node_modules/', 'dist/', '.*.js'],
+  rules: {
+    // New in eslint-plugin-react-hooks@7; existing URL/carousel sync patterns are intentional.
+    'react-hooks/set-state-in-effect': 'off',
+  },
   overrides: [
     {
       files: ['*.js?(x)', '*.ts?(x)'],

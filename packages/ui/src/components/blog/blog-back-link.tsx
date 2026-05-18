@@ -10,7 +10,7 @@ export function BlogBackLink({ returnFilter }: BlogBackLinkProps) {
   return (
     <Link
       href={href}
-      className="text-primary hover:text-primary/80 mb-4 inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-[0.2em] transition-colors"
+      className="mb-4 inline-flex items-center gap-1.5 text-sm font-bold uppercase tracking-[0.2em] text-primary transition-colors hover:text-primary/80"
     >
       <span aria-hidden>←</span>
       <span>BACK</span>
