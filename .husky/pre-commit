@@ -1,4 +1,6 @@
 #!/usr/bin/env sh
 set -e
 
-pnpm validate
+pnpm format:fix
+git add .
+pnpm validate:pre-commit
