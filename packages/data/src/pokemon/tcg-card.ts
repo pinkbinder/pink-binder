@@ -1,4 +1,14 @@
 /** Client-safe Pokémon TCG card shape (no Node / server-only deps). */
+export interface TcgCardPrice {
+  market?: number
+  low?: number
+  mid?: number
+  high?: number
+  currency: 'USD'
+  updatedAt?: string
+  source: 'pokemontcg' | 'tcgdex'
+}
+
 export interface PokemonTcgCard {
   id: string
   name: string
@@ -11,4 +21,6 @@ export interface PokemonTcgCard {
   setSeries: string
   number: string
   artist: string | null
+  tcgplayerUrl?: string
+  price?: TcgCardPrice
 }

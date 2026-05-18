@@ -89,11 +89,12 @@ export function LandingBlogHighlight({
         href={post.href}
         className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
       >
-        {post.heroArtworkUrls && post.heroArtworkUrls.length > 1 ? (
+        {post.heroArtworkUrls && post.heroArtworkUrls.length > 0 ? (
           <RoundupPostCard
             title={post.title}
             excerpt={post.excerpt}
             artworkUrls={post.heroArtworkUrls}
+            fillFrame={post.heroArtworkFill}
             meta={post.meta}
             fallback={post.thumbnailFallback ?? post.thumbnail}
           />

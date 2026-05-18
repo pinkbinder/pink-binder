@@ -15,6 +15,9 @@
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
   },
+  "dependencies": {
+    "@repo/marketplaces": "workspace:*"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",

@@ -1,4 +1,7 @@
-import { SHOP_LINKS, type ShopLink } from './site'
+import {
+  MARKETPLACE_SHOP_LINKS as SHOP_LINKS,
+  type MarketplaceShopLink as ShopLink,
+} from '@repo/marketplaces/config'
 
 export const MARKETPLACE_SLUGS = ['ebay', 'etsy', 'tcgplayer', 'whatnot'] as const
 export type MarketplaceSlug = (typeof MARKETPLACE_SLUGS)[number]

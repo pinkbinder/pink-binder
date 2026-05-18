@@ -6,3 +6,6 @@ coverage
 .turbo
 *.lock
 pnpm-lock.yaml
+
+# Generated / bulk data caches (not hand-edited source)
+packages/data/cache/

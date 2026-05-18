@@ -7,6 +7,7 @@ export interface LandingBlogFeaturedPost {
   meta?: string
   href: string
   heroArtworkUrls?: string[]
+  heroArtworkFill?: boolean
 }
 
 export interface LandingBlogFeaturedPayload {

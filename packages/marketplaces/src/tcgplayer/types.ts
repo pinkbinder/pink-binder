@@ -1,0 +1,44 @@
+/** Where USD market data came from (TCGPlayer-aligned fields). */
+export type TcgCardPriceSource = 'tcgdex' | 'pokemontcg'
+
+export interface TcgCardPrice {
+  market?: number
+  low?: number
+  mid?: number
+  high?: number
+  currency: 'USD'
+  updatedAt?: string
+  source: TcgCardPriceSource
+}
+
+/** Unified Pokémon TCG card + market snapshot from TCGdex and/or pokemontcg.io. */
+export interface TcgCardRecord {
+  id: string
+  name: string
+  imageSmall: string
+  imageLarge: string
+  imageSmallFallback?: string
+  imageLargeFallback?: string
+  rarity: string | null
+  setName: string
+  setSeries: string
+  number: string
+  artist: string | null
+  tcgplayerUrl?: string
+  price?: TcgCardPrice
+  /** Which API supplied the card metadata used in this record. */
+  metadataSource: TcgCardPriceSource
+}
+
+export type TcgCardArtistFilter = 'yuka-morii' | 'asako-ito'
+
+export interface GetPokemonTcgCardsOptions {
+  /** Exact species name (e.g. "Gengar"). */
+  speciesName: string
+  artistFilter?: TcgCardArtistFilter
+  /** Max cards returned (default 36). */
+  limit?: number
+  /** Extra pages for artist-filtered searches (default 2 × 50). */
+  maxPages?: number
+  revalidateSeconds?: number
+}

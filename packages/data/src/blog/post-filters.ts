@@ -1,4 +1,11 @@
+import { ALL_ROUNDUP_LIST_CATEGORIES } from './roundup-list-categories'
+import { SPECIES_GUIDES_CATEGORY } from './categories'
 import { parseTypeCategory } from '../ui/type-colors'
+
+const COLLECTION_FILTER_SKIP = new Set<string>([
+  SPECIES_GUIDES_CATEGORY,
+  ...ALL_ROUNDUP_LIST_CATEGORIES,
+])
 
 interface PostWithCategories {
   categories: string[]
@@ -30,16 +37,38 @@ export function extractTypeFilters(posts: PostWithCategories[]): string[] {
 }
 
 export function extractCollectionFilters(posts: PostWithCategories[]): string[] {
-  const skipPattern = /^(Cute Pokémon Guides|.+ Type|Gen [IVX]+)$/
+  const skipPattern = /^(.+ Type|Gen [IVX]+)$/
   const collections = new Set<string>()
   for (const post of posts) {
     for (const cat of post.categories) {
+      if (COLLECTION_FILTER_SKIP.has(cat)) {
+        continue
+      }
       if (!skipPattern.test(cat)) {
         collections.add(cat)
       }
     }
   }
   return [...collections].sort()
+}
+
+/** Blog index “Lists” chips: species guides + roundup angles, stable order. */
+const ALL_LIST_FILTER_CATEGORIES: readonly string[] = [
+  SPECIES_GUIDES_CATEGORY,
+  ...ALL_ROUNDUP_LIST_CATEGORIES,
+]
+
+/** Roundup list types + species guides for blog index filter chips. */
+export function extractRoundupListFilters(posts: PostWithCategories[]): string[] {
+  const present = new Set<string>()
+  for (const post of posts) {
+    for (const cat of post.categories) {
+      if (ALL_LIST_FILTER_CATEGORIES.includes(cat)) {
+        present.add(cat)
+      }
+    }
+  }
+  return ALL_LIST_FILTER_CATEGORIES.filter((label) => present.has(label))
 }
 
 export function extractGenerationFilters(posts: PostWithCategories[]): string[] {
