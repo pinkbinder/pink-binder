@@ -47,7 +47,7 @@ export function PopularityRankBadge({
       <div
         id={tooltipId}
         role="tooltip"
-        className="invisible absolute right-0 top-full z-20 mt-1.5 w-64 rounded-xl border bg-popover p-3 text-xs leading-relaxed text-popover-foreground shadow-md opacity-0 transition-all group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
+        className="invisible absolute right-0 top-full z-30 mt-1.5 w-96 max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border bg-popover p-3 text-xs leading-snug text-popover-foreground opacity-0 shadow-md transition-all group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
       >
         <p className="font-medium text-foreground">Fan survey data</p>
         {tooltipLines.map((line) => (
