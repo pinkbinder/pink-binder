@@ -1,5 +1,5 @@
 ---
-description: Rule for writing temporary/throwaway scripts
+description: Rule for writing temporary/throwable scripts
 globs: scripts/**,packages/data/scripts/**
 alwaysApply: false
 ---
@@ -8,9 +8,26 @@ alwaysApply: false
 
 When creating one-off, exploratory, or debugging scripts, write them to `packages/data/scripts/temp/` instead of `packages/data/scripts/`. The `packages/data/scripts/temp/` directory is gitignored and will not be committed.
 
-Only scripts that are meant to be long-lived and re-run regularly should live in `packages/data/scripts/` directly. Current permanent scripts:
+Only scripts that are meant to be long-lived and re-run regularly should live in `packages/data/scripts/` directly. Write them as **TypeScript** (`.ts`) so `pnpm --filter @repo/data type-check` covers them. Run via `tsx scripts/<name>.ts` (see `packages/data/package.json`).
 
-- `sync-pokemon-catalog-collections.mjs` — Rebuilds collection tags on all catalog entries
-- `build-pokemon-data-cache.mjs` — Fetches and caches enriched Pokemon data from PokeAPI
-- `audit-collection-tags.mjs` — Audits collection tagging accuracy
-- `species-collection-slug-sets.json` — Data file used by sync script
+## Maintenance scripts (`pnpm --filter @repo/data …`)
+
+| Script | Command |
+|--------|---------|
+| `build-pokemon-data-cache.ts` | `sync-api` |
+| `enrich-michi-scene-art.ts` | `enrich-michi-scene-art` |
+| `enrich-expensive-by-type.ts` | `enrich-expensive-by-type` |
+| `enrich-competitive-snippet.ts` | `enrich-competitive` |
+| `enrich-ability-descriptions.ts` | `enrich-abilities` |
+| `generate-pokemon-facts.ts` | `generate-facts` |
+| `audit-collection-tags.ts` | `audit-tags` |
+| `backfill-artwork-urls.ts` | `backfill-artwork` |
+
+## Shared libs (`scripts/lib/`)
+
+- `cache-paths.ts` — package root + cache directory paths
+- `pokemon-cache.ts` — read/write `cache/pokemon/*.json`
+- `argv.ts` — `--limit`, `--only`, flags
+- `artofpkm-scraper.ts` — artofpkm.com scene art scrape
+
+Pokemon species metadata lives in committed `packages/data/cache/pokemon/` (not a separate catalog TS file).

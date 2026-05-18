@@ -10,6 +10,7 @@ import {
   getCollectionBadgeIcon,
   extractCollectionFilters,
   extractGenerationFilters,
+  extractRoundupListFilters,
   extractTypeFilters,
   getFilterValueForCategory,
   getPokemonTypeColors,
@@ -46,10 +47,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const typeFilters = useMemo(() => extractTypeFilters(posts), [posts])
   const generationFilters = useMemo(() => extractGenerationFilters(posts), [posts])
   const collectionFilters = useMemo(() => extractCollectionFilters(posts), [posts])
+  const roundupListFilters = useMemo(() => extractRoundupListFilters(posts), [posts])
 
   const allFilterValues = useMemo(
-    () => new Set<string>([...typeFilters, ...generationFilters, ...collectionFilters]),
-    [typeFilters, generationFilters, collectionFilters]
+    () =>
+      new Set<string>([
+        ...typeFilters,
+        ...generationFilters,
+        ...collectionFilters,
+        ...roundupListFilters,
+      ]),
+    [typeFilters, generationFilters, collectionFilters, roundupListFilters]
   )
   const typeVisuals = useMemo(
     () =>
@@ -217,6 +225,25 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
             </button>
           ))}
         </div>
+        {roundupListFilters.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-muted-foreground shrink-0 text-sm font-medium">Lists:</span>
+            {roundupListFilters.map((listType) => (
+              <button
+                type="button"
+                key={listType}
+                onClick={() => applyFilter(activeFilter === listType ? null : listType)}
+                className={`${CLICKABLE_BADGE_CLASS} ${
+                  activeFilter === listType
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                }`}
+              >
+                {listType}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-muted-foreground shrink-0 text-sm font-medium">Collection:</span>
           {collectionFilters.map((collection) => (
@@ -265,11 +292,12 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                   href={buildPostHref(post.slug)}
                   className="focus-visible:ring-ring block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 >
-                  {post.heroArtworkUrls && post.heroArtworkUrls.length > 1 ? (
+                  {post.heroArtworkUrls && post.heroArtworkUrls.length > 0 ? (
                     <RoundupPostCard
                       title={post.title}
                       excerpt={post.description}
                       artworkUrls={post.heroArtworkUrls}
+                      fillFrame={post.heroArtworkFill}
                       meta={formatPostDate(post.date)}
                       fallback={defaultPostThumbnail}
                     />

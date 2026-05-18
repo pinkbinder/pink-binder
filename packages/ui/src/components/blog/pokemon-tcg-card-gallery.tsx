@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/marketplaces/config'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 
@@ -17,6 +18,8 @@ export function PokemonTcgCardGallery({
   const [showAll, setShowAll] = useState(false)
   const visibleCards = showAll ? cards : cards.slice(0, INITIAL_VISIBLE)
   const hiddenCount = cards.length - INITIAL_VISIBLE
+  const primarySource = TCG_CARD_DATA_ATTRIBUTION[0]!
+  const backupSource = TCG_CARD_DATA_ATTRIBUTION[1]!
 
   return (
     <>
@@ -38,25 +41,25 @@ export function PokemonTcgCardGallery({
         </button>
       ) : null}
       <p className="text-muted-foreground mt-4 text-xs">
-        Showing {visibleCards.length} of {cards.length} loaded cards · data from{' '}
+        Showing {visibleCards.length} of {cards.length} loaded cards · card data from{' '}
         <a
-          href="https://pokemontcg.io"
+          href={primarySource.href}
           target="_blank"
           rel="noreferrer"
           className="underline underline-offset-2"
         >
-          pokemontcg.io
+          {primarySource.label}
         </a>{' '}
-        · images via{' '}
+        with{' '}
         <a
-          href="https://scrydex.com"
+          href={backupSource.href}
           target="_blank"
           rel="noreferrer"
           className="underline underline-offset-2"
         >
-          Scrydex
+          {backupSource.label}
         </a>{' '}
-        when the official CDN is unavailable
+        as backup · images via {TCG_CARD_IMAGE_ATTRIBUTION.label} when needed
       </p>
     </>
   )

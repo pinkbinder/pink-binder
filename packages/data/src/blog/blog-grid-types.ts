@@ -14,6 +14,8 @@ export interface EnrichedPostForGrid {
   date: string
   image: string
   heroArtworkUrls?: string[]
+  /** True for cute Michi Method roundup heroes (single scene fills the frame). */
+  heroArtworkFill?: boolean
   tags: string[]
   speciesFilterTags: string[]
   categories: string[]

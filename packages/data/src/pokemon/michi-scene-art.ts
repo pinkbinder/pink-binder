@@ -12,6 +12,66 @@ export interface MichiSceneArtEntry {
   cardId?: string
   pageUrl?: string
   attribution: string
+  /** Populated by enrich when probed; used to prefer wide scenes in blog layouts. */
+  width?: number
+  height?: number
+}
+
+/** Minimal fields for landscape scoring (hero, binder, enrich). */
+export type MichiSceneLandscapeInput = Pick<
+  MichiSceneArtEntry,
+  'url' | 'label' | 'source' | 'width' | 'height'
+>
+
+const LANDSCAPE_LABEL_HINTS =
+  /\b(landscape|panoram|wide|horizontal|environment|scenery|backdrop|river|camping|field|sky|scene|illustration|artwork|game artworks)\b/i
+
+const PORTRAIT_LABEL_HINTS =
+  /\b(portrait|vertical|card art|textless|holo|rare secret|full art card)\b/i
+
+/** Higher scores favour wide scenes for blog headers and binder spreads. */
+export function landscapeScoreMichiScene(entry: MichiSceneLandscapeInput): number {
+  const width = entry.width
+  const height = entry.height
+  if (width != null && height != null && width > 0 && height > 0) {
+    const ratio = width / height
+    if (ratio >= 1.2) return 100 + Math.min(30, Math.floor((ratio - 1) * 15))
+    if (ratio <= 0.85) return -50
+    return 20
+  }
+
+  let score = 0
+  if (entry.source === 'artofpkm') score += 40
+  if (entry.source === 'tcg') score -= 45
+  if (entry.source === 'pokeos') score += 10
+
+  const label = entry.label ?? ''
+  if (LANDSCAPE_LABEL_HINTS.test(label)) score += 22
+  if (PORTRAIT_LABEL_HINTS.test(label)) score -= 18
+
+  if (entry.url.includes('artofpkm.com')) score += 12
+
+  return score
+}
+
+export function compareMichiSceneLandscapePreference(
+  a: MichiSceneLandscapeInput,
+  b: MichiSceneLandscapeInput
+): number {
+  return landscapeScoreMichiScene(b) - landscapeScoreMichiScene(a)
+}
+
+export function sortMichiSceneArtByLandscapePreference(
+  entries: MichiSceneArtEntry[]
+): MichiSceneArtEntry[] {
+  return [...entries].sort(compareMichiSceneLandscapePreference)
+}
+
+export function pickBestLandscapeMichiScene(
+  entries: MichiSceneArtEntry[]
+): MichiSceneArtEntry | undefined {
+  if (entries.length === 0) return undefined
+  return sortMichiSceneArtByLandscapePreference(entries)[0]
 }
 
 export interface MichiSceneDiscoveryLink {
@@ -175,7 +235,9 @@ export function resolveMichiSceneArt(options: {
   const max = options.max ?? 2
   const cached = (options.cached ?? []).filter((entry) => entry.url?.trim())
 
-  const artofPkmCached = cached.filter(isArtofPkmScene).slice(0, max)
+  const artofPkmCached = sortMichiSceneArtByLandscapePreference(
+    cached.filter(isArtofPkmScene)
+  ).slice(0, max)
   if (artofPkmCached.length >= max) return artofPkmCached
 
   const merged = [...artofPkmCached]
@@ -197,15 +259,14 @@ export function resolveMichiSceneArt(options: {
     }
   }
 
-  return merged.slice(0, max)
+  return sortMichiSceneArtByLandscapePreference(merged).slice(0, max)
 }
 
+/** Derived at runtime from dex + name — not stored in pokemon cache JSON. */
 export function resolveMichiSceneDiscoveryLinks(options: {
-  cached?: MichiSceneDiscoveryLink[] | null
   name: string
   pokedexNumber: number
 }): MichiSceneDiscoveryLink[] {
-  if (options.cached?.length) return options.cached
   return buildMichiSceneDiscoveryLinks({
     name: options.name,
     pokedexNumber: options.pokedexNumber,

@@ -2,12 +2,15 @@ import { getPostHref, getRandomRoundupPost } from '@repo/data'
 import { getPublicBlogUrl } from '@repo/config'
 import { formatPostDate } from '@repo/ui/server'
 import type { LandingBlogFeaturedPayload } from '@repo/data'
+import { unstable_noStore as noStore } from 'next/cache'
 
 const BLOG_URL = getPublicBlogUrl()
 
 export type { LandingBlogFeaturedPayload }
 
+/** Picks a new roundup on every request (not build-time static). */
 export async function getLandingBlogFeatured(): Promise<LandingBlogFeaturedPayload | null> {
+  noStore()
   const featuredRoundup = getRandomRoundupPost()
   if (!featuredRoundup) {
     return null
@@ -25,7 +28,12 @@ export async function getLandingBlogFeatured(): Promise<LandingBlogFeaturedPaylo
       excerpt: featuredRoundup.description,
       thumbnail: resolveBlogImageUrl(featuredRoundup.image),
       thumbnailFallback: resolveBlogImageUrl('/images/logo.png'),
-      thumbnailFit: 'contain',
+      thumbnailFit:
+        featuredRoundup.roundup?.kind === 'species' && featuredRoundup.roundup.angle === 'cutest'
+          ? 'cover'
+          : 'contain',
+      heroArtworkFill:
+        featuredRoundup.roundup?.kind === 'species' && featuredRoundup.roundup.angle === 'cutest',
       meta: formatPostDate(featuredRoundup.date),
       heroArtworkUrls,
       href: getPostHref(featuredRoundup.slug, BLOG_URL),

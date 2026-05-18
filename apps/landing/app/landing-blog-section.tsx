@@ -1,6 +1,8 @@
 import { getLandingBlogFeatured } from '../lib/landing-blog-featured'
 import { LandingBlogHighlight } from '@repo/ui'
 
+export const dynamic = 'force-dynamic'
+
 export async function LandingBlogSection() {
   const featured = await getLandingBlogFeatured()
   if (!featured) {

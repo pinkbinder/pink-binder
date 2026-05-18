@@ -15,17 +15,19 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore",
-    "merge-data": "node scripts/merge-pokemon-data.mjs",
-    "sync-api": "node scripts/build-pokemon-data-cache.mjs",
-    "audit-tags": "node scripts/audit-collection-tags.mjs",
-    "enrich-abilities": "node scripts/enrich-ability-descriptions.mjs",
-    "generate-facts": "node scripts/generate-pokemon-facts.mjs",
-    "enrich-competitive": "node scripts/enrich-competitive-snippet.mjs",
-    "backfill-artwork": "node scripts/backfill-artwork-urls.mjs",
-    "enrich-michi-scene-art": "node scripts/enrich-michi-scene-art.mjs"
+    "sync-api": "tsx scripts/build-pokemon-data-cache.ts",
+    "audit-tags": "tsx scripts/audit-collection-tags.ts",
+    "enrich-abilities": "tsx scripts/enrich-ability-descriptions.ts",
+    "generate-facts": "tsx scripts/generate-pokemon-facts.ts",
+    "enrich-competitive": "tsx scripts/enrich-competitive-snippet.ts",
+    "backfill-artwork": "tsx scripts/backfill-artwork-urls.ts",
+    "enrich-michi-scene-art": "tsx scripts/enrich-michi-scene-art.ts",
+    "enrich-expensive-by-type": "tsx scripts/enrich-expensive-by-type.ts",
+    "enrich-artist-tcg-cache": "tsx scripts/enrich-artist-tcg-cache.ts"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
+    "@repo/marketplaces": "workspace:*",
     "gray-matter": "^4.0.3",
     "server-only": "^0.0.1"
   },
@@ -35,6 +37,7 @@
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
+    "tsx": "^4.19.4",
     "eslint": "^9.26.0",
     "prettier": "^3.5.3",
     "typescript": "5.8.3"

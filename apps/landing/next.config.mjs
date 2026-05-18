@@ -1,5 +1,9 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import {
+  ebayListingImageRemotePatterns,
+  googleFaviconRemotePatterns,
+} from '@repo/marketplaces/next-images'
 import { loadMonorepoEnv } from '../../scripts/load-monorepo-env.mjs'
 import { withMonorepoDevSupport } from '../../scripts/next-monorepo-config.mjs'
 
@@ -13,21 +17,7 @@ const nextConfig = withMonorepoDevSupport(
   {
     transpilePackages: ['@repo/ui', '@repo/config', '@repo/data', '@repo/marketplaces'],
     images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'www.google.com',
-          pathname: '/s2/favicons/**',
-        },
-        {
-          protocol: 'https',
-          hostname: 'i.ebayimg.com',
-        },
-        {
-          protocol: 'https',
-          hostname: 'thumbs.ebaystatic.com',
-        },
-      ],
+      remotePatterns: [...googleFaviconRemotePatterns(), ...ebayListingImageRemotePatterns()],
     },
   },
   {

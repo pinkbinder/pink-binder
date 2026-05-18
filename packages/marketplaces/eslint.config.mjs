@@ -19,5 +19,6 @@ export default [
     parserOptions: {
       project: true,
     },
+    ignorePatterns: ['next-images.mjs'],
   }),
 ]

@@ -1,12 +1,14 @@
-const EBAY_OAUTH_URL = 'https://api.ebay.com/identity/v1/oauth2/token'
-const EBAY_OAUTH_SCOPE = 'https://api.ebay.com/oauth/api_scope'
+import { EBAY_API } from '../config/apis'
+import { EBAY_ENV } from '../config/env'
+
 const TOKEN_REFRESH_BUFFER_MS = 60_000
 
 let cachedAccessToken: { value: string; expiresAt: number } | null = null
 
 export function getEbayClientCredentials(): { clientId: string; clientSecret: string } | null {
-  const clientId = process.env.EBAY_APP_ID?.trim()
-  const clientSecret = process.env.EBAY_CLIENT_SECRET?.trim() ?? process.env.EBAY_CERT_ID?.trim()
+  const clientId = process.env[EBAY_ENV.appId]?.trim()
+  const clientSecret =
+    process.env[EBAY_ENV.clientSecret]?.trim() ?? process.env[EBAY_ENV.certId]?.trim()
 
   if (!clientId || !clientSecret) {
     return null
@@ -31,7 +33,7 @@ export async function getEbayApplicationAccessToken(credentials?: {
 
   const basicAuth = Buffer.from(`${resolved.clientId}:${resolved.clientSecret}`).toString('base64')
 
-  const response = await fetch(EBAY_OAUTH_URL, {
+  const response = await fetch(EBAY_API.oauthTokenUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
@@ -39,7 +41,7 @@ export async function getEbayApplicationAccessToken(credentials?: {
     },
     body: new URLSearchParams({
       grant_type: 'client_credentials',
-      scope: EBAY_OAUTH_SCOPE,
+      scope: EBAY_API.oauthScope,
     }),
   })
 
