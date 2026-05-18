@@ -1,10 +1,10 @@
-import { getPublicBlogUrl, getPublicLandingUrl } from '@repo/config'
+import { getSitemapBlogUrl, getSitemapLandingUrl } from '@repo/config'
 import type { MetadataRoute } from 'next'
 
 /** Served automatically at `/robots.txt` (Next.js MetadataRoute). */
 export default function robots(): MetadataRoute.Robots {
-  const landingUrl = getPublicLandingUrl().replace(/\/$/, '')
-  const blogUrl = getPublicBlogUrl().replace(/\/$/, '')
+  const landingUrl = getSitemapLandingUrl()
+  const blogUrl = getSitemapBlogUrl()
 
   const sitemaps = [`${landingUrl}/sitemap.xml`]
   if (blogUrl !== landingUrl) {
