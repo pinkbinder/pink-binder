@@ -23,7 +23,10 @@
     "backfill-artwork": "tsx scripts/backfill-artwork-urls.ts",
     "enrich-michi-scene-art": "tsx scripts/enrich-michi-scene-art.ts",
     "enrich-expensive-by-type": "tsx scripts/enrich-expensive-by-type.ts",
-    "enrich-artist-tcg-cache": "tsx scripts/enrich-artist-tcg-cache.ts"
+    "enrich-artist-tcg-cache": "tsx scripts/enrich-artist-tcg-cache.ts",
+    "compute-type-weaknesses": "tsx scripts/compute-type-weaknesses.ts",
+    "enrich-pokeapi-extra": "tsx scripts/enrich-pokeapi-extra.ts",
+    "enrich-tcg-type-profile": "tsx scripts/enrich-tcg-type-profile.ts"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
