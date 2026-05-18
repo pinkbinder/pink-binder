@@ -25,3 +25,4 @@ export {
   type RoundupBinderSlot,
 } from './roundup-mini-binder-spread'
 export { TcgCardPriceLabel } from './tcg-card-price-label'
+export { PopularityRankBadge, type PopularityRankBadgeProps } from './popularity-rank-badge'
