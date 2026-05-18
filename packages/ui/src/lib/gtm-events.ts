@@ -62,7 +62,9 @@ export function trackViewItem({
  * @see https://developers.google.com/analytics/devguides/collection/ga4/reference/events#search
  */
 export function trackSearch({ searchTerm }: { searchTerm: string }) {
-  sendGTMEvent({ event: 'search', search_term: searchTerm })
+  const sanitized = searchTerm.trim().slice(0, 100)
+  if (!sanitized) return
+  sendGTMEvent({ event: 'search', search_term: sanitized })
 }
 
 /**
