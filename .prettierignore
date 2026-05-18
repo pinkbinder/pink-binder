@@ -8,5 +8,5 @@ coverage
 *.lock
 pnpm-lock.yaml
 
-# Generated / bulk data caches (not hand-edited source)
+# Generated Pokémon / TCG JSON cache (hand-edited source lives in src/ and scripts/)
 packages/data/cache/
