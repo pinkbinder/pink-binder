@@ -251,7 +251,6 @@ export function ShareLinkDialog({
                   >
                     <IconButton
                       label={platform.label}
-                      external
                       onClick={(e) => {
                         e.preventDefault()
                         handlePlatformShare(platform.buildUrl)

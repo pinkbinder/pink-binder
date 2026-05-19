@@ -1,36 +1,54 @@
 import * as React from 'react'
 import type { SocialIcon, SocialLink } from '@repo/config'
 import { cn } from '../lib/utils'
+import { Button } from './button'
 
-interface IconButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+const ICON_BUTTON_CN =
+  'h-auto rounded-full bg-primary p-2 text-primary-foreground ring-1 ring-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+
+interface IconButtonLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   label: string
+  href: string
   external?: boolean
 }
 
-function IconButton({
-  label,
-  className,
-  children,
-  href,
-  external,
-  target,
-  rel,
-  ...props
-}: IconButtonProps) {
+interface IconButtonActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  label: string
+  href?: undefined
+  external?: never
+}
+
+type IconButtonProps = IconButtonLinkProps | IconButtonActionProps
+
+function IconButton({ label, className, children, ...props }: IconButtonProps) {
+  if ('href' in props && props.href) {
+    const { href, external, target, rel, ...rest } = props as IconButtonLinkProps
+    return (
+      <Button asChild variant="ghost" className={cn(ICON_BUTTON_CN, className)}>
+        <a
+          href={href}
+          aria-label={label}
+          target={external ? '_blank' : target}
+          rel={external ? 'noopener noreferrer' : rel}
+          {...rest}
+        >
+          {children}
+        </a>
+      </Button>
+    )
+  }
+
+  const { ...rest } = props as IconButtonActionProps
   return (
-    <a
-      href={href}
+    <Button
+      type="button"
+      variant="ghost"
       aria-label={label}
-      target={external ? '_blank' : target}
-      rel={external ? 'noopener noreferrer' : rel}
-      className={cn(
-        'inline-flex rounded-full bg-primary p-2 text-primary-foreground ring-1 ring-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
-        className
-      )}
-      {...props}
+      className={cn(ICON_BUTTON_CN, className)}
+      {...rest}
     >
       {children}
-    </a>
+    </Button>
   )
 }
 
