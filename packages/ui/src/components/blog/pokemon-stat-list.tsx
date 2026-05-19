@@ -6,6 +6,15 @@ type PokemonStatListEntry = {
   value: number
 }
 
+const STAT_EMOJI_BY_NAME: Record<string, string> = {
+  hp: '❤️',
+  attack: '⚔️',
+  defense: '🛡️',
+  'special-attack': '✨',
+  'special-defense': '🔮',
+  speed: '💨',
+}
+
 function statBarColor(value: number): string {
   if (value >= 150) return '#5A8FFF'
   if (value >= 100) return '#50C878'
@@ -27,10 +36,14 @@ export function PokemonStatList({
       <div className="space-y-3">
         {stats.map((stat) => {
           const pct = Math.min(Math.round((stat.value / 255) * 100), 100)
+          const emoji = STAT_EMOJI_BY_NAME[stat.name] ?? '•'
 
           return (
             <div key={stat.name} className="flex items-center gap-3">
-              <p className="w-16 shrink-0 text-right text-xs text-muted-foreground">{stat.label}</p>
+              <p className="inline-flex w-20 shrink-0 items-center justify-end gap-1 text-right text-xs text-muted-foreground">
+                <span aria-hidden>{emoji}</span>
+                <span>{stat.label}</span>
+              </p>
               <p className="w-8 shrink-0 text-sm font-semibold tabular-nums">{stat.value}</p>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
                 <div

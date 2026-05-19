@@ -1,5 +1,9 @@
 import Link from 'next/link'
-import { CLICKABLE_BADGE_CLASS, getPokemonTypeColors, getPokemonTypeLogoUrl } from '@repo/data/client'
+import {
+  CLICKABLE_BADGE_CLASS,
+  getPokemonTypeColors,
+  getPokemonTypeLogoUrl,
+} from '@repo/data/client'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 
 export function PokemonTypeBadge({ type, href }: { type: string; href: string }) {
