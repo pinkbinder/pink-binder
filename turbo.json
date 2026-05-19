@@ -21,7 +21,10 @@
         ".env.local",
         ".env.production",
         ".env.production.local",
-        "../../packages/data/cache/pokemon/**"
+        "../../packages/data/cache/normalized/species/**",
+        "../../packages/data/cache/normalized/meta/**",
+        "../../packages/data/cache/normalized/cards/**",
+        "../../packages/data/cache/normalized/popularity/**"
       ],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [
