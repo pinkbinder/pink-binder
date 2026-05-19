@@ -1,5 +1,6 @@
 'use client'
 
+import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 
@@ -72,7 +73,7 @@ export function BinderSpriteReferencePanel({
                 fill
                 sizes={compact ? '72px' : '120px'}
                 className="object-contain drop-shadow-md"
-                unoptimized={item.url.endsWith('.svg')}
+                unoptimized={shouldBypassNextImageOptimization(item.url)}
                 onError={() => {
                   setFailedUrls((prev) => {
                     if (prev.has(item.url)) return prev

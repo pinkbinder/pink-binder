@@ -1,3 +1,4 @@
+import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
 import Image from 'next/image'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
@@ -104,7 +105,7 @@ function BinderPage({
                     width={48}
                     height={48}
                     className="object-contain"
-                    unoptimized={slot.url.endsWith('.svg')}
+                    unoptimized={shouldBypassNextImageOptimization(slot.url)}
                   />
                 </div>
               )}

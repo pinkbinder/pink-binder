@@ -1,6 +1,7 @@
 'use client'
 
 import { tcgCardImageCandidates, type PokemonTcgCard } from '@repo/data/client'
+import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 
@@ -47,6 +48,7 @@ export function TcgCardImage({
       height={fill ? undefined : height}
       className={className}
       sizes={sizes}
+      unoptimized={shouldBypassNextImageOptimization(src)}
       onError={() => {
         setCandidateIndex((current) => (current + 1 < candidates.length ? current + 1 : current))
       }}
