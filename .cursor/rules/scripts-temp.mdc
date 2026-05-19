@@ -8,26 +8,38 @@ alwaysApply: false
 
 When creating one-off, exploratory, or debugging scripts, write them to `packages/data/scripts/temp/` instead of `packages/data/scripts/`. The `packages/data/scripts/temp/` directory is gitignored and will not be committed.
 
-Only scripts that are meant to be long-lived and re-run regularly should live in `packages/data/scripts/` directly. Write them as **TypeScript** (`.ts`) so `pnpm --filter @repo/data type-check` covers them. Run via `tsx scripts/<name>.ts` (see `packages/data/package.json`).
+Only scripts that are meant to be long-lived and re-run regularly should live in `packages/data/scripts/` directly. Write them as **TypeScript** (`.ts`) so `pnpm --filter @repo/data type-check` covers them.
 
-## Maintenance scripts (`pnpm --filter @repo/data …`)
+## Package commands (`pnpm --filter @repo/data …`)
 
-| Script | Command |
-|--------|---------|
-| `build-pokemon-data-cache.ts` | `sync-api` |
-| `enrich-michi-scene-art.ts` | `enrich-michi-scene-art` |
-| `enrich-expensive-by-type.ts` | `enrich-expensive-by-type` |
-| `enrich-competitive-snippet.ts` | `enrich-competitive` |
-| `enrich-ability-descriptions.ts` | `enrich-abilities` |
-| `generate-pokemon-facts.ts` | `generate-facts` |
-| `audit-collection-tags.ts` | `audit-tags` |
-| `backfill-artwork-urls.ts` | `backfill-artwork` |
+| Command | Orchestrator | Purpose |
+|---------|--------------|---------|
+| `extract` | `scripts/1-extract/index.ts` | Harvest raw data (scratch → `cache/raw/`) |
+| `enrich` | `scripts/enrich/index.ts` | Legacy live-API enrich (`cache/normalized/`) — until `2-transform/` |
+| `audit-tags` | `scripts/audit-collection-tags.ts` | Read-only collection tag audit |
+
+Run individual step files directly with `tsx scripts/…` when debugging a single step.
 
 ## Shared libs (`scripts/lib/`)
 
-- `cache-paths.ts` — package root + cache directory paths
-- `pokemon-cache.ts` — read/write `cache/pokemon/*.json`
+- `cache-paths.ts` — re-exports path constants from `src/paths.ts` (`speciesCacheDir`, `normalizedMetaDir`, etc.)
+- `pokemon-cache.ts` — read/write `cache/normalized/species/{slug}.json` via `speciesCacheDir`
+- `raw-pokeapi-index.ts` — list species from `cache/raw/pokeapi/` (extract layer; no normalized dependency)
 - `argv.ts` — `--limit`, `--only`, flags
 - `artofpkm-scraper.ts` — artofpkm.com scene art scrape
 
-Pokemon species metadata lives in committed `packages/data/cache/pokemon/` (not a separate catalog TS file).
+## Cache layout
+
+Committed production enrich data lives under `packages/data/cache/normalized/`:
+
+| Path | Contents |
+|------|----------|
+| `species/` | Per-species JSON + `index.json` |
+| `meta/` | `ability-descriptions.json`, `pokemon-collections.json` |
+| `cards/artists/` | Artist TCG cache |
+| `cards/expensive-by-type/` | Per-type expensive card snapshots |
+| `popularity/` | Survey CSVs |
+
+Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
+
+Offline ETL: extract scripts write gitignored `raw/` and `scratch/` only. They must not read `normalized/`. Transform scripts (future `2-transform/`) read raw and write normalized.
