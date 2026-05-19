@@ -1,5 +1,41 @@
 import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
 
+/**
+ * Remote hosts served with `unoptimized` on `next/image` so the browser loads CDNs directly.
+ * Pair with `blogNextImagesConfig().unoptimized` on Vercel so new Image usages cannot bill transforms.
+ */
+export const REMOTE_IMAGE_BYPASS_HOSTS = [
+  ...TCG_CARD_IMAGE_HOSTS,
+  ...EBAY_CDN_HOSTS,
+  'raw.githubusercontent.com',
+  'www.artofpkm.com',
+  'projectpokemon.org',
+] as const
+
+const BYPASS_HOSTS = new Set<string>(REMOTE_IMAGE_BYPASS_HOSTS)
+
+/**
+ * Use `unoptimized` on `next/image` for remote CDN assets. Local `/public` paths may
+ * still use the optimizer when the hosting plan allows it.
+ */
+export function shouldBypassNextImageOptimization(src: string): boolean {
+  const trimmed = src.trim()
+  if (!trimmed) {
+    return false
+  }
+  if (trimmed.endsWith('.svg')) {
+    return true
+  }
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) {
+    return false
+  }
+  try {
+    return BYPASS_HOSTS.has(new URL(trimmed).hostname)
+  } catch {
+    return false
+  }
+}
+
 export interface NextImageRemotePattern {
   protocol: 'https'
   hostname: string
