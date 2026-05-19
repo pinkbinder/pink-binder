@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/marketplaces/config'
 import type { PokemonTcgCard } from '@repo/data/client'
+import { Button } from '../button'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 
 /** ~3 rows on md (4 columns). */
@@ -32,13 +33,13 @@ export function PokemonTcgCardGallery({
         ))}
       </div>
       {!showAll && hiddenCount > 0 ? (
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={() => setShowAll(true)}
-          className="mt-4 w-full rounded-xl border bg-background px-4 py-2.5 text-sm font-medium transition-colors hover:bg-muted"
+          className="mt-4 w-full rounded-xl py-2.5"
         >
           Show remaining ({hiddenCount})
-        </button>
+        </Button>
       ) : null}
       <p className="mt-4 text-xs text-muted-foreground">
         Showing {visibleCards.length} of {cards.length} loaded cards · card data from{' '}

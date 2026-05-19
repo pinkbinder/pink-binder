@@ -1,5 +1,6 @@
 import * as React from 'react'
 import { cn } from '../lib/utils'
+import { Button } from './button'
 
 /** Eyebrow label above a landing section title (e.g. "Latest from the blog"). */
 export const LANDING_SECTION_EYEBROW_CLASSNAME =
@@ -38,14 +39,19 @@ function LandingSectionHeader({
         <h2 className={LANDING_SECTION_TITLE_CLASSNAME}>{title}</h2>
       </div>
       {action ? (
-        <a
-          href={action.href}
-          target={action.external ? '_blank' : undefined}
-          rel={action.external ? 'noopener noreferrer' : undefined}
-          className={LANDING_SECTION_ACTION_CLASSNAME}
+        <Button
+          variant="link"
+          asChild
+          className="h-auto shrink-0 p-0 text-sm font-bold no-underline transition-colors hover:no-underline hover:opacity-80"
         >
-          {action.label}
-        </a>
+          <a
+            href={action.href}
+            target={action.external ? '_blank' : undefined}
+            rel={action.external ? 'noopener noreferrer' : undefined}
+          >
+            {action.label}
+          </a>
+        </Button>
       ) : null}
     </div>
   )

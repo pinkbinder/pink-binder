@@ -8,7 +8,13 @@ function formatUsd(amount: number): string {
   }).format(amount)
 }
 
-export function TcgCardPriceLabel({ card }: { card: PokemonTcgCard }) {
+export function TcgCardPriceLabel({
+  card,
+  showTcgplayerLogo = false,
+}: {
+  card: PokemonTcgCard
+  showTcgplayerLogo?: boolean
+}) {
   const market = card.price?.market ?? card.price?.mid
   if (market === undefined || market <= 0) {
     return null
@@ -24,8 +30,18 @@ export function TcgCardPriceLabel({ card }: { card: PokemonTcgCard }) {
           href={card.tcgplayerUrl}
           target="_blank"
           rel="noreferrer sponsored"
-          className="text-xs font-semibold text-primary underline underline-offset-2"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary underline underline-offset-2"
         >
+          {showTcgplayerLogo ? (
+            <img
+              src="https://www.tcgplayer.com/favicon.ico"
+              alt="TCGPlayer"
+              width={12}
+              height={12}
+              loading="lazy"
+              decoding="async"
+            />
+          ) : null}
           View on TCGPlayer
         </a>
       ) : null}

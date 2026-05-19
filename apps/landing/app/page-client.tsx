@@ -1,6 +1,6 @@
 'use client'
 
-import { ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
+import { Button, ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
 import { BRAND, SOCIAL_LINKS, getPublicLandingUrl } from '@repo/config'
 import Image from 'next/image'
 import { useState, type ReactNode } from 'react'
@@ -49,8 +49,8 @@ export default function LandingPageClient({
       <div className="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center justify-center">
         <div className="flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
           <div className="flex w-full justify-end">
-            <button
-              type="button"
+            <Button
+              variant="outline"
               aria-label="Share The Pink Binder"
               onClick={() => {
                 setShareDialogState({
@@ -59,11 +59,11 @@ export default function LandingPageClient({
                 })
                 setCopyStatus('idle')
               }}
-              className="inline-flex items-center gap-2 rounded-full border border-pink-200/80 bg-white/90 px-4 py-2 text-sm font-semibold text-foreground shadow-sm transition-colors hover:bg-white hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="rounded-full border-pink-200/80 bg-white/90 font-semibold text-foreground shadow-sm hover:bg-white hover:text-primary"
             >
               <ShareIcon />
               <span>Share</span>
-            </button>
+            </Button>
           </div>
 
           <header className="flex flex-col items-center gap-3 text-center">
@@ -80,9 +80,7 @@ export default function LandingPageClient({
               {BRAND.name}
             </h1>
             <p className="text-lg font-semibold leading-relaxed">
-              <span className="text-muted-foreground/80">{BRAND.subtitleTop}</span>
-              <br />
-              <span className="text-primary">{BRAND.subtitleBottom}</span>
+              <span className="text-primary">{BRAND.subtitle}</span>
             </p>
             <p className="max-w-sm text-sm font-semibold leading-relaxed text-muted-foreground">
               {BRAND.description}
@@ -113,8 +111,8 @@ export default function LandingPageClient({
                     <span className="truncate text-primary">Shop on {link.marketplace}</span>
                   </a>
 
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
                     aria-label={shareButtonLabel}
                     onClick={() => {
                       setShareDialogState({
@@ -123,16 +121,20 @@ export default function LandingPageClient({
                       })
                       setCopyStatus('idle')
                     }}
-                    className="mr-2 rounded-full p-2 text-muted-foreground transition-colors hover:bg-pink-100 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="mr-2 h-auto w-auto rounded-full p-2 text-muted-foreground hover:bg-pink-100 hover:text-foreground"
                   >
                     <ThreeDotsIcon />
-                  </button>
+                  </Button>
                 </div>
               )
             })}
           </nav>
 
           <SocialBar socials={socials} aria-label="Social media links" />
+
+          <p className="text-lg font-semibold leading-relaxed">
+            <span className="text-muted-foreground/80">{BRAND.location}</span>
+          </p>
 
           <LandingMarketplaceLazy loadMarketplace={loadMarketplace} />
         </div>
