@@ -80,9 +80,7 @@ export default function LandingPageClient({
               {BRAND.name}
             </h1>
             <p className="text-lg font-semibold leading-relaxed">
-              <span className="text-muted-foreground/80">{BRAND.subtitleTop}</span>
-              <br />
-              <span className="text-primary">{BRAND.subtitleBottom}</span>
+              <span className="text-primary">{BRAND.subtitle}</span>
             </p>
             <p className="max-w-sm text-sm font-semibold leading-relaxed text-muted-foreground">
               {BRAND.description}
@@ -133,6 +131,10 @@ export default function LandingPageClient({
           </nav>
 
           <SocialBar socials={socials} aria-label="Social media links" />
+
+          <p className="text-lg font-semibold leading-relaxed">
+            <span className="text-muted-foreground/80">{BRAND.location}</span>
+          </p>
 
           <LandingMarketplaceLazy loadMarketplace={loadMarketplace} />
         </div>
