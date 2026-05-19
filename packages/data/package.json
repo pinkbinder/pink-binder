@@ -26,7 +26,8 @@
     "enrich-artist-tcg-cache": "tsx scripts/enrich-artist-tcg-cache.ts",
     "compute-type-weaknesses": "tsx scripts/compute-type-weaknesses.ts",
     "enrich-pokeapi-extra": "tsx scripts/enrich-pokeapi-extra.ts",
-    "enrich-tcg-type-profile": "tsx scripts/enrich-tcg-type-profile.ts"
+    "enrich-tcg-type-profile": "tsx scripts/enrich-tcg-type-profile.ts",
+    "update-collections": "tsx scripts/update-pokemon-collections.ts"
   },
   "dependencies": {
     "@repo/config": "workspace:*",

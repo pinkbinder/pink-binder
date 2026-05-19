@@ -5,15 +5,14 @@ export type SpeciesCollectionSlug =
   | 'tiny-and-adorable'
   | 'food-and-sweet-treats'
   | 'cottagecore-and-floral'
-  | 'dogs'
-  | 'cats'
-  | 'bunny'
-  | 'mice'
-  | 'birds'
+  | 'dogs-and-canines'
+  | 'cats-and-felines'
+  | 'bunnies-and-rabbits'
+  | 'mice-and-rats'
+  | 'birds-and-bats'
   | 'fish'
   | 'cozy-and-warm'
   | 'sleepy'
-  | 'all-other-animals'
   | 'dreamy-and-ethereal'
   | 'pink-pastel-icons'
   | 'elegant-and-feminine'
@@ -25,14 +24,19 @@ export type SpeciesCollectionSlug =
   | 'yuka-morii'
   | 'asako-ito'
   | 'amphibians-and-reptiles'
-  | 'foxes-and-weasels'
+  | 'foxes'
+  | 'weasels-and-badgers'
   | 'monkeys-chimps-and-apes'
   | 'farm-animals'
   | 'safari-animals'
+  | 'woodland-creatures'
+  | 'squirrels-and-hamsters'
   | 'bugs-and-insects'
   | 'bears'
   | 'dragons'
   | 'sea-creatures'
+  | 'celestial-and-space'
+  | 'fluffy-and-plush'
   | 'ice-and-snow'
   | 'electric-cuties'
   | 'fairy-tale'
@@ -54,11 +58,17 @@ export const SPECIES_COLLECTIONS = {
     description: 'Frogs, toads, salamanders, lizards, turtles, and crocodiles.',
     featuredSpecies: ['Bulbasaur', 'Charmander', 'Squirtle', 'Totodile', 'Treecko'],
   },
-  'foxes-and-weasels': {
-    slug: 'foxes-and-weasels',
-    title: '🦊 Foxes & Weasels',
-    description: 'Foxes, weasels, ferrets, and stoats.',
-    featuredSpecies: ['Vulpix', 'Zorua', 'Fennekin', 'Sneasel', 'Buizel'],
+  foxes: {
+    slug: 'foxes',
+    title: 'Foxes',
+    description: 'Fox-inspired Pokémon from classic fire foxes to modern tricksters.',
+    featuredSpecies: ['Vulpix', 'Ninetales', 'Zorua', 'Zoroark', 'Fennekin'],
+  },
+  'weasels-and-badgers': {
+    slug: 'weasels-and-badgers',
+    title: 'Weasels & Badgers',
+    description: 'Weasel, ferret, stoat, and badger-like Pokémon with agile, scrappy vibes.',
+    featuredSpecies: ['Sneasel', 'Weavile', 'Buizel', 'Floatzel', 'Sentret'],
   },
   'monkeys-chimps-and-apes': {
     slug: 'monkeys-chimps-and-apes',
@@ -78,6 +88,20 @@ export const SPECIES_COLLECTIONS = {
     description:
       'Elephants, lions, zebras, rhinos, and other safari-zone favorites — plus squirrel and mongoose cousins.',
     featuredSpecies: ['Phanpy', 'Girafarig', 'Litleo', 'Skwovet', 'Yungoos'],
+  },
+  'woodland-creatures': {
+    slug: 'woodland-creatures',
+    title: 'Woodland Creatures',
+    description:
+      'Forest and meadow Pokémon inspired by woodland critters, from skittish foragers to mossy spirits.',
+    featuredSpecies: ['Skwovet', 'Greedent', 'Bidoof', 'Sentret', 'Phantump'],
+  },
+  'squirrels-and-hamsters': {
+    slug: 'squirrels-and-hamsters',
+    title: 'Squirrels & Hamsters',
+    description:
+      'Small bushy-tail and cheek-stuffing favorites with squirrel and hamster-style energy.',
+    featuredSpecies: ['Skwovet', 'Greedent', 'Pachirisu', 'Morpeko', 'Emolga'],
   },
   'pink-brigade': {
     slug: 'pink-brigade',
@@ -116,43 +140,43 @@ export const SPECIES_COLLECTIONS = {
     description: 'Soft floral, meadow, orchard, and plant-based Pokémon with cottagecore appeal.',
     featuredSpecies: ['Shaymin', 'Comfey', 'Flabébé', 'Petilil', 'Smoliv'],
   },
-  dogs: {
-    slug: 'dogs',
+  'dogs-and-canines': {
+    slug: 'dogs-and-canines',
     title: 'Dogs & Canines',
     description:
       'Dog, wolf, and other canine-inspired Pokémon for collectors who love the full canine family.',
     featuredSpecies: ['Growlithe', 'Arcanine', 'Yamper', 'Boltund', 'Rockruff'],
   },
-  cats: {
-    slug: 'cats',
+  'cats-and-felines': {
+    slug: 'cats-and-felines',
     title: 'Cats & Felines',
     description: 'Cat, kitten, and big-cat inspired Pokémon for feline-focused collection themes.',
     featuredSpecies: ['Meowth', 'Persian', 'Skitty', 'Sprigatito', 'Litten'],
   },
-  bunny: {
-    slug: 'bunny',
-    title: 'Rabbits & Bunnies',
+  'bunnies-and-rabbits': {
+    slug: 'bunnies-and-rabbits',
+    title: 'Bunnies & Rabbits',
     description:
       'Rabbit and bunny-inspired Pokémon from playful classics to battle-ready evolutions.',
     featuredSpecies: ['Buneary', 'Lopunny', 'Scorbunny', 'Bunnelby', 'Diggersby'],
   },
-  mice: {
-    slug: 'mice',
-    title: 'Mice & Rodents',
+  'mice-and-rats': {
+    slug: 'mice-and-rats',
+    title: 'Mice & Rats',
     description:
       'Mouse and rodent-inspired Pokémon, including mascots, pika-clones, and chinchilla lines.',
     featuredSpecies: ['Pichu', 'Pikachu', 'Raichu', 'Dedenne', 'Cinccino'],
   },
-  birds: {
-    slug: 'birds',
-    title: 'Bird Pokémon',
+  'birds-and-bats': {
+    slug: 'birds-and-bats',
+    title: 'Birds & Bats',
     description:
       'Bird, owl, penguin, duck, and other avian-inspired Pokémon for collectors building feathered lineups.',
     featuredSpecies: ['Piplup', 'Rowlet', 'Decidueye', 'Togetic', 'Corviknight'],
   },
   fish: {
     slug: 'fish',
-    title: 'Fish & Aquatic Pokémon',
+    title: 'Fish',
     description:
       'Fish and closely related aquatic Pokémon, from tiny swimmers to dramatic sea-serpent evolutions.',
     featuredSpecies: ['Magikarp', 'Feebas', 'Milotic', 'Finneon', 'Veluza'],
@@ -170,13 +194,6 @@ export const SPECIES_COLLECTIONS = {
     description:
       'Slow, drowsy, and dreamlike Pokémon — from Snorlax napping on a road to Abra snoozing through battles.',
     featuredSpecies: ['Snorlax', 'Jigglypuff', 'Slowpoke', 'Abra', 'Komala'],
-  },
-  'all-other-animals': {
-    slug: 'all-other-animals',
-    title: 'Other Animal Friends',
-    description:
-      'A broad animal mix beyond cats, dogs, rabbits, rodents, birds, and fish: seals, bears, sheep, and more.',
-    featuredSpecies: ['Spheal', 'Teddiursa', 'Wooloo', 'Miltank', 'Deerling'],
   },
   'dreamy-and-ethereal': {
     slug: 'dreamy-and-ethereal',
@@ -265,10 +282,24 @@ export const SPECIES_COLLECTIONS = {
   },
   'sea-creatures': {
     slug: 'sea-creatures',
-    title: '🐙 Sea Creatures',
+    title: 'Sea Creatures',
     description:
       'Non-fish aquatic Pokémon: jellyfish, seahorses, seals, crabs, octopi, and other ocean dwellers.',
     featuredSpecies: ['Lapras', 'Tentacool', 'Corsola', 'Staryu', 'Dewgong'],
+  },
+  'celestial-and-space': {
+    slug: 'celestial-and-space',
+    title: 'Celestial & Space',
+    description:
+      'Cosmic and starlit Pokémon tied to moons, comets, constellations, and dreamy night-sky themes.',
+    featuredSpecies: ['Jirachi', 'Cosmog', 'Lunatone', 'Solrock', 'Clefairy'],
+  },
+  'fluffy-and-plush': {
+    slug: 'fluffy-and-plush',
+    title: 'Fluffy & Plush',
+    description:
+      'Soft, cuddly-looking Pokémon with plush-toy silhouettes and cozy textures collectors adore.',
+    featuredSpecies: ['Eevee', 'Wooloo', 'Altaria', 'Teddiursa', 'Stufful'],
   },
   'ice-and-snow': {
     slug: 'ice-and-snow',
@@ -372,21 +403,23 @@ export const SPECIES_COLLECTIONS = {
 
 /** Lower index = higher priority when sorting `collections` (primary = first entry). */
 export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
-  'dogs',
-  'cats',
-  'bunny',
-  'mice',
+  'dogs-and-canines',
+  'cats-and-felines',
+  'bunnies-and-rabbits',
+  'mice-and-rats',
   'bears',
-  'foxes-and-weasels',
+  'foxes',
+  'weasels-and-badgers',
   'safari-animals',
-  'birds',
+  'woodland-creatures',
+  'squirrels-and-hamsters',
+  'birds-and-bats',
   'fish',
   'sea-creatures',
   'farm-animals',
   'monkeys-chimps-and-apes',
   'amphibians-and-reptiles',
   'bugs-and-insects',
-  'all-other-animals',
   'dragons',
   'dinosaurs-and-fossils',
   'ocean-and-beach',
@@ -401,8 +434,10 @@ export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
   'spooky-cute',
   'halloween',
   'dreamy-and-ethereal',
+  'celestial-and-space',
   'fairy-tale',
   'valentines-and-love',
+  'fluffy-and-plush',
   'elegant-and-feminine',
   'electric-cuties',
   'dark-and-edgy',
