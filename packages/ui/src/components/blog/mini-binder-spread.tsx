@@ -6,6 +6,7 @@ import type { RoundupMichiScene } from './roundup-michi-scene-row'
 export type BinderSpreadSlot =
   | { kind: 'card'; card: PokemonTcgCard }
   | { kind: 'michi'; scene: RoundupMichiScene; displayName: string }
+  | { kind: 'back' }
   | { kind: 'art'; url: string; alt: string }
 
 export type PositionedBinderSpreadSlot = {
@@ -22,13 +23,41 @@ function BinderPage({
   slots: PositionedBinderSpreadSlot[]
   pageLabel: string
 }) {
+  const occupied = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => false))
+  for (const placed of slots) {
+    for (let i = 0; i < placed.colSpan; i += 1) {
+      if (occupied[placed.row]?.[placed.col + i] != null) {
+        occupied[placed.row]![placed.col + i] = true
+      }
+    }
+  }
+
+  const placeholderSlots: PositionedBinderSpreadSlot[] = []
+  for (let row = 0; row < 3; row += 1) {
+    for (let col = 0; col < 3; col += 1) {
+      if (!occupied[row]?.[col]) {
+        placeholderSlots.push({
+          row,
+          col,
+          colSpan: 1,
+          slot: { kind: 'back' },
+        })
+      }
+    }
+  }
+
+  const displaySlots = [...slots, ...placeholderSlots].sort((a, b) => {
+    if (a.row !== b.row) return a.row - b.row
+    return a.col - b.col
+  })
+
   return (
     <div className="rounded-xl border bg-muted/15 p-3">
       <p className="mb-2 text-center text-xs font-medium uppercase tracking-wide text-muted-foreground">
         {pageLabel}
       </p>
       <div className="grid grid-cols-3 grid-rows-3 gap-2" style={{ minHeight: 'min(420px, 52vw)' }}>
-        {slots.map((placed, index) => {
+        {displaySlots.map((placed, index) => {
           const { slot, row, col, colSpan } = placed
           return (
             <div
@@ -55,6 +84,17 @@ function BinderPage({
                     sizes={colSpan === 2 ? '240px' : '120px'}
                     unoptimized
                   />
+                </div>
+              ) : slot.kind === 'back' ? (
+                <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-cyan-700 p-2 text-white">
+                  <div className="absolute inset-1 rounded-sm border border-white/30" />
+                  <div className="absolute inset-2 rounded-sm border border-white/20" />
+                  <div className="relative text-center">
+                    <p className="text-[9px] uppercase tracking-[0.18em] text-white/80">
+                      Pokémon TCG
+                    </p>
+                    <p className="mt-1 text-[10px] font-semibold tracking-wide">Empty Slot</p>
+                  </div>
                 </div>
               ) : (
                 <div className="relative flex h-full w-full items-center justify-center bg-muted/30 p-1 opacity-40">
