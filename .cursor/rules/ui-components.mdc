@@ -1,0 +1,41 @@
+---
+description: All interactive UI components must be built on ShadCN / Radix UI primitives
+alwaysApply: true
+---
+
+# UI Component Standards
+
+All interactive components **must** be built on [ShadCN](https://ui.shadcn.com/) primitives (Radix UI + CVA) to inherit correct ARIA roles, keyboard navigation, and focus management for free.
+
+## Rules
+
+- **Never** use a plain HTML interactive element when a ShadCN equivalent exists:
+  - `<select>` → `Select` from `@radix-ui/react-select`
+  - `<dialog>` → `Dialog` from `@radix-ui/react-dialog`
+  - `<button>` → use the shared `Button` component (`packages/ui/src/components/button.tsx`) unless very simple inline usage where the raw `<button>` is fine
+  - Checkboxes, radios, switches, tooltips, popovers, etc. → Radix primitives
+
+- All ShadCN component files live in `packages/ui/src/components/` and follow the standard ShadCN file shape:
+  - Named exports only (no default export)
+  - Typed with `React.ComponentPropsWithoutRef` or `React.HTMLAttributes`
+  - Composed via `cn()` from `packages/ui/src/lib/utils.ts`
+  - CVA (`class-variance-authority`) for variant APIs
+
+- When adding a new Radix package, add it to `packages/ui/package.json` (not to individual apps).
+
+- Export new primitives from `packages/ui/src/index.ts`.
+
+## Where ShadCN components live
+
+```
+packages/ui/src/components/
+  badge.tsx         ← Badge (CVA)
+  button.tsx        ← Button (CVA + Radix Slot)
+  card.tsx          ← Card family
+  carousel.tsx      ← Embla carousel
+  dialog.tsx        ← Radix Dialog
+  input.tsx         ← Input (CVA)
+  select.tsx        ← Radix Select  ← add if missing
+  separator.tsx     ← Radix Separator
+  ...
+```
