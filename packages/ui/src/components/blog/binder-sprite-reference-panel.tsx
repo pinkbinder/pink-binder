@@ -69,9 +69,9 @@ export function BinderSpriteReferencePanel({
               <Image
                 src={item.url}
                 alt={`${displayName} ${item.label}`}
-                width={compact ? 64 : 100}
-                height={compact ? 64 : 100}
-                className="drop-shadow-md"
+                fill
+                sizes={compact ? '72px' : '120px'}
+                className="object-contain drop-shadow-md"
                 unoptimized={item.url.endsWith('.svg')}
                 onError={() => {
                   setFailedUrls((prev) => {
