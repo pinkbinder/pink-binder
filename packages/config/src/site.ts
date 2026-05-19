@@ -13,7 +13,16 @@ export const BRAND = {
   logoText: 'PB',
 }
 
-export type SocialIcon = 'instagram' | 'tiktok' | 'youtube' | 'facebook' | 'discord' | 'email'
+export type SocialIcon =
+  | 'instagram'
+  | 'tiktok'
+  | 'youtube'
+  | 'facebook'
+  | 'pinterest'
+  | 'linkedin'
+  | 'x'
+  | 'discord'
+  | 'email'
 
 export type SocialLink = {
   label: string
@@ -45,6 +54,24 @@ export const SOCIAL_LINKS: SocialLink[] = [
     label: 'Facebook',
     href: 'https://www.facebook.com/people/The-Pink-Binder/61576795989954/',
     icon: 'facebook',
+    enabled: true,
+  },
+  {
+    label: 'Pinterest',
+    href: 'https://www.pinterest.com/pinkbindershop',
+    icon: 'pinterest',
+    enabled: true,
+  },
+  {
+    label: 'LinkedIn',
+    href: 'https://www.linkedin.com/company/thepinkbinder',
+    icon: 'linkedin',
+    enabled: true,
+  },
+  {
+    label: 'X',
+    href: 'https://x.com/PinkBinderShop',
+    icon: 'x',
     enabled: true,
   },
   {
