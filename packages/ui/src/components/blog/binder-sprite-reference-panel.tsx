@@ -1,4 +1,7 @@
+'use client'
+
 import Image from 'next/image'
+import { useMemo, useState } from 'react'
 
 export interface BinderSpriteReference {
   label: string
@@ -16,7 +19,17 @@ export function BinderSpriteReferencePanel({
   /** Tighter layout for roundup pick rows. */
   compact?: boolean
 }) {
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set())
+  const visibleReferences = useMemo(
+    () => references.filter((item) => !failedUrls.has(item.url)),
+    [references, failedUrls]
+  )
+
   if (references.length === 0) {
+    return null
+  }
+
+  if (visibleReferences.length === 0) {
     return null
   }
 
@@ -34,10 +47,10 @@ export function BinderSpriteReferencePanel({
       )}
       <div
         className={
-          compact ? 'mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4' : 'mt-4 grid gap-4 sm:grid-cols-2'
+          compact ? 'mt-3 grid grid-cols-2 gap-2 md:grid-cols-1' : 'mt-4 grid gap-4 sm:grid-cols-2'
         }
       >
-        {references.map((item) => (
+        {visibleReferences.map((item) => (
           <figure
             key={item.url}
             className={
@@ -56,10 +69,18 @@ export function BinderSpriteReferencePanel({
               <Image
                 src={item.url}
                 alt={`${displayName} ${item.label}`}
-                width={compact ? 64 : 100}
-                height={compact ? 64 : 100}
-                className="drop-shadow-md"
+                fill
+                sizes={compact ? '72px' : '120px'}
+                className="object-contain drop-shadow-md"
                 unoptimized={item.url.endsWith('.svg')}
+                onError={() => {
+                  setFailedUrls((prev) => {
+                    if (prev.has(item.url)) return prev
+                    const next = new Set(prev)
+                    next.add(item.url)
+                    return next
+                  })
+                }}
               />
             </div>
             {!compact ? (

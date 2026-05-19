@@ -23,6 +23,7 @@ import { formatPostDate } from '../../lib/format-post-date'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
+import { Button } from '../button'
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../select'
 
 export type { EnrichedPostForGrid }
@@ -75,7 +76,8 @@ function TypeFilterTriggerContent({
         backgroundColor: lightColors.bg,
         color: lightColors.text,
         borderColor: lightColors.border,
-        border: '1px solid',
+        borderWidth: '1px',
+        borderStyle: 'solid',
       }}
     >
       {logoUrl ? <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} /> : null}
@@ -446,7 +448,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                           backgroundColor: lightColors.bg,
                           color: lightColors.text,
                           borderColor: lightColors.border,
-                          border: '1px solid',
+                          borderWidth: '1px',
+                          borderStyle: 'solid',
                         }}
                       >
                         {logoUrl ? (
@@ -548,17 +551,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         <div className="hidden flex-col gap-4 md:flex">
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Type:</span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => applyGroupedFilter('type', null)}
-              className={`${CLICKABLE_BADGE_CLASS} ${
+              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                 groupedFilters.type === null
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
               All
-            </button>
+            </Button>
             {typeChipState.options.map((type) => {
               const visuals = typeVisuals[type]
               const colors = visuals?.colors ?? getPokemonTypeColors(type)
@@ -567,11 +570,11 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
               const isActive = groupedFilters.type === type
 
               return (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   key={type}
                   onClick={() => applyGroupedFilter('type', isActive ? null : type)}
-                  className={CLICKABLE_BADGE_CLASS}
+                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                   style={{
                     borderColor: isActive ? colors.bg : lightColors.border,
                     backgroundColor: isActive ? colors.bg : lightColors.bg,
@@ -587,35 +590,35 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     ) : null}
                     <span>{type}</span>
                   </span>
-                </button>
+                </Button>
               )
             })}
             {typeChipState.hasMore ? (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpandedGroup('type')}
-                className={FILTER_SHOW_MORE_CLASS}
+                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
               >
                 Show {typeChipState.expanded ? 'less' : 'more'}
-              </button>
+              </Button>
             ) : null}
           </div>
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Generation:</span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => applyGroupedFilter('generation', null)}
-              className={`${CLICKABLE_BADGE_CLASS} ${
+              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                 groupedFilters.generation === null
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
               All
-            </button>
+            </Button>
             {generationChipState.options.map((generation) => (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 key={generation}
                 onClick={() =>
                   applyGroupedFilter(
@@ -623,84 +626,84 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     groupedFilters.generation === generation ? null : generation
                   )
                 }
-                className={`${CLICKABLE_BADGE_CLASS} ${
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                   groupedFilters.generation === generation
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                 }`}
               >
                 {generation}
-              </button>
+              </Button>
             ))}
             {generationChipState.hasMore ? (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpandedGroup('generation')}
-                className={FILTER_SHOW_MORE_CLASS}
+                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
               >
                 Show {generationChipState.expanded ? 'less' : 'more'}
-              </button>
+              </Button>
             ) : null}
           </div>
           {roundupListFilters.length > 0 ? (
             <div className="flex flex-wrap items-start gap-2">
               <span className="pt-1 text-sm font-medium text-muted-foreground">Lists:</span>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => applyGroupedFilter('list', null)}
-                className={`${CLICKABLE_BADGE_CLASS} ${
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                   groupedFilters.list === null
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                 }`}
               >
                 All
-              </button>
+              </Button>
               {listChipState.options.map((listType) => (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   key={listType}
                   onClick={() =>
                     applyGroupedFilter('list', groupedFilters.list === listType ? null : listType)
                   }
-                  className={`${CLICKABLE_BADGE_CLASS} ${
+                  className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                     groupedFilters.list === listType
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                   }`}
                 >
                   {listType}
-                </button>
+                </Button>
               ))}
               {listChipState.hasMore ? (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   onClick={() => toggleExpandedGroup('list')}
-                  className={FILTER_SHOW_MORE_CLASS}
+                  className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
                 >
                   Show {listChipState.expanded ? 'less' : 'more'}
-                </button>
+                </Button>
               ) : null}
             </div>
           ) : null}
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Collection:</span>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => applyGroupedFilter('collection', null)}
-              className={`${CLICKABLE_BADGE_CLASS} ${
+              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                 groupedFilters.collection === null
                   ? 'bg-primary text-primary-foreground'
                   : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
               }`}
             >
               All
-            </button>
+            </Button>
             {collectionChipState.options.map((collection) => {
               const collectionIcon = getCollectionBadgeIcon(collection)
               return (
-                <button
-                  type="button"
+                <Button
+                  variant="ghost"
                   key={collection}
                   onClick={() =>
                     applyGroupedFilter(
@@ -708,7 +711,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       groupedFilters.collection === collection ? null : collection
                     )
                   }
-                  className={`${CLICKABLE_BADGE_CLASS} ${
+                  className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
                     groupedFilters.collection === collection
                       ? 'bg-primary text-primary-foreground'
                       : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -718,17 +721,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
                     <span>{collection}</span>
                   </span>
-                </button>
+                </Button>
               )
             })}
             {collectionChipState.hasMore ? (
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpandedGroup('collection')}
-                className={FILTER_SHOW_MORE_CLASS}
+                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
               >
                 Show {collectionChipState.expanded ? 'less' : 'more'}
-              </button>
+              </Button>
             ) : null}
           </div>
         </div>
@@ -739,13 +742,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           Showing <span className="font-semibold text-foreground">{filteredPosts.length}</span>{' '}
           {`post${filteredPosts.length !== 1 ? 's' : ''}`} matching{' '}
           <span className="font-medium text-primary">{activeFilterLabels.join(' + ')}</span>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={clearAllFilters}
-            className="ml-2 text-muted-foreground underline underline-offset-2 hover:text-foreground"
+            className="ml-2 h-auto p-0 text-muted-foreground underline underline-offset-2 hover:bg-transparent hover:text-foreground"
           >
             Clear
-          </button>
+          </Button>
         </p>
       ) : null}
 
@@ -788,28 +791,28 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     if (!type) {
                       const collectionIcon = getCollectionBadgeIcon(category)
                       return (
-                        <button
-                          type="button"
+                        <Button
+                          variant="ghost"
                           key={`${post.slug}-${category}`}
                           onClick={() => applyCategoryFilter(filterValue)}
-                          className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                          className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
                         >
                           <span className="inline-flex items-center gap-1.5">
                             {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
                             <span>{category}</span>
                           </span>
-                        </button>
+                        </Button>
                       )
                     }
 
                     const lightColors = getPokemonTypeLightColors(type)
                     const logoUrl = getPokemonTypeLogoUrl(type)
                     return (
-                      <button
-                        type="button"
+                      <Button
+                        variant="ghost"
                         key={`${post.slug}-${category}`}
                         onClick={() => applyCategoryFilter(filterValue)}
-                        className={CLICKABLE_BADGE_CLASS}
+                        className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                         style={{
                           borderColor: lightColors.border,
                           backgroundColor: lightColors.bg,
@@ -825,7 +828,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                           ) : null}
                           <span>{type}</span>
                         </span>
-                      </button>
+                      </Button>
                     )
                   })}
                   {post.isMythical ? (
@@ -840,16 +843,16 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     </span>
                   ) : null}
                   {post.speciesFilterTags.slice(0, 6).map((speciesSlug) => (
-                    <button
-                      type="button"
+                    <Button
+                      variant="ghost"
                       key={`${post.slug}-${speciesSlug}`}
                       onClick={() =>
                         applyDirectFilter(directFilter === speciesSlug ? null : speciesSlug)
                       }
-                      className={`${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground hover:bg-muted/80`}
+                      className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground hover:bg-muted/80`}
                     >
                       #{speciesSlug}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </article>
@@ -862,13 +865,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           <h2 className="font-title text-2xl font-semibold">No posts found</h2>
           <p className="mt-3 text-muted-foreground">
             No posts match the selected filter. Try a different category or{' '}
-            <button
-              type="button"
+            <Button
+              variant="link"
               onClick={clearAllFilters}
-              className="text-primary underline underline-offset-2"
+              className="h-auto p-0 text-primary underline-offset-2"
             >
               view all
-            </button>
+            </Button>
             .
           </p>
         </div>
