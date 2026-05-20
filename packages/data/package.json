@@ -17,6 +17,9 @@
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",
     "refresh": "tsx scripts/1-extract/extract-periodic.ts",
+    "publish-images": "tsx scripts/publish-images-to-blob.ts",
+    "apply-blob-urls": "tsx scripts/apply-blob-urls.ts",
+    "publish-images:apply": "tsx scripts/publish-images-to-blob.ts && tsx scripts/apply-blob-urls.ts",
     "enrich": "tsx scripts/enrich/index.ts",
     "audit-tags": "tsx scripts/audit-collection-tags.ts"
   },
@@ -27,6 +30,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@vercel/blob": "^2.3.0",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",

@@ -4,6 +4,9 @@ import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
  * Remote hosts served with `unoptimized` on `next/image` so the browser loads CDNs directly.
  * Pair with `blogNextImagesConfig().unoptimized` on Vercel so new Image usages cannot bill transforms.
  */
+/** Vercel Blob public store host suffix (e.g. `{storeId}.public.blob.vercel-storage.com`). */
+export const VERCEL_BLOB_PUBLIC_HOST_SUFFIX = '.public.blob.vercel-storage.com'
+
 export const REMOTE_IMAGE_BYPASS_HOSTS = [
   ...TCG_CARD_IMAGE_HOSTS,
   ...EBAY_CDN_HOSTS,
@@ -30,7 +33,11 @@ export function shouldBypassNextImageOptimization(src: string): boolean {
     return false
   }
   try {
-    return BYPASS_HOSTS.has(new URL(trimmed).hostname)
+    const { hostname } = new URL(trimmed)
+    if (BYPASS_HOSTS.has(hostname)) {
+      return true
+    }
+    return hostname.endsWith(VERCEL_BLOB_PUBLIC_HOST_SUFFIX)
   } catch {
     return false
   }

@@ -9,6 +9,12 @@ const POKEAPI_SPRITES_HOST = 'raw.githubusercontent.com'
 
 const BLOG_ART_REMOTE_HOSTS = ['www.artofpkm.com', 'projectpokemon.org']
 
+/** Matches `{storeId}.public.blob.vercel-storage.com` (Vercel Blob CDN). */
+const VERCEL_BLOB_REMOTE_PATTERN = {
+  protocol: 'https',
+  hostname: '*.public.blob.vercel-storage.com',
+}
+
 const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com']
 
 function httpsHost(hostname, pathname) {
@@ -34,6 +40,7 @@ export function blogImageRemotePatterns() {
       hostname: POKEAPI_SPRITES_HOST,
       pathname: '/PokeAPI/sprites/**',
     },
+    VERCEL_BLOB_REMOTE_PATTERN,
     ...tcgCardImageRemotePatterns(),
     ...BLOG_ART_REMOTE_HOSTS.map((hostname) => httpsHost(hostname)),
   ]
