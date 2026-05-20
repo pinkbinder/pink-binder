@@ -12,11 +12,16 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 
 ## Package commands (`pnpm --filter @repo/data …`)
 
-| Command | Orchestrator | Purpose |
-|---------|--------------|---------|
-| `extract` | `scripts/1-extract/index.ts` | Harvest raw data (scratch → `cache/raw/`) |
-| `enrich` | `scripts/enrich/index.ts` | Legacy live-API enrich (`cache/normalized/`) — until `2-transform/` |
-| `audit-tags` | `scripts/audit-collection-tags.ts` | Read-only collection tag audit |
+| Command      | Orchestrator                            | Purpose                                                                   |
+| ------------ | --------------------------------------- | ------------------------------------------------------------------------- |
+| `extract`    | `scripts/1-extract/index.ts`            | Full one-time harvest → all of `cache/raw/` (includes sprites + artofpkm) |
+| `refresh`    | `scripts/1-extract/extract-periodic.ts` | Weekly cron: git pull scratch + refresh pokeapi/TCG/wiki-lore only        |
+| `enrich`     | `scripts/enrich/index.ts`               | Legacy live-API enrich (`cache/normalized/`) — until `2-transform/`       |
+| `audit-tags` | `scripts/audit-collection-tags.ts`      | Read-only collection tag audit                                            |
+
+Both extract commands sync scratch repos automatically (clone or `git pull --ff-only`). No bootstrap flags. Freshness is recorded in `cache/extract-manifest.json`.
+
+PokeAPI bulk data uses the [PokeAPI/api-data](https://github.com/PokeAPI/api-data) git mirror — not [ditto clone](https://github.com/PokeAPI/ditto) (avoids Python tooling and live API rate limits). Live prices stay in `@repo/marketplaces` at runtime.
 
 Run individual step files directly with `tsx scripts/…` when debugging a single step.
 
@@ -32,13 +37,13 @@ Run individual step files directly with `tsx scripts/…` when debugging a singl
 
 Committed production enrich data lives under `packages/data/cache/normalized/`:
 
-| Path | Contents |
-|------|----------|
-| `species/` | Per-species JSON + `index.json` |
-| `meta/` | `ability-descriptions.json`, `pokemon-collections.json` |
-| `cards/artists/` | Artist TCG cache |
-| `cards/expensive-by-type/` | Per-type expensive card snapshots |
-| `popularity/` | Survey CSVs |
+| Path                       | Contents                                                |
+| -------------------------- | ------------------------------------------------------- |
+| `species/`                 | Per-species JSON + `index.json`                         |
+| `meta/`                    | `ability-descriptions.json`, `pokemon-collections.json` |
+| `cards/artists/`           | Artist TCG cache                                        |
+| `cards/expensive-by-type/` | Per-type expensive card snapshots                       |
+| `popularity/`              | Survey CSVs                                             |
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
 

@@ -16,6 +16,7 @@
     "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",
+    "refresh": "tsx scripts/1-extract/extract-periodic.ts",
     "enrich": "tsx scripts/enrich/index.ts",
     "audit-tags": "tsx scripts/audit-collection-tags.ts"
   },
@@ -33,6 +34,7 @@
     "@types/node": "^25.8.0",
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
+    "sharp": "^0.34.5",
     "tsx": "^4.22.0",
     "typescript": "6.0.3"
   }
