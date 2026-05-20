@@ -1,121 +1,80 @@
-# Environment Variables Setup Guide
+# Environment Variables
 
-This monorepo shares configuration and API keys across all Next.js apps (landing, admin, blog, store).
+Secrets live in **Vercel** (per project). Local dev uses `vercel env pull` into each app directory.
 
-## How It Works
-
-### Root-Level Shared Environment (`.env.local`)
-
-Shared configuration is stored in the root `.env.local`, accessible to all apps:
-
-- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`, `EBAY_CLIENT_SECRET`
-- **Whatnot Scraper**: `WHATNOT_USERNAME`, `WHATNOT_USER_AGENT`, `WHATNOT_SCRAPE_CACHE_TTL_MS`, `LIVE_SHOWS_SOURCE_URL`, `LIVE_SHOWS_SOURCE_TOKEN`
-- **Client-Side Polling**: `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` (requires `NEXT_PUBLIC_` prefix)
-- **Site URLs**: `NEXT_PUBLIC_SITE_URL` (requires `NEXT_PUBLIC_` prefix)
-
-**By default, all variables are server-side only** (not exposed to browser). Use `NEXT_PUBLIC_` prefix for client-side access.
-
-### Per-App Environment Files
-
-Each app can have its own `.env.example` documenting available variables:
-
-- App-specific config
-- Inherited shared keys from root (documented in the `.env.example`)
-- Client-side variables using `NEXT_PUBLIC_` prefix
-
-## Accessing Shared Keys in Each App
-
-### How root env reaches every app (recommended)
-
-1. Put secrets in the **repo root** `.env.local`.
-2. Run apps via root scripts — they load env once, then start Turbo:
+## Quick start
 
 ```bash
-pnpm dev      # node scripts/with-env.mjs turbo run dev
-pnpm build    # node scripts/with-env.mjs turbo run build
+# One-time: link a project (from the app folder)
+cd apps/landing
+vercel link
+
+# Pull Development env into that app (creates apps/landing/.env.local)
+vercel env pull .env.local
+
+# Repeat for other apps you run locally, e.g. apps/blog
+cd ../blog
+vercel link
+vercel env pull .env.local
 ```
 
-`scripts/with-env.mjs` merges root `.env` / `.env.local` into `process.env` before Turbo spawns each app. Turbo passes those variables to tasks via `globalPassThroughEnv` / `globalEnv` in `turbo.json`.
+From the repo root, start dev as usual:
 
-The landing app's `next.config.mjs` also calls `loadMonorepoEnv()` as a fallback when you run `next dev` directly inside `apps/landing`.
+```bash
+pnpm dev          # all apps
+pnpm dev:landing  # landing only
+pnpm dev:blog     # blog only
+```
 
-**Do not** use `instrumentation.ts` with `@next/env` — it bundles Node-only code and breaks the client build (`Can't resolve 'crypto'`).
+Next.js loads each app's `.env.local` when that app runs. You do **not** need a root `.env.local` unless you want local-only overrides.
 
-### Per-app overrides (optional)
+## Where variables live
 
-Add `apps/<app>/.env.local` for app-specific values. Next.js loads app-level env files in addition to inherited process env.
+| Scope | Location | Notes |
+| ----- | -------- | ----- |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Pulled from the landing Vercel project |
+| Blog (GTM, Blob token) | `apps/blog/.env.local` | Pulled from the blog Vercel project |
+| Data scripts (Blob upload) | `apps/blog/.env.local` | `@repo/data` publish scripts read the blog token |
+| Optional overrides | Root `.env.local` | Legacy; merged by `scripts/with-env.mjs` only |
 
-## Environment Variable Naming
+Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Vercel project that needs them.
 
-### Server-Side Only (Default) — Do NOT Expose
+## Server vs client
+
+**Server-only** (default) — API routes, server components, scripts:
 
 ```env
-ETSY_SHOP_ID=cutepkmn
-ETSY_KEYSTRING=xxx
-ETSY_SECRET=xxx
-EBAY_APP_ID=xxx
-EBAY_CLIENT_SECRET=xxx
-EBAY_VERIFICATION_TOKEN=xxx
-WHATNOT_USERNAME=thepinkbinder
-WHATNOT_USER_AGENT=custom-ua
-WHATNOT_SCRAPE_CACHE_TTL_MS=60000
-LIVE_SHOWS_SOURCE_URL=https://...
-LIVE_SHOWS_SOURCE_TOKEN=xxx
+EBAY_APP_ID=
+EBAY_CLIENT_SECRET=
+BLOB_READ_WRITE_TOKEN=
 ```
 
-✅ Available in API routes and server components
-❌ NOT available in browser/client components
-⚠️ Safe to contain sensitive API keys and credentials
-
-### Client-Side (REQUIRES `NEXT_PUBLIC_` Prefix)
+**Client-visible** — must use `NEXT_PUBLIC_`:
 
 ```env
-NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS=60000
-NEXT_PUBLIC_SITE_URL=https://example.com
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_...
+NEXT_PUBLIC_GTM_ID=
+NEXT_PUBLIC_BLOG_URL=
 ```
 
-✅ Available everywhere (browser + server)
-⚠️ NEVER put sensitive data here — these values appear in browser's global scope
+Never put secrets in `NEXT_PUBLIC_*` variables.
 
-## Accessing Variables in Code
+## Root scripts and Turbo
 
-### Server-Side (API Routes, Server Components)
+`pnpm validate` / `pnpm build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `NEXT_PUBLIC_*`, etc.).
 
-```javascript
-// Can access both server-side and NEXT_PUBLIC_ vars
-const etsyShopId = process.env.ETSY_SHOP_ID // ✅ Available
-const ebayAppId = process.env.EBAY_APP_ID // ✅ Available
-const ebayClientSecret = process.env.EBAY_CLIENT_SECRET // ✅ Available
-const whatnotUser = process.env.WHATNOT_USERNAME // ✅ Available
-const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
+Each Next.js app still loads its own `.env.local` at runtime.
+
+## Image publish pipeline
+
+After extract + optimize, upload blog images to Vercel Blob:
+
+```bash
+cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
+pnpm --filter @repo/data publish-images:apply
 ```
 
-### Client-Side (Client Components, Browser)
+This uploads `packages/data/cache/images/` → Blob, then patches `cache/normalized/species/*.json` with public CDN URLs.
 
-```javascript
-// Can ONLY access variables with NEXT_PUBLIC_ prefix
-const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL // ✅ Available
+## Reference
 
-// These will be undefined in the browser:
-const ebayAppId = process.env.EBAY_APP_ID // ❌ Undefined
-const whatnotUser = process.env.WHATNOT_USERNAME // ❌ Undefined
-```
-
-## Files Created
-
-- `.env.local` (root) - Shared configuration (API keys, Whatnot settings, client polling)
-- `.env.example` (root) - Template for shared variables
-- `apps/*/env.example` - App-specific templates with inherited variables documented
-
-## Summary of Variable Classification
-
-| Variable                             | Location        | Access           | Sensitive |
-| ------------------------------------ | --------------- | ---------------- | --------- |
-| `ETSY_*`, `EBAY_*`                   | Root .env.local | Server-side only | ✅ Yes    |
-| `WHATNOT_*`, `LIVE_SHOWS_*`          | Root .env.local | Server-side only | ⚠️ Partly |
-| `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` | Root .env.local | Client + Server  | ❌ No     |
-| `NEXT_PUBLIC_SITE_URL`               | Root .env.local | Client + Server  | ❌ No     |
-| `STRIPE_SECRET_KEY`                  | App .env.local  | Server-side only | ✅ Yes    |
-| `NEXT_PUBLIC_STRIPE_PUBLIC_KEY`      | App .env.local  | Client + Server  | ❌ No     |
+See [`.env.example`](../.env.example) for the full variable list (comments only — no real values).

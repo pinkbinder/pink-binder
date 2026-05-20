@@ -2,5 +2,4 @@
 set -e
 
 pnpm format:fix
-git add .
 pnpm validate:pre-commit
