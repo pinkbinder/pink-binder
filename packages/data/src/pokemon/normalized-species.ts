@@ -101,20 +101,28 @@ export interface NormalizedSpeciesPokedex {
   tcgTypeProfileEnrichedAt?: string | null
 }
 
+/** Bulbapedia-derived prose grouped by article section (plain text). */
+export interface NormalizedBulbapediaLore {
+  /** Intro paragraphs after the infobox. */
+  lead?: string[]
+  /** Biology / Characteristics / Appearance sections. */
+  biology?: string[]
+  /** Behavior section. */
+  behavior?: string[]
+  /** Concept and development plus origin paragraphs about design. */
+  design?: string[]
+  /** Name origin, etymology, and cultural inspiration. */
+  inspiration?: string[]
+  /** General trivia (article Trivia section and misc origin notes). */
+  trivia?: string[]
+}
+
 export interface NormalizedSpeciesLore {
   pokedexEntries: NormalizedPokedexEntry[]
   formDescriptions: string[]
   facts: string[]
-  /** Bulbapedia Biology section paragraphs (plain text). */
-  biology?: string[]
-  wiki?: {
-    designOrigins: string[]
-    inspirationFacts: string[]
-    quirkDescriptions: string[]
-    /** Plain-text paragraphs from Bulbapedia ==Biology==. */
-    biology?: string[]
-    source?: 'bulbapedia' | 'veekun'
-  }
+  /** All Bulbapedia article prose lives here (not split across top-level fields). */
+  bulbapedia?: NormalizedBulbapediaLore
 }
 
 export interface NormalizedSpeciesCompetitive {
@@ -183,11 +191,10 @@ export interface NormalizedSpeciesLoreFile {
   schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION
   slug: string
   pokedexEntries: NormalizedPokedexEntry[]
-  formDescriptions: string[]
+  /** Omitted on disk when empty (PokeAPI only supplies these for alternate forms). */
+  formDescriptions?: string[]
   facts: string[]
-  /** Bulbapedia Biology section paragraphs (plain text). */
-  biology?: string[]
-  wiki?: NormalizedSpeciesLore['wiki']
+  bulbapedia?: NormalizedBulbapediaLore
 }
 
 /** Core species record under cache/normalized/pokemon/{slug}/species.json. */
