@@ -19,7 +19,7 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 | `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized + apply Blob URLs (catalog metadata; no live prices) |
 | `refresh`    | `scripts/5-refresh/index.ts`            | Live TCG prices → normalized cards + roundup caches; `--only <step>…` |
 | `refresh-prices` | (alias) `refresh`                     | Daily cron: full refresh pipeline |
-| `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (abilities, competitive, scene art) — not extract/transform/refresh |
+| `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (competitive, scene art) — not extract/transform/refresh |
 
 ### Typical workflows
 
