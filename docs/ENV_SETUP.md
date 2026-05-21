@@ -68,10 +68,10 @@ Each Next.js app still loads its own `.env.local` at runtime.
 
 Sprites, scene art, and Blob upload live in the **`images`** command (~yearly). Transform only migrates JSON and applies CDN URLs.
 
-**Weekly refresh:**
+**Weekly TCG / price catalog refresh:**
 
 ```bash
-pnpm --filter @repo/data refresh
+pnpm --filter @repo/data refresh-prices
 pnpm --filter @repo/data transform
 ```
 
@@ -97,7 +97,7 @@ Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish 
 
 The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
 
-To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run weekly `refresh` + `transform` for metadata do not need the manifest if species JSON in git already has current art URLs.
+To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run weekly `refresh-prices` + `transform` for metadata do not need the manifest if species JSON in git already has current art URLs.
 
 ## Reference
 

@@ -15,18 +15,17 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 | Command      | Orchestrator                            | Purpose                                                          |
 | ------------ | --------------------------------------- | ---------------------------------------------------------------- |
 | `extract`    | `scripts/1-extract/index.ts`            | Raw JSON harvest → `cache/raw/` (pokeapi, TCG, wiki-lore)        |
-| `refresh`    | `scripts/1-extract/extract-periodic.ts` | Weekly cron: pokeapi / TCG / wiki-lore (no images)               |
+| `refresh-prices` | `scripts/1-extract/refresh-prices.ts`   | Weekly cron: sync TCG git sources (pokemontcg + tcgdex, no images) |
 | `images`     | `scripts/2-images/index.ts`             | Sprites + artofpkm + backfill + Blob publish + local cleanup (~yearly) |
 | `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized v2 + apply Blob URLs (fast; no upload)          |
 | `enrich`     | `scripts/enrich/index.ts`               | Legacy live-API enrich (`cache/normalized/`)                     |
-| `audit-tags` | `scripts/audit-collection-tags.ts`      | Read-only collection tag audit                                   |
 
 ### Typical workflows
 
-**Weekly refresh (cron):**
+**Weekly price / TCG catalog refresh (cron):**
 
 ```bash
-pnpm --filter @repo/data refresh
+pnpm --filter @repo/data refresh-prices
 pnpm --filter @repo/data transform
 ```
 

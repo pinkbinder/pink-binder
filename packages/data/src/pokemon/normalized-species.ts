@@ -1,5 +1,6 @@
 import type { SpeciesCollectionSlug } from '../collections/types'
 import type { PokemonData } from './types'
+import { resolvePipelineExtractedAt } from '../pipeline-meta'
 
 /** Current normalized species JSON schema version written by 3-transform. */
 export const NORMALIZED_SPECIES_SCHEMA_VERSION = 3 as const
@@ -185,10 +186,33 @@ export interface NormalizedSpeciesLoreFile {
   wiki?: NormalizedSpeciesLore['wiki']
 }
 
+/** @deprecated Per-species meta removed; see cache/normalized/meta/pipeline.json. */
 export interface NormalizedSpeciesMeta {
-  transformedAt?: string
+  extractedAt?: string | null
+  transformedAt?: string | null
   pokeapiExtractedAt?: string | null
   fetchedAt?: string | null
+}
+
+/** Read legacy per-species extractedAt from old species.json meta blocks. */
+export function resolveSpeciesExtractedAt(meta?: unknown): string | null {
+  if (!meta || typeof meta !== 'object') {
+    return null
+  }
+  const record = meta as Record<string, unknown>
+  const extracted = record.extractedAt
+  if (typeof extracted === 'string' && extracted.trim()) {
+    return extracted
+  }
+  const legacyPokeapi = record.pokeapiExtractedAt
+  if (typeof legacyPokeapi === 'string' && legacyPokeapi.trim()) {
+    return legacyPokeapi
+  }
+  const legacyFetched = record.fetchedAt
+  if (typeof legacyFetched === 'string' && legacyFetched.trim()) {
+    return legacyFetched
+  }
+  return null
 }
 
 /** Core species record (schema v3) under cache/normalized/pokemon/{slug}/species.json — art and lore in sibling sidecars. */
@@ -205,6 +229,7 @@ export interface NormalizedSpeciesCoreFile {
   collections: SpeciesCollectionSlug[]
   relatedKeywords: string[]
   relatedEntities: string[]
+  /** @deprecated Use cache/normalized/meta/pipeline.json */
   meta?: NormalizedSpeciesMeta
 }
 
@@ -224,6 +249,7 @@ export interface NormalizedSpeciesFileV2 {
   collections: SpeciesCollectionSlug[]
   relatedKeywords: string[]
   relatedEntities: string[]
+  /** @deprecated Use cache/normalized/meta/pipeline.json */
   meta?: NormalizedSpeciesMeta
 }
 
@@ -305,7 +331,7 @@ export function toPokemonDataFromParts(
     shinyArtworkUrl: art.sprites.shiny,
     michiSceneArt: art.sceneArt,
     collectCardArt: art.collectCardArt,
-    fetchedAt: species.meta?.fetchedAt ?? null,
+    extractedAt: resolvePipelineExtractedAt(),
     smogonTier: species.competitive?.smogonTier,
     notableMoves: species.competitive?.notableMoves,
     competitiveEnrichedAt: species.competitive?.enrichedAt,
@@ -352,7 +378,14 @@ export function toPokemonData(record: unknown): PokemonData | null {
     return null
   }
 
-  return legacy as PokemonData
+  const { fetchedAt: legacyFetchedAt, extractedAt: legacyExtractedAt, ...rest } = legacy
+  return {
+    ...(rest as Omit<PokemonData, 'extractedAt'>),
+    extractedAt:
+      (typeof legacyExtractedAt === 'string' && legacyExtractedAt) ||
+      (typeof legacyFetchedAt === 'string' && legacyFetchedAt) ||
+      null,
+  }
 }
 
 export function computeStatTotal(stats: NormalizedBaseStats): number {
