@@ -50,4 +50,9 @@ export function tcgCardImageCandidates(card: {
   return [...new Set(ordered.filter((url): url is string => Boolean(url?.trim())))]
 }
 
-export { buildScrydexCardImageUrls } from '../config/cdn'
+export {
+  buildPokemontcgImageFallbacks,
+  buildScrydexCardImageUrls,
+  buildTcgdexImageUrls,
+  tcgplayerProductUrl,
+} from '../config/cdn'
