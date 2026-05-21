@@ -28,9 +28,9 @@ Do not log every file on ~10k-item jobs — that floods the terminal.
 
 | Layer | Folder | Command | Cadence |
 | ----- | ------ | ------- | ------- |
-| Raw JSON | `1-extract/` | `extract` / `refresh` | Weekly (`refresh`) |
+| Raw JSON | `1-extract/` | `extract` / `refresh-prices` | Weekly (`refresh-prices`) |
 | Images + CDN | `2-images/` | `images` | ~Yearly (new species / art refresh) |
-| Normalized cache | `3-transform/` | `transform` | After extract or refresh |
+| Normalized cache | `3-transform/` | `transform` | After extract or refresh-prices |
 
 Image steps under `2-images/`: sprites, artofpkm, art backfill, Blob publish.  
 Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/species/`.
