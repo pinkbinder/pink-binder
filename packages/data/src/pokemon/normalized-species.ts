@@ -2,7 +2,10 @@ import type { SpeciesCollectionSlug } from '../collections/types'
 import type { PokemonData } from './types'
 
 /** Current normalized species JSON schema version written by 3-transform. */
-export const NORMALIZED_SPECIES_SCHEMA_VERSION = 2 as const
+export const NORMALIZED_SPECIES_SCHEMA_VERSION = 3 as const
+
+/** @deprecated Schema v2 monolith with embedded art/lore. */
+export const NORMALIZED_SPECIES_SCHEMA_VERSION_V2 = 2 as const
 
 export const SPECIES_NAME_LANGUAGE_CODES = [
   'de',
@@ -165,15 +168,49 @@ export function coerceNormalizedSpeciesArt(
   }
 }
 
+export interface NormalizedSpeciesImagesFile {
+  schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION
+  slug: string
+  sprites: NormalizedSpeciesSprites
+  sceneArt?: NormalizedSceneArtEntry[]
+  collectCardArt?: NormalizedCollectCardArt[]
+}
+
+export interface NormalizedSpeciesLoreFile {
+  schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION
+  slug: string
+  pokedexEntries: NormalizedPokedexEntry[]
+  formDescriptions: string[]
+  facts: string[]
+  wiki?: NormalizedSpeciesLore['wiki']
+}
+
 export interface NormalizedSpeciesMeta {
   transformedAt?: string
   pokeapiExtractedAt?: string | null
   fetchedAt?: string | null
 }
 
-/** Grouped species record (schema v2) under cache/normalized/species/. */
-export interface NormalizedSpeciesFile {
+/** Core species record (schema v3) under cache/normalized/pokemon/{slug}/species.json — art and lore in sibling sidecars. */
+export interface NormalizedSpeciesCoreFile {
   schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION
+  slug: string
+  name: string
+  pokedexNumber: number
+  generation: number
+  types: string[]
+  names: Partial<Record<SpeciesNameLanguageCode, string>>
+  pokedex: NormalizedSpeciesPokedex
+  competitive?: NormalizedSpeciesCompetitive
+  collections: SpeciesCollectionSlug[]
+  relatedKeywords: string[]
+  relatedEntities: string[]
+  meta?: NormalizedSpeciesMeta
+}
+
+/** @deprecated Schema v2 monolith with embedded art/lore under cache/normalized/pokemon/{slug}/. */
+export interface NormalizedSpeciesFileV2 {
+  schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION_V2
   slug: string
   name: string
   pokedexNumber: number
@@ -190,15 +227,25 @@ export interface NormalizedSpeciesFile {
   meta?: NormalizedSpeciesMeta
 }
 
+/** @deprecated Alias for v2 monolith during migration. */
+export type NormalizedSpeciesFile = NormalizedSpeciesFileV2
+
 /** @deprecated Flat cache rows before schema v2. */
 export type LegacySpeciesFile = PokemonData & Record<string, unknown>
 
-export function isNormalizedSpeciesFile(value: unknown): value is NormalizedSpeciesFile {
+export function isNormalizedSpeciesFileV2(value: unknown): value is NormalizedSpeciesFileV2 {
   return (
     typeof value === 'object' &&
     value !== null &&
-    (value as NormalizedSpeciesFile).schemaVersion === NORMALIZED_SPECIES_SCHEMA_VERSION
+    (value as NormalizedSpeciesFileV2).schemaVersion === NORMALIZED_SPECIES_SCHEMA_VERSION_V2 &&
+    'art' in value &&
+    'lore' in value
   )
+}
+
+/** @deprecated Use {@link isNormalizedSpeciesFileV2}. */
+export function isNormalizedSpeciesFile(value: unknown): value is NormalizedSpeciesFileV2 {
+  return isNormalizedSpeciesFileV2(value)
 }
 
 function statTotal(stats: NormalizedBaseStats): number {
@@ -212,67 +259,92 @@ function statTotal(stats: NormalizedBaseStats): number {
   )
 }
 
-/** Map grouped v2 (or legacy flat) cache JSON to the flat {@link PokemonData} apps consume. */
+/** Map v3 bundle (or legacy flat/v2) cache JSON to the flat {@link PokemonData} apps consume. */
+export function toPokemonDataFromParts(
+  species: NormalizedSpeciesCoreFile,
+  images: NormalizedSpeciesImagesFile,
+  lore: NormalizedSpeciesLoreFile
+): PokemonData {
+  const translations: Record<string, string> = {}
+  for (const [code, value] of Object.entries(species.names)) {
+    if (value?.trim()) {
+      translations[code] = value.trim()
+    }
+  }
+
+  const art = coerceNormalizedSpeciesArt(images)
+
+  return {
+    slug: species.slug,
+    name: species.name,
+    pokedexNumber: species.pokedexNumber,
+    generation: species.generation,
+    types: species.types,
+    collections: species.collections,
+    translations,
+    relatedKeywords: species.relatedKeywords,
+    relatedEntities: species.relatedEntities,
+    facts: lore.facts,
+    abilities: species.pokedex.abilities,
+    baseStats: species.pokedex.baseStats,
+    statTotal: species.pokedex.statTotal,
+    height: species.pokedex.height,
+    weight: species.pokedex.weight,
+    color: species.pokedex.color,
+    habitat: species.pokedex.habitat,
+    shape: species.pokedex.shape,
+    genus: species.pokedex.genus,
+    eggGroups: species.pokedex.eggGroups,
+    captureRate: species.pokedex.captureRate,
+    baseHappiness: species.pokedex.baseHappiness,
+    growthRate: species.pokedex.growthRate,
+    pokedexEntries: lore.pokedexEntries,
+    evolutionChain: species.pokedex.evolutionChain,
+    officialArtworkUrl: art.sprites.official,
+    homeArtworkUrl: art.sprites.home,
+    shinyArtworkUrl: art.sprites.shiny,
+    michiSceneArt: art.sceneArt,
+    collectCardArt: art.collectCardArt,
+    fetchedAt: species.meta?.fetchedAt ?? null,
+    smogonTier: species.competitive?.smogonTier,
+    notableMoves: species.competitive?.notableMoves,
+    competitiveEnrichedAt: species.competitive?.enrichedAt,
+    competitiveSnippetSource: species.competitive?.source,
+    genderRate: species.pokedex.genderRate,
+    weaknesses: species.pokedex.weaknesses,
+    resistances: species.pokedex.resistances,
+    immunities: species.pokedex.immunities,
+    tcgEnergyType: species.pokedex.tcgEnergyType,
+    tcgWeakness: species.pokedex.tcgWeakness,
+    tcgResistance: species.pokedex.tcgResistance,
+    tcgTypeProfileEnrichedAt: species.pokedex.tcgTypeProfileEnrichedAt,
+  }
+}
+
+/** Map grouped v3 sidecars, v2 monolith, or legacy flat cache JSON to {@link PokemonData}. */
 export function toPokemonData(record: unknown): PokemonData | null {
   if (!record || typeof record !== 'object') {
     return null
   }
 
-  if (isNormalizedSpeciesFile(record)) {
-    const translations: Record<string, string> = {}
-    for (const [code, value] of Object.entries(record.names)) {
-      if (value?.trim()) {
-        translations[code] = value.trim()
+  if (isNormalizedSpeciesFileV2(record)) {
+    const { art, lore, ...core } = record
+    return toPokemonDataFromParts(
+      { ...core, schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION },
+      {
+        schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION,
+        slug: record.slug,
+        ...coerceNormalizedSpeciesArt(art),
+      },
+      {
+        schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION,
+        slug: record.slug,
+        pokedexEntries: lore.pokedexEntries,
+        formDescriptions: lore.formDescriptions,
+        facts: lore.facts,
+        ...(lore.wiki ? { wiki: lore.wiki } : {}),
       }
-    }
-
-    const art = coerceNormalizedSpeciesArt(record.art)
-
-    return {
-      slug: record.slug,
-      name: record.name,
-      pokedexNumber: record.pokedexNumber,
-      generation: record.generation,
-      types: record.types,
-      collections: record.collections,
-      translations,
-      relatedKeywords: record.relatedKeywords,
-      relatedEntities: record.relatedEntities,
-      facts: record.lore.facts,
-      abilities: record.pokedex.abilities,
-      baseStats: record.pokedex.baseStats,
-      statTotal: record.pokedex.statTotal,
-      height: record.pokedex.height,
-      weight: record.pokedex.weight,
-      color: record.pokedex.color,
-      habitat: record.pokedex.habitat,
-      shape: record.pokedex.shape,
-      genus: record.pokedex.genus,
-      eggGroups: record.pokedex.eggGroups,
-      captureRate: record.pokedex.captureRate,
-      baseHappiness: record.pokedex.baseHappiness,
-      growthRate: record.pokedex.growthRate,
-      pokedexEntries: record.lore.pokedexEntries,
-      evolutionChain: record.pokedex.evolutionChain,
-      officialArtworkUrl: art.sprites.official,
-      homeArtworkUrl: art.sprites.home,
-      shinyArtworkUrl: art.sprites.shiny,
-      michiSceneArt: art.sceneArt,
-      collectCardArt: art.collectCardArt,
-      fetchedAt: record.meta?.fetchedAt ?? null,
-      smogonTier: record.competitive?.smogonTier,
-      notableMoves: record.competitive?.notableMoves,
-      competitiveEnrichedAt: record.competitive?.enrichedAt,
-      competitiveSnippetSource: record.competitive?.source,
-      genderRate: record.pokedex.genderRate,
-      weaknesses: record.pokedex.weaknesses,
-      resistances: record.pokedex.resistances,
-      immunities: record.pokedex.immunities,
-      tcgEnergyType: record.pokedex.tcgEnergyType,
-      tcgWeakness: record.pokedex.tcgWeakness,
-      tcgResistance: record.pokedex.tcgResistance,
-      tcgTypeProfileEnrichedAt: record.pokedex.tcgTypeProfileEnrichedAt,
-    }
+    )
   }
 
   const legacy = record as LegacySpeciesFile
