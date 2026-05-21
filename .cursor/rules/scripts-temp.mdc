@@ -14,8 +14,8 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 
 | Command      | Orchestrator                            | Purpose                                                          |
 | ------------ | --------------------------------------- | ---------------------------------------------------------------- |
-| `extract`    | `scripts/1-extract/index.ts`            | Raw JSON harvest → `cache/raw/` (pokeapi, TCG, wiki-lore)        |
-| `refresh-prices` | `scripts/1-extract/refresh-prices.ts`   | Weekly cron: sync TCG git sources (pokemontcg + tcgdex, no images) |
+| `extract`    | `scripts/1-extract/index.ts`            | Raw JSON harvest → `cache/raw/`; optional `--only <source>…` |
+| `refresh-prices` | (alias) `extract --only pokemontcg tcgdex` | Weekly cron: TCG git sources only |
 | `images`     | `scripts/2-images/index.ts`             | Sprites + artofpkm + backfill + Blob publish + local cleanup (~yearly) |
 | `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized v2 + apply Blob URLs (fast; no upload)          |
 | `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (abilities, TCG, competitive, cards) — not extract/transform |
