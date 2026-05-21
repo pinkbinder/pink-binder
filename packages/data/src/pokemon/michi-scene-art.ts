@@ -18,12 +18,12 @@ export interface MichiSceneArtEntry {
   cardId?: string
   pageUrl?: string
   attribution: string
-  /** Populated by enrich when probed; used to prefer wide scenes in blog layouts. */
+  /** Optional dimensions when known; used to prefer wide scenes in blog layouts. */
   width?: number
   height?: number
 }
 
-/** Minimal fields for landscape scoring (hero, binder, enrich). */
+/** Minimal fields for landscape scoring (hero, binder, scene art). */
 export type MichiSceneLandscapeInput = Pick<
   MichiSceneArtEntry,
   'url' | 'label' | 'source' | 'width' | 'height'
