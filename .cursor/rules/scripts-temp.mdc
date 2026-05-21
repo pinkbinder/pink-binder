@@ -15,18 +15,26 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 | Command      | Orchestrator                            | Purpose                                                          |
 | ------------ | --------------------------------------- | ---------------------------------------------------------------- |
 | `extract`    | `scripts/1-extract/index.ts`            | Raw JSON harvest → `cache/raw/`; optional `--only <source>…` |
-| `refresh-prices` | (alias) `extract --only pokemontcg tcgdex` | Weekly cron: TCG git sources only |
 | `images`     | `scripts/2-images/index.ts`             | Sprites + artofpkm + backfill + Blob publish + local cleanup (~yearly) |
-| `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized v2 + apply Blob URLs (fast; no upload)          |
-| `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (abilities, TCG, competitive, cards) — not extract/transform |
+| `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized + apply Blob URLs (catalog metadata; no live prices) |
+| `refresh`    | `scripts/5-refresh/index.ts`            | Live TCG prices → normalized cards + roundup caches; `--only <step>…` |
+| `refresh-prices` | (alias) `refresh`                     | Daily cron: full refresh pipeline |
+| `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (abilities, competitive, scene art) — not extract/transform/refresh |
 
 ### Typical workflows
 
-**Weekly price / TCG catalog refresh (cron):**
+**Daily TCG prices + roundups (cron):**
 
 ```bash
-pnpm --filter @repo/data refresh-prices
+pnpm --filter @repo/data refresh
+```
+
+**New sets / generations (catalog):**
+
+```bash
+pnpm --filter @repo/data extract --only pokemontcg tcgdex
 pnpm --filter @repo/data transform
+pnpm --filter @repo/data refresh
 ```
 
 **New species / annual art refresh:**
@@ -63,11 +71,11 @@ Committed production enrich data lives under `packages/data/cache/normalized/`:
 | -------------------------- | ------------------------------------------------------- |
 | `pokemon/`                 | Per-species folders: `{slug}/species.json`, `images.json`, `lore.json`; `index.json` |
 | `meta/`                    | `pipeline.json`, `popularity.json`, `ability-descriptions.json`, `pokemon-collections.json` |
-| `cards/artists/`           | Artist TCG cache                                        |
-| `cards/expensive-by-type/` | Per-type expensive card snapshots                       |
+| `meta/cards/artists/`           | Artist TCG cache                                        |
+| `meta/cards/expensive-by-type/` | Per-type expensive card snapshots                       |
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
 
-Offline ETL: `1-extract` writes gitignored `raw/` and `scratch/` only (must not read `normalized/`). `2-images` writes `cache/images/` and `blob-manifest.json`. `3-transform` reads raw and writes normalized.
+Offline ETL: `1-extract` writes gitignored `raw/` and `scratch/` only (must not read `normalized/`). `2-images` writes `cache/images/` and `blob-manifest.json`. `3-transform` reads raw and writes normalized. `5-refresh` reads raw price sidecars + normalized cards and updates prices/roundups.
 
 Committed exception: `raw/popularity/*.csv` (Reddit survey source data).
