@@ -18,7 +18,7 @@ Scripts that iterate over hundreds or thousands of items **must** log progress t
 
 Do not log every file on ~10k-item jobs — that floods the terminal.
 
-## Blob publish (`2-images/04-publish-images-to-blob.ts`)
+## Blob publish (`2-images/05-publish-images-to-blob.ts`)
 
 - **Idempotent skip must be fast**: compare manifest `size` via `stat` before hashing or calling `put()`. Only SHA-256 when size differs or path is missing from manifest.
 - **Rate-limit only uploads**: do not `sleep()` between skipped files (11k × 40ms ≈ 8 minutes of dead time).
@@ -33,7 +33,7 @@ Do not log every file on ~10k-item jobs — that floods the terminal.
 | Normalized cache | `3-transform/` | `transform` | After extract |
 | Prices + roundups | `5-refresh/` | `refresh` / `refresh-prices` | Daily |
 
-Image steps under `2-images/`: sprites, artofpkm, art backfill, Blob publish.  
+Image steps under `2-images/`: sprites, artofpkm, art backfill, optimize, Blob publish.  
 Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/pokemon/{slug}/images.json`.
 
 When adding or editing scripts in these folders, always include progress logging and fast idempotent skip paths.

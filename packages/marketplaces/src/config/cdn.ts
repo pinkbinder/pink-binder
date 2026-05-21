@@ -65,11 +65,65 @@ export function buildPokemontcgImageFallbacks(images?: {
   return { imageSmallFallback, imageLargeFallback }
 }
 
-export function tcgplayerProductUrl(cardId: string, tcgplayerUrl?: string): string | undefined {
-  if (tcgplayerUrl?.trim()) {
-    return tcgplayerUrl.trim()
+/** Set id segment from a card id (e.g. `swsh2-53` → `swsh2`). */
+export function tcgCardSetId(cardId: string): string {
+  const trimmed = cardId.trim()
+  const dash = trimmed.lastIndexOf('-')
+  return dash > 0 ? trimmed.slice(0, dash) : trimmed
+}
+
+/**
+ * Scrydex `prices.pokemontcg.io/tcgplayer/{id}` only resolves pokemontcg.io catalog ids.
+ * TCG Pocket and other TCGdex-only sets 404 — do not persist affiliate links for them.
+ */
+export function isKnownTcgplayerPricesRedirectId(cardId: string): boolean {
+  const setId = tcgCardSetId(cardId).toLowerCase()
+
+  if (/^[ab]\d+[a-z]?$/.test(setId)) {
+    return false
   }
-  return `${POKEMON_TCG_PRICES_CDN.tcgplayerPriceBase}/${encodeURIComponent(cardId)}`
+  if (setId === 'p-a' || /^20\d{2}sv$/.test(setId) || setId === 'mfb') {
+    return false
+  }
+
+  return true
+}
+
+function tcgplayerUrlCardId(url: string): string | null {
+  const match = url.match(/\/tcgplayer\/([^/?#]+)/i)
+  return match?.[1] ? decodeURIComponent(match[1]) : null
+}
+
+/**
+ * Affiliate / product URL for TCGPlayer.
+ *
+ * 1. Prefer explicit `tcgplayer.url` from pokemontcg.io (Scrydex redirect → TCGPlayer).
+ * 2. Else synthesize `prices.pokemontcg.io/tcgplayer/{id}` when the card id is in the
+ *    physical TCG catalog (git pokemon-tcg-data has no tcgplayer field; synthesis is required).
+ * 3. Omit links for TCG Pocket / other ids that 404 on the redirect service.
+ */
+export function tcgplayerProductUrl(
+  cardId: string,
+  tcgplayerUrl?: string | null
+): string | undefined {
+  const id = cardId.trim()
+  const explicit = tcgplayerUrl?.trim()
+
+  if (explicit) {
+    if (explicit.includes('prices.pokemontcg.io')) {
+      const redirectId = tcgplayerUrlCardId(explicit) ?? id
+      if (!redirectId || !isKnownTcgplayerPricesRedirectId(redirectId)) {
+        return undefined
+      }
+    }
+    return explicit
+  }
+
+  if (!id || !isKnownTcgplayerPricesRedirectId(id)) {
+    return undefined
+  }
+
+  return `${POKEMON_TCG_PRICES_CDN.tcgplayerPriceBase}/${encodeURIComponent(id)}`
 }
 
 /** @deprecated Use {@link POKEMON_TCG_API} from `./apis`. */
