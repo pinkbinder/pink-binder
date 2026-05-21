@@ -1,0 +1,31 @@
+---
+description: Progress logging for long-running @repo/data scripts
+globs: packages/data/scripts/**
+alwaysApply: false
+---
+
+# Long-running data scripts
+
+Scripts that iterate over hundreds or thousands of items (extract, transform, publish, apply) **must** log progress to stdout so operators can tell the job is alive.
+
+## Requirements
+
+- Log at start: total count and key flags (`--force`, `--dry-run`, `--only`).
+- Log periodically during the loop (every **50** items, or every **10** for slow network I/O).
+- Log at end: summary counts (updated / skipped / errors).
+- Use a consistent prefix: `step-name: 150/1025 processed (42 updated)`.
+
+## Example
+
+```typescript
+const PROGRESS_EVERY = 50
+for (let i = 0; i < items.length; i += 1) {
+  // ... work ...
+  const n = i + 1
+  if (n % PROGRESS_EVERY === 0 || n === items.length) {
+    console.log(`publish-images: ${n}/${items.length} (${uploaded} uploaded, ${skipped} skipped)`)
+  }
+}
+```
+
+Do not rely on per-file `console.log` for every item — that floods the terminal on ~10k files.

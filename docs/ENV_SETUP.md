@@ -66,14 +66,16 @@ Each Next.js app still loads its own `.env.local` at runtime.
 
 ## Image publish pipeline
 
-After extract + optimize, upload blog images to Vercel Blob:
+After extract, run the full transform pipeline (pokeapi → normalized, Blob upload, URL patch):
 
 ```bash
 cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
-pnpm --filter @repo/data publish-images:apply
+pnpm --filter @repo/data transform
 ```
 
-This uploads `packages/data/cache/images/` → Blob, then patches `cache/normalized/species/*.json` with public CDN URLs.
+Runs three steps in order: pokeapi → normalized JSON, Blob upload, URL patch. Re-runs are safe — unchanged files are skipped at each step.
+
+Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for steps 2–3.
 
 ## Reference
 

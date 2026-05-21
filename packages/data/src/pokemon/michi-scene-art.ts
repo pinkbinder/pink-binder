@@ -1,6 +1,12 @@
 import type { PokemonTcgCard } from './tcg-card'
 
-export type MichiSceneArtSource = 'artofpkm' | 'tcg' | 'pokeos'
+export type MichiSceneArtSource =
+  | 'artofpkm'
+  | 'tcg'
+  | 'pokeos'
+  | 'wallhaven'
+  | 'openverse'
+  | 'wikimedia'
 
 /** Cached or runtime-resolved full-scene illustration for Michi Method spreads. */
 export interface MichiSceneArtEntry {
