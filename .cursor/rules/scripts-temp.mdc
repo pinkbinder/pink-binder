@@ -48,8 +48,8 @@ See `.cursor/rules/data-scripts-progress.mdc` for progress logging and fast blob
 
 ## Shared libs (`scripts/lib/`)
 
-- `cache-paths.ts` — re-exports path constants from `src/paths.ts` (`speciesCacheDir`, `normalizedMetaDir`, etc.)
-- `pokemon-cache.ts` — read/write `cache/normalized/species/{slug}.json` via `speciesCacheDir`
+- `cache-paths.ts` — re-exports path constants from `src/paths.ts` (`normalizedPokemonDir`, `normalizedMetaDir`, etc.)
+- `pokemon-cache.ts` — read/write `cache/normalized/pokemon/{slug}/` via bundle helpers
 - `raw-pokeapi-index.ts` — list species from `cache/raw/pokeapi/` (extract layer; no normalized dependency)
 - `argv.ts` — `--limit`, `--only`, flags
 - `artofpkm-scraper.ts` — artofpkm.com scene art scrape
@@ -62,7 +62,7 @@ Committed production enrich data lives under `packages/data/cache/normalized/`:
 
 | Path                       | Contents                                                |
 | -------------------------- | ------------------------------------------------------- |
-| `species/`                 | Per-species JSON + `index.json`                         |
+| `pokemon/`                 | Per-species folders: `{slug}/species.json`, `images.json`, `lore.json`; `index.json` |
 | `meta/`                    | `ability-descriptions.json`, `pokemon-collections.json` |
 | `cards/artists/`           | Artist TCG cache                                        |
 | `cards/expensive-by-type/` | Per-type expensive card snapshots                       |
