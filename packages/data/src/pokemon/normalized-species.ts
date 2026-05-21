@@ -105,10 +105,15 @@ export interface NormalizedSpeciesLore {
   pokedexEntries: NormalizedPokedexEntry[]
   formDescriptions: string[]
   facts: string[]
+  /** Bulbapedia Biology section paragraphs (plain text). */
+  biology?: string[]
   wiki?: {
     designOrigins: string[]
     inspirationFacts: string[]
     quirkDescriptions: string[]
+    /** Plain-text paragraphs from Bulbapedia ==Biology==. */
+    biology?: string[]
+    source?: 'bulbapedia' | 'veekun'
   }
 }
 
@@ -180,6 +185,8 @@ export interface NormalizedSpeciesLoreFile {
   pokedexEntries: NormalizedPokedexEntry[]
   formDescriptions: string[]
   facts: string[]
+  /** Bulbapedia Biology section paragraphs (plain text). */
+  biology?: string[]
   wiki?: NormalizedSpeciesLore['wiki']
 }
 

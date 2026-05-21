@@ -30,7 +30,7 @@ Do not log every file on ~10k-item jobs — that floods the terminal.
 | ----- | ------ | ------- | ------- |
 | Raw JSON | `1-extract/` | `extract` / `refresh-prices` | Weekly (`refresh-prices`) |
 | Images + CDN | `2-images/` | `images` | ~Yearly (new species / art refresh) |
-| Normalized cache | `3-transform/` | `transform` | After extract or refresh-prices |
+| Normalized cache | `3-transform/` | `transform` | After extract |
 
 Image steps under `2-images/`: sprites, artofpkm, art backfill, Blob publish.  
 Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/pokemon/{slug}/images.json`.
