@@ -33,6 +33,6 @@ Do not log every file on ~10k-item jobs — that floods the terminal.
 | Normalized cache | `3-transform/` | `transform` | After extract or refresh-prices |
 
 Image steps under `2-images/`: sprites, artofpkm, art backfill, Blob publish.  
-Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/species/`.
+Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/pokemon/{slug}/images.json`.
 
 When adding or editing scripts in these folders, always include progress logging and fast idempotent skip paths.

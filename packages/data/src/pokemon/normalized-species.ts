@@ -5,9 +5,6 @@ import { resolvePipelineExtractedAt } from '../pipeline-meta'
 /** Current normalized species JSON schema version written by 3-transform. */
 export const NORMALIZED_SPECIES_SCHEMA_VERSION = 3 as const
 
-/** @deprecated Schema v2 monolith with embedded art/lore. */
-export const NORMALIZED_SPECIES_SCHEMA_VERSION_V2 = 2 as const
-
 export const SPECIES_NAME_LANGUAGE_CODES = [
   'de',
   'es',
@@ -136,7 +133,7 @@ export interface NormalizedSpeciesArt {
   collectCardArt?: NormalizedCollectCardArt[]
 }
 
-/** Coerce v2 `art.sprites` or legacy flat artwork URL fields into schema v2 shape. */
+/** Coerce artwork sidecar JSON into {@link NormalizedSpeciesArt}. */
 export function coerceNormalizedSpeciesArt(
   art: NormalizedSpeciesArt | Record<string, unknown>
 ): NormalizedSpeciesArt {
@@ -150,7 +147,7 @@ export function coerceNormalizedSpeciesArt(
     return art as NormalizedSpeciesArt
   }
 
-  const legacy = art as NormalizedSpeciesArt & {
+  const flatArt = art as NormalizedSpeciesArt & {
     officialArtworkUrl?: string | null
     homeArtworkUrl?: string | null
     shinyArtworkUrl?: string | null
@@ -158,14 +155,14 @@ export function coerceNormalizedSpeciesArt(
 
   return {
     sprites: {
-      official: legacy.officialArtworkUrl ?? null,
-      home: legacy.homeArtworkUrl ?? null,
-      shiny: legacy.shinyArtworkUrl ?? null,
+      official: flatArt.officialArtworkUrl ?? null,
+      home: flatArt.homeArtworkUrl ?? null,
+      shiny: flatArt.shinyArtworkUrl ?? null,
       dreamWorld: null,
       showdown: null,
     },
-    sceneArt: legacy.sceneArt,
-    collectCardArt: legacy.collectCardArt,
+    sceneArt: flatArt.sceneArt,
+    collectCardArt: flatArt.collectCardArt,
   }
 }
 
@@ -186,36 +183,7 @@ export interface NormalizedSpeciesLoreFile {
   wiki?: NormalizedSpeciesLore['wiki']
 }
 
-/** @deprecated Per-species meta removed; see cache/normalized/meta/pipeline.json. */
-export interface NormalizedSpeciesMeta {
-  extractedAt?: string | null
-  transformedAt?: string | null
-  pokeapiExtractedAt?: string | null
-  fetchedAt?: string | null
-}
-
-/** Read legacy per-species extractedAt from old species.json meta blocks. */
-export function resolveSpeciesExtractedAt(meta?: unknown): string | null {
-  if (!meta || typeof meta !== 'object') {
-    return null
-  }
-  const record = meta as Record<string, unknown>
-  const extracted = record.extractedAt
-  if (typeof extracted === 'string' && extracted.trim()) {
-    return extracted
-  }
-  const legacyPokeapi = record.pokeapiExtractedAt
-  if (typeof legacyPokeapi === 'string' && legacyPokeapi.trim()) {
-    return legacyPokeapi
-  }
-  const legacyFetched = record.fetchedAt
-  if (typeof legacyFetched === 'string' && legacyFetched.trim()) {
-    return legacyFetched
-  }
-  return null
-}
-
-/** Core species record (schema v3) under cache/normalized/pokemon/{slug}/species.json — art and lore in sibling sidecars. */
+/** Core species record under cache/normalized/pokemon/{slug}/species.json. */
 export interface NormalizedSpeciesCoreFile {
   schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION
   slug: string
@@ -229,49 +197,6 @@ export interface NormalizedSpeciesCoreFile {
   collections: SpeciesCollectionSlug[]
   relatedKeywords: string[]
   relatedEntities: string[]
-  /** @deprecated Use cache/normalized/meta/pipeline.json */
-  meta?: NormalizedSpeciesMeta
-}
-
-/** @deprecated Schema v2 monolith with embedded art/lore under cache/normalized/pokemon/{slug}/. */
-export interface NormalizedSpeciesFileV2 {
-  schemaVersion: typeof NORMALIZED_SPECIES_SCHEMA_VERSION_V2
-  slug: string
-  name: string
-  pokedexNumber: number
-  generation: number
-  types: string[]
-  names: Partial<Record<SpeciesNameLanguageCode, string>>
-  pokedex: NormalizedSpeciesPokedex
-  lore: NormalizedSpeciesLore
-  competitive?: NormalizedSpeciesCompetitive
-  art: NormalizedSpeciesArt
-  collections: SpeciesCollectionSlug[]
-  relatedKeywords: string[]
-  relatedEntities: string[]
-  /** @deprecated Use cache/normalized/meta/pipeline.json */
-  meta?: NormalizedSpeciesMeta
-}
-
-/** @deprecated Alias for v2 monolith during migration. */
-export type NormalizedSpeciesFile = NormalizedSpeciesFileV2
-
-/** @deprecated Flat cache rows before schema v2. */
-export type LegacySpeciesFile = PokemonData & Record<string, unknown>
-
-export function isNormalizedSpeciesFileV2(value: unknown): value is NormalizedSpeciesFileV2 {
-  return (
-    typeof value === 'object' &&
-    value !== null &&
-    (value as NormalizedSpeciesFileV2).schemaVersion === NORMALIZED_SPECIES_SCHEMA_VERSION_V2 &&
-    'art' in value &&
-    'lore' in value
-  )
-}
-
-/** @deprecated Use {@link isNormalizedSpeciesFileV2}. */
-export function isNormalizedSpeciesFile(value: unknown): value is NormalizedSpeciesFileV2 {
-  return isNormalizedSpeciesFileV2(value)
 }
 
 function statTotal(stats: NormalizedBaseStats): number {
@@ -285,7 +210,7 @@ function statTotal(stats: NormalizedBaseStats): number {
   )
 }
 
-/** Map v3 bundle (or legacy flat/v2) cache JSON to the flat {@link PokemonData} apps consume. */
+/** Map v3 bundle cache JSON to the flat {@link PokemonData} apps consume. */
 export function toPokemonDataFromParts(
   species: NormalizedSpeciesCoreFile,
   images: NormalizedSpeciesImagesFile,
@@ -344,47 +269,6 @@ export function toPokemonDataFromParts(
     tcgWeakness: species.pokedex.tcgWeakness,
     tcgResistance: species.pokedex.tcgResistance,
     tcgTypeProfileEnrichedAt: species.pokedex.tcgTypeProfileEnrichedAt,
-  }
-}
-
-/** Map grouped v3 sidecars, v2 monolith, or legacy flat cache JSON to {@link PokemonData}. */
-export function toPokemonData(record: unknown): PokemonData | null {
-  if (!record || typeof record !== 'object') {
-    return null
-  }
-
-  if (isNormalizedSpeciesFileV2(record)) {
-    const { art, lore, ...core } = record
-    return toPokemonDataFromParts(
-      { ...core, schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION },
-      {
-        schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION,
-        slug: record.slug,
-        ...coerceNormalizedSpeciesArt(art),
-      },
-      {
-        schemaVersion: NORMALIZED_SPECIES_SCHEMA_VERSION,
-        slug: record.slug,
-        pokedexEntries: lore.pokedexEntries,
-        formDescriptions: lore.formDescriptions,
-        facts: lore.facts,
-        ...(lore.wiki ? { wiki: lore.wiki } : {}),
-      }
-    )
-  }
-
-  const legacy = record as LegacySpeciesFile
-  if (!legacy.slug || !legacy.name || !legacy.pokedexNumber) {
-    return null
-  }
-
-  const { fetchedAt: legacyFetchedAt, extractedAt: legacyExtractedAt, ...rest } = legacy
-  return {
-    ...(rest as Omit<PokemonData, 'extractedAt'>),
-    extractedAt:
-      (typeof legacyExtractedAt === 'string' && legacyExtractedAt) ||
-      (typeof legacyFetchedAt === 'string' && legacyFetchedAt) ||
-      null,
   }
 }
 

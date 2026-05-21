@@ -18,7 +18,7 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 | `refresh-prices` | `scripts/1-extract/refresh-prices.ts`   | Weekly cron: sync TCG git sources (pokemontcg + tcgdex, no images) |
 | `images`     | `scripts/2-images/index.ts`             | Sprites + artofpkm + backfill + Blob publish + local cleanup (~yearly) |
 | `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized v2 + apply Blob URLs (fast; no upload)          |
-| `enrich`     | `scripts/enrich/index.ts`               | Legacy live-API enrich (`cache/normalized/`)                     |
+| `enrich`     | `scripts/enrich/index.ts`               | Live-API enrich (abilities, TCG, competitive, cards) — not extract/transform |
 
 ### Typical workflows
 
@@ -62,10 +62,9 @@ Committed production enrich data lives under `packages/data/cache/normalized/`:
 | Path                       | Contents                                                |
 | -------------------------- | ------------------------------------------------------- |
 | `pokemon/`                 | Per-species folders: `{slug}/species.json`, `images.json`, `lore.json`; `index.json` |
-| `meta/`                    | `ability-descriptions.json`, `pokemon-collections.json` |
+| `meta/`                    | `pipeline.json`, `popularity.json`, `ability-descriptions.json`, `pokemon-collections.json` |
 | `cards/artists/`           | Artist TCG cache                                        |
 | `cards/expensive-by-type/` | Per-type expensive card snapshots                       |
-| `popularity/`              | `index.json` — blended survey ranks (from `raw/popularity/` CSVs) |
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
 
