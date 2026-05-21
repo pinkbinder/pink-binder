@@ -66,8 +66,10 @@ Committed production enrich data lives under `packages/data/cache/normalized/`:
 | `meta/`                    | `ability-descriptions.json`, `pokemon-collections.json` |
 | `cards/artists/`           | Artist TCG cache                                        |
 | `cards/expensive-by-type/` | Per-type expensive card snapshots                       |
-| `popularity/`              | Survey CSVs                                             |
+| `popularity/`              | `index.json` — blended survey ranks (from `raw/popularity/` CSVs) |
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
 
 Offline ETL: `1-extract` writes gitignored `raw/` and `scratch/` only (must not read `normalized/`). `2-images` writes `cache/images/` and `blob-manifest.json`. `3-transform` reads raw and writes normalized.
+
+Committed exception: `raw/popularity/*.csv` (Reddit survey source data).
