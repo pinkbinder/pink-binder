@@ -12,18 +12,39 @@ Only scripts that are meant to be long-lived and re-run regularly should live in
 
 ## Package commands (`pnpm --filter @repo/data …`)
 
-| Command      | Orchestrator                            | Purpose                                                                   |
-| ------------ | --------------------------------------- | ------------------------------------------------------------------------- |
-| `extract`    | `scripts/1-extract/index.ts`            | Full one-time harvest → all of `cache/raw/` (includes sprites + artofpkm) |
-| `refresh`    | `scripts/1-extract/extract-periodic.ts` | Weekly cron: git pull scratch + refresh pokeapi/TCG/wiki-lore only        |
-| `enrich`     | `scripts/enrich/index.ts`               | Legacy live-API enrich (`cache/normalized/`) — until `2-transform/`       |
-| `audit-tags` | `scripts/audit-collection-tags.ts`      | Read-only collection tag audit                                            |
+| Command      | Orchestrator                            | Purpose                                                          |
+| ------------ | --------------------------------------- | ---------------------------------------------------------------- |
+| `extract`    | `scripts/1-extract/index.ts`            | Raw JSON harvest → `cache/raw/` (pokeapi, TCG, wiki-lore)        |
+| `refresh`    | `scripts/1-extract/extract-periodic.ts` | Weekly cron: pokeapi / TCG / wiki-lore (no images)               |
+| `images`     | `scripts/2-images/index.ts`             | Sprites + artofpkm + backfill + Blob publish + local cleanup (~yearly) |
+| `transform`  | `scripts/3-transform/index.ts`          | Raw → normalized v2 + apply Blob URLs (fast; no upload)          |
+| `enrich`     | `scripts/enrich/index.ts`               | Legacy live-API enrich (`cache/normalized/`)                     |
+| `audit-tags` | `scripts/audit-collection-tags.ts`      | Read-only collection tag audit                                   |
 
-Both extract commands sync scratch repos automatically (clone or `git pull --ff-only`). No bootstrap flags. Freshness is recorded in `cache/extract-manifest.json`.
+### Typical workflows
+
+**Weekly refresh (cron):**
+
+```bash
+pnpm --filter @repo/data refresh
+pnpm --filter @repo/data transform
+```
+
+**New species / annual art refresh:**
+
+```bash
+pnpm --filter @repo/data extract    # if pokeapi raw needs update
+pnpm --filter @repo/data images     # sprites, scene art, Blob upload
+pnpm --filter @repo/data transform  # normalized JSON + URL patch
+```
+
+Both extract commands sync scratch repos automatically (clone or `git pull --ff-only`). Freshness is recorded in `cache/extract-manifest.json`.
 
 PokeAPI bulk data uses the [PokeAPI/api-data](https://github.com/PokeAPI/api-data) git mirror — not [ditto clone](https://github.com/PokeAPI/ditto) (avoids Python tooling and live API rate limits). Live prices stay in `@repo/marketplaces` at runtime.
 
 Run individual step files directly with `tsx scripts/…` when debugging a single step.
+
+See `.cursor/rules/data-scripts-progress.mdc` for progress logging and fast blob skip requirements.
 
 ## Shared libs (`scripts/lib/`)
 
@@ -32,6 +53,8 @@ Run individual step files directly with `tsx scripts/…` when debugging a singl
 - `raw-pokeapi-index.ts` — list species from `cache/raw/pokeapi/` (extract layer; no normalized dependency)
 - `argv.ts` — `--limit`, `--only`, flags
 - `artofpkm-scraper.ts` — artofpkm.com scene art scrape
+- `blob-manifest.ts` — idempotent Vercel Blob publish manifest
+- `apply-blob-art.ts` — patch normalized species `art` from manifest
 
 ## Cache layout
 
@@ -47,4 +70,4 @@ Committed production enrich data lives under `packages/data/cache/normalized/`:
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.
 
-Offline ETL: extract scripts write gitignored `raw/` and `scratch/` only. They must not read `normalized/`. Transform scripts (future `2-transform/`) read raw and write normalized.
+Offline ETL: `1-extract` writes gitignored `raw/` and `scratch/` only (must not read `normalized/`). `2-images` writes `cache/images/` and `blob-manifest.json`. `3-transform` reads raw and writes normalized.

@@ -1,7 +1,7 @@
 import type { SpeciesCollectionSlug } from '../collections/types'
 import type { PokemonData } from './types'
 
-/** Current normalized species JSON schema version written by 2-transform. */
+/** Current normalized species JSON schema version written by 3-transform. */
 export const NORMALIZED_SPECIES_SCHEMA_VERSION = 2 as const
 
 export const SPECIES_NAME_LANGUAGE_CODES = [

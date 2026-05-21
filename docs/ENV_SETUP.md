@@ -66,16 +66,38 @@ Each Next.js app still loads its own `.env.local` at runtime.
 
 ## Image publish pipeline
 
-After extract, run the full transform pipeline (pokeapi → normalized, Blob upload, URL patch):
+Sprites, scene art, and Blob upload live in the **`images`** command (~yearly). Transform only migrates JSON and applies CDN URLs.
+
+**Weekly refresh:**
 
 ```bash
-cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
+pnpm --filter @repo/data refresh
 pnpm --filter @repo/data transform
 ```
 
-Runs three steps in order: pokeapi → normalized JSON, Blob upload, URL patch. Re-runs are safe — unchanged files are skipped at each step.
+**When sprites or scene art change (new species, art refresh):**
 
-Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for steps 2–3.
+```bash
+cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
+pnpm --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
+pnpm --filter @repo/data transform           # normalized JSON + URL patch
+```
+
+Re-runs are safe — unchanged files are skipped at each step. Step 5 removes local `cache/images/` after validating every file is in `blob-manifest.json` (use `--skip-cleanup` to keep local copies).
+
+Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish (step 4). Apply URLs (transform) reads the manifest only — no token.
+
+### Sharing `blob-manifest.json` across machines
+
+| Artifact | Commit to git? | Why |
+| -------- | -------------- | --- |
+| `cache/normalized/species/*.json` | **Yes** (already) | Apps read Blob URLs from here at runtime |
+| `cache/blob-manifest.json` | **Recommended for teams** | Lets others run `transform` (apply URLs) and `images` publish skips without re-uploading |
+| `cache/images/` | **No** | Staging only; cleaned up after publish |
+
+The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
+
+To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run weekly `refresh` + `transform` for metadata do not need the manifest if species JSON in git already has current art URLs.
 
 ## Reference
 
