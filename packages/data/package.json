@@ -17,7 +17,8 @@
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",
     "refresh": "tsx scripts/1-extract/extract-periodic.ts",
-    "transform": "tsx scripts/2-transform/index.ts",
+    "images": "tsx scripts/2-images/index.ts",
+    "transform": "tsx scripts/3-transform/index.ts",
     "enrich": "tsx scripts/enrich/index.ts",
     "audit-tags": "tsx scripts/audit-collection-tags.ts"
   },

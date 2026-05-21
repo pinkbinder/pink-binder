@@ -1,31 +1,38 @@
 ---
-description: Progress logging for long-running @repo/data scripts
+description: Progress logging and performance for long-running @repo/data ETL scripts (especially blob upload)
 globs: packages/data/scripts/**
-alwaysApply: false
+alwaysApply: true
 ---
 
 # Long-running data scripts
 
-Scripts that iterate over hundreds or thousands of items (extract, transform, publish, apply) **must** log progress to stdout so operators can tell the job is alive.
+Scripts that iterate over hundreds or thousands of items **must** log progress to stdout so operators can tell the job is alive. This is mandatory for blob publish, extract loops, and transform apply steps.
 
-## Requirements
+## Progress logging
 
 - Log at start: total count and key flags (`--force`, `--dry-run`, `--only`).
-- Log periodically during the loop (every **50** items, or every **10** for slow network I/O).
-- Log at end: summary counts (updated / skipped / errors).
-- Use a consistent prefix: `step-name: 150/1025 processed (42 updated)`.
+- Log periodically during the loop (every **50** items for JSON/species work; every **250** for ~10k file walks).
+- Log at end: summary counts (uploaded / updated / skipped / failed).
+- Use a consistent prefix: `publish-images: 250/11765 processed (0 ok, 250 skipped, 0 failed)`.
+- Use `processRecords()` with `progressEvery` from `scripts/lib/process-queue.ts` when batching.
 
-## Example
+Do not log every file on ~10k-item jobs — that floods the terminal.
 
-```typescript
-const PROGRESS_EVERY = 50
-for (let i = 0; i < items.length; i += 1) {
-  // ... work ...
-  const n = i + 1
-  if (n % PROGRESS_EVERY === 0 || n === items.length) {
-    console.log(`publish-images: ${n}/${items.length} (${uploaded} uploaded, ${skipped} skipped)`)
-  }
-}
-```
+## Blob publish (`2-images/04-publish-images-to-blob.ts`)
 
-Do not rely on per-file `console.log` for every item — that floods the terminal on ~10k files.
+- **Idempotent skip must be fast**: compare manifest `size` via `stat` before hashing or calling `put()`. Only SHA-256 when size differs or path is missing from manifest.
+- **Rate-limit only uploads**: do not `sleep()` between skipped files (11k × 40ms ≈ 8 minutes of dead time).
+- Re-run with a complete manifest should finish in seconds, not minutes.
+
+## Pipeline layers
+
+| Layer | Folder | Command | Cadence |
+| ----- | ------ | ------- | ------- |
+| Raw JSON | `1-extract/` | `extract` / `refresh` | Weekly (`refresh`) |
+| Images + CDN | `2-images/` | `images` | ~Yearly (new species / art refresh) |
+| Normalized cache | `3-transform/` | `transform` | After extract or refresh |
+
+Image steps under `2-images/`: sprites, artofpkm, art backfill, Blob publish.  
+Apply blob URLs stays in `3-transform/` — it patches `cache/normalized/species/`.
+
+When adding or editing scripts in these folders, always include progress logging and fast idempotent skip paths.
