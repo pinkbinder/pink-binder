@@ -11,12 +11,21 @@ export type {
   TcgCardRecord,
 } from './types'
 
+export { mergeTcgCardRecords } from './merge'
+
+export { canonicalTcgCardId, normalizeTcgCardNumber, pickPreferredTcgCardId } from './card-id'
+
 export {
   tcgCardImageCandidates,
   resolveTcgCardImageUrls,
+  buildPokemontcgImageFallbacks,
   buildScrydexCardImageUrls,
+  buildTcgdexImageUrls,
+  tcgplayerProductUrl,
   type TcgCardImageUrls,
 } from './images'
+
+export { inferSetSeries, pickPokemontcgPrice, pickTcgdexPrice } from './pricing'
 
 export {
   TCGDEX_API,
