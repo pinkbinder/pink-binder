@@ -26,6 +26,12 @@ export interface TcgCardRecord {
   artist: string | null
   tcgplayerUrl?: string
   price?: TcgCardPrice
+  /** TCG print energy types (e.g. Grass, Lightning), when present in extract. */
+  energyTypes?: string[]
+  /** Most common weakness types across prints; per-card when known. */
+  weaknessTypes?: string[]
+  /** Most common resistance types across prints; per-card when known. */
+  resistanceTypes?: string[]
   /** Which API supplied the card metadata used in this record. */
   metadataSource: TcgCardPriceSource
 }

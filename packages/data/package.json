@@ -16,9 +16,9 @@
     "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",
-    "refresh-prices": "tsx scripts/1-extract/index.ts --only pokemontcg tcgdex",
     "images": "tsx scripts/2-images/index.ts",
     "transform": "tsx scripts/3-transform/index.ts",
+    "refresh": "tsx scripts/5-refresh/index.ts",
     "enrich": "tsx scripts/enrich/index.ts"
   },
   "dependencies": {
