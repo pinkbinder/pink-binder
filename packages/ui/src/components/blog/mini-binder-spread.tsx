@@ -1,4 +1,4 @@
-import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
+import { shouldBypassNextImageOptimization } from '@repo/data/client'
 import Image from 'next/image'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'

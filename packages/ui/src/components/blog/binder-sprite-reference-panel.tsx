@@ -1,6 +1,6 @@
 'use client'
 
-import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
+import { shouldBypassNextImageOptimization } from '@repo/data/client'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 
