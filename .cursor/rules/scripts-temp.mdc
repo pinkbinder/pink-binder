@@ -77,7 +77,8 @@ Committed production data lives under `packages/data/cache/normalized/`:
 | -------------------------- | ------------------------------------------------------- |
 | `pokemon/`                 | Per-species folders: `{slug}/species.json`, `images.json`, `lore.json`; `index.json` |
 | `meta/`                    | `pipeline.json`, `popularity.json`, `ability-descriptions.json`, `pokemon-collections.json` |
-| `meta/cards/artists/`           | Artist TCG cache                                        |
+| `meta/cards/illustrators/`      | Illustrator TCG cache + `info.json` bios                |
+| `meta/illustrators-catalog.json` | Bulbapedia curated illustrator list                  |
 | `meta/cards/expensive-by-type/` | Per-type expensive card snapshots                       |
 
 Path constants are defined once in `packages/data/src/paths.ts`. Scripts should import from `./lib/cache-paths`, not hardcode paths.

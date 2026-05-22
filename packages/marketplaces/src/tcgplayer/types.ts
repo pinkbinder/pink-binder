@@ -36,12 +36,11 @@ export interface TcgCardRecord {
   metadataSource: TcgCardPriceSource
 }
 
-export type TcgCardArtistFilter = 'yuka-morii' | 'asako-ito'
-
 export interface GetPokemonTcgCardsOptions {
   /** Exact species name (e.g. "Gengar"). */
   speciesName: string
-  artistFilter?: TcgCardArtistFilter
+  /** Exact illustrator name for API search (e.g. "Yuka Morii"). */
+  artistName?: string
   /** Max cards returned (default 36). */
   limit?: number
   /** Extra pages for artist-filtered searches (default 2 × 50). */

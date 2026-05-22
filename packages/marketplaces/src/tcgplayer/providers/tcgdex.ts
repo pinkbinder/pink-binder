@@ -45,14 +45,13 @@ function buildTcgdexSearchParams(
   params.set('name', `eq:${options.speciesName}`)
   params.set('category', 'eq:Pokemon')
 
-  if (options.artistFilter === 'yuka-morii') {
-    params.set('illustrator', 'like:Yuka Morii')
-  } else if (options.artistFilter === 'asako-ito') {
-    params.set('illustrator', 'like:Asako Ito')
+  const artistName = options.artistName?.trim()
+  if (artistName) {
+    params.set('illustrator', `like:${artistName}`)
   }
 
   params.set('pagination:page', String(page))
-  params.set('pagination:itemsPerPage', String(options.artistFilter ? 50 : (options.limit ?? 36)))
+  params.set('pagination:itemsPerPage', String(artistName ? 50 : (options.limit ?? 36)))
   params.set('sort:order', 'DESC')
   return params
 }
@@ -61,7 +60,7 @@ async function fetchTcgdexCardBriefs(
   options: GetPokemonTcgCardsOptions,
   revalidateSeconds?: number
 ): Promise<TcgdexCardBrief[]> {
-  const maxPages = options.artistFilter ? (options.maxPages ?? 2) : 1
+  const maxPages = options.artistName ? (options.maxPages ?? 2) : 1
   const limit = options.limit ?? 36
   const briefs: TcgdexCardBrief[] = []
 
@@ -75,15 +74,15 @@ async function fetchTcgdexCardBriefs(
       break
     }
     briefs.push(...batch)
-    if (!options.artistFilter && briefs.length >= limit) {
+    if (!options.artistName && briefs.length >= limit) {
       break
     }
-    if (batch.length < (options.artistFilter ? 50 : limit)) {
+    if (batch.length < (options.artistName ? 50 : limit)) {
       break
     }
   }
 
-  return options.artistFilter ? briefs : briefs.slice(0, limit)
+  return options.artistName ? briefs : briefs.slice(0, limit)
 }
 
 async function fetchTcgdexCardFull(
