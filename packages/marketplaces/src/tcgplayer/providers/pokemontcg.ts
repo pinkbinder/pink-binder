@@ -41,10 +41,9 @@ function pokemontcgHeaders(): Record<string, string> {
 
 function buildPokemontcgSearchQuery(options: GetPokemonTcgCardsOptions): string {
   const parts = [`name:"${options.speciesName}"`, 'supertype:Pokémon']
-  if (options.artistFilter === 'yuka-morii') {
-    parts.push('artist:"Yuka Morii"')
-  } else if (options.artistFilter === 'asako-ito') {
-    parts.push('artist:"Asako Ito"')
+  const artistName = options.artistName?.trim()
+  if (artistName) {
+    parts.push(`artist:"${artistName}"`)
   }
   return parts.join(' ')
 }
@@ -73,8 +72,8 @@ function mapPokemontcgCard(card: PokemontcgCard): TcgCardRecord {
 export async function searchPokemontcgPokemonCards(
   options: GetPokemonTcgCardsOptions
 ): Promise<TcgCardRecord[]> {
-  const maxPages = options.artistFilter ? (options.maxPages ?? 2) : 1
-  const pageSize = options.artistFilter ? 50 : (options.limit ?? 36)
+  const maxPages = options.artistName ? (options.maxPages ?? 2) : 1
+  const pageSize = options.artistName ? 50 : (options.limit ?? 36)
   const limit = options.limit ?? 36
   const cards: TcgCardRecord[] = []
 
@@ -106,7 +105,7 @@ export async function searchPokemontcgPokemonCards(
     }
   }
 
-  return options.artistFilter ? cards : cards.slice(0, limit)
+  return options.artistName ? cards : cards.slice(0, limit)
 }
 
 export async function getPokemontcgPokemonCardById(

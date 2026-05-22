@@ -5,7 +5,6 @@ import type { GetPokemonTcgCardsOptions, TcgCardRecord } from './types'
 
 export type {
   GetPokemonTcgCardsOptions,
-  TcgCardArtistFilter,
   TcgCardPrice,
   TcgCardPriceSource,
   TcgCardRecord,
