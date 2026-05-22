@@ -1,6 +1,7 @@
 /** Server-only barrel (uses `fs`). Client Components must import `@repo/data/client`. */
 export * from './pokemon'
 export * from './illustrators'
+export * from './expansions'
 export * from './regions'
 export * from './popularity'
 export * from './collections'
