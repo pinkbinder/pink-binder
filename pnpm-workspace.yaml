@@ -1,7 +1,13 @@
 packages:
   - "apps/*"
   - "packages/*"
+
 allowBuilds:
   esbuild: true
   sharp: true
   unrs-resolver: true
+
+overrides:
+  eslint: "^9.39.4"
+  "@eslint/js": "^9.39.4"
+  tailwindcss: "^3.4.19"
