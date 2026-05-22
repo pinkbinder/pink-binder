@@ -14,7 +14,7 @@ Scripts that iterate over hundreds or thousands of items **must** log progress t
 - Log periodically during the loop (every **50** items for JSON/species work; every **250** for ~10k file walks).
 - Log at end: summary counts (uploaded / updated / skipped / failed).
 - Use a consistent prefix: `publish-images: 250/11765 processed (0 ok, 250 skipped, 0 failed)`.
-- Use `processRecords()` with `progressEvery` from `scripts/lib/process-queue.ts` when batching.
+- Use `processRecords()` with `progressEvery` from `scripts/lib/core/process-queue.ts` when batching.
 
 Do not log every file on ~10k-item jobs — that floods the terminal.
 
