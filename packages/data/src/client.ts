@@ -20,7 +20,14 @@ export type {
 export type { LandingBlogFeaturedPayload, LandingBlogFeaturedPost } from './landing/types'
 export * from './utils'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
-export { tcgCardImageCandidates } from '@repo/marketplaces/tcgplayer'
+export {
+  tcgCardImageCandidates,
+  tcgCardHeroImageUrl,
+  enrichPokemonTcgCardImages,
+  shouldBypassNextImageOptimization,
+  TCG_CARD_DATA_ATTRIBUTION,
+  TCG_CARD_IMAGE_ATTRIBUTION,
+} from './tcg/images'
 export {
   buildProjectPokemonSpriteUrls,
   projectPokemonSpriteSlugCandidates,
