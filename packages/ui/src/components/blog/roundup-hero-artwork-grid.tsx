@@ -1,9 +1,12 @@
 'use client'
 
 import { cn } from '../../lib/utils'
+import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 
 export interface RoundupHeroArtworkGridProps {
   artworkUrls: string[]
+  /** Per-cell URL chains (blob-first). When set, overrides `artworkUrls` for that index. */
+  artworkCandidateLists?: string[][]
   fallback?: string
   className?: string
   /** Michi Method single scene — fill the cell. Official art / multi-up use contain + padding. */
@@ -19,25 +22,43 @@ function gridColumnClass(urlCount: number): string {
 }
 
 /** Single-row hero strip for roundup posts (3-up stays one row on mobile). */
+function cellCandidateLists(
+  artworkUrls: string[],
+  artworkCandidateLists: string[][] | undefined,
+  fallback?: string
+): string[][] {
+  const urls = artworkUrls.filter(Boolean).slice(0, 3)
+  if (artworkCandidateLists?.length) {
+    return artworkCandidateLists
+      .map((list) => list.filter(Boolean))
+      .filter((list) => list.length > 0)
+      .slice(0, 3)
+  }
+  return urls.map((url) => (fallback ? [url, fallback] : [url]))
+}
+
 export function RoundupHeroArtworkGrid({
   artworkUrls,
+  artworkCandidateLists,
   fallback,
   className,
   fillFrame = false,
   variant = 'index',
 }: RoundupHeroArtworkGridProps) {
-  const urls = artworkUrls.filter(Boolean).slice(0, 3)
-  if (urls.length === 0) return null
+  const lists = cellCandidateLists(artworkUrls, artworkCandidateLists, fallback).map((list) =>
+    fallback && !list.includes(fallback) ? [...list, fallback] : list
+  )
+  if (lists.length === 0) return null
 
   return (
     <div
       className={cn(
         'grid aspect-[16/10] grid-rows-1 divide-x divide-pink-100/80 bg-muted',
-        gridColumnClass(urls.length),
+        gridColumnClass(lists.length),
         className
       )}
     >
-      {urls.map((url, index) => (
+      {lists.map((candidates, index) => (
         <div
           className={cn(
             'min-h-0 min-w-0',
@@ -48,24 +69,27 @@ export function RoundupHeroArtworkGrid({
                   variant === 'article' ? 'bg-muted/30 p-4 sm:p-6' : 'bg-muted/40 p-2'
                 )
           )}
-          key={`${url}-${index}`}
+          key={`${candidates[0]}-${index}`}
         >
-          <img
-            src={url}
-            alt=""
-            loading="lazy"
-            decoding="async"
-            className={
-              fillFrame
-                ? 'absolute inset-0 h-full w-full object-cover'
-                : 'max-h-full max-w-full object-contain drop-shadow-lg'
-            }
-            onError={(event) => {
-              if (fallback && event.currentTarget.src !== fallback) {
-                event.currentTarget.src = fallback
-              }
-            }}
-          />
+          {fillFrame ? (
+            <RemoteImageWithFallback
+              candidates={candidates}
+              alt=""
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 33vw, 240px"
+            />
+          ) : (
+            <div className="relative h-full min-h-[120px] w-full">
+              <RemoteImageWithFallback
+                candidates={candidates}
+                alt=""
+                fill
+                className="object-contain drop-shadow-lg"
+                sizes="(max-width: 768px) 33vw, 240px"
+              />
+            </div>
+          )}
         </div>
       ))}
     </div>

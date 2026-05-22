@@ -12,12 +12,33 @@ export type {
 
 export { mergeTcgCardRecords } from './merge'
 
-export { canonicalTcgCardId, normalizeTcgCardNumber, pickPreferredTcgCardId } from './card-id'
+export {
+  canonicalTcgCardId,
+  normalizeTcgCardNumber,
+  pickPreferredTcgCardId,
+  resolveScrydexCardId,
+  tcgplayerUrlCardId,
+  tcgSetIdToPokemontcgCatalog,
+  TCGDEX_TO_POKEMONTCG_SET,
+  toPokemontcgCatalogCardId,
+  toScrydexCatalogCardId,
+} from './card-id'
+
+export {
+  isTcgPocketCardId,
+  isTcgPocketSetId,
+  isTrainerKitSetName,
+  tcgProductLineFromSetId,
+  trainerKitDedupeKey,
+} from './product-line'
+
+export type { TcgProductLine } from './types'
 
 export {
   tcgCardImageCandidates,
   resolveTcgCardImageUrls,
   buildPokemontcgImageFallbacks,
+  buildPokemontcgImageUrlsFromCardId,
   buildScrydexCardImageUrls,
   buildTcgdexImageUrls,
   tcgplayerProductUrl,

@@ -11,6 +11,9 @@ export interface TcgCardPrice {
   source: TcgCardPriceSource
 }
 
+/** Physical TCG prints vs Pokémon TCG Pocket (TCGdex `A*` / `B*` expansions). */
+export type TcgProductLine = 'physical' | 'pokemon-tcg-pocket'
+
 /** Unified Pokémon TCG card + market snapshot from TCGdex and/or pokemontcg.io. */
 export interface TcgCardRecord {
   id: string
@@ -22,6 +25,8 @@ export interface TcgCardRecord {
   rarity: string | null
   setName: string
   setSeries: string
+  /** ISO date from extract (`set.releaseDate`) when available. */
+  setReleaseDate?: string | null
   number: string
   artist: string | null
   tcgplayerUrl?: string
@@ -34,6 +39,8 @@ export interface TcgCardRecord {
   resistanceTypes?: string[]
   /** Which API supplied the card metadata used in this record. */
   metadataSource: TcgCardPriceSource
+  /** Used to exclude Pocket prints from physical-collector surfaces (e.g. collectCardArt). */
+  productLine?: TcgProductLine
 }
 
 export interface GetPokemonTcgCardsOptions {

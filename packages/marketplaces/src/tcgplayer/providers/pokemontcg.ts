@@ -1,10 +1,7 @@
 import { POKEMON_TCG_API } from '../../config/apis'
 import { POKEMON_TCG_ENV } from '../../config/env'
-import {
-  buildPokemontcgImageFallbacks,
-  buildScrydexCardImageUrls,
-  tcgplayerProductUrl,
-} from '../../config/cdn'
+import { tcgplayerProductUrl } from '../../config/cdn'
+import { resolveTcgCardImageUrls } from '../images'
 import { marketplaceFetchJson } from '../../http'
 import { inferSetSeries, pickPokemontcgPrice } from '../pricing'
 import type { GetPokemonTcgCardsOptions, TcgCardRecord } from '../types'
@@ -49,21 +46,19 @@ function buildPokemontcgSearchQuery(options: GetPokemonTcgCardsOptions): string 
 }
 
 function mapPokemontcgCard(card: PokemontcgCard): TcgCardRecord {
-  const scrydex = buildScrydexCardImageUrls(card.id)
-  const fallbacks = buildPokemontcgImageFallbacks(card.images)
+  const tcgplayerUrl = tcgplayerProductUrl(card.id, card.tcgplayer?.url)
+  const images = resolveTcgCardImageUrls(card.id, card.images, null, tcgplayerUrl)
 
   return {
     id: card.id,
     name: card.name,
-    imageSmall: scrydex.small,
-    imageLarge: scrydex.large,
-    ...fallbacks,
+    ...images,
     rarity: card.rarity ?? null,
     setName: card.set.name,
     setSeries: inferSetSeries(card.set.id, card.set.series),
     number: card.number,
     artist: card.artist ?? null,
-    tcgplayerUrl: tcgplayerProductUrl(card.id, card.tcgplayer?.url),
+    tcgplayerUrl,
     price: pickPokemontcgPrice(card.tcgplayer),
     metadataSource: 'pokemontcg',
   }

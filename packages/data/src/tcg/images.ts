@@ -1,4 +1,4 @@
-import { buildScrydexCardImageUrls } from '@repo/marketplaces/tcgplayer'
+import { buildScrydexCardImageUrls, resolveTcgCardImageUrls } from '@repo/marketplaces/tcgplayer'
 
 export {
   buildPokemontcgImageFallbacks,
@@ -17,24 +17,28 @@ export {
 } from '@repo/marketplaces/config'
 
 import type { PokemonTcgCard } from '../pokemon/tcg-card'
+import { coercePokemonTcgCardImageUrls } from '../pokemon/image-urls'
+
+export { coercePokemonTcgCardImageUrls } from '../pokemon/image-urls'
 
 export function tcgCardHeroImageUrl(cardId: string): string | undefined {
   const id = cardId.trim()
   if (!id) {
     return undefined
   }
-  return buildScrydexCardImageUrls(id).large
+  return resolveTcgCardImageUrls(id).imageLarge
 }
 
 export function enrichPokemonTcgCardImages(card: PokemonTcgCard): PokemonTcgCard {
-  const hasImages = Boolean(card.imageLarge?.trim() || card.imageSmall?.trim())
+  const coerced = coercePokemonTcgCardImageUrls(card)
+  const hasImages = Boolean(coerced.imageLarge?.trim() || coerced.imageSmall?.trim())
   if (hasImages) {
-    return card
+    return coerced
   }
-  const urls = buildScrydexCardImageUrls(card.id)
+  const urls = buildScrydexCardImageUrls(card.id, { tcgplayerUrl: card.tcgplayerUrl })
   return {
-    ...card,
-    imageSmall: card.imageSmall || urls.small,
-    imageLarge: card.imageLarge || urls.large,
+    ...coerced,
+    imageSmall: coerced.imageSmall || urls.small,
+    imageLarge: coerced.imageLarge || urls.large,
   }
 }

@@ -1,7 +1,7 @@
-import { shouldBypassNextImageOptimization } from '@repo/data/client'
-import Image from 'next/image'
 import type { PokemonTcgCard } from '@repo/data/client'
+import { MichiSceneArtImage } from './michi-scene-art-image'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
+import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 import type { RoundupMichiScene } from './roundup-michi-scene-row'
 
 export type BinderSpreadSlot =
@@ -77,13 +77,10 @@ function BinderPage({
                 </div>
               ) : slot.kind === 'michi' ? (
                 <div className="relative h-full w-full">
-                  <Image
-                    src={slot.scene.url}
-                    alt={`${slot.displayName} Michi scene`}
-                    fill
-                    className="object-cover"
+                  <MichiSceneArtImage
+                    scene={slot.scene}
+                    displayName={slot.displayName}
                     sizes={colSpan === 2 ? '240px' : '120px'}
-                    unoptimized
                   />
                 </div>
               ) : slot.kind === 'back' ? (
@@ -99,14 +96,17 @@ function BinderPage({
                 </div>
               ) : (
                 <div className="relative flex h-full w-full items-center justify-center bg-muted/30 p-1 opacity-40">
-                  <Image
-                    src={slot.url}
-                    alt={slot.alt}
-                    width={48}
-                    height={48}
-                    className="object-contain"
-                    unoptimized={shouldBypassNextImageOptimization(slot.url)}
-                  />
+                  <div className="relative h-12 w-12">
+                    <RemoteImageWithFallback
+                      candidates={[slot.url]}
+                      alt={slot.alt}
+                      fill={false}
+                      width={48}
+                      height={48}
+                      className="object-contain"
+                      sizes="48px"
+                    />
+                  </div>
                 </div>
               )}
             </div>

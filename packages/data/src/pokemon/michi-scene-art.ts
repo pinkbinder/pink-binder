@@ -1,4 +1,11 @@
+import { shuffleWithSeed } from '../blog/section-templates'
 import type { PokemonTcgCard } from './tcg-card'
+
+/** Default Michi scene count on species pages and roundup pick rows. */
+export const MICHI_SCENE_DISPLAY_MAX = 2
+
+/** Pool size when filling binder spreads from the full cached scene list. */
+export const MICHI_SCENE_BINDER_POOL_MAX = 4
 
 export type MichiSceneArtSource =
   | 'artofpkm'
@@ -17,6 +24,8 @@ export interface MichiSceneArtEntry {
   artist?: string | null
   cardId?: string
   pageUrl?: string
+  /** Original CDN URL before Blob (used when Blob returns 403). */
+  sourceUrl?: string
   attribution: string
   /** Optional dimensions when known; used to prefer wide scenes in blog layouts. */
   width?: number
@@ -233,36 +242,76 @@ function isArtofPkmScene(entry: MichiSceneArtEntry): boolean {
   return entry.source === 'artofpkm'
 }
 
+/**
+ * Pick up to `max` scenes from a pool. With `seed`, artofpkm scenes are shuffled
+ * deterministically so posts and binders vary while staying stable per slug.
+ */
+export function sampleMichiSceneArt(
+  entries: MichiSceneArtEntry[],
+  options: { max?: number; seed?: string } = {}
+): MichiSceneArtEntry[] {
+  const max = options.max ?? MICHI_SCENE_DISPLAY_MAX
+  const pool = entries.filter((entry) => entry.url?.trim())
+  if (pool.length === 0) {
+    return []
+  }
+
+  const artofpkm = pool.filter(isArtofPkmScene)
+  const other = pool.filter((entry) => !isArtofPkmScene(entry))
+
+  let picked: MichiSceneArtEntry[] = []
+  if (artofpkm.length > 0) {
+    if (options.seed && artofpkm.length > max) {
+      picked = shuffleWithSeed(artofpkm, options.seed).slice(0, max)
+    } else {
+      picked = sortMichiSceneArtByLandscapePreference(artofpkm).slice(0, max)
+    }
+  }
+
+  if (picked.length < max) {
+    const seen = new Set(picked.map((entry) => entry.url))
+    const rest = sortMichiSceneArtByLandscapePreference(other)
+    for (const entry of rest) {
+      if (picked.length >= max) {
+        break
+      }
+      if (seen.has(entry.url)) {
+        continue
+      }
+      seen.add(entry.url)
+      picked.push(entry)
+    }
+  }
+
+  return picked.slice(0, max)
+}
+
 export function resolveMichiSceneArt(options: {
   cached?: MichiSceneArtEntry[] | null
   tcgCards: PokemonTcgCard[]
   max?: number
+  seed?: string
 }): MichiSceneArtEntry[] {
-  const max = options.max ?? 2
+  const max = options.max ?? MICHI_SCENE_DISPLAY_MAX
   const cached = (options.cached ?? []).filter((entry) => entry.url?.trim())
 
-  const artofPkmCached = sortMichiSceneArtByLandscapePreference(
-    cached.filter(isArtofPkmScene)
-  ).slice(0, max)
-  if (artofPkmCached.length >= max) return artofPkmCached
-
-  const merged = [...artofPkmCached]
-  const seen = new Set(merged.map((entry) => entry.url))
-
-  for (const entry of cached) {
-    if (merged.length >= max) break
-    if (seen.has(entry.url)) continue
-    seen.add(entry.url)
-    merged.push(entry)
+  const sampled = sampleMichiSceneArt(cached, { max, seed: options.seed })
+  if (sampled.length >= max) {
+    return sampled
   }
 
-  if (merged.length < max) {
-    for (const entry of pickMichiSceneArtFromCards(options.tcgCards, max - merged.length)) {
-      if (merged.length >= max) break
-      if (seen.has(entry.url)) continue
-      seen.add(entry.url)
-      merged.push(entry)
+  const seen = new Set(sampled.map((entry) => entry.url))
+  const merged = [...sampled]
+
+  for (const entry of pickMichiSceneArtFromCards(options.tcgCards, max - merged.length)) {
+    if (merged.length >= max) {
+      break
     }
+    if (seen.has(entry.url)) {
+      continue
+    }
+    seen.add(entry.url)
+    merged.push(entry)
   }
 
   return sortMichiSceneArtByLandscapePreference(merged).slice(0, max)
