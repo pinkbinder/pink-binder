@@ -19,8 +19,12 @@ export interface PokemonTcgCard {
   rarity: string | null
   setName: string
   setSeries: string
+  /** ISO expansion release date from extract, used for newest-first sorting. */
+  setReleaseDate?: string | null
   number: string
   artist: string | null
   tcgplayerUrl?: string
   price?: TcgCardPrice
+  /** `pokemon-tcg-pocket` = TCGdex Pocket expansions (A1, B2, …); omitted on older cache rows. */
+  productLine?: 'physical' | 'pokemon-tcg-pocket'
 }

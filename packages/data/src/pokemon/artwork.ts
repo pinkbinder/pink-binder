@@ -1,3 +1,5 @@
+import { isVercelBlobPublicUrl, spriteUrlCandidates } from './image-urls'
+
 /** Local SVG artwork for unreleased Gen 10 species (blog static assets). */
 export const GEN10_FALLBACK_ARTWORK: Record<string, string> = {
   browt: '/images/pokemon/gen10/browt.svg',
@@ -47,6 +49,8 @@ export interface BinderSpriteReference {
   label: string
   url: string
   usage: string
+  /** Tried in order when `url` fails to load (e.g. Vercel Blob 403). */
+  fallbackUrls?: string[]
 }
 
 /** @deprecated Use BinderSpriteReference */
@@ -61,29 +65,46 @@ export function buildBinderSpriteReferences(options: {
 }): BinderSpriteReference[] {
   const { pokedexNumber } = options
   const items: BinderSpriteReference[] = []
-  const push = (label: string, url: string | null, usage: string) => {
-    if (!url || items.some((entry) => entry.url === url)) return
-    items.push({ label, url, usage })
+  const push = (
+    label: string,
+    primary: string | null | undefined,
+    fallback: string | null,
+    usage: string
+  ) => {
+    const candidates = spriteUrlCandidates(primary, fallback)
+    if (candidates.length === 0 || items.some((entry) => entry.url === candidates[0])) {
+      return
+    }
+    items.push({
+      label,
+      url: candidates[0]!,
+      usage,
+      fallbackUrls: candidates.length > 1 ? candidates.slice(1) : undefined,
+    })
   }
 
   push(
     'Official artwork',
-    options.officialArtworkUrl ?? buildOfficialArtworkCdnUrl(pokedexNumber),
+    options.officialArtworkUrl,
+    buildOfficialArtworkCdnUrl(pokedexNumber),
     'Match card holo colours and keep the species silhouette consistent across pockets.'
   )
   push(
     'HOME render',
-    options.homeArtworkUrl ?? buildHomeArtworkCdnUrl(pokedexNumber),
+    options.homeArtworkUrl,
+    buildHomeArtworkCdnUrl(pokedexNumber),
     'Modern pose reference when you want a cleaner, upright character layout.'
   )
   push(
     'Dream World vector',
     buildDreamWorldArtworkCdnUrl(pokedexNumber),
+    buildDreamWorldArtworkCdnUrl(pokedexNumber),
     'Simple line-and-fill shape — handy for tracing pocket placement before you print.'
   )
   push(
     'Shiny palette',
-    options.shinyArtworkUrl ?? buildShinyArtworkCdnUrl(pokedexNumber),
+    options.shinyArtworkUrl,
+    buildShinyArtworkCdnUrl(pokedexNumber),
     'Alternate colourway for accent pockets or shiny-themed spreads.'
   )
 
@@ -97,6 +118,29 @@ export const buildMichiArtReferences = buildBinderSpriteReferences
  * Resolve display artwork when cache/API omits sprites (common for species whose
  * PokeAPI pokemon slug is a variety, e.g. maushold → maushold-family-of-four).
  */
+/** Blob-first sprite chain for interactive UI (`RemoteImageWithFallback`). */
+export function officialArtworkUrlCandidates(
+  storedUrl: string | null | undefined,
+  pokedexNumber: number
+): string[] {
+  return spriteUrlCandidates(storedUrl, buildOfficialArtworkCdnUrl(pokedexNumber))
+}
+
+/**
+ * Single URL for thumbnails, OG tags, and grids — prefers PokéAPI when the cache
+ * only has a Blob URL (public store 403s cannot be detected at build time).
+ */
+export function resolveReliableArtworkUrl(
+  storedUrl: string | null | undefined,
+  pokedexNumber: number
+): string | null {
+  const candidates = officialArtworkUrlCandidates(storedUrl, pokedexNumber)
+  if (candidates[0] && isVercelBlobPublicUrl(candidates[0]) && candidates[1]) {
+    return candidates[1]
+  }
+  return candidates[0] ?? null
+}
+
 export function resolveOfficialArtworkUrl(options: {
   slug: string
   pokedexNumber?: number | null

@@ -1,4 +1,5 @@
 import { tcgplayerProductUrl } from '../config/cdn'
+import { isTcgPocketSetId } from './product-line'
 import type { TcgCardPrice, TcgCardPriceSource } from './types'
 
 type PriceVariant = {
@@ -115,6 +116,9 @@ export function mergeTcgCardPrices(
 }
 
 export function inferSetSeries(setId: string, setSeriesFromApi?: string): string {
+  if (isTcgPocketSetId(setId)) {
+    return 'tcgp'
+  }
   if (setSeriesFromApi?.trim()) {
     return setSeriesFromApi.trim()
   }

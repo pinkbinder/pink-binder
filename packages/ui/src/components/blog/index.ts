@@ -43,3 +43,7 @@ export {
 } from './roundup-mini-binder-spread'
 export { TcgCardPriceLabel } from './tcg-card-price-label'
 export { PopularityRankBadge, type PopularityRankBadgeProps } from './popularity-rank-badge'
+export { MichiSceneArtImage } from './michi-scene-art-image'
+export { SpeciesHeroArtwork } from './species-hero-artwork'
+export { RoundupCutestHeroImage } from './roundup-cutest-hero-image'
+export { RoundupPickArtwork } from './roundup-pick-artwork'

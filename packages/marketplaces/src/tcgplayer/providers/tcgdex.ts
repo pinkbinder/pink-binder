@@ -97,7 +97,8 @@ async function fetchTcgdexCardFull(
 
 function mapTcgdexFullToRecord(card: TcgdexCardFull): TcgCardRecord {
   const tcgImages = buildTcgdexImageUrls(card.image)
-  const scrydex = buildScrydexCardImageUrls(card.id)
+  const tcgplayerUrl = tcgplayerProductUrl(card.id)
+  const scrydex = buildScrydexCardImageUrls(card.id, { tcgplayerUrl })
   const price = pickTcgdexPrice(card.pricing)
 
   return {
@@ -112,7 +113,7 @@ function mapTcgdexFullToRecord(card: TcgdexCardFull): TcgCardRecord {
     setSeries: inferSetSeries(card.set.id),
     number: String(card.localId),
     artist: card.illustrator ?? null,
-    tcgplayerUrl: tcgplayerProductUrl(card.id),
+    tcgplayerUrl,
     price,
     metadataSource: 'tcgdex',
   }

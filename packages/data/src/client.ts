@@ -24,10 +24,21 @@ export {
   tcgCardImageCandidates,
   tcgCardHeroImageUrl,
   enrichPokemonTcgCardImages,
+  coercePokemonTcgCardImageUrls,
   shouldBypassNextImageOptimization,
   TCG_CARD_DATA_ATTRIBUTION,
   TCG_CARD_IMAGE_ATTRIBUTION,
 } from './tcg/images'
+export {
+  isVercelBlobPublicUrl,
+  sceneArtUrlCandidates,
+  spriteUrlCandidates,
+} from './pokemon/image-urls'
+export {
+  MICHI_SCENE_BINDER_POOL_MAX,
+  MICHI_SCENE_DISPLAY_MAX,
+  sampleMichiSceneArt,
+} from './pokemon/michi-scene-art'
 export {
   buildProjectPokemonSpriteUrls,
   projectPokemonSpriteSlugCandidates,

@@ -1,6 +1,15 @@
 import type { SpeciesCollectionSlug } from '../collections/types'
 import type { PokemonData } from './types'
-import { resolvePipelineExtractedAt } from '../pipeline-meta'
+import {
+  resolvePipelineCompetitiveAppliedAt,
+  resolvePipelineExtractedAt,
+  resolvePipelineTcgTypeProfilesAppliedAt,
+} from '../pipeline-meta'
+import { normalizeCollectCardArtIds } from './collect-card-art'
+import { resolveCollectCardArt } from './resolve-collect-card-art'
+import { coerceSpeciesDisplayArt } from './image-urls'
+import { enrichSceneArtEntriesWithFallbacks } from './scene-art-enrichment'
+import type { PokemonTcgCard } from './tcg-card'
 
 /** Current normalized species JSON schema version written by 3-transform. */
 export const NORMALIZED_SPECIES_SCHEMA_VERSION = 3 as const
@@ -53,22 +62,14 @@ export interface NormalizedSceneArtEntry {
   artist?: string | null
   cardId?: string
   pageUrl?: string
+  /** Original remote URL before Blob publish (e.g. artofpkm ActiveStorage redirect). */
+  sourceUrl?: string
   attribution: string
   width?: number
   height?: number
 }
 
-export interface NormalizedCollectCardArt {
-  cardId: string
-  name: string
-  imageLarge: string
-  imageSmall: string
-  setName: string
-  artist: string | null
-  rarity: string | null
-  marketPrice?: number
-  tcgplayerUrl?: string
-}
+export type NormalizedCollectCardArtIds = string[]
 
 export interface NormalizedSpeciesPokedex {
   genus: string | null
@@ -98,7 +99,6 @@ export interface NormalizedSpeciesPokedex {
   tcgEnergyType?: string | null
   tcgWeakness?: string | null
   tcgResistance?: string | null
-  tcgTypeProfileEnrichedAt?: string | null
 }
 
 /** Bulbapedia-derived prose grouped by article section (plain text). */
@@ -128,7 +128,6 @@ export interface NormalizedSpeciesLore {
 export interface NormalizedSpeciesCompetitive {
   smogonTier?: string | null
   notableMoves?: Array<{ name: string; summary: string; learnLevel?: number }>
-  enrichedAt?: string | null
   source?: string | null
 }
 
@@ -143,7 +142,8 @@ export interface NormalizedSpeciesSprites {
 export interface NormalizedSpeciesArt {
   sprites: NormalizedSpeciesSprites
   sceneArt?: NormalizedSceneArtEntry[]
-  collectCardArt?: NormalizedCollectCardArt[]
+  /** Chase print ids — resolve via {@link resolveCollectCardArt} + cards.json. */
+  collectCardArt?: NormalizedCollectCardArtIds
 }
 
 /** Coerce artwork sidecar JSON into {@link NormalizedSpeciesArt}. */
@@ -157,7 +157,11 @@ export function coerceNormalizedSpeciesArt(
     art.sprites &&
     typeof art.sprites === 'object'
   ) {
-    return art as NormalizedSpeciesArt
+    const typed = art as NormalizedSpeciesArt
+    return {
+      ...typed,
+      collectCardArt: normalizeCollectCardArtIds(typed.collectCardArt),
+    }
   }
 
   const flatArt = art as NormalizedSpeciesArt & {
@@ -175,7 +179,9 @@ export function coerceNormalizedSpeciesArt(
       showdown: null,
     },
     sceneArt: flatArt.sceneArt,
-    collectCardArt: flatArt.collectCardArt,
+    collectCardArt: normalizeCollectCardArtIds(
+      flatArt.collectCardArt as NormalizedCollectCardArtIds | undefined
+    ),
   }
 }
 
@@ -184,7 +190,8 @@ export interface NormalizedSpeciesImagesFile {
   slug: string
   sprites: NormalizedSpeciesSprites
   sceneArt?: NormalizedSceneArtEntry[]
-  collectCardArt?: NormalizedCollectCardArt[]
+  /** Chase print ids — resolve via {@link resolveCollectCardArt} + cards.json. */
+  collectCardArt?: NormalizedCollectCardArtIds
 }
 
 export interface NormalizedSpeciesLoreFile {
@@ -237,7 +244,13 @@ export function toPokemonDataFromParts(
     }
   }
 
-  const art = coerceNormalizedSpeciesArt(images)
+  const normalizedArt = coerceNormalizedSpeciesArt(images)
+  const art = coerceSpeciesDisplayArt(normalizedArt, species.pokedexNumber)
+  const collectCardArtIds = normalizeCollectCardArtIds(normalizedArt.collectCardArt)
+  const collectCardArt: PokemonTcgCard[] = resolveCollectCardArt(species.slug, collectCardArtIds)
+  const michiSceneArt = enrichSceneArtEntriesWithFallbacks(art.sceneArt, {
+    slug: species.slug,
+  })
 
   return {
     slug: species.slug,
@@ -268,12 +281,13 @@ export function toPokemonDataFromParts(
     officialArtworkUrl: art.sprites.official,
     homeArtworkUrl: art.sprites.home,
     shinyArtworkUrl: art.sprites.shiny,
-    michiSceneArt: art.sceneArt,
-    collectCardArt: art.collectCardArt,
+    michiSceneArt,
+    collectCardArtIds: collectCardArtIds.length > 0 ? collectCardArtIds : undefined,
+    collectCardArt: collectCardArt.length > 0 ? collectCardArt : undefined,
     extractedAt: resolvePipelineExtractedAt(),
     smogonTier: species.competitive?.smogonTier,
     notableMoves: species.competitive?.notableMoves,
-    competitiveEnrichedAt: species.competitive?.enrichedAt,
+    competitiveEnrichedAt: resolvePipelineCompetitiveAppliedAt(),
     competitiveSnippetSource: species.competitive?.source,
     genderRate: species.pokedex.genderRate,
     weaknesses: species.pokedex.weaknesses,
@@ -282,7 +296,7 @@ export function toPokemonDataFromParts(
     tcgEnergyType: species.pokedex.tcgEnergyType,
     tcgWeakness: species.pokedex.tcgWeakness,
     tcgResistance: species.pokedex.tcgResistance,
-    tcgTypeProfileEnrichedAt: species.pokedex.tcgTypeProfileEnrichedAt,
+    tcgTypeProfileEnrichedAt: resolvePipelineTcgTypeProfilesAppliedAt(),
   }
 }
 
