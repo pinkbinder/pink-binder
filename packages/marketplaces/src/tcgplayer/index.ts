@@ -10,7 +10,11 @@ export type {
   TcgCardRecord,
 } from './types'
 
-export { mergeTcgCardRecords } from './merge'
+export {
+  collapseMcDonaldsRegionalDuplicates,
+  collapseTrainerKitDuplicates,
+  mergeTcgCardRecords,
+} from './merge'
 
 export {
   canonicalTcgCardId,
@@ -22,19 +26,58 @@ export {
   TCGDEX_TO_POKEMONTCG_SET,
   toPokemontcgCatalogCardId,
   toScrydexCatalogCardId,
+  pokemontcgCatalogCardIdFromImageUrl,
 } from './card-id'
 
 export {
   isTcgPocketCardId,
   isTcgPocketSetId,
+  isTrainerKitCardId,
   isTrainerKitSetName,
   tcgProductLineFromSetId,
   trainerKitDedupeKey,
+  trainerKitSlotDedupeKey,
+  normalizeTrainerKitSetNameKey,
+  POKEMONTCG_TRAINER_KIT_SET_TO_TCGDEX,
+  tcgdxTrainerKitSetIdForCard,
 } from './product-line'
+
+export {
+  TCGDEX_TRAINER_KIT_TO_TCGCSV_GROUP,
+  buildTrainerKitTcgplayerUrlMap,
+  getTrainerKitTcgplayerUrl,
+  getTrainerKitTcgplayerImage,
+  parseTrainerKitCardId,
+  setTrainerKitTcgplayerUrlMap,
+  type TrainerKitCardRef,
+} from './trainer-kit-tcgplayer'
+
+export {
+  getTcgPocketImage,
+  setTcgPocketImageMap,
+  tcgPocketImageLookupKeys,
+  tcgPocketImageRelativePath,
+  type TcgPocketImageEntry,
+} from './tcg-pocket-images'
+
+export {
+  buildTcgcsvPromoImageMap,
+  buildTcgplayerCdnImageUrls,
+  extractTcgplayerProductId,
+  getTcgcsvPromoImage,
+  isTcgplayerCdnImageUrl,
+  setTcgcsvPromoImageMap,
+  tcgcsvGroupForCardId,
+  TCGCSV_PROMO_SET_TO_GROUP,
+  type TcgcsvPromoCardRef,
+  type TcgcsvPromoImageEntry,
+} from './tcgcsv-promo-images'
 
 export type { TcgProductLine } from './types'
 
 export {
+  isDisplayableTcgCardImageUrl,
+  preferredTcgCardImageUrl,
   tcgCardImageCandidates,
   resolveTcgCardImageUrls,
   buildPokemontcgImageFallbacks,
@@ -45,7 +88,63 @@ export {
   type TcgCardImageUrls,
 } from './images'
 
-export { inferSetSeries, pickPokemontcgPrice, pickTcgdexPrice } from './pricing'
+export {
+  inferSetSeries,
+  pickPokemontcgPrice,
+  pickTcgdexCardmarketPrice,
+  pickTcgdexPrice,
+} from './pricing'
+
+export {
+  TCGCSV_BASE,
+  TCGCSV_LAST_UPDATED_URL,
+  TCGCSV_POKEMON_CATEGORY_ID,
+  TCGCSV_REQUEST_DELAY_MS,
+  TCGCSV_USER_AGENT,
+  fetchAllTcgcsvPokemonGroupData,
+  fetchTcgcsvGroupPrices,
+  fetchTcgcsvGroupProducts,
+  fetchTcgcsvLastUpdated,
+  fetchTcgcsvPokemonGroups,
+  type TcgcsvGroup,
+  type TcgcsvPokemonGroupData,
+  type TcgcsvPriceRow,
+  type TcgcsvProduct,
+} from './tcgcsv-client'
+
+export {
+  TCGCSV_MIN_FULL_SYNC_INTERVAL_MS,
+  TCGCSV_POKEMON_FULL_SYNC_MAX_REQUESTS,
+  resolveTcgcsvFullSyncSkip,
+  tcgcsvRemoteBuildIsNewer,
+  type TcgcsvSkipFullSyncReason,
+} from './tcgcsv-sync-policy'
+
+export {
+  buildTcgcsvPriceIndex,
+  lookupTcgcsvCatalogEntry,
+  lookupTcgcsvPriceIndexEntry,
+  maxTcgcsvMarketPrice,
+  normalizeTcgcsvPriceIndex,
+  parseTcgplayerSetIdFromProductUrl,
+  type TcgcsvPriceIndex,
+  type TcgcsvPriceIndexEntry,
+} from './tcgcsv-price-index'
+
+export {
+  buildTcgCardImageStack,
+  shouldApplyTcgcsvImageStack,
+  type TcgCardImageStack,
+} from './tcg-card-image-stack'
+
+export { tcgplayerImageSmallFromProduct } from './tcgcsv-promo-images'
+
+export {
+  buildSetToGroupIdMap,
+  normalizeTcgSetTitle,
+  resolveTcgcsvGroupIdForCard,
+  type TcgSetCatalogEntry,
+} from './tcgcsv-set-groups'
 
 export {
   TCGDEX_API,

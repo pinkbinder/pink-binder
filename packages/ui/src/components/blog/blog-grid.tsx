@@ -49,6 +49,20 @@ function filterFromSelectValue(value: string): string | null {
   return value === FILTER_SELECT_ALL ? null : value
 }
 
+function isFilterValueActive(
+  filterValue: string,
+  grouped: GroupedFilters,
+  direct: string | null
+): boolean {
+  return (
+    direct === filterValue ||
+    grouped.type === filterValue ||
+    grouped.generation === filterValue ||
+    grouped.list === filterValue ||
+    grouped.collection === filterValue
+  )
+}
+
 type TypeVisualEntry = {
   colors: ReturnType<typeof getPokemonTypeColors>
   lightColors: ReturnType<typeof getPokemonTypeLightColors>
@@ -552,13 +566,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Type:</span>
             <Button
-              variant="ghost"
+              variant="filterChip"
+              aria-pressed={groupedFilters.type === null}
               onClick={() => applyGroupedFilter('type', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                groupedFilters.type === null
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
+              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
             >
               All
             </Button>
@@ -571,7 +582,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
 
               return (
                 <Button
-                  variant="ghost"
+                  variant="filterChip"
+                  aria-pressed={isActive}
                   key={type}
                   onClick={() => applyGroupedFilter('type', isActive ? null : type)}
                   className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
@@ -606,19 +618,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Generation:</span>
             <Button
-              variant="ghost"
+              variant="filterChip"
+              aria-pressed={groupedFilters.generation === null}
               onClick={() => applyGroupedFilter('generation', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                groupedFilters.generation === null
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
+              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
             >
               All
             </Button>
             {generationChipState.options.map((generation) => (
               <Button
-                variant="ghost"
+                variant="filterChip"
+                aria-pressed={groupedFilters.generation === generation}
                 key={generation}
                 onClick={() =>
                   applyGroupedFilter(
@@ -626,11 +636,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     groupedFilters.generation === generation ? null : generation
                   )
                 }
-                className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                  groupedFilters.generation === generation
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
               >
                 {generation}
               </Button>
@@ -649,28 +655,22 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
             <div className="flex flex-wrap items-start gap-2">
               <span className="pt-1 text-sm font-medium text-muted-foreground">Lists:</span>
               <Button
-                variant="ghost"
+                variant="filterChip"
+                aria-pressed={groupedFilters.list === null}
                 onClick={() => applyGroupedFilter('list', null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                  groupedFilters.list === null
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
               >
                 All
               </Button>
               {listChipState.options.map((listType) => (
                 <Button
-                  variant="ghost"
+                  variant="filterChip"
+                  aria-pressed={groupedFilters.list === listType}
                   key={listType}
                   onClick={() =>
                     applyGroupedFilter('list', groupedFilters.list === listType ? null : listType)
                   }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                    groupedFilters.list === listType
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
+                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                 >
                   {listType}
                 </Button>
@@ -689,13 +689,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           <div className="flex flex-wrap items-start gap-2">
             <span className="pt-1 text-sm font-medium text-muted-foreground">Collection:</span>
             <Button
-              variant="ghost"
+              variant="filterChip"
+              aria-pressed={groupedFilters.collection === null}
               onClick={() => applyGroupedFilter('collection', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                groupedFilters.collection === null
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-              }`}
+              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
             >
               All
             </Button>
@@ -703,7 +700,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
               const collectionIcon = getCollectionBadgeIcon(collection)
               return (
                 <Button
-                  variant="ghost"
+                  variant="filterChip"
+                  aria-pressed={groupedFilters.collection === collection}
                   key={collection}
                   onClick={() =>
                     applyGroupedFilter(
@@ -711,11 +709,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       groupedFilters.collection === collection ? null : collection
                     )
                   }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS} ${
-                    groupedFilters.collection === collection
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                  }`}
+                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                 >
                   <span className="inline-flex items-center gap-1.5">
                     {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
@@ -792,10 +786,15 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       const collectionIcon = getCollectionBadgeIcon(category)
                       return (
                         <Button
-                          variant="ghost"
+                          variant="filterChip"
+                          aria-pressed={isFilterValueActive(
+                            filterValue,
+                            groupedFilters,
+                            directFilter
+                          )}
                           key={`${post.slug}-${category}`}
                           onClick={() => applyCategoryFilter(filterValue)}
-                          className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                          className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                         >
                           <span className="inline-flex items-center gap-1.5">
                             {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
@@ -809,7 +808,12 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                     const logoUrl = getPokemonTypeLogoUrl(type)
                     return (
                       <Button
-                        variant="ghost"
+                        variant="filterChip"
+                        aria-pressed={isFilterValueActive(
+                          filterValue,
+                          groupedFilters,
+                          directFilter
+                        )}
                         key={`${post.slug}-${category}`}
                         onClick={() => applyCategoryFilter(filterValue)}
                         className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
@@ -844,12 +848,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                   ) : null}
                   {post.speciesFilterTags.slice(0, 6).map((speciesSlug) => (
                     <Button
-                      variant="ghost"
+                      variant="filterChip"
+                      aria-pressed={directFilter === speciesSlug}
                       key={`${post.slug}-${speciesSlug}`}
                       onClick={() =>
                         applyDirectFilter(directFilter === speciesSlug ? null : speciesSlug)
                       }
-                      className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground hover:bg-muted/80`}
+                      className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground aria-pressed:bg-primary aria-pressed:text-primary-foreground [@media(hover:hover)]:hover:bg-muted/80`}
                     >
                       #{speciesSlug}
                     </Button>

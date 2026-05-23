@@ -1,8 +1,21 @@
-import { isPokemontcgImageUrl } from '../config/cdn'
-import { canonicalTcgCardId, normalizeTcgCardNumber, pickPreferredTcgCardId } from './card-id'
+import { getTcgcsvPromoImage, isTcgplayerCdnImageUrl } from './tcgcsv-promo-images'
+import { getTrainerKitTcgplayerImage } from './trainer-kit-tcgplayer'
+import { isPokemontcgImageUrl, tcgCardSetId } from '../config/cdn'
+import {
+  canonicalTcgCardId,
+  normalizeTcgCardNumber,
+  pickPreferredTcgCardId,
+  pokemontcgCatalogCardIdFromImageUrl,
+} from './card-id'
+import { tcgplayerProductUrl } from '../config/cdn'
 import { resolveTcgCardImageUrls } from './images'
 import { mergeTcgCardPrices } from './pricing'
-import { tcgProductLineFromSetId, trainerKitDedupeKey } from './product-line'
+import {
+  isTrainerKitCardId,
+  tcgProductLineFromSetId,
+  trainerKitDedupeKey,
+  trainerKitSlotDedupeKey,
+} from './product-line'
 import type { TcgCardRecord } from './types'
 
 function normalizeCardKeyPart(value: string | null | undefined): string {
@@ -25,16 +38,13 @@ function pickMergedTcgCardId(...ids: string[]): string {
   if (mcdCatalog) {
     return mcdCatalog
   }
-  const trainerKitIds = trimmed.filter((id) => /^tk-/i.test(id))
-  if (trainerKitIds.length > 1) {
-    return trainerKitIds.sort((a, b) => {
-      const localA = Number.parseInt(a.slice(a.lastIndexOf('-') + 1), 10)
-      const localB = Number.parseInt(b.slice(b.lastIndexOf('-') + 1), 10)
-      if (Number.isFinite(localA) && Number.isFinite(localB) && localA !== localB) {
-        return localA - localB
-      }
-      return a.localeCompare(b)
-    })[0]!
+  const trainerKitIds = trimmed.filter((id) => isTrainerKitCardId(id))
+  if (trainerKitIds.length > 0) {
+    return trainerKitIds.sort((a, b) => a.localeCompare(b))[0]!
+  }
+  const legacyTk2 = trimmed.filter((id) => /^tk2[ab]-/i.test(id))
+  if (legacyTk2.length > 0) {
+    return legacyTk2.sort((a, b) => a.localeCompare(b))[0]!
   }
   return pickPreferredTcgCardId(...trimmed)
 }
@@ -42,6 +52,114 @@ function pickMergedTcgCardId(...ids: string[]): string {
 function normalizeCardNumberKeyPart(value: string | null | undefined): string {
   const base = normalizeCardKeyPart(value)
   return base ? normalizeTcgCardNumber(base) : ''
+}
+
+function isFrenchMcDonaldsPromo(card: TcgCardRecord): boolean {
+  const setId = tcgCardSetId(card.id).toLowerCase()
+  if (setId.includes('-fr') || /fr$/.test(setId)) {
+    return true
+  }
+  return /collection mcdonald/i.test(normalizeCardKeyPart(card.setName))
+}
+
+function mcdonaldsPromoNameYearKey(
+  card: TcgCardRecord,
+  speciesPokedexNumber?: number
+): string | null {
+  const year = card.setName?.match(/\b(20\d{2})\b/)?.[1]
+  if (!year || !/mcdonald/i.test(card.setName ?? '')) {
+    return null
+  }
+  if (typeof speciesPokedexNumber === 'number') {
+    return `mcd-species-dex::${year}::${speciesPokedexNumber}`
+  }
+  const name = normalizeCardKeyPart(card.name)
+  return name ? `mcd-species::${year}::${name}` : null
+}
+
+function preferMcDonaldsPromoRecord(
+  existing: TcgCardRecord,
+  candidate: TcgCardRecord
+): TcgCardRecord {
+  const score = (record: TcgCardRecord): number => {
+    let value = 0
+    if (/^mcd\d+-/i.test(record.id)) {
+      value += 8
+    }
+    if (!isFrenchMcDonaldsPromo(record)) {
+      value += 4
+    }
+    if (getTcgcsvPromoImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
+      value += 16
+    }
+    if (isPokemontcgImageUrl(record.imageLarge)) {
+      value += 2
+    }
+    return value
+  }
+  return score(candidate) > score(existing) ? candidate : existing
+}
+
+/** One English McDonald's row per species per year (drop 2018sm-fr when mcd18 exists). */
+export function collapseMcDonaldsRegionalDuplicates(
+  cards: TcgCardRecord[],
+  options?: { speciesPokedexNumber?: number }
+): TcgCardRecord[] {
+  const byKey = new Map<string, TcgCardRecord>()
+  const rest: TcgCardRecord[] = []
+
+  for (const card of cards) {
+    const key = mcdonaldsPromoNameYearKey(card, options?.speciesPokedexNumber)
+    if (!key) {
+      rest.push(card)
+      continue
+    }
+    const existing = byKey.get(key)
+    byKey.set(key, existing ? preferMcDonaldsPromoRecord(existing, card) : card)
+  }
+
+  return [...rest, ...byKey.values()]
+}
+
+function preferTrainerKitRecord(existing: TcgCardRecord, candidate: TcgCardRecord): TcgCardRecord {
+  const score = (record: TcgCardRecord): number => {
+    let value = 0
+    if (isTrainerKitCardId(record.id)) {
+      value += 8
+    }
+    if (getTrainerKitTcgplayerImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
+      value += 16
+    }
+    if (getTcgcsvPromoImage(record.id)) {
+      value += 4
+    }
+    if (isPokemontcgImageUrl(record.imageLarge)) {
+      value += 2
+    }
+    return value
+  }
+  return score(candidate) > score(existing) ? candidate : existing
+}
+
+/** One row per trainer-kit slot (e.g. `tk-ex-m-4` + `tk2b-4` on the same species page). */
+export function collapseTrainerKitDuplicates(
+  cards: TcgCardRecord[],
+  options?: { speciesPokedexNumber?: number }
+): TcgCardRecord[] {
+  const byKey = new Map<string, TcgCardRecord>()
+  const rest: TcgCardRecord[] = []
+
+  for (const card of cards) {
+    const key = trainerKitSlotDedupeKey(card, options)
+    if (!key) {
+      rest.push(card)
+      continue
+    }
+    const existing = byKey.get(key)
+    byKey.set(key, existing ? preferTrainerKitRecord(existing, card) : card)
+  }
+
+  return [...rest, ...byKey.values()]
 }
 
 function getEquivalentCardKeys(card: TcgCardRecord): string[] {
@@ -66,9 +184,13 @@ function getEquivalentCardKeys(card: TcgCardRecord): string[] {
     keys.push(`mcd-promo::${normalizeMcDonaldsSetNameKey(setName)}::${number}`)
   }
 
-  const trainerKitKey = trainerKitDedupeKey(card.setName, card.name)
+  const trainerKitKey = trainerKitDedupeKey(card.setName, card.name, card.number)
   if (trainerKitKey) {
     keys.push(trainerKitKey)
+  }
+  const trainerKitSlotKey = trainerKitSlotDedupeKey(card)
+  if (trainerKitSlotKey && trainerKitSlotKey !== trainerKitKey) {
+    keys.push(trainerKitSlotKey)
   }
 
   return keys
@@ -78,28 +200,47 @@ function pickPokemontcgApiImages(...records: TcgCardRecord[]): { small?: string;
   let small: string | undefined
   let large: string | undefined
   for (const record of records) {
-    for (const url of [record.imageSmall, record.imageSmallFallback]) {
+    for (const url of [record.imageSmall, ...(record.imageSmallFallbacks ?? [])]) {
       if (!small && isPokemontcgImageUrl(url)) {
-        small = url!.trim()
+        small = url.trim()
       }
     }
-    for (const url of [record.imageLarge, record.imageLargeFallback]) {
+    for (const url of [record.imageLarge, ...(record.imageLargeFallbacks ?? [])]) {
       if (!large && isPokemontcgImageUrl(url)) {
-        large = url!.trim()
+        large = url.trim()
       }
     }
   }
   return { small, large }
 }
 
+function preferredCatalogCardIdFromRecord(card: TcgCardRecord): string | null {
+  for (const url of [...(card.imageSmallFallbacks ?? []), ...(card.imageLargeFallbacks ?? [])]) {
+    const id = pokemontcgCatalogCardIdFromImageUrl(url)
+    if (id) return id
+  }
+  return (
+    pokemontcgCatalogCardIdFromImageUrl(card.imageSmall) ??
+    pokemontcgCatalogCardIdFromImageUrl(card.imageLarge)
+  )
+}
+
 function mergeRecord(primary: TcgCardRecord, fallback: TcgCardRecord): TcgCardRecord {
   const price = mergeTcgCardPrices(primary.price, fallback.price)
   const mergedId = pickMergedTcgCardId(primary.id, fallback.id)
+  const preferredCatalogCardId =
+    preferredCatalogCardIdFromRecord(fallback) ?? preferredCatalogCardIdFromRecord(primary)
+  const tcgplayerUrl =
+    tcgplayerProductUrl(mergedId, fallback.tcgplayerUrl ?? primary.tcgplayerUrl, {
+      preferredCatalogCardId,
+    }) ??
+    fallback.tcgplayerUrl ??
+    primary.tcgplayerUrl
   const tcgImages = resolveTcgCardImageUrls(
     mergedId,
     pickPokemontcgApiImages(fallback, primary),
     null,
-    fallback.tcgplayerUrl ?? primary.tcgplayerUrl
+    tcgplayerUrl
   )
 
   const setId = mergedId.includes('-') ? mergedId.slice(0, mergedId.lastIndexOf('-')) : mergedId
@@ -113,7 +254,7 @@ function mergeRecord(primary: TcgCardRecord, fallback: TcgCardRecord): TcgCardRe
     setSeries: fallback.setSeries || primary.setSeries,
     number: normalizeTcgCardNumber(primary.number || fallback.number),
     artist: primary.artist ?? fallback.artist,
-    tcgplayerUrl: fallback.tcgplayerUrl ?? primary.tcgplayerUrl,
+    tcgplayerUrl,
     price,
     metadataSource: primary.metadataSource,
     productLine: tcgProductLineFromSetId(setId),
@@ -145,7 +286,7 @@ function dedupeWithinSource(cards: TcgCardRecord[]): TcgCardRecord[] {
   const rest: TcgCardRecord[] = []
 
   for (const card of byCanonicalId.values()) {
-    const key = trainerKitDedupeKey(card.setName, card.name)
+    const key = trainerKitDedupeKey(card.setName, card.name, card.number)
     if (!key) {
       rest.push(card)
       continue
@@ -219,5 +360,5 @@ export function mergeTcgCardRecords(
     }
   }
 
-  return merged
+  return collapseTrainerKitDuplicates(collapseMcDonaldsRegionalDuplicates(merged))
 }

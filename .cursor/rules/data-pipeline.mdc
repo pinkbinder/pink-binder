@@ -1,0 +1,91 @@
+---
+description: "@repo/data ETL — three commands, run order, layer boundaries"
+globs: packages/data/**
+alwaysApply: false
+---
+
+# Data pipeline
+
+**Three npm scripts** in `packages/data/package.json`: `extract`, `images`, `transform`. The `refresh` script is an alias for `transform --only prices`. Do not add standalone pipeline aliases — use `--only` on these commands during development.
+
+## Run order
+
+```
+extract → images (rare) → transform
+```
+
+| Command | Folder | Output | Default |
+| ------- | ------ | ------ | ------- |
+| `extract` | `1-extract/` | gitignored `cache/raw/` + `meta/evolution-chains/` | `--force` |
+| `images` | `2-images/` | `cache/images/`, blob manifest | quick pass; `--downloads` for full |
+| `transform` | `3-transform/` | `cache/normalized/` + TCGCSV prices + roundup meta | `--force` |
+
+Use `--no-force` to skip unchanged writes on fast pipelines.
+
+### `images` quick vs full
+
+**Default (quick):** bootstrap, sync-artofpkm-raw, pocket-cache — no sprite download, artofpkm scrape, backfill, pocket-extract, Blob publish, or cleanup.
+
+**Full:** `pnpm --filter @repo/data images --downloads` (add `--skip-cleanup` to keep local files).
+
+### `transform` step groups (`--only <group>…`)
+
+```
+3-transform/
+  1-core/    — pokeapi, bulbapedia, blob URLs, popularity, cards, type profiles,
+               collections, competitive, collect card art, illustrator/expansion catalogs
+  2-prices/  — TCG support caches, TCGCSV price sync, apply prices, roundups, illustrators
+  3-events/  — (reserved)
+```
+
+**`core`** (14 steps): pokeapi, bulbapedia, blob URLs, popularity, cards merge, type profiles, collections, competitive, collect card art, illustrator/expansion catalogs.
+
+**`prices`** (5 steps, formerly `refresh`):
+1. TCG support caches — promo CDN + trainer-kit TCGPlayer URL caches
+2. TCGCSV price sync — sync bulk index (24h policy; `--allow-frequent-sync` overrides)
+3. Apply prices — patch prices into `pokemon/{slug}/cards.json`
+4. Expensive by type — roundup snapshots
+5. Illustrators — illustrator index + expensive picks
+
+```bash
+# Run prices group only (daily cron)
+pnpm --filter @repo/data transform --only prices
+# or
+pnpm --filter @repo/data refresh
+```
+
+## Layer boundaries
+
+- **Extract** writes raw only — must not read `cache/normalized/`.
+- **Transform (core)** reads raw + blob manifest; builds normalized species, cards metadata, catalogs. McDonald's / trainer-kit dupes collapse in `1-core/07-transform-pokemon-cards.ts`.
+- **Transform (prices)** syncs TCGCSV → `cache/raw/tcgcsv/`, patches card prices, rebuilds roundup meta. Card image URLs resolve at **read time** from price-built caches — not persisted per card in core transform.
+- **Runtime prices** are cache-first from the committed TCGCSV index — no per-card live TCGPlayer API on blog requests.
+
+## Timestamps
+
+Run times live **only** in `cache/normalized/meta/pipeline.json` via `writePipelineMeta()`. Never add `extractedAt`, `transformedAt`, `generatedAt`, etc. to per-entity normalized files. See `pipeline-timestamps.mdc`.
+
+## Scripts & temp files
+
+- Shared libs: `packages/data/scripts/lib/` (see `scripts/lib/README.md`).
+- Path constants: import from `scripts/lib/paths/cache-paths` → `src/paths.ts`.
+- **One-off / debug scripts** → `packages/data/scripts/temp/` (gitignored). Long-lived steps belong in `1-extract/`, `2-images/`, or `3-transform/`.
+- Debug a single step: `pnpm exec tsx packages/data/scripts/3-transform/2-prices/02-sync-tcgcsv-prices.ts`
+
+## Common workflows
+
+```bash
+# Daily cron (prices only)
+pnpm --filter @repo/data refresh
+
+# New TCG sets
+pnpm --filter @repo/data extract --only pokemontcg tcgdex
+pnpm --filter @repo/data transform
+
+# Annual sprites / scene art / Blob
+pnpm --filter @repo/data extract          # if pokeapi raw stale
+pnpm --filter @repo/data images --downloads
+pnpm --filter @repo/data transform
+```
+
+Long-running loops: see `data-scripts-progress.mdc`.

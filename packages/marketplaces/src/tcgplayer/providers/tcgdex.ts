@@ -1,12 +1,14 @@
 import { TCGDEX_API } from '../../config/apis'
 import { TCGDEX_ENV } from '../../config/env'
-import {
-  buildScrydexCardImageUrls,
-  buildTcgdexImageUrls,
-  tcgplayerProductUrl,
-} from '../../config/cdn'
+import { tcgplayerProductUrl } from '../../config/cdn'
+import { resolveTcgCardImageUrls } from '../images'
 import { marketplaceFetchJson } from '../../http'
-import { inferSetSeries, pickTcgdexPrice } from '../pricing'
+import {
+  inferSetSeries,
+  mergeTcgCardPrices,
+  pickTcgdexCardmarketPrice,
+  pickTcgdexPrice,
+} from '../pricing'
 import type { GetPokemonTcgCardsOptions, TcgCardRecord } from '../types'
 
 type TcgdexCardBrief = {
@@ -96,22 +98,26 @@ async function fetchTcgdexCardFull(
 }
 
 function mapTcgdexFullToRecord(card: TcgdexCardFull): TcgCardRecord {
-  const tcgImages = buildTcgdexImageUrls(card.image)
-  const tcgplayerUrl = tcgplayerProductUrl(card.id)
-  const scrydex = buildScrydexCardImageUrls(card.id, { tcgplayerUrl })
-  const price = pickTcgdexPrice(card.pricing)
+  const cardId = card.id?.trim() ?? ''
+  const setId = card.set?.id?.trim() ?? ''
+  const tcgplayerUrl = cardId ? tcgplayerProductUrl(cardId) : undefined
+  const images = resolveTcgCardImageUrls(cardId, null, card.image ?? null, tcgplayerUrl)
+  const price = mergeTcgCardPrices(
+    pickTcgdexPrice(card.pricing),
+    pickTcgdexCardmarketPrice(card.pricing)
+  )
 
   return {
-    id: card.id,
-    name: card.name,
-    imageSmall: tcgImages?.small ?? scrydex.small,
-    imageLarge: tcgImages?.large ?? scrydex.large,
-    imageSmallFallback: tcgImages ? scrydex.small : undefined,
-    imageLargeFallback: tcgImages ? scrydex.large : undefined,
+    id: cardId,
+    name: card.name?.trim() ?? '',
+    imageSmall: images.imageSmall,
+    imageLarge: images.imageLarge,
+    imageSmallFallbacks: images.imageSmallFallbacks,
+    imageLargeFallbacks: images.imageLargeFallbacks,
     rarity: card.rarity ?? null,
-    setName: card.set.name,
-    setSeries: inferSetSeries(card.set.id),
-    number: String(card.localId),
+    setName: card.set?.name?.trim() ?? '',
+    setSeries: inferSetSeries(setId),
+    number: card.localId != null ? String(card.localId) : '',
     artist: card.illustrator ?? null,
     tcgplayerUrl,
     price,

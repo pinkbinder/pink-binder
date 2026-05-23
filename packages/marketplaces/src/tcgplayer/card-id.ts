@@ -1,5 +1,8 @@
 /** Normalize numeric card numbers (e.g. 060 → 60) for dedupe keys. */
-export function normalizeTcgCardNumber(number: string): string {
+export function normalizeTcgCardNumber(number: string | null | undefined): string {
+  if (number == null || typeof number !== 'string') {
+    return ''
+  }
   const trimmed = number.trim()
   if (/^\d+$/.test(trimmed)) {
     const parsed = Number.parseInt(trimmed, 10)
@@ -12,7 +15,10 @@ export function normalizeTcgCardNumber(number: string): string {
  * Canonical Pokémon TCG card id: lowercase set prefix + unpadded local number.
  * e.g. sv10-060 → sv10-60
  */
-export function canonicalTcgCardId(id: string): string {
+export function canonicalTcgCardId(id: string | null | undefined): string {
+  if (id == null || typeof id !== 'string') {
+    return ''
+  }
   const trimmed = id.trim()
   const lastDash = trimmed.lastIndexOf('-')
   if (lastDash <= 0) {
@@ -46,6 +52,29 @@ export const TCGDEX_TO_POKEMONTCG_SET: Record<string, string> = {
   '2022swsh': 'mcd22',
   '2023sv': 'mcd23',
   '2024sv': 'mcd24',
+  /** TCGdex `lc` → pokemontcg.io `base6` (Legendary Collection). */
+  lc: 'base6',
+  /** Pokémon GO — TCGdex `swsh10.5`, not `swsh10pt5`. */
+  'swsh10.5': 'pgo',
+  'swsh3.5': 'swsh35',
+  'swsh4.5': 'swsh45',
+  'sm3.5': 'sm35',
+  'sm7.5': 'sm75',
+  /** White Flare / Black Bolt (TCGdex letter suffixes). */
+  'sv10.5w': 'rsv10pt5',
+  'sv10.5b': 'zsv10pt5',
+  bog: 'bp',
+}
+
+/** pokemontcg.io catalog card id from `images.pokemontcg.io/{set}/{local}.png`. */
+export function pokemontcgCatalogCardIdFromImageUrl(url: string | null | undefined): string | null {
+  const match = url?.trim().match(/images\.pokemontcg\.io\/([^/]+)\/([^./?#]+)/i)
+  if (!match?.[1] || !match[2]) {
+    return null
+  }
+  const setId = match[1].trim().toLowerCase()
+  const local = normalizeTcgCardNumber(match[2])
+  return local ? `${setId}-${local}` : null
 }
 
 function tcgdxSetUsesAlternateScrydexCatalog(setId: string): boolean {

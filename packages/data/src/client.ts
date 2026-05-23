@@ -21,6 +21,7 @@ export type { LandingBlogFeaturedPayload, LandingBlogFeaturedPost } from './land
 export * from './utils'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
+  preferredTcgCardImageUrl,
   tcgCardImageCandidates,
   tcgCardHeroImageUrl,
   enrichPokemonTcgCardImages,

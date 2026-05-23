@@ -18,8 +18,7 @@
     "extract": "tsx scripts/1-extract/index.ts",
     "images": "tsx scripts/2-images/index.ts",
     "transform": "tsx scripts/3-transform/index.ts",
-    "refresh": "tsx scripts/5-refresh/index.ts",
-    "audit:tcg-images": "tsx scripts/audit/verify-tcg-provider-urls.ts"
+    "refresh": "tsx scripts/3-transform/index.ts --only prices"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
