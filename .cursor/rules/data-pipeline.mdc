@@ -32,13 +32,14 @@ Use `--no-force` to skip unchanged writes on fast pipelines.
 
 ```
 3-transform/
-  1-core/    — pokeapi, bulbapedia, blob URLs, popularity, cards, type profiles,
-               collections, competitive, collect card art, illustrator/expansion catalogs
+  1-core/    — pokeapi, bulbapedia, fandom, blob URLs, popularity, cards, type profiles,
+               collections, competitive, collect card art, illustrator/expansion catalogs,
+               TCG card flavor dedup
   2-prices/  — TCG support caches, TCGCSV price sync, apply prices, roundups, illustrators
   3-events/  — (reserved)
 ```
 
-**`core`** (14 steps): pokeapi, bulbapedia, blob URLs, popularity, cards merge, type profiles, collections, competitive, collect card art, illustrator/expansion catalogs.
+**`core`** (16 steps): pokeapi, bulbapedia, fandom wiki, blob URLs, popularity, cards merge, type profiles, collections, competitive, collect card art, illustrator/expansion catalogs, TCG card flavor dedup.
 
 **`prices`** (5 steps, formerly `refresh`):
 1. TCG support caches — promo CDN + trainer-kit TCGPlayer URL caches
