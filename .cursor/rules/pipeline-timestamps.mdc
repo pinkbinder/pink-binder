@@ -14,13 +14,13 @@ alwaysApply: false
 | ----- | ------ |
 | `extractedAt` | `scripts/1-extract/index.ts` (includes evolution-chains materialization) |
 | `transformedAt` | `scripts/3-transform/index.ts` |
-| `cardsMergedAt` | `scripts/3-transform/1-core/07-transform-pokemon-cards.ts` |
+| `cardsMergedAt` | `scripts/3-transform/1-pokemon/06-transform-pokemon-cards.ts` |
 | `refreshedAt` | `scripts/3-transform/index.ts` (prices group) |
-| `bulbapediaIllustratorsCatalogAt` | `scripts/3-transform/1-core/04-transform-bulbapedia-illustrators.ts` |
-| `bulbapediaExpansionsCatalogAt` | `scripts/3-transform/1-core/05-transform-bulbapedia-expansions.ts` |
-| `competitiveAppliedAt` | `scripts/3-transform/1-core/11-apply-competitive.ts` |
-| `tcgTypeProfilesAppliedAt` | `scripts/3-transform/1-core/08-transform-tcg-type-profile.ts` |
-| `illustratorTcgIndexAt` | `scripts/3-transform/2-prices/05-refresh-illustrator-tcg-cache.ts` |
+| `bulbapediaIllustratorsCatalogAt` | `scripts/3-transform/2-meta/02-transform-bulbapedia-illustrators.ts` |
+| `bulbapediaExpansionsCatalogAt` | `scripts/3-transform/2-meta/03-transform-bulbapedia-expansions.ts` |
+| `competitiveAppliedAt` | `scripts/3-transform/1-pokemon/09-apply-competitive.ts` |
+| `tcgTypeProfilesAppliedAt` | `scripts/3-transform/1-pokemon/07-transform-tcg-type-profile.ts` |
+| `illustratorTcgIndexAt` | `scripts/3-transform/3-prices/05-refresh-illustrator-tcg-cache.ts` |
 
 App-facing “when was data built?” → `readPipelineMeta()` / `resolvePipelineExtractedAt()`.
 
