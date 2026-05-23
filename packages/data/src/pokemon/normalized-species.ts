@@ -117,12 +117,32 @@ export interface NormalizedBulbapediaLore {
   trivia?: string[]
 }
 
+/** Fandom wiki-derived prose — deeper behavior / ecology / abilities (plain text). */
+export interface NormalizedFandomLore {
+  /** Intro paragraphs after the infobox. */
+  lead?: string[]
+  /** Physical appearance / physiology. */
+  physiology?: string[]
+  /** How the species lives, hunts, socializes (the "behavior vault"). */
+  behavior?: string[]
+  /** Special powers and combat abilities. */
+  naturalAbilities?: string[]
+  /** Design origin / etymology. */
+  origin?: string[]
+  /** Trivia bullet points. */
+  trivia?: string[]
+}
+
 export interface NormalizedSpeciesLore {
   pokedexEntries: NormalizedPokedexEntry[]
   formDescriptions: string[]
   facts: string[]
   /** All Bulbapedia article prose lives here (not split across top-level fields). */
   bulbapedia?: NormalizedBulbapediaLore
+  /** Fandom wiki prose — deeper behavior / ecology. */
+  fandom?: NormalizedFandomLore
+  /** Unique TCG card flavor texts not already in pokedexEntries. */
+  tcgCardFlavors?: string[]
 }
 
 export interface NormalizedSpeciesCompetitive {
@@ -202,6 +222,9 @@ export interface NormalizedSpeciesLoreFile {
   formDescriptions?: string[]
   facts: string[]
   bulbapedia?: NormalizedBulbapediaLore
+  fandom?: NormalizedFandomLore
+  /** Unique TCG card flavor texts not already in pokedexEntries. */
+  tcgCardFlavors?: string[]
 }
 
 /** Core species record under cache/normalized/pokemon/{slug}/species.json. */
