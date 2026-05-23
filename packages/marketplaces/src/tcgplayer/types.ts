@@ -1,12 +1,12 @@
-/** Where USD market data came from (TCGPlayer-aligned fields). */
-export type TcgCardPriceSource = 'tcgdex' | 'pokemontcg'
+/** Where market data came from (TCGPlayer USD or Cardmarket EUR via TCGdex). */
+export type TcgCardPriceSource = 'tcgdex' | 'tcgdex-cardmarket' | 'pokemontcg' | 'tcgcsv'
 
 export interface TcgCardPrice {
   market?: number
   low?: number
   mid?: number
   high?: number
-  currency: 'USD'
+  currency: 'USD' | 'EUR'
   updatedAt?: string
   source: TcgCardPriceSource
 }
@@ -20,8 +20,10 @@ export interface TcgCardRecord {
   name: string
   imageSmall: string
   imageLarge: string
-  imageSmallFallback?: string
-  imageLargeFallback?: string
+  imageSmallFallbacks?: string[]
+  imageLargeFallbacks?: string[]
+  /** TCGPlayer product id when matched via TCGCSV catalog index. */
+  tcgplayerProductId?: number
   rarity: string | null
   setName: string
   setSeries: string

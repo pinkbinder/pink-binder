@@ -4,6 +4,8 @@ export {
   buildPokemontcgImageFallbacks,
   buildScrydexCardImageUrls,
   buildTcgdexImageUrls,
+  isDisplayableTcgCardImageUrl,
+  preferredTcgCardImageUrl,
   resolveTcgCardImageUrls,
   tcgCardImageCandidates,
   tcgplayerProductUrl,

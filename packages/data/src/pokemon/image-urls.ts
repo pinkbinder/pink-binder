@@ -1,10 +1,17 @@
 import {
   TCGDEX_CDN,
   VERCEL_BLOB_PUBLIC_HOST_SUFFIX,
+  isDisplayableTcgCardImageUrl,
   isLikelyBrokenTcgdexAssetUrl,
-  isPokemontcgImageUrl,
+  isTcgdexUnsupportedSetId,
   repairTcgdexAssetUrl,
+  tcgCardSetId,
 } from '@repo/marketplaces/config'
+import {
+  getTcgcsvPromoImage,
+  getTcgPocketImage,
+  getTrainerKitTcgplayerImage,
+} from '@repo/marketplaces/tcgplayer'
 import { buildScrydexCardImageUrls, toScrydexCatalogCardId } from '@repo/marketplaces/tcgplayer'
 import {
   buildDreamWorldArtworkCdnUrl,
@@ -100,147 +107,102 @@ function scrydexUrlsForCard(card: PokemonTcgCard): {
   }
 }
 
-function applyScrydexFallbackIfNeeded(
+/** Ensure Scrydex URLs are included in fallback arrays when missing. */
+function ensureScrydexInFallbacks(
   scrydex: { small: string; large: string },
-  imageLarge: string,
   imageSmall: string,
-  imageLargeFallback: string | undefined,
-  imageSmallFallback: string | undefined
-): {
-  imageLarge: string
-  imageSmall: string
-  imageLargeFallback: string
-  imageSmallFallback: string
-} {
-  let largeFallback = imageLargeFallback
-  let smallFallback = imageSmallFallback
-
-  if (!largeFallback || (largeFallback === imageLarge && !isPokemontcgImageUrl(largeFallback))) {
-    largeFallback = scrydex.large
-  }
-  if (!smallFallback || (smallFallback === imageSmall && !isPokemontcgImageUrl(smallFallback))) {
-    smallFallback = scrydex.small
-  }
-
-  return {
-    imageLarge,
-    imageSmall,
-    imageLargeFallback: largeFallback,
-    imageSmallFallback: smallFallback,
-  }
-}
-
-function promoteBestArtWhenTcgdexBroken(
-  card: PokemonTcgCard,
-  scrydex: { catalog: { small: string; large: string }; tcgdx: { small: string; large: string } },
   imageLarge: string,
-  imageSmall: string,
-  imageLargeFallback: string | undefined,
-  imageSmallFallback: string | undefined
-): {
-  imageLarge: string
-  imageSmall: string
-  imageLargeFallback: string
-  imageSmallFallback: string
-} {
-  const pokemontcgLarge = isPokemontcgImageUrl(imageLargeFallback) ? imageLargeFallback : undefined
-  const pokemontcgSmall = isPokemontcgImageUrl(imageSmallFallback) ? imageSmallFallback : undefined
+  smallFallbacks: string[],
+  largeFallbacks: string[]
+): { imageSmallFallbacks: string[]; imageLargeFallbacks: string[] } {
+  const imageSmallFallbacks = [...smallFallbacks]
+  const imageLargeFallbacks = [...largeFallbacks]
 
-  if (pokemontcgLarge) {
-    return {
-      imageLarge: pokemontcgLarge,
-      imageSmall: pokemontcgSmall ?? imageSmall,
-      imageLargeFallback: scrydex.catalog.large,
-      imageSmallFallback: scrydex.catalog.small,
-    }
+  if (scrydex.small !== imageSmall && !imageSmallFallbacks.includes(scrydex.small)) {
+    imageSmallFallbacks.push(scrydex.small)
+  }
+  if (scrydex.large !== imageLarge && !imageLargeFallbacks.includes(scrydex.large)) {
+    imageLargeFallbacks.push(scrydex.large)
   }
 
-  const scrydexId = toScrydexCatalogCardId(card.id, { tcgplayerUrl: card.tcgplayerUrl })
-  const catalogScrydexLarge =
-    scrydex.catalog.large !== scrydex.tcgdx.large ? scrydex.catalog.large : undefined
-  if (catalogScrydexLarge && scrydexId !== card.id.trim().toLowerCase()) {
-    return {
-      imageLarge: catalogScrydexLarge,
-      imageSmall:
-        scrydex.catalog.small !== scrydex.tcgdx.small ? scrydex.catalog.small : imageSmall,
-      imageLargeFallback: scrydex.tcgdx.large,
-      imageSmallFallback: scrydex.tcgdx.small,
-    }
-  }
-
-  return {
-    imageLarge: scrydex.catalog.large,
-    imageSmall: scrydex.catalog.small,
-    imageLargeFallback: imageLargeFallback ?? imageLarge,
-    imageSmallFallback: imageSmallFallback ?? imageSmall,
-  }
+  return { imageSmallFallbacks, imageLargeFallbacks }
 }
 
 /**
  * Repair TCGdex paths on cards already written by extract/transform.
- * Preserves pokemontcg.io fallbacks; promotes catalog Scrydex / pokemontcg when TCGdex URLs are known-bad.
+ * Ensures Scrydex fallbacks are always present. Promotes pokemontcg.io / Scrydex
+ * when TCGdex primaries are known-broken.
  */
 export function coercePokemonTcgCardImageUrls(card: PokemonTcgCard): PokemonTcgCard {
   const scrydex = scrydexUrlsForCard(card)
 
   let imageLarge = card.imageLarge?.trim() ?? ''
   let imageSmall = card.imageSmall?.trim() ?? ''
-  let imageLargeFallback = card.imageLargeFallback?.trim()
-  let imageSmallFallback = card.imageSmallFallback?.trim()
 
-  if (isTcgdexImageUrl(imageLarge)) {
-    imageLarge = repairTcgdexAssetUrl(imageLarge)
-  }
-  if (isTcgdexImageUrl(imageSmall)) {
-    imageSmall = repairTcgdexAssetUrl(imageSmall)
-  }
-  if (imageLargeFallback && isTcgdexImageUrl(imageLargeFallback)) {
-    imageLargeFallback = repairTcgdexAssetUrl(imageLargeFallback)
-  }
-  if (imageSmallFallback && isTcgdexImageUrl(imageSmallFallback)) {
-    imageSmallFallback = repairTcgdexAssetUrl(imageSmallFallback)
-  }
+  if (isTcgdexImageUrl(imageLarge)) imageLarge = repairTcgdexAssetUrl(imageLarge)
+  if (isTcgdexImageUrl(imageSmall)) imageSmall = repairTcgdexAssetUrl(imageSmall)
 
-  const repaired = applyScrydexFallbackIfNeeded(
-    scrydex.catalog,
-    imageLarge,
-    imageSmall,
-    imageLargeFallback,
-    imageSmallFallback
+  let smallFallbacks = (card.imageSmallFallbacks ?? []).map((u) =>
+    isTcgdexImageUrl(u) ? repairTcgdexAssetUrl(u) : u
   )
-  imageLarge = repaired.imageLarge
-  imageSmall = repaired.imageSmall
-  imageLargeFallback = repaired.imageLargeFallback
-  imageSmallFallback = repaired.imageSmallFallback
+  let largeFallbacks = (card.imageLargeFallbacks ?? []).map((u) =>
+    isTcgdexImageUrl(u) ? repairTcgdexAssetUrl(u) : u
+  )
 
-  if (!imageLarge) {
-    imageLarge = imageLargeFallback ?? ''
+  if (!imageLarge && largeFallbacks.length) {
+    imageLarge = largeFallbacks.shift()!
   }
-  if (!imageSmall) {
-    imageSmall = imageSmallFallback ?? ''
+  if (!imageSmall && smallFallbacks.length) {
+    imageSmall = smallFallbacks.shift()!
   }
 
-  if (isLikelyBrokenTcgdexAssetUrl(imageLarge) || isLikelyBrokenTcgdexAssetUrl(imageSmall)) {
-    const promoted = promoteBestArtWhenTcgdexBroken(
-      card,
-      scrydex,
-      imageLarge,
-      imageSmall,
-      imageLargeFallback,
-      imageSmallFallback
+  const tcgdxSetUnsupported = isTcgdexUnsupportedSetId(tcgCardSetId(card.id))
+  const primaryIsBroken =
+    !getTcgcsvPromoImage(card.id) &&
+    !getTrainerKitTcgplayerImage(card.id) &&
+    !getTcgPocketImage(card.id) &&
+    (isLikelyBrokenTcgdexAssetUrl(imageSmall) || isLikelyBrokenTcgdexAssetUrl(imageLarge))
+
+  if (tcgdxSetUnsupported && primaryIsBroken) {
+    const bestSmall = [scrydex.catalog.small, scrydex.tcgdx.small, ...smallFallbacks].find(
+      isDisplayableTcgCardImageUrl
     )
-    imageLarge = promoted.imageLarge
-    imageSmall = promoted.imageSmall
-    imageLargeFallback = promoted.imageLargeFallback
-    imageSmallFallback = promoted.imageSmallFallback
+    const bestLarge = [scrydex.catalog.large, scrydex.tcgdx.large, ...largeFallbacks].find(
+      isDisplayableTcgCardImageUrl
+    )
+
+    if (bestSmall && bestSmall !== imageSmall) {
+      smallFallbacks = [imageSmall, ...smallFallbacks].filter(
+        (u) => u !== bestSmall && u.trim() !== ''
+      )
+      imageSmall = bestSmall
+    }
+    if (bestLarge && bestLarge !== imageLarge) {
+      largeFallbacks = [imageLarge, ...largeFallbacks].filter(
+        (u) => u !== bestLarge && u.trim() !== ''
+      )
+      imageLarge = bestLarge
+    }
   }
+
+  const withScrydex = ensureScrydexInFallbacks(
+    scrydex.catalog,
+    imageSmall,
+    imageLarge,
+    smallFallbacks,
+    largeFallbacks
+  )
 
   return {
     ...card,
     imageLarge,
     imageSmall,
-    imageLargeFallback,
-    imageSmallFallback,
+    imageSmallFallbacks: withScrydex.imageSmallFallbacks.length
+      ? withScrydex.imageSmallFallbacks
+      : undefined,
+    imageLargeFallbacks: withScrydex.imageLargeFallbacks.length
+      ? withScrydex.imageLargeFallbacks
+      : undefined,
   }
 }
 

@@ -4,6 +4,8 @@ import {
   tcgplayerUrlCardId,
   toPokemontcgCatalogCardId,
 } from '../tcgplayer/card-id'
+import { isTrainerKitCardId } from '../tcgplayer/product-line'
+import { getTrainerKitTcgplayerUrl } from '../tcgplayer/trainer-kit-tcgplayer'
 
 export const SCRYDEX_CDN = {
   cardImageBase: 'https://images.scrydex.com/pokemon',
@@ -29,10 +31,13 @@ export const POKEMON_TCG_PRICES_CDN = {
 export const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com'] as const
 
 /** Hostnames allowed in Next.js `images.remotePatterns` for Pokémon TCG card art. */
+export const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
+
 export const TCG_CARD_IMAGE_HOSTS = [
   POKEMON_TCG_CDN.imageHost,
   TCGDEX_CDN.assetsHost,
   SCRYDEX_CDN.host,
+  TCGPLAYER_CDN_HOST,
 ] as const
 
 export function buildScrydexCardImageUrls(
@@ -293,6 +298,9 @@ export function isLikelyBrokenTcgdexAssetUrl(url: string | null | undefined): bo
   if (/\/tk\//.test(decoded)) {
     return true
   }
+  if (/\/mfb\//.test(decoded)) {
+    return true
+  }
   if (trimmed.includes("'")) {
     return true
   }
@@ -366,10 +374,10 @@ export function isPokemontcgImageUrl(url: string | null | undefined): boolean {
 export function buildPokemontcgImageFallbacks(images?: {
   small?: string | null
   large?: string | null
-}): { imageSmallFallback?: string; imageLargeFallback?: string } {
-  const imageSmallFallback = isPokemontcgImageUrl(images?.small) ? images!.small!.trim() : undefined
-  const imageLargeFallback = isPokemontcgImageUrl(images?.large) ? images!.large!.trim() : undefined
-  return { imageSmallFallback, imageLargeFallback }
+}): { pokemontcgSmall?: string; pokemontcgLarge?: string } {
+  const pokemontcgSmall = isPokemontcgImageUrl(images?.small) ? images!.small!.trim() : undefined
+  const pokemontcgLarge = isPokemontcgImageUrl(images?.large) ? images!.large!.trim() : undefined
+  return { pokemontcgSmall, pokemontcgLarge }
 }
 
 /** Standard pokemontcg.io CDN paths for McDonald's catalog set ids (`mcd16-8` → `mcd16/8_hires.png`). */
@@ -409,6 +417,55 @@ export function isTcgdexUnsupportedSetId(setId: string): boolean {
   return false
 }
 
+export function isScrydexCardImageUrl(url: string | null | undefined): boolean {
+  const trimmed = url?.trim()
+  if (!trimmed) {
+    return false
+  }
+  try {
+    return new URL(trimmed).hostname === SCRYDEX_CDN.host
+  } catch {
+    return false
+  }
+}
+
+export function isTcgdexAssetImageUrl(url: string | null | undefined): boolean {
+  const trimmed = url?.trim()
+  if (!trimmed) {
+    return false
+  }
+  try {
+    return new URL(trimmed).hostname === TCGDEX_CDN.assetsHost
+  } catch {
+    return false
+  }
+}
+
+function isVercelBlobPublicUrl(url: string): boolean {
+  try {
+    return new URL(url.trim()).hostname.endsWith('.public.blob.vercel-storage.com')
+  } catch {
+    return false
+  }
+}
+
+/** URLs safe to use as a primary card image (not known-bad TCGdex paths). */
+export function isDisplayableTcgCardImageUrl(url: string): boolean {
+  const trimmed = url.trim()
+  if (!trimmed) {
+    return false
+  }
+  if (
+    isPokemontcgImageUrl(trimmed) ||
+    isScrydexCardImageUrl(trimmed) ||
+    trimmed.includes(TCGPLAYER_CDN_HOST) ||
+    isVercelBlobPublicUrl(trimmed)
+  ) {
+    return true
+  }
+  return isTcgdexAssetImageUrl(trimmed) && !isLikelyBrokenTcgdexAssetUrl(trimmed)
+}
+
 /** Set id segment from a card id (e.g. `swsh2-53` → `swsh2`). */
 export function tcgCardSetId(cardId: string): string {
   const trimmed = cardId.trim()
@@ -443,6 +500,11 @@ export function buildTcgdexImageBaseFromCardId(cardId: string): string | null {
  * TCG Pocket and other TCGdex-only sets 404 — do not persist affiliate links for them.
  */
 export function isKnownTcgplayerPricesRedirectId(cardId: string): boolean {
+  const normalized = cardId.trim().toLowerCase()
+  if (/^tk-/i.test(normalized)) {
+    return false
+  }
+
   const setId = tcgCardSetId(cardId).toLowerCase()
 
   if (/^[ab]\d+[a-z]?$/.test(setId)) {
@@ -455,6 +517,14 @@ export function isKnownTcgplayerPricesRedirectId(cardId: string): boolean {
   return true
 }
 
+export type TcgplayerProductUrlOptions = {
+  /**
+   * Trustworthy pokemontcg.io catalog id (e.g. parsed from `images.pokemontcg.io` fallback URLs).
+   * Used to correct naive TCGdex `*.5` → `*pt5` synthesis on Scrydex redirect links.
+   */
+  preferredCatalogCardId?: string | null
+}
+
 /**
  * Affiliate / product URL for TCGPlayer.
  *
@@ -465,10 +535,26 @@ export function isKnownTcgplayerPricesRedirectId(cardId: string): boolean {
  */
 export function tcgplayerProductUrl(
   cardId: string,
-  tcgplayerUrl?: string | null
+  tcgplayerUrl?: string | null,
+  options?: TcgplayerProductUrlOptions
 ): string | undefined {
   const id = cardId.trim()
-  const catalogId = toPokemontcgCatalogCardId(id)
+  if (isTrainerKitCardId(id)) {
+    const cached = getTrainerKitTcgplayerUrl(id)
+    if (cached) {
+      return cached
+    }
+    const explicit = tcgplayerUrl?.trim()
+    if (explicit && /tcgplayer\.com\/product\//i.test(explicit)) {
+      return explicit
+    }
+    return undefined
+  }
+
+  const naiveCatalogId = toPokemontcgCatalogCardId(id)
+  const preferred = options?.preferredCatalogCardId?.trim().toLowerCase()
+  const catalogId =
+    preferred && isKnownTcgplayerPricesRedirectId(preferred) ? preferred : naiveCatalogId
   const explicit = tcgplayerUrl?.trim()
 
   if (explicit) {
@@ -476,6 +562,9 @@ export function tcgplayerProductUrl(
       const redirectId = tcgplayerUrlCardId(explicit) ?? catalogId
       if (!redirectId || !isKnownTcgplayerPricesRedirectId(redirectId)) {
         return undefined
+      }
+      if (preferred && redirectId !== preferred && isKnownTcgplayerPricesRedirectId(preferred)) {
+        return `${POKEMON_TCG_PRICES_CDN.tcgplayerPriceBase}/${encodeURIComponent(preferred)}`
       }
     }
     return explicit

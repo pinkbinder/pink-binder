@@ -1,47 +1,48 @@
-# Pipeline timestamps (no per-file bloat)
+---
+description: Pipeline run timestamps belong only in pipeline.json — never on entity files
+globs: packages/data/**
+alwaysApply: false
+---
+
+# Pipeline timestamps
 
 ## Single source of truth
 
-Committed normalized data records **pipeline run times** only in:
-
-`packages/data/cache/normalized/meta/pipeline.json`
-
-Update via `writePipelineMeta()` in `packages/data/src/pipeline-meta.ts`.
+`packages/data/cache/normalized/meta/pipeline.json` — update via `writePipelineMeta()` in `packages/data/src/pipeline-meta.ts`.
 
 | Field | Set by |
 | ----- | ------ |
-| `extractedAt` | `scripts/1-extract/index.ts` |
+| `extractedAt` | `scripts/1-extract/index.ts` (includes evolution-chains materialization) |
 | `transformedAt` | `scripts/3-transform/index.ts` |
-| `cardsMergedAt` | `scripts/3-transform/07-transform-pokemon-cards.ts` |
-| `refreshedAt` | `scripts/5-refresh/index.ts` |
-| `bulbapediaIllustratorsCatalogAt` | `scripts/3-transform/04-transform-bulbapedia-illustrators.ts` |
-| `bulbapediaExpansionsCatalogAt` | `scripts/3-transform/05-transform-bulbapedia-expansions.ts` |
-| `competitiveAppliedAt` | `scripts/3-transform/11-apply-competitive.ts` |
-| `tcgTypeProfilesAppliedAt` | `scripts/3-transform/08-transform-tcg-type-profile.ts` |
-| `illustratorTcgIndexAt` | `scripts/5-refresh/04-refresh-illustrator-tcg-cache.ts` |
+| `cardsMergedAt` | `scripts/3-transform/1-core/07-transform-pokemon-cards.ts` |
+| `refreshedAt` | `scripts/3-transform/index.ts` (prices group) |
+| `bulbapediaIllustratorsCatalogAt` | `scripts/3-transform/1-core/04-transform-bulbapedia-illustrators.ts` |
+| `bulbapediaExpansionsCatalogAt` | `scripts/3-transform/1-core/05-transform-bulbapedia-expansions.ts` |
+| `competitiveAppliedAt` | `scripts/3-transform/1-core/11-apply-competitive.ts` |
+| `tcgTypeProfilesAppliedAt` | `scripts/3-transform/1-core/08-transform-tcg-type-profile.ts` |
+| `illustratorTcgIndexAt` | `scripts/3-transform/2-prices/05-refresh-illustrator-tcg-cache.ts` |
 
-## Do not duplicate on every entity file
+App-facing “when was data built?” → `readPipelineMeta()` / `resolvePipelineExtractedAt()`.
 
-**Never** add run timestamps to:
+## Never duplicate on entity files
 
-- `meta/cards/expansions/{slug}/info.json`
-- `meta/cards/illustrators/{slug}/info.json`
-- Per-species `species.json`, `cards.json`, `images.json`, etc.
+Do **not** add run timestamps to:
+
+- `meta/evolution-chains/{id}.json`
+- `meta/cards/expansions/{slug}/info.json`, `meta/cards/illustrators/{slug}/info.json`
+- Per-species `species.json`, `cards.json`, `images.json`, `lore.json`
 - `meta/illustrators-catalog.json`, `meta/expansions-catalog.json`, `meta/cards/illustrators/index.json`
 
-Forbidden keys on committed normalized files include: `extractedAt`, `transformedAt`, `generatedAt`, `enrichedAt`, `tcgTypeProfileEnrichedAt`.
+Forbidden keys: `extractedAt`, `transformedAt`, `generatedAt`, `enrichedAt`, `tcgTypeProfileEnrichedAt`.
 
-`stripAllCommittedNormalizedTimestamps()` runs at the start of every `pnpm transform`.
+`stripAllCommittedNormalizedTimestamps()` runs at the start of every `transform` (includes evolution-chains cleanup).
 
 ## Where timestamps are allowed
 
 | Location | Purpose |
-| ----- | ---- |
+| -------- | ------- |
 | `cache/normalized/meta/pipeline.json` | Global pipeline runs (committed) |
 | `cache/extract-manifest.json` | Per-source extract stats (gitignored) |
 | `cache/raw/**` | Per-record extract time (gitignored) |
 
-## When editing transform scripts
-
-- Use `readPipelineMeta()` / `resolvePipelineExtractedAt()` for app-facing “when was data built?”
-- If you need per-entity freshness, use **content hashes** or bump `schemaVersion`, not `new Date()` on every file.
+Per-entity freshness → content hashes or `schemaVersion`, not `new Date()` on every file.

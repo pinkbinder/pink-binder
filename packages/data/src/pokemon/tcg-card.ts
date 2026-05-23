@@ -4,9 +4,9 @@ export interface TcgCardPrice {
   low?: number
   mid?: number
   high?: number
-  currency: 'USD'
+  currency: 'USD' | 'EUR'
   updatedAt?: string
-  source: 'pokemontcg' | 'tcgdex'
+  source: 'pokemontcg' | 'tcgdex' | 'tcgdex-cardmarket' | 'tcgcsv'
 }
 
 export interface PokemonTcgCard {
@@ -14,8 +14,9 @@ export interface PokemonTcgCard {
   name: string
   imageSmall: string
   imageLarge: string
-  imageSmallFallback?: string
-  imageLargeFallback?: string
+  imageSmallFallbacks?: string[]
+  imageLargeFallbacks?: string[]
+  tcgplayerProductId?: number
   rarity: string | null
   setName: string
   setSeries: string

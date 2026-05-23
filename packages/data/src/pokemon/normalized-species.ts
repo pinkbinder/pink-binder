@@ -281,6 +281,7 @@ export function toPokemonDataFromParts(
     officialArtworkUrl: art.sprites.official,
     homeArtworkUrl: art.sprites.home,
     shinyArtworkUrl: art.sprites.shiny,
+    showdownSpriteUrl: art.sprites.showdown,
     michiSceneArt,
     collectCardArtIds: collectCardArtIds.length > 0 ? collectCardArtIds : undefined,
     collectCardArt: collectCardArt.length > 0 ? collectCardArt : undefined,

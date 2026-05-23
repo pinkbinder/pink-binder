@@ -1,4 +1,5 @@
 export { BlogBackLink } from './blog-back-link'
+export { BlogScrollToTop } from './blog-scroll-to-top'
 export { BlogPostHeader, type BlogPostHeaderBreadcrumbItem } from './blog-post-header'
 export { BlogParagraphList } from './blog-paragraph-list'
 export { BlogBulletList } from './blog-bullet-list'

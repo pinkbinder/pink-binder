@@ -3,7 +3,12 @@
 /** Edge cache TTL for `/_next/image` (seconds). Vercel allows up to ~31 days. */
 export const NEXT_IMAGE_MINIMUM_CACHE_TTL = 60 * 60 * 24 * 31
 
-const TCG_CARD_IMAGE_HOSTS = ['images.pokemontcg.io', 'assets.tcgdex.net', 'images.scrydex.com']
+const TCG_CARD_IMAGE_HOSTS = [
+  'images.pokemontcg.io',
+  'assets.tcgdex.net',
+  'images.scrydex.com',
+  'tcgplayer-cdn.tcgplayer.com',
+]
 
 const POKEAPI_SPRITES_HOST = 'raw.githubusercontent.com'
 

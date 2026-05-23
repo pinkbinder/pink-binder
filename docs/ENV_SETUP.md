@@ -74,7 +74,7 @@ Sprites, scene art, and Blob upload live in the **`images`** command (~yearly). 
 pnpm --filter @repo/data refresh
 ```
 
-(`refresh-prices` is an alias for the same command.)
+(`refresh` is an alias for `transform --only prices`.)
 
 **When new sets or generations ship (catalog metadata only):**
 
@@ -106,7 +106,7 @@ Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish 
 
 The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
 
-To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run `refresh` for prices do not need the manifest if species JSON in git already has current art URLs.
+To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run the prices group do not need the manifest if species JSON in git already has current art URLs.
 
 ## Reference
 

@@ -46,17 +46,21 @@ function buildPokemontcgSearchQuery(options: GetPokemonTcgCardsOptions): string 
 }
 
 function mapPokemontcgCard(card: PokemontcgCard): TcgCardRecord {
-  const tcgplayerUrl = tcgplayerProductUrl(card.id, card.tcgplayer?.url)
-  const images = resolveTcgCardImageUrls(card.id, card.images, null, tcgplayerUrl)
+  const cardId = card.id?.trim() ?? ''
+  const setId = card.set?.id?.trim() ?? ''
+  const tcgplayerUrl = cardId ? tcgplayerProductUrl(cardId, card.tcgplayer?.url) : undefined
+  const images = cardId
+    ? resolveTcgCardImageUrls(cardId, card.images, null, tcgplayerUrl)
+    : { imageSmall: '', imageLarge: '' }
 
   return {
-    id: card.id,
-    name: card.name,
+    id: cardId,
+    name: card.name?.trim() ?? '',
     ...images,
     rarity: card.rarity ?? null,
-    setName: card.set.name,
-    setSeries: inferSetSeries(card.set.id, card.set.series),
-    number: card.number,
+    setName: card.set?.name?.trim() ?? '',
+    setSeries: inferSetSeries(setId, card.set?.series),
+    number: card.number?.trim() ?? '',
     artist: card.artist ?? null,
     tcgplayerUrl,
     price: pickPokemontcgPrice(card.tcgplayer),
