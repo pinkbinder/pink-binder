@@ -32,14 +32,18 @@ Use `--no-force` to skip unchanged writes on fast pipelines.
 
 ```
 3-transform/
-  1-core/    — pokeapi, bulbapedia, fandom, blob URLs, popularity, cards, type profiles,
-               collections, competitive, collect card art, illustrator/expansion catalogs,
-               TCG card flavor dedup, generation articles
-  2-prices/  — TCG support caches, TCGCSV price sync, apply prices, roundups, illustrators
-  3-events/  — (reserved)
+  1-pokemon/ — pokeapi, bulbapedia, blob URLs, fandom, TCG card flavors,
+               cards merge, type profiles, collections, competitive
+  2-meta/    — regions, illustrators, expansions, popularity, generations,
+               ability descriptions
+  3-prices/  — TCG support caches, TCGCSV price sync, apply prices, roundups, illustrators
+  4-events/  — (reserved)
+  5-blog/    — derived content: pokemon facts, collect card art
 ```
 
-**`core`** (17 steps): pokeapi, bulbapedia, fandom wiki, blob URLs, popularity, cards merge, type profiles, collections, competitive, collect card art, illustrator/expansion catalogs, TCG card flavor dedup, generation articles.
+**`pokemon`** (9 steps): pokeapi, bulbapedia lore, blob URLs, fandom lore, TCG card flavors, cards merge, type profiles, collections, competitive.
+
+**`meta`** (6 steps): Bulbapedia regions, illustrator catalog, expansion catalog, popularity index, generation articles, ability descriptions (also patches species abilities).
 
 **`prices`** (5 steps, formerly `refresh`):
 1. TCG support caches — promo CDN + trainer-kit TCGPlayer URL caches
@@ -48,18 +52,25 @@ Use `--no-force` to skip unchanged writes on fast pipelines.
 4. Expensive by type — roundup snapshots
 5. Illustrators — illustrator index + expensive picks
 
+**`blog`** (2 steps): pokemon facts generation, collect card art selection. Derived from accumulated species data — runs last.
+
 ```bash
 # Run prices group only (daily cron)
 pnpm --filter @repo/data transform --only prices
 # or
 pnpm --filter @repo/data refresh
+
+# Run only blog-derived content
+pnpm --filter @repo/data transform --only blog
 ```
 
 ## Layer boundaries
 
 - **Extract** writes raw only — must not read `cache/normalized/`.
-- **Transform (core)** reads raw + blob manifest; builds normalized species, cards metadata, catalogs. McDonald's / trainer-kit dupes collapse in `1-core/07-transform-pokemon-cards.ts`.
+- **Transform (pokemon)** reads raw + blob manifest; builds normalized species, cards metadata, lore. McDonald's / trainer-kit dupes collapse in `1-pokemon/06-transform-pokemon-cards.ts`.
+- **Transform (meta)** reads raw wiki/survey data; builds region, generation, illustrator, expansion catalogs and popularity index. Fully independent of pokemon output.
 - **Transform (prices)** syncs TCGCSV → `cache/raw/tcgcsv/`, patches card prices, rebuilds roundup meta. Card image URLs resolve at **read time** from price-built caches — not persisted per card in core transform.
+- **Transform (blog)** derives content from accumulated pokemon data (facts, card art). Runs after pokemon + prices.
 - **Runtime prices** are cache-first from the committed TCGCSV index — no per-card live TCGPlayer API on blog requests.
 
 ## Timestamps
@@ -71,7 +82,7 @@ Run times live **only** in `cache/normalized/meta/pipeline.json` via `writePipel
 - Shared libs: `packages/data/scripts/lib/` (see `scripts/lib/README.md`).
 - Path constants: import from `scripts/lib/paths/cache-paths` → `src/paths.ts`.
 - **One-off / debug scripts** → `packages/data/scripts/temp/` (gitignored). Long-lived steps belong in `1-extract/`, `2-images/`, or `3-transform/`.
-- Debug a single step: `pnpm exec tsx packages/data/scripts/3-transform/2-prices/02-sync-tcgcsv-prices.ts`
+- Debug a single step: `pnpm exec tsx packages/data/scripts/3-transform/3-prices/02-sync-tcgcsv-prices.ts`
 
 ## Common workflows
 
