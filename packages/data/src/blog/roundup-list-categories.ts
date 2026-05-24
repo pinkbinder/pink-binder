@@ -13,7 +13,12 @@ export const ROUNDUP_LIST_CATEGORIES: Record<RoundupAngle, string> = {
   expensive: 'TCG Price Lists',
 }
 
-export const ALL_ROUNDUP_LIST_CATEGORIES: readonly string[] = Object.values(ROUNDUP_LIST_CATEGORIES)
+export const TCG_ILLUSTRATORS_CATEGORY = 'TCG Illustrators'
+
+export const ALL_ROUNDUP_LIST_CATEGORIES: readonly string[] = [
+  ...Object.values(ROUNDUP_LIST_CATEGORIES),
+  TCG_ILLUSTRATORS_CATEGORY,
+]
 
 /** @deprecated Use {@link ROUNDUP_LIST_CATEGORIES}. */
 export const ROUNDUP_TYPE_TAGS = ROUNDUP_LIST_CATEGORIES

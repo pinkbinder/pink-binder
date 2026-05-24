@@ -1,4 +1,4 @@
-import { ALL_ROUNDUP_LIST_CATEGORIES } from './roundup-list-categories'
+import { ALL_ROUNDUP_LIST_CATEGORIES, TCG_ILLUSTRATORS_CATEGORY } from './roundup-list-categories'
 import { SPECIES_GUIDES_CATEGORY } from './categories'
 import { parseTypeCategory } from '../ui/type-colors'
 
@@ -36,12 +36,26 @@ export function extractTypeFilters(posts: PostWithCategories[]): string[] {
   return [...types].sort()
 }
 
+export function extractIllustratorFilters(posts: PostWithCategories[]): string[] {
+  const illustrators = new Set<string>()
+  for (const post of posts) {
+    if (!post.categories.includes(TCG_ILLUSTRATORS_CATEGORY)) continue
+    for (const cat of post.categories) {
+      if (cat !== TCG_ILLUSTRATORS_CATEGORY) {
+        illustrators.add(cat)
+      }
+    }
+  }
+  return [...illustrators].sort()
+}
+
 export function extractCollectionFilters(posts: PostWithCategories[]): string[] {
+  const illustratorNames = new Set(extractIllustratorFilters(posts))
   const skipPattern = /^(.+ Type|Gen [IVX]+)$/
   const collections = new Set<string>()
   for (const post of posts) {
     for (const cat of post.categories) {
-      if (COLLECTION_FILTER_SKIP.has(cat)) {
+      if (COLLECTION_FILTER_SKIP.has(cat) || illustratorNames.has(cat)) {
         continue
       }
       if (!skipPattern.test(cat)) {

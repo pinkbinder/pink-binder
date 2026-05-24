@@ -7,6 +7,7 @@ export { SPECIES_GUIDES_CATEGORY } from './blog/categories'
 export * from './blog/post-filters'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
+  TCG_ILLUSTRATORS_CATEGORY,
   getRoundupListCategory,
   isRoundupListCategory,
   ROUNDUP_LIST_CATEGORIES,

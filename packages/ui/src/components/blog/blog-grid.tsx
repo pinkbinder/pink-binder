@@ -10,6 +10,7 @@ import {
   getCollectionBadgeIcon,
   extractCollectionFilters,
   extractGenerationFilters,
+  extractIllustratorFilters,
   extractRoundupListFilters,
   extractTypeFilters,
   getFilterValueForCategory,
@@ -59,6 +60,7 @@ function isFilterValueActive(
     grouped.type === filterValue ||
     grouped.generation === filterValue ||
     grouped.list === filterValue ||
+    grouped.illustrator === filterValue ||
     grouped.collection === filterValue
   )
 }
@@ -100,6 +102,19 @@ function TypeFilterTriggerContent({
   )
 }
 
+function IllustratorFilterTriggerContent({ illustrator }: { illustrator: string | null }) {
+  if (!illustrator) {
+    return <span>All</span>
+  }
+  const icon = getCollectionBadgeIcon(illustrator)
+  return (
+    <span className="inline-flex items-center gap-1.5">
+      {icon ? <span aria-hidden>{icon}</span> : null}
+      <span>{illustrator}</span>
+    </span>
+  )
+}
+
 function CollectionFilterTriggerContent({ collection }: { collection: string | null }) {
   if (!collection) {
     return <span>All</span>
@@ -113,12 +128,13 @@ function CollectionFilterTriggerContent({ collection }: { collection: string | n
   )
 }
 
-type FilterGroupKey = 'type' | 'generation' | 'list' | 'collection'
+type FilterGroupKey = 'type' | 'generation' | 'list' | 'illustrator' | 'collection'
 
 interface GroupedFilters {
   type: string | null
   generation: string | null
   list: string | null
+  illustrator: string | null
   collection: string | null
 }
 
@@ -126,6 +142,7 @@ const EMPTY_GROUPED_FILTERS: GroupedFilters = {
   type: null,
   generation: null,
   list: null,
+  illustrator: null,
   collection: null,
 }
 
@@ -144,6 +161,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     type: false,
     generation: false,
     list: false,
+    illustrator: false,
     collection: false,
   })
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS)
@@ -151,6 +169,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
 
   const typeFilters = useMemo(() => extractTypeFilters(posts), [posts])
   const generationFilters = useMemo(() => extractGenerationFilters(posts), [posts])
+  const illustratorFilters = useMemo(() => extractIllustratorFilters(posts), [posts])
   const collectionFilters = useMemo(() => extractCollectionFilters(posts), [posts])
   const roundupListFilters = useMemo(() => extractRoundupListFilters(posts), [posts])
 
@@ -159,13 +178,15 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       new Set<string>([
         ...typeFilters,
         ...generationFilters,
+        ...illustratorFilters,
         ...collectionFilters,
         ...roundupListFilters,
       ]),
-    [typeFilters, generationFilters, collectionFilters, roundupListFilters]
+    [typeFilters, generationFilters, illustratorFilters, collectionFilters, roundupListFilters]
   )
   const typeFilterSet = useMemo(() => new Set(typeFilters), [typeFilters])
   const generationFilterSet = useMemo(() => new Set(generationFilters), [generationFilters])
+  const illustratorFilterSet = useMemo(() => new Set(illustratorFilters), [illustratorFilters])
   const collectionFilterSet = useMemo(() => new Set(collectionFilters), [collectionFilters])
   const roundupListFilterSet = useMemo(() => new Set(roundupListFilters), [roundupListFilters])
   const typeVisuals = useMemo(
@@ -187,6 +208,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     let nextType = searchParams.get('type')
     let nextGeneration = searchParams.get('generation')
     let nextList = searchParams.get('list')
+    let nextIllustrator = searchParams.get('illustrator')
     let nextCollection = searchParams.get('collection')
     let nextDirect = searchParams.get('filter')
 
@@ -197,6 +219,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         nextGeneration = nextDirect
       } else if (roundupListFilterSet.has(nextDirect)) {
         nextList = nextDirect
+      } else if (illustratorFilterSet.has(nextDirect)) {
+        nextIllustrator = nextDirect
       } else if (collectionFilterSet.has(nextDirect)) {
         nextCollection = nextDirect
       }
@@ -207,6 +231,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       type: nextType && typeFilterSet.has(nextType) ? nextType : null,
       generation: nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
       list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
+      illustrator:
+        nextIllustrator && illustratorFilterSet.has(nextIllustrator) ? nextIllustrator : null,
       collection: nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
     })
     setDirectFilter(nextDirect)
@@ -216,6 +242,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     typeFilterSet,
     generationFilterSet,
     roundupListFilterSet,
+    illustratorFilterSet,
     collectionFilterSet,
   ])
 
@@ -225,6 +252,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       groupedFilters.type !== null ||
       groupedFilters.generation !== null ||
       groupedFilters.list !== null ||
+      groupedFilters.illustrator !== null ||
       groupedFilters.collection !== null,
     [groupedFilters, directFilter]
   )
@@ -245,6 +273,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         return false
       }
       if (groupedFilters.list && !post.categories.includes(groupedFilters.list)) {
+        return false
+      }
+      if (groupedFilters.illustrator && !post.categories.includes(groupedFilters.illustrator)) {
         return false
       }
       if (groupedFilters.collection && !post.categories.includes(groupedFilters.collection)) {
@@ -314,6 +345,11 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       params.set('list', nextGroupedFilters.list)
     } else {
       params.delete('list')
+    }
+    if (nextGroupedFilters.illustrator) {
+      params.set('illustrator', nextGroupedFilters.illustrator)
+    } else {
+      params.delete('illustrator')
     }
     if (nextGroupedFilters.collection) {
       params.set('collection', nextGroupedFilters.collection)
@@ -386,6 +422,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       applyGroupedFilter('list', groupedFilters.list === filterValue ? null : filterValue)
       return
     }
+    if (illustratorFilterSet.has(filterValue)) {
+      applyGroupedFilter(
+        'illustrator',
+        groupedFilters.illustrator === filterValue ? null : filterValue
+      )
+      return
+    }
     if (collectionFilterSet.has(filterValue)) {
       applyGroupedFilter(
         'collection',
@@ -408,6 +451,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     if (groupedFilters.list) {
       params.set('list', groupedFilters.list)
     }
+    if (groupedFilters.illustrator) {
+      params.set('illustrator', groupedFilters.illustrator)
+    }
     if (groupedFilters.collection) {
       params.set('collection', groupedFilters.collection)
     }
@@ -424,11 +470,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const typeChipState = getGroupOptionState('type', typeFilters)
   const generationChipState = getGroupOptionState('generation', generationFilters)
   const listChipState = getGroupOptionState('list', roundupListFilters)
+  const illustratorChipState = getGroupOptionState('illustrator', illustratorFilters)
   const collectionChipState = getGroupOptionState('collection', collectionFilters)
   const activeFilterLabels = [
     groupedFilters.type,
     groupedFilters.generation,
     groupedFilters.list,
+    groupedFilters.illustrator,
     groupedFilters.collection,
     directFilter,
   ].filter((value): value is string => Boolean(value))
@@ -526,6 +574,39 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       </span>
                     </SelectItem>
                   ))}
+                </SelectContent>
+              </Select>
+            </div>
+          ) : null}
+          {illustratorFilters.length > 0 ? (
+            <div className="grid gap-1.5">
+              <span className="text-sm font-medium text-muted-foreground">Illustrators</span>
+              <Select
+                value={selectValueFromFilter(groupedFilters.illustrator)}
+                onValueChange={(value) =>
+                  applyGroupedFilter('illustrator', filterFromSelectValue(value))
+                }
+              >
+                <SelectTrigger className="rounded-xl">
+                  <span className="line-clamp-1">
+                    <IllustratorFilterTriggerContent illustrator={groupedFilters.illustrator} />
+                  </span>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
+                  {illustratorFilters.map((illustrator) => {
+                    const icon = getCollectionBadgeIcon(illustrator)
+                    return (
+                      <SelectItem key={`mobile-illustrator-${illustrator}`} value={illustrator}>
+                        <span
+                          className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+                        >
+                          {icon ? <span aria-hidden>{icon}</span> : null}
+                          {illustrator}
+                        </span>
+                      </SelectItem>
+                    )
+                  })}
                 </SelectContent>
               </Select>
             </div>
@@ -682,6 +763,50 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                   className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
                 >
                   Show {listChipState.expanded ? 'less' : 'more'}
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+          {illustratorFilters.length > 0 ? (
+            <div className="flex flex-wrap items-start gap-2">
+              <span className="pt-1 text-sm font-medium text-muted-foreground">Illustrators:</span>
+              <Button
+                variant="filterChip"
+                aria-pressed={groupedFilters.illustrator === null}
+                onClick={() => applyGroupedFilter('illustrator', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
+              >
+                All
+              </Button>
+              {illustratorChipState.options.map((illustrator) => {
+                const illustratorIcon = getCollectionBadgeIcon(illustrator)
+                return (
+                  <Button
+                    variant="filterChip"
+                    aria-pressed={groupedFilters.illustrator === illustrator}
+                    key={illustrator}
+                    onClick={() =>
+                      applyGroupedFilter(
+                        'illustrator',
+                        groupedFilters.illustrator === illustrator ? null : illustrator
+                      )
+                    }
+                    className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
+                  >
+                    <span className="inline-flex items-center gap-1.5">
+                      {illustratorIcon ? <span aria-hidden>{illustratorIcon}</span> : null}
+                      <span>{illustrator}</span>
+                    </span>
+                  </Button>
+                )
+              })}
+              {illustratorChipState.hasMore ? (
+                <Button
+                  variant="ghost"
+                  onClick={() => toggleExpandedGroup('illustrator')}
+                  className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
+                >
+                  Show {illustratorChipState.expanded ? 'less' : 'more'}
                 </Button>
               ) : null}
             </div>

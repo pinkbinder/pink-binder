@@ -39,8 +39,12 @@ const COLLECTION_BADGE_ICONS: Record<string, string> = {
   'Most Popular Pokémon': '⭐',
   Legendary: '🌟',
   Mythical: '🔮',
-  'Yuka Morii Art': '🏺',
-  'Asako Ito Art': '🧶',
+  'Yuka Morii': '🏺',
+  'Asako Ito': '🧶',
+  Sowsow: '🌊',
+  Hyogonosuke: '🎨',
+  kawayoo: '🌈',
+  kodama: '🍃',
 }
 
 export function getCollectionBadgeIcon(collection: string): string | null {
