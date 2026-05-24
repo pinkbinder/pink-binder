@@ -3,7 +3,7 @@
  * Use `@repo/data` (main entry) from Server Components, route handlers, and scripts.
  */
 export * from './ui'
-export { SPECIES_GUIDES_CATEGORY, CUTE_GUIDES_CATEGORY } from './blog/categories'
+export { SPECIES_GUIDES_CATEGORY } from './blog/categories'
 export * from './blog/post-filters'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
