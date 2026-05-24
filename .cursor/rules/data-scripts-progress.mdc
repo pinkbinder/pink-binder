@@ -1,0 +1,27 @@
+---
+description: Progress logging and fast idempotent skips for long @repo/data ETL loops
+globs: packages/data/scripts/**
+alwaysApply: false
+---
+
+# Long-running data scripts
+
+Scripts iterating hundreds/thousands of items **must** log progress so operators know the job is alive. Pipeline commands and layer boundaries: `data-pipeline.mdc`.
+
+## Progress logging
+
+- **Start:** total count + key flags (`--force`, `--dry-run`, `--only`).
+- **During loop:** every **50** items (JSON/species); every **250** for ~10k file walks.
+- **End:** summary (uploaded / updated / skipped / failed).
+- **Prefix:** `publish-images: 250/11765 processed (0 ok, 250 skipped, 0 failed)`.
+- Prefer `processRecords()` with `progressEvery` from `scripts/lib/core/process-queue.ts`.
+
+Do not log every file on ~10k-item jobs.
+
+## Blob publish (`2-images/05-publish-images-to-blob.ts`)
+
+- **Fast skip:** compare manifest `size` via `stat` before hashing or `put()`. SHA-256 only when size differs or path missing.
+- **Rate-limit uploads only** — never `sleep()` between skipped files.
+- Re-run with complete manifest should finish in seconds.
+
+When adding extract/transform loops, include progress logging and fast idempotent skip paths.

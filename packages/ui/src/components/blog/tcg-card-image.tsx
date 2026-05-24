@@ -1,7 +1,11 @@
 'use client'
 
-import { tcgCardImageCandidates, type PokemonTcgCard } from '@repo/data/client'
-import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
+import {
+  preferredTcgCardImageUrl,
+  tcgCardImageCandidates,
+  type PokemonTcgCard,
+} from '@repo/data/client'
+import { shouldBypassNextImageOptimization } from '@repo/data/client'
 import Image from 'next/image'
 import { useMemo, useState } from 'react'
 
@@ -24,7 +28,14 @@ export function TcgCardImage({
   width,
   height,
 }: TcgCardImageProps) {
-  const candidates = useMemo(() => tcgCardImageCandidates(card), [card])
+  const candidates = useMemo(() => {
+    const all = tcgCardImageCandidates(card)
+    const preferred = preferredTcgCardImageUrl(card)
+    if (!preferred || all[0] === preferred) {
+      return all
+    }
+    return [preferred, ...all.filter((url) => url !== preferred)]
+  }, [card])
   const [candidateIndex, setCandidateIndex] = useState(0)
   const src = candidates[candidateIndex]
 
@@ -41,6 +52,7 @@ export function TcgCardImage({
 
   return (
     <Image
+      key={src}
       src={src}
       alt={alt}
       fill={fill}

@@ -3,11 +3,22 @@
 /** Edge cache TTL for `/_next/image` (seconds). Vercel allows up to ~31 days. */
 export const NEXT_IMAGE_MINIMUM_CACHE_TTL = 60 * 60 * 24 * 31
 
-const TCG_CARD_IMAGE_HOSTS = ['images.pokemontcg.io', 'assets.tcgdex.net', 'images.scrydex.com']
+const TCG_CARD_IMAGE_HOSTS = [
+  'images.pokemontcg.io',
+  'assets.tcgdex.net',
+  'images.scrydex.com',
+  'tcgplayer-cdn.tcgplayer.com',
+]
 
 const POKEAPI_SPRITES_HOST = 'raw.githubusercontent.com'
 
 const BLOG_ART_REMOTE_HOSTS = ['www.artofpkm.com', 'projectpokemon.org']
+
+/** Matches `{storeId}.public.blob.vercel-storage.com` (Vercel Blob CDN). */
+const VERCEL_BLOB_REMOTE_PATTERN = {
+  protocol: 'https',
+  hostname: '*.public.blob.vercel-storage.com',
+}
 
 const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com']
 
@@ -34,6 +45,7 @@ export function blogImageRemotePatterns() {
       hostname: POKEAPI_SPRITES_HOST,
       pathname: '/PokeAPI/sprites/**',
     },
+    VERCEL_BLOB_REMOTE_PATTERN,
     ...tcgCardImageRemotePatterns(),
     ...BLOG_ART_REMOTE_HOSTS.map((hostname) => httpsHost(hostname)),
   ]

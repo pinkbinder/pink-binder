@@ -1,13 +1,14 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": [".env", ".env.local"],
-  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"],
+  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "BLOB_*", "NEXT_PUBLIC_*"],
   "globalPassThroughEnv": [
     "EBAY_*",
     "ETSY_*",
     "WHATNOT_*",
     "LIVE_SHOWS_*",
     "BLOG_*",
+    "BLOB_*",
     "NEXT_PUBLIC_*",
     "NODE_ENV",
     "VERCEL_ENV"
@@ -21,7 +22,9 @@
         ".env.local",
         ".env.production",
         ".env.production.local",
-        "../../packages/data/cache/pokemon/**"
+        "../../packages/data/cache/normalized/pokemon/**",
+        "../../packages/data/cache/normalized/meta/**",
+        "../../packages/data/cache/normalized/cards/**"
       ],
       "outputs": [".next/**", "!.next/cache/**"],
       "env": [

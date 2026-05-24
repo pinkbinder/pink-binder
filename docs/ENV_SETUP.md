@@ -1,121 +1,113 @@
-# Environment Variables Setup Guide
+# Environment Variables
 
-This monorepo shares configuration and API keys across all Next.js apps (landing, admin, blog, store).
+Secrets live in **Vercel** (per project). Local dev uses `vercel env pull` into each app directory.
 
-## How It Works
-
-### Root-Level Shared Environment (`.env.local`)
-
-Shared configuration is stored in the root `.env.local`, accessible to all apps:
-
-- **Marketplace APIs**: `ETSY_SHOP_ID`, `ETSY_KEYSTRING`, `ETSY_SECRET`, `EBAY_APP_ID`, `EBAY_CLIENT_SECRET`
-- **Whatnot Scraper**: `WHATNOT_USERNAME`, `WHATNOT_USER_AGENT`, `WHATNOT_SCRAPE_CACHE_TTL_MS`, `LIVE_SHOWS_SOURCE_URL`, `LIVE_SHOWS_SOURCE_TOKEN`
-- **Client-Side Polling**: `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` (requires `NEXT_PUBLIC_` prefix)
-- **Site URLs**: `NEXT_PUBLIC_SITE_URL` (requires `NEXT_PUBLIC_` prefix)
-
-**By default, all variables are server-side only** (not exposed to browser). Use `NEXT_PUBLIC_` prefix for client-side access.
-
-### Per-App Environment Files
-
-Each app can have its own `.env.example` documenting available variables:
-
-- App-specific config
-- Inherited shared keys from root (documented in the `.env.example`)
-- Client-side variables using `NEXT_PUBLIC_` prefix
-
-## Accessing Shared Keys in Each App
-
-### How root env reaches every app (recommended)
-
-1. Put secrets in the **repo root** `.env.local`.
-2. Run apps via root scripts — they load env once, then start Turbo:
+## Quick start
 
 ```bash
-pnpm dev      # node scripts/with-env.mjs turbo run dev
-pnpm build    # node scripts/with-env.mjs turbo run build
+# One-time: link a project (from the app folder)
+cd apps/landing
+vercel link
+
+# Pull Development env into that app (creates apps/landing/.env.local)
+vercel env pull .env.local
+
+# Repeat for other apps you run locally, e.g. apps/blog
+cd ../blog
+vercel link
+vercel env pull .env.local
 ```
 
-`scripts/with-env.mjs` merges root `.env` / `.env.local` into `process.env` before Turbo spawns each app. Turbo passes those variables to tasks via `globalPassThroughEnv` / `globalEnv` in `turbo.json`.
+From the repo root, start dev as usual:
 
-The landing app's `next.config.mjs` also calls `loadMonorepoEnv()` as a fallback when you run `next dev` directly inside `apps/landing`.
+```bash
+pnpm dev          # all apps
+pnpm dev:landing  # landing only
+pnpm dev:blog     # blog only
+```
 
-**Do not** use `instrumentation.ts` with `@next/env` — it bundles Node-only code and breaks the client build (`Can't resolve 'crypto'`).
+Next.js loads each app's `.env.local` when that app runs. You do **not** need a root `.env.local` unless you want local-only overrides.
 
-### Per-app overrides (optional)
+## Where variables live
 
-Add `apps/<app>/.env.local` for app-specific values. Next.js loads app-level env files in addition to inherited process env.
+| Scope | Location | Notes |
+| ----- | -------- | ----- |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Pulled from the landing Vercel project |
+| Blog (GTM, Blob token) | `apps/blog/.env.local` | Pulled from the blog Vercel project |
+| Data scripts (Blob upload) | `apps/blog/.env.local` | `@repo/data` publish scripts read the blog token |
+| Optional overrides | Root `.env.local` | Legacy; merged by `scripts/with-env.mjs` only |
 
-## Environment Variable Naming
+Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Vercel project that needs them.
 
-### Server-Side Only (Default) — Do NOT Expose
+## Server vs client
+
+**Server-only** (default) — API routes, server components, scripts:
 
 ```env
-ETSY_SHOP_ID=cutepkmn
-ETSY_KEYSTRING=xxx
-ETSY_SECRET=xxx
-EBAY_APP_ID=xxx
-EBAY_CLIENT_SECRET=xxx
-EBAY_VERIFICATION_TOKEN=xxx
-WHATNOT_USERNAME=thepinkbinder
-WHATNOT_USER_AGENT=custom-ua
-WHATNOT_SCRAPE_CACHE_TTL_MS=60000
-LIVE_SHOWS_SOURCE_URL=https://...
-LIVE_SHOWS_SOURCE_TOKEN=xxx
+EBAY_APP_ID=
+EBAY_CLIENT_SECRET=
+BLOB_READ_WRITE_TOKEN=
 ```
 
-✅ Available in API routes and server components
-❌ NOT available in browser/client components
-⚠️ Safe to contain sensitive API keys and credentials
-
-### Client-Side (REQUIRES `NEXT_PUBLIC_` Prefix)
+**Client-visible** — must use `NEXT_PUBLIC_`:
 
 ```env
-NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS=60000
-NEXT_PUBLIC_SITE_URL=https://example.com
-NEXT_PUBLIC_STRIPE_PUBLIC_KEY=pk_...
+NEXT_PUBLIC_GTM_ID=
+NEXT_PUBLIC_BLOG_URL=
 ```
 
-✅ Available everywhere (browser + server)
-⚠️ NEVER put sensitive data here — these values appear in browser's global scope
+Never put secrets in `NEXT_PUBLIC_*` variables.
 
-## Accessing Variables in Code
+## Root scripts and Turbo
 
-### Server-Side (API Routes, Server Components)
+`pnpm validate` / `pnpm build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `NEXT_PUBLIC_*`, etc.).
 
-```javascript
-// Can access both server-side and NEXT_PUBLIC_ vars
-const etsyShopId = process.env.ETSY_SHOP_ID // ✅ Available
-const ebayAppId = process.env.EBAY_APP_ID // ✅ Available
-const ebayClientSecret = process.env.EBAY_CLIENT_SECRET // ✅ Available
-const whatnotUser = process.env.WHATNOT_USERNAME // ✅ Available
-const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
+Each Next.js app still loads its own `.env.local` at runtime.
+
+## Image publish pipeline
+
+Sprites, scene art, and Blob upload live in the **`images`** command (~yearly). Transform only migrates JSON and applies CDN URLs.
+
+**Daily TCG prices + roundup caches:**
+
+```bash
+pnpm --filter @repo/data refresh
 ```
 
-### Client-Side (Client Components, Browser)
+(`refresh` is an alias for `transform --only prices`.)
 
-```javascript
-// Can ONLY access variables with NEXT_PUBLIC_ prefix
-const pollInterval = process.env.NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS // ✅ Available
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL // ✅ Available
+**When new sets or generations ship (catalog metadata only):**
 
-// These will be undefined in the browser:
-const ebayAppId = process.env.EBAY_APP_ID // ❌ Undefined
-const whatnotUser = process.env.WHATNOT_USERNAME // ❌ Undefined
+```bash
+pnpm --filter @repo/data extract --only pokemontcg tcgdex
+pnpm --filter @repo/data transform
+pnpm --filter @repo/data refresh
 ```
 
-## Files Created
+**When sprites or scene art change (new species, art refresh):**
 
-- `.env.local` (root) - Shared configuration (API keys, Whatnot settings, client polling)
-- `.env.example` (root) - Template for shared variables
-- `apps/*/env.example` - App-specific templates with inherited variables documented
+```bash
+cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
+pnpm --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
+pnpm --filter @repo/data transform           # normalized JSON + URL patch
+```
 
-## Summary of Variable Classification
+Re-runs are safe — unchanged files are skipped at each step. Step 5 removes local `cache/images/` after validating every file is in `blob-manifest.json` (use `--skip-cleanup` to keep local copies).
 
-| Variable                             | Location        | Access           | Sensitive |
-| ------------------------------------ | --------------- | ---------------- | --------- |
-| `ETSY_*`, `EBAY_*`                   | Root .env.local | Server-side only | ✅ Yes    |
-| `WHATNOT_*`, `LIVE_SHOWS_*`          | Root .env.local | Server-side only | ⚠️ Partly |
-| `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS` | Root .env.local | Client + Server  | ❌ No     |
-| `NEXT_PUBLIC_SITE_URL`               | Root .env.local | Client + Server  | ❌ No     |
-| `STRIPE_SECRET_KEY`                  | App .env.local  | Server-side only | ✅ Yes    |
-| `NEXT_PUBLIC_STRIPE_PUBLIC_KEY`      | App .env.local  | Client + Server  | ❌ No     |
+Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish (step 4). Apply URLs (transform) reads the manifest only — no token.
+
+### Sharing `blob-manifest.json` across machines
+
+| Artifact | Commit to git? | Why |
+| -------- | -------------- | --- |
+| `cache/normalized/species/*.json` | **Yes** (already) | Apps read Blob URLs from here at runtime |
+| `cache/blob-manifest.json` | **Recommended for teams** | Lets others run `transform` (apply URLs) and `images` publish skips without re-uploading |
+| `cache/images/` | **No** | Staging only; cleaned up after publish |
+
+The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
+
+To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run the prices group do not need the manifest if species JSON in git already has current art URLs.
+
+## Reference
+
+See [`.env.example`](../.env.example) for the full variable list (comments only — no real values).

@@ -3,18 +3,29 @@
 import {
   buildProjectPokemonSpriteUrls,
   projectPokemonSpriteSlugCandidates,
+  spriteUrlCandidates,
 } from '@repo/data/client'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 interface Pokemon3dSpriteShowcaseProps {
   slug: string
   displayName: string
+  /** Animated Showdown GIF from images.json — used when Project Pokémon 3D sprites 404 (Gen 9+). */
+  showdownSpriteUrl?: string | null
 }
 
-export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteShowcaseProps) {
+export function Pokemon3dSpriteShowcase({
+  slug,
+  displayName,
+  showdownSpriteUrl,
+}: Pokemon3dSpriteShowcaseProps) {
   const candidates = useMemo(() => projectPokemonSpriteSlugCandidates(slug), [slug])
+  const showdownCandidates = useMemo(
+    () => spriteUrlCandidates(showdownSpriteUrl, null),
+    [showdownSpriteUrl]
+  )
   const [slugIndex, setSlugIndex] = useState(0)
-  const [hidden, setHidden] = useState(false)
+  const [mode, setMode] = useState<'project' | 'showdown'>('project')
   const loadFailures = useRef(0)
 
   const spriteSlug = candidates[slugIndex]
@@ -22,9 +33,32 @@ export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteSh
 
   useEffect(() => {
     loadFailures.current = 0
-  }, [slugIndex])
+  }, [slugIndex, mode])
 
-  if (!candidates.length || hidden || !urls) {
+  if (mode === 'showdown' && showdownCandidates.length > 0) {
+    return (
+      <ShowdownSpriteSection
+        displayName={displayName}
+        url={showdownCandidates[0]!}
+        fallbackUrls={showdownCandidates.slice(1)}
+      />
+    )
+  }
+
+  if (!candidates.length) {
+    if (showdownCandidates.length > 0) {
+      return (
+        <ShowdownSpriteSection
+          displayName={displayName}
+          url={showdownCandidates[0]!}
+          fallbackUrls={showdownCandidates.slice(1)}
+        />
+      )
+    }
+    return null
+  }
+
+  if (mode !== 'project' || !urls) {
     return null
   }
 
@@ -34,8 +68,8 @@ export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteSh
     loadFailures.current = 0
     if (slugIndex + 1 < candidates.length) {
       setSlugIndex((current) => current + 1)
-    } else {
-      setHidden(true)
+    } else if (showdownCandidates.length > 0) {
+      setMode('showdown')
     }
   }
 
@@ -71,6 +105,49 @@ export function Pokemon3dSpriteShowcase({ slug, displayName }: Pokemon3dSpriteSh
         </a>
         . Pokémon and character names are trademarks of Nintendo / Creatures / GAME FREAK.
       </p>
+    </div>
+  )
+}
+
+function ShowdownSpriteSection({
+  displayName,
+  url,
+  fallbackUrls,
+}: {
+  displayName: string
+  url: string
+  fallbackUrls: string[]
+}) {
+  const [candidateIndex, setCandidateIndex] = useState(0)
+  const candidates = useMemo(
+    () => [url, ...fallbackUrls].filter((entry, index, list) => list.indexOf(entry) === index),
+    [url, fallbackUrls]
+  )
+  const src = candidates[candidateIndex]
+
+  if (!src) {
+    return null
+  }
+
+  return (
+    <div className="mt-8 border-t pt-6">
+      <h3 className="text-sm font-semibold tracking-tight">Battle sprite</h3>
+      <p className="mt-1 text-sm text-muted-foreground">
+        Animated Showdown sprite for {displayName} (from our species art cache — 3D Project Pokémon
+        models are not available for this species yet).
+      </p>
+      <div className="mt-4 flex justify-center">
+        <SpriteTile
+          label="Showdown"
+          url={src}
+          alt={`${displayName} Showdown battle sprite`}
+          onFailed={() => {
+            setCandidateIndex((current) =>
+              current + 1 < candidates.length ? current + 1 : current
+            )
+          }}
+        />
+      </div>
     </div>
   )
 }

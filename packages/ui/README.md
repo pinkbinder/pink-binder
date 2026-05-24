@@ -22,6 +22,6 @@ src/lib/             # cn, format-post-date
 
 ## Related packages
 
-- `@repo/data` — posts, Pokémon, enrichment, landing payload types
+- `@repo/data` — posts, Pokémon, landing payload types
 - `@repo/config` — URLs, brand, marketplace display config
 - `@repo/marketplaces` — listing fetchers (called from app server actions)

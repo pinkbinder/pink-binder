@@ -1,10 +1,7 @@
 import { POKEMON_TCG_API } from '../../config/apis'
 import { POKEMON_TCG_ENV } from '../../config/env'
-import {
-  buildPokemontcgImageFallbacks,
-  buildScrydexCardImageUrls,
-  tcgplayerProductUrl,
-} from '../../config/cdn'
+import { tcgplayerProductUrl } from '../../config/cdn'
+import { resolveTcgCardImageUrls } from '../images'
 import { marketplaceFetchJson } from '../../http'
 import { inferSetSeries, pickPokemontcgPrice } from '../pricing'
 import type { GetPokemonTcgCardsOptions, TcgCardRecord } from '../types'
@@ -41,30 +38,31 @@ function pokemontcgHeaders(): Record<string, string> {
 
 function buildPokemontcgSearchQuery(options: GetPokemonTcgCardsOptions): string {
   const parts = [`name:"${options.speciesName}"`, 'supertype:Pokémon']
-  if (options.artistFilter === 'yuka-morii') {
-    parts.push('artist:"Yuka Morii"')
-  } else if (options.artistFilter === 'asako-ito') {
-    parts.push('artist:"Asako Ito"')
+  const artistName = options.artistName?.trim()
+  if (artistName) {
+    parts.push(`artist:"${artistName}"`)
   }
   return parts.join(' ')
 }
 
 function mapPokemontcgCard(card: PokemontcgCard): TcgCardRecord {
-  const scrydex = buildScrydexCardImageUrls(card.id)
-  const fallbacks = buildPokemontcgImageFallbacks(card.images)
+  const cardId = card.id?.trim() ?? ''
+  const setId = card.set?.id?.trim() ?? ''
+  const tcgplayerUrl = cardId ? tcgplayerProductUrl(cardId, card.tcgplayer?.url) : undefined
+  const images = cardId
+    ? resolveTcgCardImageUrls(cardId, card.images, null, tcgplayerUrl)
+    : { imageSmall: '', imageLarge: '' }
 
   return {
-    id: card.id,
-    name: card.name,
-    imageSmall: scrydex.small,
-    imageLarge: scrydex.large,
-    ...fallbacks,
+    id: cardId,
+    name: card.name?.trim() ?? '',
+    ...images,
     rarity: card.rarity ?? null,
-    setName: card.set.name,
-    setSeries: inferSetSeries(card.set.id, card.set.series),
-    number: card.number,
+    setName: card.set?.name?.trim() ?? '',
+    setSeries: inferSetSeries(setId, card.set?.series),
+    number: card.number?.trim() ?? '',
     artist: card.artist ?? null,
-    tcgplayerUrl: tcgplayerProductUrl(card.id, card.tcgplayer?.url),
+    tcgplayerUrl,
     price: pickPokemontcgPrice(card.tcgplayer),
     metadataSource: 'pokemontcg',
   }
@@ -73,8 +71,8 @@ function mapPokemontcgCard(card: PokemontcgCard): TcgCardRecord {
 export async function searchPokemontcgPokemonCards(
   options: GetPokemonTcgCardsOptions
 ): Promise<TcgCardRecord[]> {
-  const maxPages = options.artistFilter ? (options.maxPages ?? 2) : 1
-  const pageSize = options.artistFilter ? 50 : (options.limit ?? 36)
+  const maxPages = options.artistName ? (options.maxPages ?? 2) : 1
+  const pageSize = options.artistName ? 50 : (options.limit ?? 36)
   const limit = options.limit ?? 36
   const cards: TcgCardRecord[] = []
 
@@ -106,7 +104,7 @@ export async function searchPokemontcgPokemonCards(
     }
   }
 
-  return options.artistFilter ? cards : cards.slice(0, limit)
+  return options.artistName ? cards : cards.slice(0, limit)
 }
 
 export async function getPokemontcgPokemonCardById(

@@ -15,19 +15,10 @@
     "type-check": "tsc --noEmit",
     "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
-    "sync-api": "tsx scripts/build-pokemon-data-cache.ts",
-    "audit-tags": "tsx scripts/audit-collection-tags.ts",
-    "enrich-abilities": "tsx scripts/enrich-ability-descriptions.ts",
-    "generate-facts": "tsx scripts/generate-pokemon-facts.ts",
-    "enrich-competitive": "tsx scripts/enrich-competitive-snippet.ts",
-    "backfill-artwork": "tsx scripts/backfill-artwork-urls.ts",
-    "enrich-michi-scene-art": "tsx scripts/enrich-michi-scene-art.ts",
-    "enrich-expensive-by-type": "tsx scripts/enrich-expensive-by-type.ts",
-    "enrich-artist-tcg-cache": "tsx scripts/enrich-artist-tcg-cache.ts",
-    "compute-type-weaknesses": "tsx scripts/compute-type-weaknesses.ts",
-    "enrich-pokeapi-extra": "tsx scripts/enrich-pokeapi-extra.ts",
-    "enrich-tcg-type-profile": "tsx scripts/enrich-tcg-type-profile.ts",
-    "update-collections": "tsx scripts/update-pokemon-collections.ts"
+    "extract": "tsx scripts/1-extract/index.ts",
+    "images": "tsx scripts/2-images/index.ts",
+    "transform": "tsx scripts/3-transform/index.ts",
+    "refresh": "tsx scripts/3-transform/index.ts --only prices"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
@@ -36,6 +27,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@vercel/blob": "^2.3.0",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
@@ -43,6 +35,7 @@
     "@types/node": "^25.8.0",
     "eslint": "^9.39.4",
     "prettier": "^3.8.3",
+    "sharp": "^0.34.5",
     "tsx": "^4.22.0",
     "typescript": "6.0.3"
   }
