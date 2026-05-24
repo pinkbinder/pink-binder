@@ -14,7 +14,6 @@ import {
   extractRoundupListFilters,
   extractTypeFilters,
   getFilterValueForCategory,
-  getPokemonTypeColors,
   getPokemonTypeLightColors,
   getPokemonTypeLogoColor,
   getPokemonTypeLogoUrl,
@@ -25,7 +24,7 @@ import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
 import { Button } from '../button'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '../select'
+import { SearchableSelect, type SearchableSelectOption } from '../searchable-select'
 
 export type { EnrichedPostForGrid }
 
@@ -33,22 +32,6 @@ export type { EnrichedPostForGrid }
 const INITIAL_VISIBLE_POSTS = 9
 const VISIBLE_POST_BATCH = 24
 const LOAD_MORE_ROOT_MARGIN = '480px'
-const INITIAL_VISIBLE_FILTER_CHIPS = 10
-
-/** Desktop chip rows — visually distinct from filter chips. */
-const FILTER_SHOW_MORE_CLASS =
-  'rounded-full border-2 border-dashed border-primary/60 bg-primary/10 px-3 py-1 text-xs font-bold text-primary shadow-sm ring-1 ring-primary/15 transition-all hover:border-primary hover:bg-primary/15 hover:-translate-y-px'
-
-/** Radix Select reserves `""` for clearing; mobile "All" uses this sentinel instead. */
-const FILTER_SELECT_ALL = '__all__'
-
-function selectValueFromFilter(value: string | null): string {
-  return value ?? FILTER_SELECT_ALL
-}
-
-function filterFromSelectValue(value: string): string | null {
-  return value === FILTER_SELECT_ALL ? null : value
-}
 
 function isFilterValueActive(
   filterValue: string,
@@ -62,69 +45,6 @@ function isFilterValueActive(
     grouped.list === filterValue ||
     grouped.illustrator === filterValue ||
     grouped.collection === filterValue
-  )
-}
-
-type TypeVisualEntry = {
-  colors: ReturnType<typeof getPokemonTypeColors>
-  lightColors: ReturnType<typeof getPokemonTypeLightColors>
-  logoUrl: string | null
-}
-
-/** Explicit trigger content — avoids Radix SelectValue SSR/client placeholder mismatch. */
-function TypeFilterTriggerContent({
-  type,
-  typeVisuals,
-}: {
-  type: string | null
-  typeVisuals: Record<string, TypeVisualEntry>
-}) {
-  if (!type) {
-    return <span>All</span>
-  }
-  const visuals = typeVisuals[type]
-  const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-  const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
-      style={{
-        backgroundColor: lightColors.bg,
-        color: lightColors.text,
-        borderColor: lightColors.border,
-        borderWidth: '1px',
-        borderStyle: 'solid',
-      }}
-    >
-      {logoUrl ? <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} /> : null}
-      {type}
-    </span>
-  )
-}
-
-function IllustratorFilterTriggerContent({ illustrator }: { illustrator: string | null }) {
-  if (!illustrator) {
-    return <span>All</span>
-  }
-  const icon = getCollectionBadgeIcon(illustrator)
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      {icon ? <span aria-hidden>{icon}</span> : null}
-      <span>{illustrator}</span>
-    </span>
-  )
-}
-
-function CollectionFilterTriggerContent({ collection }: { collection: string | null }) {
-  if (!collection) {
-    return <span>All</span>
-  }
-  const icon = getCollectionBadgeIcon(collection)
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      {icon ? <span aria-hidden>{icon}</span> : null}
-      <span>{collection}</span>
-    </span>
   )
 }
 
@@ -157,13 +77,6 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const searchParams = useSearchParams()
   const [groupedFilters, setGroupedFilters] = useState<GroupedFilters>(EMPTY_GROUPED_FILTERS)
   const [directFilter, setDirectFilter] = useState<string | null>(null)
-  const [expandedGroups, setExpandedGroups] = useState<Record<FilterGroupKey, boolean>>({
-    type: false,
-    generation: false,
-    list: false,
-    illustrator: false,
-    collection: false,
-  })
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS)
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
@@ -195,7 +108,6 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         typeFilters.map((type) => [
           type,
           {
-            colors: getPokemonTypeColors(type),
             lightColors: getPokemonTypeLightColors(type),
             logoUrl: getPokemonTypeLogoUrl(type),
           },
@@ -387,25 +299,6 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     pushFilterParams(EMPTY_GROUPED_FILTERS, null)
   }
 
-  function toggleExpandedGroup(group: FilterGroupKey) {
-    setExpandedGroups((current) => ({
-      ...current,
-      [group]: !current[group],
-    }))
-  }
-
-  function getGroupOptionState<T extends string>(group: FilterGroupKey, values: T[]) {
-    const expanded = expandedGroups[group]
-    if (expanded || values.length <= INITIAL_VISIBLE_FILTER_CHIPS) {
-      return { options: values, hasMore: false, expanded }
-    }
-    return {
-      options: values.slice(0, INITIAL_VISIBLE_FILTER_CHIPS),
-      hasMore: true,
-      expanded,
-    }
-  }
-
   function applyCategoryFilter(filterValue: string) {
     if (typeFilterSet.has(filterValue)) {
       applyGroupedFilter('type', groupedFilters.type === filterValue ? null : filterValue)
@@ -467,11 +360,94 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     return `${base}?${query}`
   }
 
-  const typeChipState = getGroupOptionState('type', typeFilters)
-  const generationChipState = getGroupOptionState('generation', generationFilters)
-  const listChipState = getGroupOptionState('list', roundupListFilters)
-  const illustratorChipState = getGroupOptionState('illustrator', illustratorFilters)
-  const collectionChipState = getGroupOptionState('collection', collectionFilters)
+  const typeOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      typeFilters.map((type) => {
+        const logoUrl = typeVisuals[type]?.logoUrl ?? getPokemonTypeLogoUrl(type)
+        const lightColors = typeVisuals[type]?.lightColors ?? getPokemonTypeLightColors(type)
+        return {
+          value: type,
+          label: type,
+          icon: logoUrl ? (
+            <span
+              className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+              style={{ backgroundColor: lightColors.bg, color: lightColors.text }}
+            >
+              <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} />
+            </span>
+          ) : undefined,
+        }
+      }),
+    [typeFilters, typeVisuals]
+  )
+
+  const generationOptions: SearchableSelectOption[] = useMemo(
+    () => generationFilters.map((g) => ({ value: g, label: g })),
+    [generationFilters]
+  )
+
+  const listOptions: SearchableSelectOption[] = useMemo(
+    () => roundupListFilters.map((l) => ({ value: l, label: l })),
+    [roundupListFilters]
+  )
+
+  const illustratorOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      illustratorFilters.map((name) => {
+        const icon = getCollectionBadgeIcon(name)
+        return {
+          value: name,
+          label: name,
+          icon: icon ? <span aria-hidden>{icon}</span> : undefined,
+        }
+      }),
+    [illustratorFilters]
+  )
+
+  const collectionOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      collectionFilters.map((name) => {
+        const icon = getCollectionBadgeIcon(name)
+        return {
+          value: name,
+          label: name,
+          icon: icon ? <span aria-hidden>{icon}</span> : undefined,
+        }
+      }),
+    [collectionFilters]
+  )
+
+  function renderTypeChip(option: SearchableSelectOption) {
+    const lightColors = getPokemonTypeLightColors(option.value)
+    const logoUrl = getPokemonTypeLogoUrl(option.value)
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
+        style={{
+          backgroundColor: lightColors.bg,
+          color: lightColors.text,
+          borderColor: lightColors.border,
+          borderWidth: '1px',
+          borderStyle: 'solid',
+        }}
+      >
+        {logoUrl ? (
+          <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(option.value)} />
+        ) : null}
+        {option.label}
+      </span>
+    )
+  }
+
+  function renderIconChip(option: SearchableSelectOption) {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        {option.icon}
+        <span>{option.label}</span>
+      </span>
+    )
+  }
+
   const activeFilterLabels = [
     groupedFilters.type,
     groupedFilters.generation,
@@ -482,394 +458,151 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   ].filter((value): value is string => Boolean(value))
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-3 md:hidden">
+    <div className="flex flex-col gap-6">
+      <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Type</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.type)}
-              onValueChange={(value) => applyGroupedFilter('type', filterFromSelectValue(value))}
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">
-                  <TypeFilterTriggerContent type={groupedFilters.type} typeVisuals={typeVisuals} />
-                </span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {typeFilters.map((type) => {
-                  const visuals = typeVisuals[type]
-                  const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-                  const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-                  return (
-                    <SelectItem key={`mobile-type-${type}`} value={type}>
-                      <span
-                        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
-                        style={{
-                          backgroundColor: lightColors.bg,
-                          color: lightColors.text,
-                          borderColor: lightColors.border,
-                          borderWidth: '1px',
-                          borderStyle: 'solid',
-                        }}
-                      >
-                        {logoUrl ? (
-                          <PokemonTypeLogo
-                            logoUrl={logoUrl}
-                            color={getPokemonTypeLogoColor(type)}
-                          />
-                        ) : null}
-                        {type}
-                      </span>
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
+            <span className="text-xs font-medium text-muted-foreground">Type</span>
+            <SearchableSelect
+              options={typeOptions}
+              value={groupedFilters.type}
+              onValueChange={(v) => applyGroupedFilter('type', v)}
+              label="Filter by type"
+              renderSelected={renderTypeChip}
+            />
           </div>
           <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Generation</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.generation)}
-              onValueChange={(value) =>
-                applyGroupedFilter('generation', filterFromSelectValue(value))
-              }
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">{groupedFilters.generation ?? 'All'}</span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {generationFilters.map((generation) => (
-                  <SelectItem key={`mobile-generation-${generation}`} value={generation}>
-                    <span
-                      className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                    >
-                      {generation}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <span className="text-xs font-medium text-muted-foreground">Generation</span>
+            <SearchableSelect
+              options={generationOptions}
+              value={groupedFilters.generation}
+              onValueChange={(v) => applyGroupedFilter('generation', v)}
+              label="Filter by generation"
+            />
           </div>
           {roundupListFilters.length > 0 ? (
             <div className="grid gap-1.5">
-              <span className="text-sm font-medium text-muted-foreground">Lists</span>
-              <Select
-                value={selectValueFromFilter(groupedFilters.list)}
-                onValueChange={(value) => applyGroupedFilter('list', filterFromSelectValue(value))}
-              >
-                <SelectTrigger className="rounded-xl">
-                  <span className="line-clamp-1">{groupedFilters.list ?? 'All'}</span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                  {roundupListFilters.map((listType) => (
-                    <SelectItem key={`mobile-list-${listType}`} value={listType}>
-                      <span
-                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                      >
-                        {listType}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <span className="text-xs font-medium text-muted-foreground">Lists</span>
+              <SearchableSelect
+                options={listOptions}
+                value={groupedFilters.list}
+                onValueChange={(v) => applyGroupedFilter('list', v)}
+                label="Filter by list"
+              />
             </div>
           ) : null}
           {illustratorFilters.length > 0 ? (
             <div className="grid gap-1.5">
-              <span className="text-sm font-medium text-muted-foreground">Illustrators</span>
-              <Select
-                value={selectValueFromFilter(groupedFilters.illustrator)}
-                onValueChange={(value) =>
-                  applyGroupedFilter('illustrator', filterFromSelectValue(value))
-                }
-              >
-                <SelectTrigger className="rounded-xl">
-                  <span className="line-clamp-1">
-                    <IllustratorFilterTriggerContent illustrator={groupedFilters.illustrator} />
-                  </span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                  {illustratorFilters.map((illustrator) => {
-                    const icon = getCollectionBadgeIcon(illustrator)
-                    return (
-                      <SelectItem key={`mobile-illustrator-${illustrator}`} value={illustrator}>
-                        <span
-                          className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                        >
-                          {icon ? <span aria-hidden>{icon}</span> : null}
-                          {illustrator}
-                        </span>
-                      </SelectItem>
-                    )
-                  })}
-                </SelectContent>
-              </Select>
+              <span className="text-xs font-medium text-muted-foreground">Illustrators</span>
+              <SearchableSelect
+                options={illustratorOptions}
+                value={groupedFilters.illustrator}
+                onValueChange={(v) => applyGroupedFilter('illustrator', v)}
+                label="Filter by illustrator"
+                renderSelected={renderIconChip}
+              />
             </div>
           ) : null}
           <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Collection</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.collection)}
-              onValueChange={(value) =>
-                applyGroupedFilter('collection', filterFromSelectValue(value))
-              }
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">
-                  <CollectionFilterTriggerContent collection={groupedFilters.collection} />
-                </span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {collectionFilters.map((collection) => {
-                  const icon = getCollectionBadgeIcon(collection)
-                  return (
-                    <SelectItem key={`mobile-collection-${collection}`} value={collection}>
-                      <span
-                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                      >
-                        {icon ? <span aria-hidden>{icon}</span> : null}
-                        {collection}
-                      </span>
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
+            <span className="text-xs font-medium text-muted-foreground">Collection</span>
+            <SearchableSelect
+              options={collectionOptions}
+              value={groupedFilters.collection}
+              onValueChange={(v) => applyGroupedFilter('collection', v)}
+              label="Filter by collection"
+              renderSelected={renderIconChip}
+            />
           </div>
         </div>
-        <div className="hidden flex-col gap-4 md:flex">
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Type:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.type === null}
-              onClick={() => applyGroupedFilter('type', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {typeChipState.options.map((type) => {
-              const visuals = typeVisuals[type]
-              const colors = visuals?.colors ?? getPokemonTypeColors(type)
-              const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-              const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-              const isActive = groupedFilters.type === type
 
-              return (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={isActive}
-                  key={type}
-                  onClick={() => applyGroupedFilter('type', isActive ? null : type)}
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                  style={{
-                    borderColor: isActive ? colors.bg : lightColors.border,
-                    backgroundColor: isActive ? colors.bg : lightColors.bg,
-                    color: isActive ? colors.text : lightColors.text,
-                  }}
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {logoUrl ? (
-                      <PokemonTypeLogo
-                        logoUrl={logoUrl}
-                        color={isActive ? colors.text : getPokemonTypeLogoColor(type)}
-                      />
-                    ) : null}
-                    <span>{type}</span>
-                  </span>
-                </Button>
-              )
-            })}
-            {typeChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('type')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {typeChipState.expanded ? 'less' : 'more'}
-              </Button>
-            ) : null}
-          </div>
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Generation:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.generation === null}
-              onClick={() => applyGroupedFilter('generation', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {generationChipState.options.map((generation) => (
+        {activeFilterLabels.length > 0 ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3">
+            {groupedFilters.type ? (
               <Button
                 variant="filterChip"
-                aria-pressed={groupedFilters.generation === generation}
-                key={generation}
-                onClick={() =>
-                  applyGroupedFilter(
-                    'generation',
-                    groupedFilters.generation === generation ? null : generation
-                  )
-                }
+                aria-pressed
+                onClick={() => applyGroupedFilter('type', null)}
                 className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
+                style={{
+                  borderColor: getPokemonTypeLightColors(groupedFilters.type).border,
+                  backgroundColor: getPokemonTypeLightColors(groupedFilters.type).bg,
+                  color: getPokemonTypeLightColors(groupedFilters.type).text,
+                }}
               >
-                {generation}
-              </Button>
-            ))}
-            {generationChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('generation')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {generationChipState.expanded ? 'less' : 'more'}
+                <span className="inline-flex items-center gap-1.5">
+                  {getPokemonTypeLogoUrl(groupedFilters.type) ? (
+                    <PokemonTypeLogo
+                      logoUrl={getPokemonTypeLogoUrl(groupedFilters.type)!}
+                      color={getPokemonTypeLogoColor(groupedFilters.type)}
+                    />
+                  ) : null}
+                  <span>{groupedFilters.type}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
               </Button>
             ) : null}
-          </div>
-          {roundupListFilters.length > 0 ? (
-            <div className="flex flex-wrap items-start gap-2">
-              <span className="pt-1 text-sm font-medium text-muted-foreground">Lists:</span>
+            {groupedFilters.generation ? (
               <Button
                 variant="filterChip"
-                aria-pressed={groupedFilters.list === null}
+                aria-pressed
+                onClick={() => applyGroupedFilter('generation', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                {groupedFilters.generation} <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.list ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
                 onClick={() => applyGroupedFilter('list', null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
               >
-                All
-              </Button>
-              {listChipState.options.map((listType) => (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={groupedFilters.list === listType}
-                  key={listType}
-                  onClick={() =>
-                    applyGroupedFilter('list', groupedFilters.list === listType ? null : listType)
-                  }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                >
-                  {listType}
-                </Button>
-              ))}
-              {listChipState.hasMore ? (
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleExpandedGroup('list')}
-                  className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-                >
-                  Show {listChipState.expanded ? 'less' : 'more'}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-          {illustratorFilters.length > 0 ? (
-            <div className="flex flex-wrap items-start gap-2">
-              <span className="pt-1 text-sm font-medium text-muted-foreground">Illustrators:</span>
-              <Button
-                variant="filterChip"
-                aria-pressed={groupedFilters.illustrator === null}
-                onClick={() => applyGroupedFilter('illustrator', null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-              >
-                All
-              </Button>
-              {illustratorChipState.options.map((illustrator) => {
-                const illustratorIcon = getCollectionBadgeIcon(illustrator)
-                return (
-                  <Button
-                    variant="filterChip"
-                    aria-pressed={groupedFilters.illustrator === illustrator}
-                    key={illustrator}
-                    onClick={() =>
-                      applyGroupedFilter(
-                        'illustrator',
-                        groupedFilters.illustrator === illustrator ? null : illustrator
-                      )
-                    }
-                    className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      {illustratorIcon ? <span aria-hidden>{illustratorIcon}</span> : null}
-                      <span>{illustrator}</span>
-                    </span>
-                  </Button>
-                )
-              })}
-              {illustratorChipState.hasMore ? (
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleExpandedGroup('illustrator')}
-                  className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-                >
-                  Show {illustratorChipState.expanded ? 'less' : 'more'}
-                </Button>
-              ) : null}
-            </div>
-          ) : null}
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Collection:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.collection === null}
-              onClick={() => applyGroupedFilter('collection', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {collectionChipState.options.map((collection) => {
-              const collectionIcon = getCollectionBadgeIcon(collection)
-              return (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={groupedFilters.collection === collection}
-                  key={collection}
-                  onClick={() =>
-                    applyGroupedFilter(
-                      'collection',
-                      groupedFilters.collection === collection ? null : collection
-                    )
-                  }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
-                    <span>{collection}</span>
-                  </span>
-                </Button>
-              )
-            })}
-            {collectionChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('collection')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {collectionChipState.expanded ? 'less' : 'more'}
+                {groupedFilters.list} <span className="ml-1 text-[10px] opacity-60">×</span>
               </Button>
             ) : null}
+            {groupedFilters.illustrator ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('illustrator', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getCollectionBadgeIcon(groupedFilters.illustrator) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.illustrator)}</span>
+                  ) : null}
+                  <span>{groupedFilters.illustrator}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
+              </Button>
+            ) : null}
+            {groupedFilters.collection ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('collection', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getCollectionBadgeIcon(groupedFilters.collection) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.collection)}</span>
+                  ) : null}
+                  <span>{groupedFilters.collection}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
+              </Button>
+            ) : null}
+            <Button
+              variant="ghost"
+              onClick={clearAllFilters}
+              className="ml-auto h-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear all
+            </Button>
           </div>
-        </div>
+        ) : null}
       </div>
-
-      {activeFilterLabels.length > 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">{filteredPosts.length}</span>{' '}
-          {`post${filteredPosts.length !== 1 ? 's' : ''}`} matching{' '}
-          <span className="font-medium text-primary">{activeFilterLabels.join(' + ')}</span>
-          <Button
-            variant="ghost"
-            onClick={clearAllFilters}
-            className="ml-2 h-auto p-0 text-muted-foreground underline underline-offset-2 hover:bg-transparent hover:text-foreground"
-          >
-            Clear
-          </Button>
-        </p>
-      ) : null}
 
       {filteredPosts.length ? (
         <>
@@ -1010,25 +743,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   )
 }
 
-/** Placeholder for blog index: filter chips + first row of posts (9). */
+/** Placeholder for blog index: filter box + first row of posts (9). */
 export function BlogGridSkeleton() {
   return (
-    <div className="flex flex-col gap-8" aria-busy="true" aria-label="Loading blog posts">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap gap-2">
-          <div className="h-8 w-14 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-20 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className="h-8 w-24 animate-pulse rounded-full bg-muted" />
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="h-8 w-28 animate-pulse rounded-full bg-muted" />
+    <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading blog posts">
+      <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {Array.from({ length: 5 }, (_, index) => (
+            <div key={index} className="grid gap-1.5">
+              <div className="h-3.5 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-9 animate-pulse rounded-xl bg-muted" />
+            </div>
           ))}
         </div>
       </div>
