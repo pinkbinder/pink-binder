@@ -1,4 +1,5 @@
 import { tcgplayerProductUrl } from '../config/cdn'
+import { isTcgPocketSetId } from './product-line'
 import type { TcgCardPrice, TcgCardPriceSource } from './types'
 
 type PriceVariant = {
@@ -50,7 +51,25 @@ type TcgdexVariantPrice = {
   directLowPrice?: number
 }
 
+type TcgdexCardmarketPricing = {
+  updated?: string
+  unit?: string
+  avg?: number
+  low?: number
+  trend?: number
+  avg1?: number
+  avg7?: number
+  avg30?: number
+  'avg-holo'?: number
+  'low-holo'?: number
+  'trend-holo'?: number
+  'avg1-holo'?: number
+  'avg7-holo'?: number
+  'avg30-holo'?: number
+}
+
 type TcgdexPricing = {
+  cardmarket?: TcgdexCardmarketPricing
   tcgplayer?: {
     updated?: string
     unit?: string
@@ -62,6 +81,46 @@ type TcgdexPricing = {
     '1st-edition-holofoil'?: TcgdexVariantPrice
     unlimited?: TcgdexVariantPrice
     'unlimited-holofoil'?: TcgdexVariantPrice
+  }
+}
+
+/** Cardmarket EUR when TCGPlayer USD is missing on the TCGdex card payload. */
+export function pickTcgdexCardmarketPrice(
+  pricing?: TcgdexPricing | null
+): TcgCardPrice | undefined {
+  const cardmarket = pricing?.cardmarket
+  if (!cardmarket) {
+    return undefined
+  }
+
+  const market =
+    cardmarket['trend-holo'] ??
+    cardmarket['avg7-holo'] ??
+    cardmarket['avg-holo'] ??
+    cardmarket['low-holo'] ??
+    cardmarket.trend ??
+    cardmarket.avg7 ??
+    cardmarket.avg30 ??
+    cardmarket.avg ??
+    cardmarket.low
+
+  if (market == null || market <= 0) {
+    return undefined
+  }
+
+  const low = cardmarket['low-holo'] ?? cardmarket.low ?? cardmarket['avg1-holo'] ?? cardmarket.avg1
+  const mid = cardmarket['avg-holo'] ?? cardmarket.avg ?? cardmarket.avg7
+  const high =
+    cardmarket['trend-holo'] ?? cardmarket.trend ?? cardmarket['avg30-holo'] ?? cardmarket.avg30
+
+  return {
+    market,
+    low,
+    mid,
+    high,
+    currency: 'EUR',
+    updatedAt: cardmarket.updated,
+    source: 'tcgdex-cardmarket',
   }
 }
 
@@ -114,12 +173,22 @@ export function mergeTcgCardPrices(
   return primary ?? secondary
 }
 
-export function inferSetSeries(setId: string, setSeriesFromApi?: string): string {
+export function inferSetSeries(
+  setId: string | null | undefined,
+  setSeriesFromApi?: string
+): string {
+  const normalizedSetId = setId?.trim() ?? ''
+  if (!normalizedSetId) {
+    return setSeriesFromApi?.trim() || ''
+  }
+  if (isTcgPocketSetId(normalizedSetId)) {
+    return 'tcgp'
+  }
   if (setSeriesFromApi?.trim()) {
     return setSeriesFromApi.trim()
   }
-  const match = setId.match(/^([a-z]+)/i)
-  return match?.[1]?.toUpperCase() ?? setId
+  const match = normalizedSetId.match(/^([a-z]+)/i)
+  return match?.[1]?.toUpperCase() ?? normalizedSetId
 }
 
 export { tcgplayerProductUrl, type TcgCardPriceSource }

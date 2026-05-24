@@ -1,12 +1,14 @@
 import { TCGDEX_API } from '../../config/apis'
 import { TCGDEX_ENV } from '../../config/env'
-import {
-  buildScrydexCardImageUrls,
-  buildTcgdexImageUrls,
-  tcgplayerProductUrl,
-} from '../../config/cdn'
+import { tcgplayerProductUrl } from '../../config/cdn'
+import { resolveTcgCardImageUrls } from '../images'
 import { marketplaceFetchJson } from '../../http'
-import { inferSetSeries, pickTcgdexPrice } from '../pricing'
+import {
+  inferSetSeries,
+  mergeTcgCardPrices,
+  pickTcgdexCardmarketPrice,
+  pickTcgdexPrice,
+} from '../pricing'
 import type { GetPokemonTcgCardsOptions, TcgCardRecord } from '../types'
 
 type TcgdexCardBrief = {
@@ -45,14 +47,13 @@ function buildTcgdexSearchParams(
   params.set('name', `eq:${options.speciesName}`)
   params.set('category', 'eq:Pokemon')
 
-  if (options.artistFilter === 'yuka-morii') {
-    params.set('illustrator', 'like:Yuka Morii')
-  } else if (options.artistFilter === 'asako-ito') {
-    params.set('illustrator', 'like:Asako Ito')
+  const artistName = options.artistName?.trim()
+  if (artistName) {
+    params.set('illustrator', `like:${artistName}`)
   }
 
   params.set('pagination:page', String(page))
-  params.set('pagination:itemsPerPage', String(options.artistFilter ? 50 : (options.limit ?? 36)))
+  params.set('pagination:itemsPerPage', String(artistName ? 50 : (options.limit ?? 36)))
   params.set('sort:order', 'DESC')
   return params
 }
@@ -61,7 +62,7 @@ async function fetchTcgdexCardBriefs(
   options: GetPokemonTcgCardsOptions,
   revalidateSeconds?: number
 ): Promise<TcgdexCardBrief[]> {
-  const maxPages = options.artistFilter ? (options.maxPages ?? 2) : 1
+  const maxPages = options.artistName ? (options.maxPages ?? 2) : 1
   const limit = options.limit ?? 36
   const briefs: TcgdexCardBrief[] = []
 
@@ -75,15 +76,15 @@ async function fetchTcgdexCardBriefs(
       break
     }
     briefs.push(...batch)
-    if (!options.artistFilter && briefs.length >= limit) {
+    if (!options.artistName && briefs.length >= limit) {
       break
     }
-    if (batch.length < (options.artistFilter ? 50 : limit)) {
+    if (batch.length < (options.artistName ? 50 : limit)) {
       break
     }
   }
 
-  return options.artistFilter ? briefs : briefs.slice(0, limit)
+  return options.artistName ? briefs : briefs.slice(0, limit)
 }
 
 async function fetchTcgdexCardFull(
@@ -97,23 +98,28 @@ async function fetchTcgdexCardFull(
 }
 
 function mapTcgdexFullToRecord(card: TcgdexCardFull): TcgCardRecord {
-  const tcgImages = buildTcgdexImageUrls(card.image)
-  const scrydex = buildScrydexCardImageUrls(card.id)
-  const price = pickTcgdexPrice(card.pricing)
+  const cardId = card.id?.trim() ?? ''
+  const setId = card.set?.id?.trim() ?? ''
+  const tcgplayerUrl = cardId ? tcgplayerProductUrl(cardId) : undefined
+  const images = resolveTcgCardImageUrls(cardId, null, card.image ?? null, tcgplayerUrl)
+  const price = mergeTcgCardPrices(
+    pickTcgdexPrice(card.pricing),
+    pickTcgdexCardmarketPrice(card.pricing)
+  )
 
   return {
-    id: card.id,
-    name: card.name,
-    imageSmall: tcgImages?.small ?? scrydex.small,
-    imageLarge: tcgImages?.large ?? scrydex.large,
-    imageSmallFallback: tcgImages ? scrydex.small : undefined,
-    imageLargeFallback: tcgImages ? scrydex.large : undefined,
+    id: cardId,
+    name: card.name?.trim() ?? '',
+    imageSmall: images.imageSmall,
+    imageLarge: images.imageLarge,
+    imageSmallFallbacks: images.imageSmallFallbacks,
+    imageLargeFallbacks: images.imageLargeFallbacks,
     rarity: card.rarity ?? null,
-    setName: card.set.name,
-    setSeries: inferSetSeries(card.set.id),
-    number: String(card.localId),
+    setName: card.set?.name?.trim() ?? '',
+    setSeries: inferSetSeries(setId),
+    number: card.localId != null ? String(card.localId) : '',
     artist: card.illustrator ?? null,
-    tcgplayerUrl: tcgplayerProductUrl(card.id),
+    tcgplayerUrl,
     price,
     metadataSource: 'tcgdex',
   }

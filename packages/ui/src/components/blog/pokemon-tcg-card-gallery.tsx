@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/marketplaces/config'
+import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/data/client'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { Button } from '../button'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'

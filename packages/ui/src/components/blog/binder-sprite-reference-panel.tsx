@@ -1,13 +1,13 @@
 'use client'
 
-import { shouldBypassNextImageOptimization } from '@repo/marketplaces/config'
-import Image from 'next/image'
+import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 import { useMemo, useState } from 'react'
 
 export interface BinderSpriteReference {
   label: string
   url: string
   usage: string
+  fallbackUrls?: string[]
 }
 
 export function BinderSpriteReferencePanel({
@@ -67,14 +67,13 @@ export function BinderSpriteReferencePanel({
                   : 'relative mx-auto flex aspect-square w-full max-w-[120px] shrink-0 items-center justify-center rounded-lg border bg-muted/30 p-2 sm:mx-0'
               }
             >
-              <Image
-                src={item.url}
+              <RemoteImageWithFallback
+                candidates={[item.url, ...(item.fallbackUrls ?? [])]}
                 alt={`${displayName} ${item.label}`}
                 fill
                 sizes={compact ? '72px' : '120px'}
                 className="object-contain drop-shadow-md"
-                unoptimized={shouldBypassNextImageOptimization(item.url)}
-                onError={() => {
+                onExhausted={() => {
                   setFailedUrls((prev) => {
                     if (prev.has(item.url)) return prev
                     const next = new Set(prev)

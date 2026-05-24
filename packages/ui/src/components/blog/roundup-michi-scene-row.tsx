@@ -1,10 +1,11 @@
-import Image from 'next/image'
+import { MichiSceneArtImage } from './michi-scene-art-image'
 
 export interface RoundupMichiScene {
   url: string
   label: string
   attribution: string
   pageUrl?: string
+  sourceUrl?: string
 }
 
 export function RoundupMichiSceneRow({
@@ -28,13 +29,10 @@ export function RoundupMichiSceneRow({
         {scenes.map((scene) => (
           <figure key={scene.url} className="space-y-2">
             <div className="relative aspect-[4/3] overflow-hidden rounded-xl border bg-muted/30">
-              <Image
-                src={scene.url}
-                alt={`${displayName} — ${scene.label}`}
-                fill
-                className="object-cover"
+              <MichiSceneArtImage
+                scene={scene}
+                displayName={displayName}
                 sizes="(max-width: 640px) 45vw, 240px"
-                unoptimized
               />
             </div>
             <figcaption className="text-xs leading-relaxed text-muted-foreground">
