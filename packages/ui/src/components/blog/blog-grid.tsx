@@ -11,6 +11,7 @@ import {
   extractCollectionFilters,
   extractGenerationFilters,
   generationFilterLabel,
+  BLOG_FILTER_GROUP_LABELS,
   extractIllustratorFilters,
   extractRoundupListFilters,
   extractTypeFilters,
@@ -463,54 +464,64 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Type</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {BLOG_FILTER_GROUP_LABELS.type}
+            </span>
             <SearchableSelect
               options={typeOptions}
               value={groupedFilters.type}
               onValueChange={(v) => applyGroupedFilter('type', v)}
-              label="Filter by type"
+              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.type.toLowerCase()}`}
               renderSelected={renderTypeChip}
             />
           </div>
           <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Generation / Region</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {BLOG_FILTER_GROUP_LABELS.generation}
+            </span>
             <SearchableSelect
               options={generationOptions}
               value={groupedFilters.generation}
               onValueChange={(v) => applyGroupedFilter('generation', v)}
-              label="Filter by generation"
+              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.generation.toLowerCase()}`}
             />
           </div>
           {roundupListFilters.length > 0 ? (
             <div className="grid gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">Lists</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                {BLOG_FILTER_GROUP_LABELS.list}
+              </span>
               <SearchableSelect
                 options={listOptions}
                 value={groupedFilters.list}
                 onValueChange={(v) => applyGroupedFilter('list', v)}
-                label="Filter by list"
+                label={`Filter by ${BLOG_FILTER_GROUP_LABELS.list.toLowerCase()}`}
               />
             </div>
           ) : null}
           {illustratorFilters.length > 0 ? (
             <div className="grid gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">Illustrators</span>
+              <span className="text-xs font-medium text-muted-foreground">
+                {BLOG_FILTER_GROUP_LABELS.illustrator}
+              </span>
               <SearchableSelect
                 options={illustratorOptions}
                 value={groupedFilters.illustrator}
                 onValueChange={(v) => applyGroupedFilter('illustrator', v)}
-                label="Filter by illustrator"
+                label={`Filter by ${BLOG_FILTER_GROUP_LABELS.illustrator.toLowerCase()}`}
                 renderSelected={renderIconChip}
               />
             </div>
           ) : null}
           <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Collection</span>
+            <span className="text-xs font-medium text-muted-foreground">
+              {BLOG_FILTER_GROUP_LABELS.collection}
+            </span>
             <SearchableSelect
               options={collectionOptions}
               value={groupedFilters.collection}
               onValueChange={(v) => applyGroupedFilter('collection', v)}
-              label="Filter by collection"
+              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.collection.toLowerCase()}`}
               renderSelected={renderIconChip}
             />
           </div>
@@ -549,7 +560,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                 onClick={() => applyGroupedFilter('generation', null)}
                 className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
               >
-                {groupedFilters.generation} <span className="ml-1 text-[10px] opacity-60">×</span>
+                {generationFilterLabel(groupedFilters.generation)}{' '}
+                <span className="ml-1 text-[10px] opacity-60">×</span>
               </Button>
             ) : null}
             {groupedFilters.list ? (
