@@ -2,9 +2,26 @@ import { ALL_ROUNDUP_LIST_CATEGORIES, TCG_ILLUSTRATORS_CATEGORY } from './roundu
 import { SPECIES_GUIDES_CATEGORY } from './categories'
 import { parseTypeCategory } from '../ui/type-colors'
 
+/** TCG set series groupings on expansion posts — browse via Post Format, not binder themes. */
+const TCG_EXPANSION_SERIES_CATEGORIES = [
+  'Wizards of the Coast sets',
+  'Post-Wizards of the Coast sets',
+  'Other sets',
+] as const
+
+/** Blog index filter box labels (display only; filter values unchanged). */
+export const BLOG_FILTER_GROUP_LABELS = {
+  type: 'Pokémon Type',
+  generation: 'Generation / Region',
+  list: 'Post Format',
+  illustrator: 'Card Illustrators',
+  collection: 'Binder Themes',
+} as const
+
 const COLLECTION_FILTER_SKIP = new Set<string>([
   SPECIES_GUIDES_CATEGORY,
   ...ALL_ROUNDUP_LIST_CATEGORIES,
+  ...TCG_EXPANSION_SERIES_CATEGORIES,
   'Generations',
   'Regions',
 ])
