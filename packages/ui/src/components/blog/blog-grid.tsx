@@ -10,6 +10,7 @@ import {
   getCollectionBadgeIcon,
   extractCollectionFilters,
   extractGenerationFilters,
+  generationFilterLabel,
   extractIllustratorFilters,
   extractRoundupListFilters,
   extractTypeFilters,
@@ -382,7 +383,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   )
 
   const generationOptions: SearchableSelectOption[] = useMemo(
-    () => generationFilters.map((g) => ({ value: g, label: g })),
+    () => generationFilters.map((g) => ({ value: g, label: generationFilterLabel(g) })),
     [generationFilters]
   )
 
@@ -472,7 +473,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
             />
           </div>
           <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">Generation</span>
+            <span className="text-xs font-medium text-muted-foreground">Generation / Region</span>
             <SearchableSelect
               options={generationOptions}
               value={groupedFilters.generation}

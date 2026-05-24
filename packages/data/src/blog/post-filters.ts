@@ -5,6 +5,8 @@ import { parseTypeCategory } from '../ui/type-colors'
 const COLLECTION_FILTER_SKIP = new Set<string>([
   SPECIES_GUIDES_CATEGORY,
   ...ALL_ROUNDUP_LIST_CATEGORIES,
+  'Generations',
+  'Regions',
 ])
 
 interface PostWithCategories {
@@ -22,6 +24,26 @@ const GENERATION_ORDER: Record<string, number> = {
   VIII: 8,
   IX: 9,
   X: 10,
+}
+
+const GENERATION_REGION: Record<string, string> = {
+  I: 'Kanto',
+  II: 'Johto',
+  III: 'Hoenn',
+  IV: 'Sinnoh',
+  V: 'Unova',
+  VI: 'Kalos',
+  VII: 'Alola',
+  VIII: 'Galar',
+  IX: 'Paldea',
+  X: 'Unknown',
+}
+
+/** Returns a display label for a generation filter value (e.g. "Gen I" → "Gen I — Kanto"). */
+export function generationFilterLabel(value: string): string {
+  const roman = value.replace('Gen ', '')
+  const region = GENERATION_REGION[roman]
+  return region ? `${value} — ${region}` : value
 }
 
 export function extractTypeFilters(posts: PostWithCategories[]): string[] {

@@ -24,13 +24,7 @@ export interface BlogSeoKeywordConfig {
 export const BLOG_POST_SCHEMA_VERSION = 1 as const
 
 /** Top-level entity types served by the blog. */
-export type BlogPostKind =
-  | 'species'
-  | 'roundup'
-  | 'illustrator'
-  | 'expansion'
-  | 'region'
-  | 'generation'
+export type BlogPostKind = 'species' | 'roundup' | 'illustrator' | 'expansion' | 'generation'
 
 /**
  * Hero artwork is referenced — never the absolute URL of an externally hosted
