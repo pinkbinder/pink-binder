@@ -38,7 +38,8 @@ Use `--no-force` to skip unchanged writes on fast pipelines.
                ability descriptions
   3-prices/  — TCG support caches, TCGCSV price sync, apply prices, roundups, illustrators
   4-events/  — (reserved)
-  5-blog/    — derived content: pokemon facts, collect card art
+  5-blog/    — CMS pipeline: facts, card art, per-entity blogs, roundups,
+               index, AI polish, coverage verification
 ```
 
 **`pokemon`** (9 steps): pokeapi, bulbapedia lore, blob URLs, fandom lore, TCG card flavors, cards merge, type profiles, collections, competitive.
@@ -52,7 +53,7 @@ Use `--no-force` to skip unchanged writes on fast pipelines.
 4. Expensive by type — roundup snapshots
 5. Illustrators — illustrator index + expensive picks
 
-**`blog`** (2 steps): pokemon facts generation, collect card art selection. Derived from accumulated species data — runs last.
+**`blog`** (11 steps): pokemon facts, collect card art, per-species blogs, illustrator blogs, expansion blogs, region blogs, generation blogs, roundup blogs, blog index, AI polish, coverage verification. Derived from accumulated species + meta data — runs last. Output is `cache/normalized/blogs/` which the blog app reads at render time via `packages/data/src/blog/loader.ts`.
 
 ```bash
 # Run prices group only (daily cron)
