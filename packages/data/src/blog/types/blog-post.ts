@@ -131,14 +131,18 @@ export interface BlogPost {
     title: string
     description: string
     date: string
-    image: string
     categories: string[]
     tags: string[]
     species: string[]
     keywords: string[]
     relatedPostSlugs: string[]
-    /** Static hero refs for grid + share images (resolves to `meta.image`). */
+    /**
+     * Hero refs for grid + share images. Joined to `images.json` / `cards.json`
+     * at read time — do not duplicate blob URLs here.
+     */
     heroArtworkRefs?: HeroArtworkRef[]
+    /** Optional baked URL (MDX overrides, static assets). Prefer {@link heroArtworkRefs}. */
+    image: string
   }
 
   /** Same shape as runtime `PostTemplateSection[]` for species/entity guides. */
