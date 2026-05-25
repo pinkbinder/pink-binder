@@ -57,7 +57,7 @@ export interface NormalizedPokedexEntry {
 export interface NormalizedSceneArtEntry {
   url: string
   label: string
-  source: 'artofpkm' | 'tcg' | 'pokeos' | 'wallhaven' | 'openverse' | 'wikimedia'
+  source: 'artofpkm' | 'tcg' | 'pokeos' | 'wallhaven' | 'openverse' | 'wikimedia' | 'pexels'
   setName?: string
   artist?: string | null
   cardId?: string
