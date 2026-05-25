@@ -12,21 +12,24 @@ const INITIAL_VISIBLE = 12
 export function PokemonTcgCardGallery({
   cards,
   displayName,
+  subtitle,
 }: {
   cards: PokemonTcgCard[]
   displayName: string
+  /** Overrides the default species intro line. */
+  subtitle?: string
 }) {
   const [showAll, setShowAll] = useState(false)
   const visibleCards = showAll ? cards : cards.slice(0, INITIAL_VISIBLE)
   const hiddenCount = cards.length - INITIAL_VISIBLE
   const primarySource = TCG_CARD_DATA_ATTRIBUTION[0]!
   const backupSource = TCG_CARD_DATA_ATTRIBUTION[1]!
+  const introLine =
+    subtitle ?? `Recent cards featuring ${displayName} from the Trading Card Game, newest first.`
 
   return (
     <>
-      <p className="mt-2 text-sm text-muted-foreground">
-        Recent cards featuring {displayName} from the Trading Card Game, newest first.
-      </p>
+      <p className="mt-2 text-sm text-muted-foreground">{introLine}</p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {visibleCards.map((card) => (
           <PokemonTcgCardTile key={card.id} card={card} />

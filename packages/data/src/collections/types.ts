@@ -458,6 +458,12 @@ export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
 
 const SORT_INDEX = new Map(SPECIES_COLLECTION_SORT_ORDER.map((slug, index) => [slug, index]))
 
+/** Artist-themed collections that ship roundup content via `illustrator--*` blog posts. */
+export const ARTIST_COLLECTIONS_WITH_ILLUSTRATOR_BLOG = new Set<SpeciesCollectionSlug>([
+  'asako-ito',
+  'yuka-morii',
+])
+
 export function sortSpeciesCollections(
   collections: SpeciesCollectionSlug[]
 ): SpeciesCollectionSlug[] {

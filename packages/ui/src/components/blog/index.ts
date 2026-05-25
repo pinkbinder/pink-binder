@@ -36,6 +36,13 @@ export {
   RoundupHeroArtworkGrid,
   type RoundupHeroArtworkGridProps,
 } from './roundup-hero-artwork-grid'
+export {
+  BlogPostHeroArtworkSection,
+  type BlogPostHeroArtworkSectionProps,
+} from './blog-post-hero-artwork-section'
+export { BlogRelatedPostsSection } from './blog-related-posts-section'
+export { BlogShopCtaSection } from './blog-shop-cta-section'
+export { BlogPostClosingSections } from './blog-post-closing-sections'
 export { RoundupMethodologyCard } from './roundup-methodology-card'
 export {
   RoundupMiniBinderSpread,
