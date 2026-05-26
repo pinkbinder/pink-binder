@@ -1,5 +1,7 @@
 export { BlogBackLink } from './blog-back-link'
 export { BlogScrollToTop } from './blog-scroll-to-top'
+export { BlogSiteBrand, type BlogSiteBrandProps } from './blog-site-brand'
+export { BlogMainLayout, type BlogMainLayoutProps } from './blog-main-layout'
 export { BlogPostHeader, type BlogPostHeaderBreadcrumbItem } from './blog-post-header'
 export { BlogParagraphList } from './blog-paragraph-list'
 export { BlogBulletList } from './blog-bullet-list'

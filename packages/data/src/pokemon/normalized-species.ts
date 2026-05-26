@@ -239,6 +239,10 @@ export interface NormalizedSpeciesCoreFile {
   pokedex: NormalizedSpeciesPokedex
   competitive?: NormalizedSpeciesCompetitive
   collections: SpeciesCollectionSlug[]
+  /** TCG illustrators with ≥1 card for this species (sorted); applied after illustrator index build. */
+  illustratorSlugs?: string[]
+  /** TCG expansion slugs with ≥1 card for this species (sorted); applied after expansion index build. */
+  expansionSlugs?: string[]
   relatedKeywords: string[]
   relatedEntities: string[]
 }
@@ -282,6 +286,8 @@ export function toPokemonDataFromParts(
     generation: species.generation,
     types: species.types,
     collections: species.collections,
+    illustratorSlugs: species.illustratorSlugs ?? [],
+    expansionSlugs: species.expansionSlugs ?? [],
     translations,
     relatedKeywords: species.relatedKeywords,
     relatedEntities: species.relatedEntities,

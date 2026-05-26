@@ -46,10 +46,12 @@ export interface TcgCardRecord {
 }
 
 export interface GetPokemonTcgCardsOptions {
-  /** Exact species name (e.g. "Gengar"). */
-  speciesName: string
+  /** Exact species name (e.g. "Gengar"). Omit when {@link artistOnly} is true. */
+  speciesName?: string
   /** Exact illustrator name for API search (e.g. "Yuka Morii"). */
   artistName?: string
+  /** Search by illustrator across all card types (trainers, Pokémon, etc.). */
+  artistOnly?: boolean
   /** Max cards returned (default 36). */
   limit?: number
   /** Extra pages for artist-filtered searches (default 2 × 50). */

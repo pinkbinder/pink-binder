@@ -69,4 +69,7 @@ export function displayCategoriesForPost(categories: string[], kind: string): st
 }
 
 /** Categories used by blog index filters — skip when extracting binder themes. */
-export const COLLECTION_FILTER_SKIP = new Set<string>(BLOG_POST_FORMAT_CATEGORIES)
+export const THEME_FILTER_SKIP = new Set<string>(BLOG_POST_FORMAT_CATEGORIES)
+
+/** @deprecated Use {@link THEME_FILTER_SKIP}. */
+export const COLLECTION_FILTER_SKIP = THEME_FILTER_SKIP

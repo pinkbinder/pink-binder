@@ -9,6 +9,8 @@ export interface SearchableSelectOption {
   value: string
   label: string
   icon?: React.ReactNode
+  /** Stronger label weight in the dropdown (e.g. fan-favorite species). */
+  emphasized?: boolean
 }
 
 export interface SearchableSelectProps {
@@ -87,7 +89,9 @@ export function SearchableSelect({
                   <span>{selectedOption.label}</span>
                 </span>
               ) : (
-                selectedOption.label
+                <span className={cn(selectedOption.emphasized && 'font-bold')}>
+                  {selectedOption.label}
+                </span>
               )
             ) : (
               placeholder
@@ -147,7 +151,7 @@ export function SearchableSelect({
                 </span>
                 <span className="inline-flex items-center gap-1.5 truncate">
                   {option.icon}
-                  <span>{option.label}</span>
+                  <span className={cn(option.emphasized && 'font-bold')}>{option.label}</span>
                 </span>
               </button>
             ))}

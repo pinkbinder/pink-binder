@@ -449,6 +449,39 @@ function isVercelBlobPublicUrl(url: string): boolean {
   }
 }
 
+/**
+ * Hero strips and blog headers: prefer TCGdex `low.webp`.
+ * `high.webp` is often missing (e.g. Crown Zenith Galarian Gallery `GG19`).
+ */
+export function preferTcgdexStripImageUrl(url: string): string {
+  const trimmed = url.trim()
+  if (!trimmed.endsWith('/high.webp')) {
+    return trimmed
+  }
+  try {
+    if (new URL(trimmed).hostname !== TCGDEX_CDN.assetsHost) {
+      return trimmed
+    }
+  } catch {
+    return trimmed
+  }
+  return trimmed.replace(/\/high\.webp$/i, '/low.webp')
+}
+
+/** Ordered candidates for hero strips — low-res TCGdex first, then original URL. */
+export function heroStripImageCandidates(url: string, fallback?: string): string[] {
+  const trimmed = url.trim()
+  if (!trimmed) {
+    return fallback ? [fallback] : []
+  }
+  const preferred = preferTcgdexStripImageUrl(trimmed)
+  const chain = preferred !== trimmed ? [preferred, trimmed] : [trimmed]
+  if (fallback && !chain.includes(fallback)) {
+    chain.push(fallback)
+  }
+  return chain
+}
+
 /** URLs safe to use as a primary card image (not known-bad TCGdex paths). */
 export function isDisplayableTcgCardImageUrl(url: string): boolean {
   const trimmed = url.trim()
