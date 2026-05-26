@@ -5,6 +5,8 @@ export interface BlogFilterPost {
   categories: string[]
   tags: string[]
   speciesFilterTags: string[]
+  featuredSpeciesFilterTags: string[]
+  expansionFilterTags: string[]
 }
 
 export interface EnrichedPostForGrid {
@@ -18,6 +20,8 @@ export interface EnrichedPostForGrid {
   heroArtworkFill?: boolean
   tags: string[]
   speciesFilterTags: string[]
+  featuredSpeciesFilterTags: string[]
+  expansionFilterTags: string[]
   categories: string[]
   displayCategories: string[]
   isLegendary?: boolean

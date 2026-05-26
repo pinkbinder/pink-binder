@@ -5,6 +5,7 @@
 export * from './ui'
 export { SPECIES_GUIDES_CATEGORY } from './blog/categories'
 export * from './blog/post-filters'
+export { getPostHref, getLegacyPostRedirectPath } from './blog/post-path'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
   TCG_EXPANSIONS_CATEGORY,
@@ -24,6 +25,8 @@ export * from './utils'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
   preferredTcgCardImageUrl,
+  preferTcgdexStripImageUrl,
+  heroStripImageCandidates,
   tcgCardImageCandidates,
   tcgCardHeroImageUrl,
   enrichPokemonTcgCardImages,
@@ -47,3 +50,8 @@ export {
   projectPokemonSpriteSlugCandidates,
   PROJECT_POKEMON_SPRITE_BASE,
 } from './pokemon/project-pokemon-sprites'
+export {
+  isTopPopularPokemonSlug,
+  TOP_POPULAR_POKEMON_SLUG_COUNT,
+  TOP_POPULAR_POKEMON_SLUGS,
+} from './popularity/popular-pokemon-slugs'

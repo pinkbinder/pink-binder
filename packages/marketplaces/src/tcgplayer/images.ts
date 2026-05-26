@@ -253,9 +253,11 @@ export {
   buildScrydexCardImageUrls,
   buildTcgdexImageBaseFromCardId,
   buildTcgdexImageUrls,
+  heroStripImageCandidates,
   isDisplayableTcgCardImageUrl,
   isPokemontcgImageUrl,
   isScrydexCardImageUrl,
   isTcgdexUnsupportedSetId,
+  preferTcgdexStripImageUrl,
   tcgplayerProductUrl,
 } from '../config/cdn'

@@ -76,6 +76,10 @@ export interface BlogPostGridSummary {
   heroArtworkFill?: boolean
   tags: string[]
   speciesFilterTags: string[]
+  /** Subset of {@link speciesFilterTags} for `#slug` chips on the index grid. */
+  featuredSpeciesFilterTags: string[]
+  /** Expansion slugs for blog index expansion filter (species + set guides). */
+  expansionFilterTags: string[]
   categories: string[]
   displayCategories: string[]
   isLegendary?: boolean

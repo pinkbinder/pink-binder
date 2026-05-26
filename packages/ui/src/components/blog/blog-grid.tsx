@@ -8,7 +8,8 @@ import {
   MYTHICAL_PLATINUM_TONE_CLASS,
   type EnrichedPostForGrid,
   getCollectionBadgeIcon,
-  extractCollectionFilters,
+  extractThemeFilters,
+  extractExpansionFilters,
   extractGenerationFilters,
   generationFilterLabel,
   BLOG_FILTER_GROUP_LABELS,
@@ -16,11 +17,19 @@ import {
   extractRoundupListFilters,
   extractTypeFilters,
   getFilterValueForCategory,
+  postMatchesExpansionFilter,
+  postMatchesPokemonFilter,
+  sortPostsForExpansionFilter,
+  sortPostsForPokemonFilter,
+  extractPokemonFilters,
+  isTopPopularPokemonSlug,
   getPokemonTypeLightColors,
   getPokemonTypeLogoColor,
   getPokemonTypeLogoUrl,
+  getPostHref,
   parseTypeCategory,
 } from '@repo/data/client'
+import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
@@ -46,18 +55,29 @@ function isFilterValueActive(
     grouped.generation === filterValue ||
     grouped.list === filterValue ||
     grouped.illustrator === filterValue ||
-    grouped.collection === filterValue
+    grouped.themes === filterValue ||
+    grouped.expansion === filterValue ||
+    grouped.pokemon === filterValue
   )
 }
 
-type FilterGroupKey = 'type' | 'generation' | 'list' | 'illustrator' | 'collection'
+type FilterGroupKey =
+  | 'type'
+  | 'generation'
+  | 'list'
+  | 'illustrator'
+  | 'expansion'
+  | 'pokemon'
+  | 'themes'
 
 interface GroupedFilters {
   type: string | null
   generation: string | null
   list: string | null
   illustrator: string | null
-  collection: string | null
+  expansion: string | null
+  pokemon: string | null
+  themes: string | null
 }
 
 const EMPTY_GROUPED_FILTERS: GroupedFilters = {
@@ -65,7 +85,9 @@ const EMPTY_GROUPED_FILTERS: GroupedFilters = {
   generation: null,
   list: null,
   illustrator: null,
-  collection: null,
+  expansion: null,
+  pokemon: null,
+  themes: null,
 }
 
 interface BlogGridProps {
@@ -85,7 +107,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const typeFilters = useMemo(() => extractTypeFilters(posts), [posts])
   const generationFilters = useMemo(() => extractGenerationFilters(posts), [posts])
   const illustratorFilters = useMemo(() => extractIllustratorFilters(posts), [posts])
-  const collectionFilters = useMemo(() => extractCollectionFilters(posts), [posts])
+  const themeFilters = useMemo(() => extractThemeFilters(posts), [posts])
+  const expansionFilters = useMemo(() => extractExpansionFilters(posts), [posts])
+  const pokemonFilters = useMemo(() => extractPokemonFilters(posts), [posts])
   const roundupListFilters = useMemo(() => extractRoundupListFilters(posts), [posts])
 
   const allGroupedFilterValues = useMemo(
@@ -94,15 +118,33 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         ...typeFilters,
         ...generationFilters,
         ...illustratorFilters,
-        ...collectionFilters,
+        ...themeFilters,
+        ...expansionFilters.map((entry) => entry.slug),
+        ...pokemonFilters.map((entry) => entry.slug),
         ...roundupListFilters,
       ]),
-    [typeFilters, generationFilters, illustratorFilters, collectionFilters, roundupListFilters]
+    [
+      typeFilters,
+      generationFilters,
+      illustratorFilters,
+      themeFilters,
+      expansionFilters,
+      pokemonFilters,
+      roundupListFilters,
+    ]
   )
   const typeFilterSet = useMemo(() => new Set(typeFilters), [typeFilters])
   const generationFilterSet = useMemo(() => new Set(generationFilters), [generationFilters])
   const illustratorFilterSet = useMemo(() => new Set(illustratorFilters), [illustratorFilters])
-  const collectionFilterSet = useMemo(() => new Set(collectionFilters), [collectionFilters])
+  const themeFilterSet = useMemo(() => new Set(themeFilters), [themeFilters])
+  const expansionFilterSet = useMemo(
+    () => new Set(expansionFilters.map((entry) => entry.slug)),
+    [expansionFilters]
+  )
+  const pokemonFilterSet = useMemo(
+    () => new Set(pokemonFilters.map((entry) => entry.slug)),
+    [pokemonFilters]
+  )
   const roundupListFilterSet = useMemo(() => new Set(roundupListFilters), [roundupListFilters])
   const typeVisuals = useMemo(
     () =>
@@ -123,10 +165,15 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     let nextGeneration = searchParams.get('generation')
     let nextList = searchParams.get('list')
     let nextIllustrator = searchParams.get('illustrator')
-    let nextCollection = searchParams.get('collection')
+    let nextExpansion = searchParams.get('expansion')
+    let nextPokemon = searchParams.get('pokemon')
+    let nextThemes = searchParams.get('themes') ?? searchParams.get('collection')
     let nextDirect = searchParams.get('filter')
 
-    if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
+    if (nextDirect && pokemonFilterSet.has(nextDirect)) {
+      nextPokemon = nextDirect
+      nextDirect = null
+    } else if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
       if (typeFilterSet.has(nextDirect)) {
         nextType = nextDirect
       } else if (generationFilterSet.has(nextDirect)) {
@@ -135,8 +182,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         nextList = nextDirect
       } else if (illustratorFilterSet.has(nextDirect)) {
         nextIllustrator = nextDirect
-      } else if (collectionFilterSet.has(nextDirect)) {
-        nextCollection = nextDirect
+      } else if (themeFilterSet.has(nextDirect)) {
+        nextThemes = nextDirect
+      } else if (expansionFilterSet.has(nextDirect)) {
+        nextExpansion = nextDirect
       }
       nextDirect = null
     }
@@ -147,7 +196,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
       illustrator:
         nextIllustrator && illustratorFilterSet.has(nextIllustrator) ? nextIllustrator : null,
-      collection: nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
+      expansion: nextExpansion && expansionFilterSet.has(nextExpansion) ? nextExpansion : null,
+      pokemon: nextPokemon && pokemonFilterSet.has(nextPokemon) ? nextPokemon : null,
+      themes: nextThemes && themeFilterSet.has(nextThemes) ? nextThemes : null,
     })
     setDirectFilter(nextDirect)
   }, [
@@ -157,7 +208,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     generationFilterSet,
     roundupListFilterSet,
     illustratorFilterSet,
-    collectionFilterSet,
+    themeFilterSet,
+    expansionFilterSet,
+    pokemonFilterSet,
   ])
 
   const hasActiveFilters = useMemo(
@@ -167,7 +220,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       groupedFilters.generation !== null ||
       groupedFilters.list !== null ||
       groupedFilters.illustrator !== null ||
-      groupedFilters.collection !== null,
+      groupedFilters.themes !== null ||
+      groupedFilters.expansion !== null ||
+      groupedFilters.pokemon !== null,
     [groupedFilters, directFilter]
   )
 
@@ -179,7 +234,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   }, [hasActiveFilters])
 
   const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
+    const filtered = posts.filter((post) => {
       if (groupedFilters.type && !post.categories.includes(`${groupedFilters.type} Type`)) {
         return false
       }
@@ -192,7 +247,13 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       if (groupedFilters.illustrator && !post.categories.includes(groupedFilters.illustrator)) {
         return false
       }
-      if (groupedFilters.collection && !post.categories.includes(groupedFilters.collection)) {
+      if (groupedFilters.expansion && !postMatchesExpansionFilter(post, groupedFilters.expansion)) {
+        return false
+      }
+      if (groupedFilters.themes && !post.categories.includes(groupedFilters.themes)) {
+        return false
+      }
+      if (groupedFilters.pokemon && !postMatchesPokemonFilter(post, groupedFilters.pokemon)) {
         return false
       }
       if (!directFilter) {
@@ -201,10 +262,18 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       const needle = directFilter.toLowerCase()
       if (post.categories.includes(`${directFilter} Type`)) return true
       if (post.categories.includes(directFilter)) return true
-      if (post.speciesFilterTags.some((slug) => slug.toLowerCase() === needle)) return true
+      if (post.expansionFilterTags?.some((slug) => slug.toLowerCase() === needle)) return true
       if (post.tags.some((tag) => tag.toLowerCase() === needle)) return true
       return false
     })
+
+    if (groupedFilters.pokemon) {
+      return sortPostsForPokemonFilter(filtered, groupedFilters.pokemon)
+    }
+    if (groupedFilters.expansion) {
+      return sortPostsForExpansionFilter(filtered, groupedFilters.expansion)
+    }
+    return filtered
   }, [posts, groupedFilters, directFilter])
 
   const postsToRender = useMemo(() => {
@@ -265,11 +334,22 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     } else {
       params.delete('illustrator')
     }
-    if (nextGroupedFilters.collection) {
-      params.set('collection', nextGroupedFilters.collection)
+    if (nextGroupedFilters.expansion) {
+      params.set('expansion', nextGroupedFilters.expansion)
     } else {
-      params.delete('collection')
+      params.delete('expansion')
     }
+    if (nextGroupedFilters.pokemon) {
+      params.set('pokemon', nextGroupedFilters.pokemon)
+    } else {
+      params.delete('pokemon')
+    }
+    if (nextGroupedFilters.themes) {
+      params.set('themes', nextGroupedFilters.themes)
+    } else {
+      params.delete('themes')
+    }
+    params.delete('collection')
     if (nextDirectFilter) {
       params.set('filter', nextDirectFilter)
     } else {
@@ -324,18 +404,23 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       )
       return
     }
-    if (collectionFilterSet.has(filterValue)) {
-      applyGroupedFilter(
-        'collection',
-        groupedFilters.collection === filterValue ? null : filterValue
-      )
+    if (themeFilterSet.has(filterValue)) {
+      applyGroupedFilter('themes', groupedFilters.themes === filterValue ? null : filterValue)
+      return
+    }
+    if (expansionFilterSet.has(filterValue)) {
+      applyGroupedFilter('expansion', groupedFilters.expansion === filterValue ? null : filterValue)
+      return
+    }
+    if (pokemonFilterSet.has(filterValue)) {
+      applyGroupedFilter('pokemon', groupedFilters.pokemon === filterValue ? null : filterValue)
       return
     }
     applyDirectFilter(directFilter === filterValue ? null : filterValue)
   }
 
   function buildPostHref(slug: string): string {
-    const base = `/posts/${encodeURIComponent(slug)}`
+    const base = getPostHref(slug)
     const params = new URLSearchParams()
     if (groupedFilters.type) {
       params.set('type', groupedFilters.type)
@@ -349,8 +434,14 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     if (groupedFilters.illustrator) {
       params.set('illustrator', groupedFilters.illustrator)
     }
-    if (groupedFilters.collection) {
-      params.set('collection', groupedFilters.collection)
+    if (groupedFilters.expansion) {
+      params.set('expansion', groupedFilters.expansion)
+    }
+    if (groupedFilters.pokemon) {
+      params.set('pokemon', groupedFilters.pokemon)
+    }
+    if (groupedFilters.themes) {
+      params.set('themes', groupedFilters.themes)
     }
     if (directFilter) {
       params.set('filter', directFilter)
@@ -406,9 +497,32 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     [illustratorFilters]
   )
 
-  const collectionOptions: SearchableSelectOption[] = useMemo(
+  const expansionOptions: SearchableSelectOption[] = useMemo(
     () =>
-      collectionFilters.map((name) => {
+      expansionFilters.map((entry) => ({
+        value: entry.slug,
+        label: entry.label,
+      })),
+    [expansionFilters]
+  )
+
+  const pokemonOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      pokemonFilters.map((entry) => ({
+        value: entry.slug,
+        label: entry.label,
+        emphasized: isTopPopularPokemonSlug(entry.slug),
+      })),
+    [pokemonFilters]
+  )
+
+  function renderPokemonChip(option: SearchableSelectOption) {
+    return <span className={cn(option.emphasized && 'font-bold')}>{option.label}</span>
+  }
+
+  const themeOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      themeFilters.map((name) => {
         const icon = getCollectionBadgeIcon(name)
         return {
           value: name,
@@ -416,7 +530,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
           icon: icon ? <span aria-hidden>{icon}</span> : undefined,
         }
       }),
-    [collectionFilters]
+    [themeFilters]
   )
 
   function renderTypeChip(option: SearchableSelectOption) {
@@ -455,75 +569,136 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     groupedFilters.generation,
     groupedFilters.list,
     groupedFilters.illustrator,
-    groupedFilters.collection,
+    groupedFilters.expansion
+      ? (expansionFilters.find((entry) => entry.slug === groupedFilters.expansion)?.label ??
+        groupedFilters.expansion)
+      : null,
+    groupedFilters.pokemon
+      ? (pokemonFilters.find((entry) => entry.slug === groupedFilters.pokemon)?.label ??
+        groupedFilters.pokemon)
+      : null,
+    groupedFilters.themes,
     directFilter,
   ].filter((value): value is string => Boolean(value))
+
+  const pokemonFilterRowClass = 'grid grid-cols-1 gap-3 sm:grid-cols-3'
+  const metaFilterCount =
+    1 +
+    (expansionFilters.length > 0 ? 1 : 0) +
+    (illustratorFilters.length > 0 ? 1 : 0) +
+    (roundupListFilters.length > 0 ? 1 : 0)
+  const metaFilterRowClass =
+    metaFilterCount >= 4
+      ? 'grid grid-cols-2 gap-3 lg:grid-cols-4'
+      : metaFilterCount >= 3
+        ? 'grid grid-cols-2 gap-3 sm:grid-cols-3'
+        : 'grid grid-cols-2 gap-3'
 
   return (
     <div className="flex flex-col gap-6">
       <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-          <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">
-              {BLOG_FILTER_GROUP_LABELS.type}
-            </span>
-            <SearchableSelect
-              options={typeOptions}
-              value={groupedFilters.type}
-              onValueChange={(v) => applyGroupedFilter('type', v)}
-              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.type.toLowerCase()}`}
-              renderSelected={renderTypeChip}
-            />
-          </div>
-          <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">
-              {BLOG_FILTER_GROUP_LABELS.generation}
-            </span>
-            <SearchableSelect
-              options={generationOptions}
-              value={groupedFilters.generation}
-              onValueChange={(v) => applyGroupedFilter('generation', v)}
-              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.generation.toLowerCase()}`}
-            />
-          </div>
-          {roundupListFilters.length > 0 ? (
-            <div className="grid gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">
-                {BLOG_FILTER_GROUP_LABELS.list}
-              </span>
-              <SearchableSelect
-                options={listOptions}
-                value={groupedFilters.list}
-                onValueChange={(v) => applyGroupedFilter('list', v)}
-                label={`Filter by ${BLOG_FILTER_GROUP_LABELS.list.toLowerCase()}`}
-              />
+        <div className="flex flex-col gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Pokémon</p>
+            <div className={`mt-2.5 ${pokemonFilterRowClass}`}>
+              <div className="grid gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {BLOG_FILTER_GROUP_LABELS.type}
+                </span>
+                <SearchableSelect
+                  options={typeOptions}
+                  value={groupedFilters.type}
+                  onValueChange={(v) => applyGroupedFilter('type', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.type.toLowerCase()}`}
+                  renderSelected={renderTypeChip}
+                />
+              </div>
+              {pokemonFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {BLOG_FILTER_GROUP_LABELS.pokemon}
+                  </span>
+                  <SearchableSelect
+                    options={pokemonOptions}
+                    value={groupedFilters.pokemon}
+                    onValueChange={(v) => applyGroupedFilter('pokemon', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.pokemon.toLowerCase()}`}
+                    renderSelected={renderPokemonChip}
+                  />
+                </div>
+              ) : null}
+              <div className="grid gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {BLOG_FILTER_GROUP_LABELS.themes}
+                </span>
+                <SearchableSelect
+                  options={themeOptions}
+                  value={groupedFilters.themes}
+                  onValueChange={(v) => applyGroupedFilter('themes', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.themes.toLowerCase()}`}
+                  renderSelected={renderIconChip}
+                />
+              </div>
             </div>
-          ) : null}
-          {illustratorFilters.length > 0 ? (
-            <div className="grid gap-1.5">
-              <span className="text-xs font-medium text-muted-foreground">
-                {BLOG_FILTER_GROUP_LABELS.illustrator}
-              </span>
-              <SearchableSelect
-                options={illustratorOptions}
-                value={groupedFilters.illustrator}
-                onValueChange={(v) => applyGroupedFilter('illustrator', v)}
-                label={`Filter by ${BLOG_FILTER_GROUP_LABELS.illustrator.toLowerCase()}`}
-                renderSelected={renderIconChip}
-              />
+          </div>
+
+          <div className="rounded-xl border border-dashed border-muted-foreground/20 bg-muted/40 px-3 py-3 sm:px-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Meta
+            </p>
+            <div className={`mt-2.5 ${metaFilterRowClass}`}>
+              <div className="grid gap-1.5">
+                <span className="text-[11px] font-medium text-muted-foreground/90">
+                  {BLOG_FILTER_GROUP_LABELS.generation}
+                </span>
+                <SearchableSelect
+                  options={generationOptions}
+                  value={groupedFilters.generation}
+                  onValueChange={(v) => applyGroupedFilter('generation', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.generation.toLowerCase()}`}
+                />
+              </div>
+              {expansionFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.expansion}
+                  </span>
+                  <SearchableSelect
+                    options={expansionOptions}
+                    value={groupedFilters.expansion}
+                    onValueChange={(v) => applyGroupedFilter('expansion', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.expansion.toLowerCase()}`}
+                  />
+                </div>
+              ) : null}
+              {illustratorFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.illustrator}
+                  </span>
+                  <SearchableSelect
+                    options={illustratorOptions}
+                    value={groupedFilters.illustrator}
+                    onValueChange={(v) => applyGroupedFilter('illustrator', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.illustrator.toLowerCase()}`}
+                    renderSelected={renderIconChip}
+                  />
+                </div>
+              ) : null}
+              {roundupListFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.list}
+                  </span>
+                  <SearchableSelect
+                    options={listOptions}
+                    value={groupedFilters.list}
+                    onValueChange={(v) => applyGroupedFilter('list', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.list.toLowerCase()}`}
+                  />
+                </div>
+              ) : null}
             </div>
-          ) : null}
-          <div className="grid gap-1.5">
-            <span className="text-xs font-medium text-muted-foreground">
-              {BLOG_FILTER_GROUP_LABELS.collection}
-            </span>
-            <SearchableSelect
-              options={collectionOptions}
-              value={groupedFilters.collection}
-              onValueChange={(v) => applyGroupedFilter('collection', v)}
-              label={`Filter by ${BLOG_FILTER_GROUP_LABELS.collection.toLowerCase()}`}
-              renderSelected={renderIconChip}
-            />
           </div>
         </div>
 
@@ -590,18 +765,40 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                 </span>
               </Button>
             ) : null}
-            {groupedFilters.collection ? (
+            {groupedFilters.expansion ? (
               <Button
                 variant="filterChip"
                 aria-pressed
-                onClick={() => applyGroupedFilter('collection', null)}
+                onClick={() => applyGroupedFilter('expansion', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                {expansionFilters.find((entry) => entry.slug === groupedFilters.expansion)?.label ??
+                  groupedFilters.expansion}{' '}
+                <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.pokemon ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('pokemon', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                #{groupedFilters.pokemon} <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.themes ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('themes', null)}
                 className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
               >
                 <span className="inline-flex items-center gap-1.5">
-                  {getCollectionBadgeIcon(groupedFilters.collection) ? (
-                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.collection)}</span>
+                  {getCollectionBadgeIcon(groupedFilters.themes) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.themes)}</span>
                   ) : null}
-                  <span>{groupedFilters.collection}</span>
+                  <span>{groupedFilters.themes}</span>
                   <span className="text-[10px] opacity-60">×</span>
                 </span>
               </Button>
@@ -717,13 +914,16 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       ★ Legendary
                     </span>
                   ) : null}
-                  {post.speciesFilterTags.slice(0, 6).map((speciesSlug) => (
+                  {(post.featuredSpeciesFilterTags ?? []).map((speciesSlug) => (
                     <Button
                       variant="filterChip"
-                      aria-pressed={directFilter === speciesSlug}
+                      aria-pressed={isFilterValueActive(speciesSlug, groupedFilters, directFilter)}
                       key={`${post.slug}-${speciesSlug}`}
                       onClick={() =>
-                        applyDirectFilter(directFilter === speciesSlug ? null : speciesSlug)
+                        applyGroupedFilter(
+                          'pokemon',
+                          groupedFilters.pokemon === speciesSlug ? null : speciesSlug
+                        )
                       }
                       className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground aria-pressed:bg-primary aria-pressed:text-primary-foreground [@media(hover:hover)]:hover:bg-muted/80`}
                     >

@@ -1,5 +1,6 @@
 'use client'
 
+import { heroStripImageCandidates } from '@repo/data/client'
 import { cn } from '../../lib/utils'
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 
@@ -34,7 +35,7 @@ function cellCandidateLists(
       .filter((list) => list.length > 0)
       .slice(0, 3)
   }
-  return urls.map((url) => (fallback ? [url, fallback] : [url]))
+  return urls.map((url) => heroStripImageCandidates(url, fallback))
 }
 
 export function RoundupHeroArtworkGrid({
@@ -53,7 +54,8 @@ export function RoundupHeroArtworkGrid({
   return (
     <div
       className={cn(
-        'grid aspect-[16/10] grid-rows-1 divide-x divide-pink-100/80 bg-muted',
+        'grid grid-rows-1 divide-x divide-pink-100/80 bg-muted',
+        variant === 'article' ? 'aspect-[2/1]' : 'aspect-[16/10]',
         gridColumnClass(lists.length),
         className
       )}
@@ -66,7 +68,7 @@ export function RoundupHeroArtworkGrid({
               ? 'relative overflow-hidden'
               : cn(
                   'flex items-center justify-center',
-                  variant === 'article' ? 'bg-muted/30 p-4 sm:p-6' : 'bg-muted/40 p-2'
+                  variant === 'article' ? 'bg-muted/30 p-3 sm:p-4' : 'bg-muted/40 p-2'
                 )
           )}
           key={`${candidates[0]}-${index}`}
@@ -80,7 +82,12 @@ export function RoundupHeroArtworkGrid({
               sizes="(max-width: 768px) 33vw, 240px"
             />
           ) : (
-            <div className="relative h-full min-h-[120px] w-full">
+            <div
+              className={cn(
+                'relative h-full w-full',
+                variant === 'article' ? 'min-h-[72px]' : 'min-h-[120px]'
+              )}
+            >
               <RemoteImageWithFallback
                 candidates={candidates}
                 alt=""
