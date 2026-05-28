@@ -16,6 +16,7 @@ export * from './components/post-card'
 export * from './components/roundup-post-card'
 export * from './components/blog'
 export * from './components/select'
+export * from './components/searchable-select'
 export * from './components/separator'
 export * from './components/share-link-dialog'
 

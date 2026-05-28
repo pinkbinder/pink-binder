@@ -247,15 +247,31 @@ export function preferredTcgCardImageUrl(card: {
   return tcgCardImageCandidates(card).find(isDisplayableTcgCardImageUrl)
 }
 
+/** High-res URL for zoom overlays — large chain only; defers loading until the dialog opens. */
+export function largestTcgCardImageUrl(card: {
+  imageLarge: string
+  imageSmall: string
+  imageLargeFallbacks?: string[]
+}): string | undefined {
+  const largeChain = chainUrls(card.imageLarge, card.imageLargeFallbacks)
+  const fromLarge = largeChain.find(isDisplayableTcgCardImageUrl)
+  if (fromLarge) {
+    return fromLarge
+  }
+  return preferredTcgCardImageUrl(card)
+}
+
 export {
   buildPokemontcgImageFallbacks,
   buildPokemontcgImageUrlsFromCardId,
   buildScrydexCardImageUrls,
   buildTcgdexImageBaseFromCardId,
   buildTcgdexImageUrls,
+  heroStripImageCandidates,
   isDisplayableTcgCardImageUrl,
   isPokemontcgImageUrl,
   isScrydexCardImageUrl,
   isTcgdexUnsupportedSetId,
+  preferTcgdexStripImageUrl,
   tcgplayerProductUrl,
 } from '../config/cdn'

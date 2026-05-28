@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 set -e
 
-pnpm format:fix
+pnpm lint-staged
 pnpm validate:pre-commit

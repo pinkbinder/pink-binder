@@ -3,10 +3,17 @@
  * Use `@repo/data` (main entry) from Server Components, route handlers, and scripts.
  */
 export * from './ui'
-export { SPECIES_GUIDES_CATEGORY, CUTE_GUIDES_CATEGORY } from './blog/categories'
+export {
+  GENERATIONS_GUIDE_CATEGORY,
+  GENERATIONS_GUIDES_CATEGORY,
+  SPECIES_GUIDES_CATEGORY,
+} from './blog/categories'
 export * from './blog/post-filters'
+export { getPostHref, getLegacyPostRedirectPath } from './blog/post-path'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
+  TCG_EXPANSIONS_CATEGORY,
+  TCG_ILLUSTRATORS_CATEGORY,
   getRoundupListCategory,
   isRoundupListCategory,
   ROUNDUP_LIST_CATEGORIES,
@@ -22,6 +29,9 @@ export * from './utils'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
+  preferTcgdexStripImageUrl,
+  heroStripImageCandidates,
   tcgCardImageCandidates,
   tcgCardHeroImageUrl,
   enrichPokemonTcgCardImages,
@@ -45,3 +55,8 @@ export {
   projectPokemonSpriteSlugCandidates,
   PROJECT_POKEMON_SPRITE_BASE,
 } from './pokemon/project-pokemon-sprites'
+export {
+  isTopPopularPokemonSlug,
+  TOP_POPULAR_POKEMON_SLUG_COUNT,
+  TOP_POPULAR_POKEMON_SLUGS,
+} from './popularity/popular-pokemon-slugs'

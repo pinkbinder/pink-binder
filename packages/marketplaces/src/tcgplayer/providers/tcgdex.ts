@@ -44,12 +44,19 @@ function buildTcgdexSearchParams(
   page: number
 ): URLSearchParams {
   const params = new URLSearchParams()
-  params.set('name', `eq:${options.speciesName}`)
-  params.set('category', 'eq:Pokemon')
-
   const artistName = options.artistName?.trim()
-  if (artistName) {
+
+  if (options.artistOnly && artistName) {
     params.set('illustrator', `like:${artistName}`)
+  } else {
+    const speciesName = options.speciesName?.trim()
+    if (speciesName) {
+      params.set('name', `eq:${speciesName}`)
+      params.set('category', 'eq:Pokemon')
+    }
+    if (artistName) {
+      params.set('illustrator', `like:${artistName}`)
+    }
   }
 
   params.set('pagination:page', String(page))

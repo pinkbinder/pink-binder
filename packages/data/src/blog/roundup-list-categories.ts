@@ -13,7 +13,16 @@ export const ROUNDUP_LIST_CATEGORIES: Record<RoundupAngle, string> = {
   expensive: 'TCG Price Lists',
 }
 
-export const ALL_ROUNDUP_LIST_CATEGORIES: readonly string[] = Object.values(ROUNDUP_LIST_CATEGORIES)
+export const TCG_ILLUSTRATORS_CATEGORY = 'TCG Illustrators'
+
+/** Meta-category for per-set expansion guides (filter under Post Format, not binder themes). */
+export const TCG_EXPANSIONS_CATEGORY = 'TCG Expansions'
+
+export const ALL_ROUNDUP_LIST_CATEGORIES: readonly string[] = [
+  ...Object.values(ROUNDUP_LIST_CATEGORIES),
+  TCG_ILLUSTRATORS_CATEGORY,
+  TCG_EXPANSIONS_CATEGORY,
+]
 
 /** @deprecated Use {@link ROUNDUP_LIST_CATEGORIES}. */
 export const ROUNDUP_TYPE_TAGS = ROUNDUP_LIST_CATEGORIES

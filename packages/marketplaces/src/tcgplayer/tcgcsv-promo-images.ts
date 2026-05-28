@@ -28,6 +28,9 @@ export const TCGCSV_PROMO_SET_TO_GROUP: Record<string, number> = {
   '2023sv': 23306,
   mcd24: 24163,
   '2024sv': 24163,
+  ttbb: 3179,
+  ttbb23: 23266,
+  ttbb24: 23561,
 }
 
 export const TCGPLAYER_CDN = {

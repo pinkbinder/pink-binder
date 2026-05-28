@@ -1,21 +1,26 @@
 import type { ReactNode } from 'react'
 import { JsonLdScript } from '../json-ld-script'
 import { BlogBackLink } from './blog-back-link'
+import { BlogMainLayout } from './blog-main-layout'
 
 export function BlogPostShell({
   children,
-  returnFilter,
+  returnHref,
   jsonLd,
+  landingUrl,
 }: {
   children: ReactNode
-  returnFilter?: string | null
+  returnHref?: string | null
   jsonLd?: unknown
+  landingUrl: string
 }) {
   return (
-    <article className="mx-auto max-w-3xl px-4 py-10">
+    <BlogMainLayout landingUrl={landingUrl} linkBlogTitleToHome compactMobile>
       {jsonLd ? <JsonLdScript data={jsonLd} /> : null}
-      <BlogBackLink returnFilter={returnFilter} />
-      {children}
-    </article>
+      <article className="mx-auto w-full max-w-3xl">
+        <BlogBackLink returnHref={returnHref} />
+        {children}
+      </article>
+    </BlogMainLayout>
   )
 }
