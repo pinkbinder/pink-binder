@@ -3,7 +3,11 @@
  * Use `@repo/data` (main entry) from Server Components, route handlers, and scripts.
  */
 export * from './ui'
-export { SPECIES_GUIDES_CATEGORY } from './blog/categories'
+export {
+  GENERATIONS_GUIDE_CATEGORY,
+  GENERATIONS_GUIDES_CATEGORY,
+  SPECIES_GUIDES_CATEGORY,
+} from './blog/categories'
 export * from './blog/post-filters'
 export { getPostHref, getLegacyPostRedirectPath } from './blog/post-path'
 export {
@@ -25,6 +29,7 @@ export * from './utils'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
   preferTcgdexStripImageUrl,
   heroStripImageCandidates,
   tcgCardImageCandidates,

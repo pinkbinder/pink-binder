@@ -55,7 +55,7 @@ export function RoundupHeroArtworkGrid({
     <div
       className={cn(
         'grid grid-rows-1 divide-x divide-pink-100/80 bg-muted',
-        variant === 'article' ? 'aspect-[2/1]' : 'aspect-[16/10]',
+        variant === 'article' ? 'aspect-[12/5]' : 'aspect-[16/10]',
         gridColumnClass(lists.length),
         className
       )}
@@ -68,7 +68,7 @@ export function RoundupHeroArtworkGrid({
               ? 'relative overflow-hidden'
               : cn(
                   'flex items-center justify-center',
-                  variant === 'article' ? 'bg-muted/30 p-3 sm:p-4' : 'bg-muted/40 p-2'
+                  variant === 'article' ? 'bg-muted/30 p-2 sm:p-2.5' : 'bg-muted/40 p-2'
                 )
           )}
           key={`${candidates[0]}-${index}`}
@@ -80,12 +80,13 @@ export function RoundupHeroArtworkGrid({
               fill
               className="object-cover"
               sizes="(max-width: 768px) 33vw, 240px"
+              priority={variant === 'article' && index === 0}
             />
           ) : (
             <div
               className={cn(
                 'relative h-full w-full',
-                variant === 'article' ? 'min-h-[72px]' : 'min-h-[120px]'
+                variant === 'article' ? 'min-h-[56px]' : 'min-h-[120px]'
               )}
             >
               <RemoteImageWithFallback
@@ -94,6 +95,7 @@ export function RoundupHeroArtworkGrid({
                 fill
                 className="object-contain drop-shadow-lg"
                 sizes="(max-width: 768px) 33vw, 240px"
+                priority={variant === 'article' && index === 0}
               />
             </div>
           )}

@@ -96,6 +96,11 @@ export function normalizeCanonicalBlogSlug(slug: string): string {
   return slug.startsWith('list--') ? slug.slice('list--'.length) : slug
 }
 
+/** Entity overview only (`generation--generation-1`), not gen roundups (`generation--1--cutest`). */
+export function isGenerationEntityOverviewSlug(slug: string): boolean {
+  return /^generation--generation-\d+$/.test(normalizeCanonicalBlogSlug(slug.trim().toLowerCase()))
+}
+
 export function isRoundupCanonicalSlug(slug: string): boolean {
   const normalized = normalizeCanonicalBlogSlug(slug)
   if (/^illustrator--.+--(cutest|collect|expensive)$/.test(normalized)) {

@@ -7,7 +7,7 @@
  *   - Asako Ito → Best Cards to Collect
  */
 
-import { SPECIES_GUIDES_CATEGORY } from './categories'
+import { GENERATIONS_GUIDE_CATEGORY, SPECIES_GUIDES_CATEGORY } from './categories'
 import {
   ROUNDUP_LIST_CATEGORIES,
   TCG_EXPANSIONS_CATEGORY,
@@ -18,7 +18,7 @@ export const BLOG_POST_FORMAT_CATEGORIES: readonly string[] = [
   ...Object.values(ROUNDUP_LIST_CATEGORIES),
   TCG_ILLUSTRATORS_CATEGORY,
   TCG_EXPANSIONS_CATEGORY,
-  'Generations',
+  GENERATIONS_GUIDE_CATEGORY,
   'Regions',
   'Wizards of the Coast sets',
   'Post-Wizards of the Coast sets',

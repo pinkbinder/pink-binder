@@ -27,7 +27,8 @@ export function BlogShopCtaSection({
             alt="The Pink Binder live promo"
             width={272}
             height={272}
-            className="aspect-square h-auto w-full object-cover sm:h-[272px] sm:w-[272px]"
+            className="aspect-square w-full object-cover sm:w-[272px]"
+            style={{ height: 'auto' }}
             sizes="(max-width: 640px) 100vw, 272px"
             priority={false}
           />

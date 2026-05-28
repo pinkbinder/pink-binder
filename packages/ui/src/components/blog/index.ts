@@ -6,6 +6,11 @@ export { BlogPostHeader, type BlogPostHeaderBreadcrumbItem } from './blog-post-h
 export { BlogParagraphList } from './blog-paragraph-list'
 export { BlogBulletList } from './blog-bullet-list'
 export { BlogCardHighlightItem } from './blog-card-highlight-item'
+export {
+  CollectCardHighlightGrid,
+  COLLECT_CARD_HIGHLIGHT_MAX,
+  type CollectCardHighlightGridItem,
+} from './collect-card-highlight-grid'
 export { BlogInfoPill } from './blog-info-pill'
 export { BlogLinkPillList, type BlogLinkPillListItem } from './blog-link-pill-list'
 export { BlogPostShell } from './blog-post-shell'
@@ -24,6 +29,7 @@ export { Pokemon3dSpriteShowcase } from './pokemon-3d-sprite-showcase'
 export { PokemonTcgCardGallery } from './pokemon-tcg-card-gallery'
 export { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 export { TcgCardImage } from './tcg-card-image'
+export { TcgCardZoomDialog } from './tcg-card-zoom-dialog'
 export {
   MiniBinderSpread,
   type BinderSpreadSlot,

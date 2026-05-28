@@ -305,6 +305,7 @@ export function toPokemonDataFromParts(
     captureRate: species.pokedex.captureRate,
     baseHappiness: species.pokedex.baseHappiness,
     growthRate: species.pokedex.growthRate,
+    hatchCounter: species.pokedex.hatchCounter,
     pokedexEntries: lore.pokedexEntries,
     evolutionChain: species.pokedex.evolutionChain,
     officialArtworkUrl: art.sprites.official,

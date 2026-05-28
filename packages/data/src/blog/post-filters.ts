@@ -3,7 +3,8 @@ import {
   TCG_EXPANSIONS_CATEGORY,
   TCG_ILLUSTRATORS_CATEGORY,
 } from './roundup-list-categories'
-import { SPECIES_GUIDES_CATEGORY } from './categories'
+import { GENERATIONS_GUIDE_CATEGORY, SPECIES_GUIDES_CATEGORY } from './categories'
+import { isGenerationEntityOverviewSlug } from './post-path'
 import { THEME_FILTER_SKIP } from './category-order'
 import { SPECIES_COLLECTIONS } from '../collections/types'
 import { ILLUSTRATOR_THEME_SKIP_LABELS } from './illustrator-theme-skip-labels'
@@ -364,7 +365,23 @@ export const extractCollectionFilters = extractThemeFilters
 const ALL_LIST_FILTER_CATEGORIES: readonly string[] = [
   SPECIES_GUIDES_CATEGORY,
   ...ALL_ROUNDUP_LIST_CATEGORIES,
+  GENERATIONS_GUIDE_CATEGORY,
 ]
+
+export function isGenerationGuideBlogSlug(slug: string): boolean {
+  return isGenerationEntityOverviewSlug(slug)
+}
+
+/** Post Format list filter — generation guides match overview slugs only. */
+export function postMatchesListFilter(
+  post: Pick<PostWithCategories, 'slug' | 'categories'>,
+  listFilter: string
+): boolean {
+  if (listFilter === GENERATIONS_GUIDE_CATEGORY) {
+    return isGenerationGuideBlogSlug(post.slug)
+  }
+  return post.categories.includes(listFilter)
+}
 
 /** Roundup list types + species guides for blog index filter chips. */
 export function extractRoundupListFilters(posts: PostWithCategories[]): string[] {
@@ -374,6 +391,9 @@ export function extractRoundupListFilters(posts: PostWithCategories[]): string[]
       if (ALL_LIST_FILTER_CATEGORIES.includes(cat)) {
         present.add(cat)
       }
+    }
+    if (isGenerationGuideBlogSlug(post.slug)) {
+      present.add(GENERATIONS_GUIDE_CATEGORY)
     }
   }
   return ALL_LIST_FILTER_CATEGORIES.filter((label) => present.has(label))
