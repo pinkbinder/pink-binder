@@ -57,7 +57,7 @@ export interface NormalizedPokedexEntry {
 export interface NormalizedSceneArtEntry {
   url: string
   label: string
-  source: 'artofpkm' | 'tcg' | 'pokeos' | 'wallhaven' | 'openverse' | 'wikimedia'
+  source: 'artofpkm' | 'tcg' | 'pokeos' | 'wallhaven' | 'openverse' | 'wikimedia' | 'pexels'
   setName?: string
   artist?: string | null
   cardId?: string
@@ -239,6 +239,10 @@ export interface NormalizedSpeciesCoreFile {
   pokedex: NormalizedSpeciesPokedex
   competitive?: NormalizedSpeciesCompetitive
   collections: SpeciesCollectionSlug[]
+  /** TCG illustrators with ≥1 card for this species (sorted); applied after illustrator index build. */
+  illustratorSlugs?: string[]
+  /** TCG expansion slugs with ≥1 card for this species (sorted); applied after expansion index build. */
+  expansionSlugs?: string[]
   relatedKeywords: string[]
   relatedEntities: string[]
 }
@@ -282,6 +286,8 @@ export function toPokemonDataFromParts(
     generation: species.generation,
     types: species.types,
     collections: species.collections,
+    illustratorSlugs: species.illustratorSlugs ?? [],
+    expansionSlugs: species.expansionSlugs ?? [],
     translations,
     relatedKeywords: species.relatedKeywords,
     relatedEntities: species.relatedEntities,
@@ -299,6 +305,7 @@ export function toPokemonDataFromParts(
     captureRate: species.pokedex.captureRate,
     baseHappiness: species.pokedex.baseHappiness,
     growthRate: species.pokedex.growthRate,
+    hatchCounter: species.pokedex.hatchCounter,
     pokedexEntries: lore.pokedexEntries,
     evolutionChain: species.pokedex.evolutionChain,
     officialArtworkUrl: art.sprites.official,

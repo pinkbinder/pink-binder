@@ -14,6 +14,7 @@ export type MichiSceneArtSource =
   | 'wallhaven'
   | 'openverse'
   | 'wikimedia'
+  | 'pexels'
 
 /** Cached or runtime-resolved full-scene illustration for Michi Method spreads. */
 export interface MichiSceneArtEntry {
@@ -59,6 +60,7 @@ export function landscapeScoreMichiScene(entry: MichiSceneLandscapeInput): numbe
   if (entry.source === 'artofpkm') score += 40
   if (entry.source === 'tcg') score -= 45
   if (entry.source === 'pokeos') score += 10
+  if (entry.source === 'pexels') score += 8
 
   const label = entry.label ?? ''
   if (LANDSCAPE_LABEL_HINTS.test(label)) score += 22

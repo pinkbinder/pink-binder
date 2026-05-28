@@ -37,8 +37,17 @@ function pokemontcgHeaders(): Record<string, string> {
 }
 
 function buildPokemontcgSearchQuery(options: GetPokemonTcgCardsOptions): string {
-  const parts = [`name:"${options.speciesName}"`, 'supertype:Pokémon']
   const artistName = options.artistName?.trim()
+  if (options.artistOnly && artistName) {
+    return `artist:"${artistName}"`
+  }
+
+  const speciesName = options.speciesName?.trim()
+  if (!speciesName) {
+    return ''
+  }
+
+  const parts = [`name:"${speciesName}"`, 'supertype:Pokémon']
   if (artistName) {
     parts.push(`artist:"${artistName}"`)
   }

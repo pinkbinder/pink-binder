@@ -8,23 +8,35 @@ import {
   MYTHICAL_PLATINUM_TONE_CLASS,
   type EnrichedPostForGrid,
   getCollectionBadgeIcon,
-  extractCollectionFilters,
+  extractThemeFilters,
+  extractExpansionFilters,
   extractGenerationFilters,
+  generationFilterLabel,
+  BLOG_FILTER_GROUP_LABELS,
+  extractIllustratorFilters,
   extractRoundupListFilters,
+  postMatchesListFilter,
   extractTypeFilters,
   getFilterValueForCategory,
-  getPokemonTypeColors,
+  postMatchesExpansionFilter,
+  postMatchesPokemonFilter,
+  sortPostsForExpansionFilter,
+  sortPostsForPokemonFilter,
+  extractPokemonFilters,
+  isTopPopularPokemonSlug,
   getPokemonTypeLightColors,
   getPokemonTypeLogoColor,
   getPokemonTypeLogoUrl,
+  getPostHref,
   parseTypeCategory,
 } from '@repo/data/client'
+import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
 import { Button } from '../button'
-import { Select, SelectContent, SelectItem, SelectTrigger } from '../select'
+import { SearchableSelect, type SearchableSelectOption } from '../searchable-select'
 
 export type { EnrichedPostForGrid }
 
@@ -32,22 +44,6 @@ export type { EnrichedPostForGrid }
 const INITIAL_VISIBLE_POSTS = 9
 const VISIBLE_POST_BATCH = 24
 const LOAD_MORE_ROOT_MARGIN = '480px'
-const INITIAL_VISIBLE_FILTER_CHIPS = 10
-
-/** Desktop chip rows — visually distinct from filter chips. */
-const FILTER_SHOW_MORE_CLASS =
-  'rounded-full border-2 border-dashed border-primary/60 bg-primary/10 px-3 py-1 text-xs font-bold text-primary shadow-sm ring-1 ring-primary/15 transition-all hover:border-primary hover:bg-primary/15 hover:-translate-y-px'
-
-/** Radix Select reserves `""` for clearing; mobile "All" uses this sentinel instead. */
-const FILTER_SELECT_ALL = '__all__'
-
-function selectValueFromFilter(value: string | null): string {
-  return value ?? FILTER_SELECT_ALL
-}
-
-function filterFromSelectValue(value: string): string | null {
-  return value === FILTER_SELECT_ALL ? null : value
-}
 
 function isFilterValueActive(
   filterValue: string,
@@ -59,74 +55,40 @@ function isFilterValueActive(
     grouped.type === filterValue ||
     grouped.generation === filterValue ||
     grouped.list === filterValue ||
-    grouped.collection === filterValue
+    grouped.illustrator === filterValue ||
+    grouped.themes === filterValue ||
+    grouped.expansion === filterValue ||
+    grouped.pokemon === filterValue
   )
 }
 
-type TypeVisualEntry = {
-  colors: ReturnType<typeof getPokemonTypeColors>
-  lightColors: ReturnType<typeof getPokemonTypeLightColors>
-  logoUrl: string | null
-}
-
-/** Explicit trigger content — avoids Radix SelectValue SSR/client placeholder mismatch. */
-function TypeFilterTriggerContent({
-  type,
-  typeVisuals,
-}: {
-  type: string | null
-  typeVisuals: Record<string, TypeVisualEntry>
-}) {
-  if (!type) {
-    return <span>All</span>
-  }
-  const visuals = typeVisuals[type]
-  const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-  const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
-      style={{
-        backgroundColor: lightColors.bg,
-        color: lightColors.text,
-        borderColor: lightColors.border,
-        borderWidth: '1px',
-        borderStyle: 'solid',
-      }}
-    >
-      {logoUrl ? <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} /> : null}
-      {type}
-    </span>
-  )
-}
-
-function CollectionFilterTriggerContent({ collection }: { collection: string | null }) {
-  if (!collection) {
-    return <span>All</span>
-  }
-  const icon = getCollectionBadgeIcon(collection)
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      {icon ? <span aria-hidden>{icon}</span> : null}
-      <span>{collection}</span>
-    </span>
-  )
-}
-
-type FilterGroupKey = 'type' | 'generation' | 'list' | 'collection'
+type FilterGroupKey =
+  | 'type'
+  | 'generation'
+  | 'list'
+  | 'illustrator'
+  | 'expansion'
+  | 'pokemon'
+  | 'themes'
 
 interface GroupedFilters {
   type: string | null
   generation: string | null
   list: string | null
-  collection: string | null
+  illustrator: string | null
+  expansion: string | null
+  pokemon: string | null
+  themes: string | null
 }
 
 const EMPTY_GROUPED_FILTERS: GroupedFilters = {
   type: null,
   generation: null,
   list: null,
-  collection: null,
+  illustrator: null,
+  expansion: null,
+  pokemon: null,
+  themes: null,
 }
 
 interface BlogGridProps {
@@ -140,18 +102,15 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   const searchParams = useSearchParams()
   const [groupedFilters, setGroupedFilters] = useState<GroupedFilters>(EMPTY_GROUPED_FILTERS)
   const [directFilter, setDirectFilter] = useState<string | null>(null)
-  const [expandedGroups, setExpandedGroups] = useState<Record<FilterGroupKey, boolean>>({
-    type: false,
-    generation: false,
-    list: false,
-    collection: false,
-  })
   const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_POSTS)
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
   const typeFilters = useMemo(() => extractTypeFilters(posts), [posts])
   const generationFilters = useMemo(() => extractGenerationFilters(posts), [posts])
-  const collectionFilters = useMemo(() => extractCollectionFilters(posts), [posts])
+  const illustratorFilters = useMemo(() => extractIllustratorFilters(posts), [posts])
+  const themeFilters = useMemo(() => extractThemeFilters(posts), [posts])
+  const expansionFilters = useMemo(() => extractExpansionFilters(posts), [posts])
+  const pokemonFilters = useMemo(() => extractPokemonFilters(posts), [posts])
   const roundupListFilters = useMemo(() => extractRoundupListFilters(posts), [posts])
 
   const allGroupedFilterValues = useMemo(
@@ -159,14 +118,34 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       new Set<string>([
         ...typeFilters,
         ...generationFilters,
-        ...collectionFilters,
+        ...illustratorFilters,
+        ...themeFilters,
+        ...expansionFilters.map((entry) => entry.slug),
+        ...pokemonFilters.map((entry) => entry.slug),
         ...roundupListFilters,
       ]),
-    [typeFilters, generationFilters, collectionFilters, roundupListFilters]
+    [
+      typeFilters,
+      generationFilters,
+      illustratorFilters,
+      themeFilters,
+      expansionFilters,
+      pokemonFilters,
+      roundupListFilters,
+    ]
   )
   const typeFilterSet = useMemo(() => new Set(typeFilters), [typeFilters])
   const generationFilterSet = useMemo(() => new Set(generationFilters), [generationFilters])
-  const collectionFilterSet = useMemo(() => new Set(collectionFilters), [collectionFilters])
+  const illustratorFilterSet = useMemo(() => new Set(illustratorFilters), [illustratorFilters])
+  const themeFilterSet = useMemo(() => new Set(themeFilters), [themeFilters])
+  const expansionFilterSet = useMemo(
+    () => new Set(expansionFilters.map((entry) => entry.slug)),
+    [expansionFilters]
+  )
+  const pokemonFilterSet = useMemo(
+    () => new Set(pokemonFilters.map((entry) => entry.slug)),
+    [pokemonFilters]
+  )
   const roundupListFilterSet = useMemo(() => new Set(roundupListFilters), [roundupListFilters])
   const typeVisuals = useMemo(
     () =>
@@ -174,7 +153,6 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         typeFilters.map((type) => [
           type,
           {
-            colors: getPokemonTypeColors(type),
             lightColors: getPokemonTypeLightColors(type),
             logoUrl: getPokemonTypeLogoUrl(type),
           },
@@ -187,18 +165,28 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     let nextType = searchParams.get('type')
     let nextGeneration = searchParams.get('generation')
     let nextList = searchParams.get('list')
-    let nextCollection = searchParams.get('collection')
+    let nextIllustrator = searchParams.get('illustrator')
+    let nextExpansion = searchParams.get('expansion')
+    let nextPokemon = searchParams.get('pokemon')
+    let nextThemes = searchParams.get('themes') ?? searchParams.get('collection')
     let nextDirect = searchParams.get('filter')
 
-    if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
+    if (nextDirect && pokemonFilterSet.has(nextDirect)) {
+      nextPokemon = nextDirect
+      nextDirect = null
+    } else if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
       if (typeFilterSet.has(nextDirect)) {
         nextType = nextDirect
       } else if (generationFilterSet.has(nextDirect)) {
         nextGeneration = nextDirect
       } else if (roundupListFilterSet.has(nextDirect)) {
         nextList = nextDirect
-      } else if (collectionFilterSet.has(nextDirect)) {
-        nextCollection = nextDirect
+      } else if (illustratorFilterSet.has(nextDirect)) {
+        nextIllustrator = nextDirect
+      } else if (themeFilterSet.has(nextDirect)) {
+        nextThemes = nextDirect
+      } else if (expansionFilterSet.has(nextDirect)) {
+        nextExpansion = nextDirect
       }
       nextDirect = null
     }
@@ -207,7 +195,11 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       type: nextType && typeFilterSet.has(nextType) ? nextType : null,
       generation: nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
       list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
-      collection: nextCollection && collectionFilterSet.has(nextCollection) ? nextCollection : null,
+      illustrator:
+        nextIllustrator && illustratorFilterSet.has(nextIllustrator) ? nextIllustrator : null,
+      expansion: nextExpansion && expansionFilterSet.has(nextExpansion) ? nextExpansion : null,
+      pokemon: nextPokemon && pokemonFilterSet.has(nextPokemon) ? nextPokemon : null,
+      themes: nextThemes && themeFilterSet.has(nextThemes) ? nextThemes : null,
     })
     setDirectFilter(nextDirect)
   }, [
@@ -216,7 +208,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     typeFilterSet,
     generationFilterSet,
     roundupListFilterSet,
-    collectionFilterSet,
+    illustratorFilterSet,
+    themeFilterSet,
+    expansionFilterSet,
+    pokemonFilterSet,
   ])
 
   const hasActiveFilters = useMemo(
@@ -225,7 +220,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       groupedFilters.type !== null ||
       groupedFilters.generation !== null ||
       groupedFilters.list !== null ||
-      groupedFilters.collection !== null,
+      groupedFilters.illustrator !== null ||
+      groupedFilters.themes !== null ||
+      groupedFilters.expansion !== null ||
+      groupedFilters.pokemon !== null,
     [groupedFilters, directFilter]
   )
 
@@ -237,17 +235,26 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   }, [hasActiveFilters])
 
   const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
+    const filtered = posts.filter((post) => {
       if (groupedFilters.type && !post.categories.includes(`${groupedFilters.type} Type`)) {
         return false
       }
       if (groupedFilters.generation && !post.categories.includes(groupedFilters.generation)) {
         return false
       }
-      if (groupedFilters.list && !post.categories.includes(groupedFilters.list)) {
+      if (groupedFilters.list && !postMatchesListFilter(post, groupedFilters.list)) {
         return false
       }
-      if (groupedFilters.collection && !post.categories.includes(groupedFilters.collection)) {
+      if (groupedFilters.illustrator && !post.categories.includes(groupedFilters.illustrator)) {
+        return false
+      }
+      if (groupedFilters.expansion && !postMatchesExpansionFilter(post, groupedFilters.expansion)) {
+        return false
+      }
+      if (groupedFilters.themes && !post.categories.includes(groupedFilters.themes)) {
+        return false
+      }
+      if (groupedFilters.pokemon && !postMatchesPokemonFilter(post, groupedFilters.pokemon)) {
         return false
       }
       if (!directFilter) {
@@ -256,10 +263,18 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       const needle = directFilter.toLowerCase()
       if (post.categories.includes(`${directFilter} Type`)) return true
       if (post.categories.includes(directFilter)) return true
-      if (post.speciesFilterTags.some((slug) => slug.toLowerCase() === needle)) return true
+      if (post.expansionFilterTags?.some((slug) => slug.toLowerCase() === needle)) return true
       if (post.tags.some((tag) => tag.toLowerCase() === needle)) return true
       return false
     })
+
+    if (groupedFilters.pokemon) {
+      return sortPostsForPokemonFilter(filtered, groupedFilters.pokemon)
+    }
+    if (groupedFilters.expansion) {
+      return sortPostsForExpansionFilter(filtered, groupedFilters.expansion)
+    }
+    return filtered
   }, [posts, groupedFilters, directFilter])
 
   const postsToRender = useMemo(() => {
@@ -315,11 +330,27 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     } else {
       params.delete('list')
     }
-    if (nextGroupedFilters.collection) {
-      params.set('collection', nextGroupedFilters.collection)
+    if (nextGroupedFilters.illustrator) {
+      params.set('illustrator', nextGroupedFilters.illustrator)
     } else {
-      params.delete('collection')
+      params.delete('illustrator')
     }
+    if (nextGroupedFilters.expansion) {
+      params.set('expansion', nextGroupedFilters.expansion)
+    } else {
+      params.delete('expansion')
+    }
+    if (nextGroupedFilters.pokemon) {
+      params.set('pokemon', nextGroupedFilters.pokemon)
+    } else {
+      params.delete('pokemon')
+    }
+    if (nextGroupedFilters.themes) {
+      params.set('themes', nextGroupedFilters.themes)
+    } else {
+      params.delete('themes')
+    }
+    params.delete('collection')
     if (nextDirectFilter) {
       params.set('filter', nextDirectFilter)
     } else {
@@ -351,25 +382,6 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     pushFilterParams(EMPTY_GROUPED_FILTERS, null)
   }
 
-  function toggleExpandedGroup(group: FilterGroupKey) {
-    setExpandedGroups((current) => ({
-      ...current,
-      [group]: !current[group],
-    }))
-  }
-
-  function getGroupOptionState<T extends string>(group: FilterGroupKey, values: T[]) {
-    const expanded = expandedGroups[group]
-    if (expanded || values.length <= INITIAL_VISIBLE_FILTER_CHIPS) {
-      return { options: values, hasMore: false, expanded }
-    }
-    return {
-      options: values.slice(0, INITIAL_VISIBLE_FILTER_CHIPS),
-      hasMore: true,
-      expanded,
-    }
-  }
-
   function applyCategoryFilter(filterValue: string) {
     if (typeFilterSet.has(filterValue)) {
       applyGroupedFilter('type', groupedFilters.type === filterValue ? null : filterValue)
@@ -386,18 +398,30 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       applyGroupedFilter('list', groupedFilters.list === filterValue ? null : filterValue)
       return
     }
-    if (collectionFilterSet.has(filterValue)) {
+    if (illustratorFilterSet.has(filterValue)) {
       applyGroupedFilter(
-        'collection',
-        groupedFilters.collection === filterValue ? null : filterValue
+        'illustrator',
+        groupedFilters.illustrator === filterValue ? null : filterValue
       )
+      return
+    }
+    if (themeFilterSet.has(filterValue)) {
+      applyGroupedFilter('themes', groupedFilters.themes === filterValue ? null : filterValue)
+      return
+    }
+    if (expansionFilterSet.has(filterValue)) {
+      applyGroupedFilter('expansion', groupedFilters.expansion === filterValue ? null : filterValue)
+      return
+    }
+    if (pokemonFilterSet.has(filterValue)) {
+      applyGroupedFilter('pokemon', groupedFilters.pokemon === filterValue ? null : filterValue)
       return
     }
     applyDirectFilter(directFilter === filterValue ? null : filterValue)
   }
 
   function buildPostHref(slug: string): string {
-    const base = `/posts/${encodeURIComponent(slug)}`
+    const base = getPostHref(slug)
     const params = new URLSearchParams()
     if (groupedFilters.type) {
       params.set('type', groupedFilters.type)
@@ -408,8 +432,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     if (groupedFilters.list) {
       params.set('list', groupedFilters.list)
     }
-    if (groupedFilters.collection) {
-      params.set('collection', groupedFilters.collection)
+    if (groupedFilters.illustrator) {
+      params.set('illustrator', groupedFilters.illustrator)
+    }
+    if (groupedFilters.expansion) {
+      params.set('expansion', groupedFilters.expansion)
+    }
+    if (groupedFilters.pokemon) {
+      params.set('pokemon', groupedFilters.pokemon)
+    }
+    if (groupedFilters.themes) {
+      params.set('themes', groupedFilters.themes)
     }
     if (directFilter) {
       params.set('filter', directFilter)
@@ -421,330 +454,366 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     return `${base}?${query}`
   }
 
-  const typeChipState = getGroupOptionState('type', typeFilters)
-  const generationChipState = getGroupOptionState('generation', generationFilters)
-  const listChipState = getGroupOptionState('list', roundupListFilters)
-  const collectionChipState = getGroupOptionState('collection', collectionFilters)
+  const typeOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      typeFilters.map((type) => {
+        const logoUrl = typeVisuals[type]?.logoUrl ?? getPokemonTypeLogoUrl(type)
+        const lightColors = typeVisuals[type]?.lightColors ?? getPokemonTypeLightColors(type)
+        return {
+          value: type,
+          label: type,
+          icon: logoUrl ? (
+            <span
+              className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
+              style={{ backgroundColor: lightColors.bg, color: lightColors.text }}
+            >
+              <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} />
+            </span>
+          ) : undefined,
+        }
+      }),
+    [typeFilters, typeVisuals]
+  )
+
+  const generationOptions: SearchableSelectOption[] = useMemo(
+    () => generationFilters.map((g) => ({ value: g, label: generationFilterLabel(g) })),
+    [generationFilters]
+  )
+
+  const listOptions: SearchableSelectOption[] = useMemo(
+    () => roundupListFilters.map((l) => ({ value: l, label: l })),
+    [roundupListFilters]
+  )
+
+  const illustratorOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      illustratorFilters.map((name) => {
+        const icon = getCollectionBadgeIcon(name)
+        return {
+          value: name,
+          label: name,
+          icon: icon ? <span aria-hidden>{icon}</span> : undefined,
+        }
+      }),
+    [illustratorFilters]
+  )
+
+  const expansionOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      expansionFilters.map((entry) => ({
+        value: entry.slug,
+        label: entry.label,
+      })),
+    [expansionFilters]
+  )
+
+  const pokemonOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      pokemonFilters.map((entry) => ({
+        value: entry.slug,
+        label: entry.label,
+        emphasized: isTopPopularPokemonSlug(entry.slug),
+      })),
+    [pokemonFilters]
+  )
+
+  function renderPokemonChip(option: SearchableSelectOption) {
+    return <span className={cn(option.emphasized && 'font-bold')}>{option.label}</span>
+  }
+
+  const themeOptions: SearchableSelectOption[] = useMemo(
+    () =>
+      themeFilters.map((name) => {
+        const icon = getCollectionBadgeIcon(name)
+        return {
+          value: name,
+          label: name,
+          icon: icon ? <span aria-hidden>{icon}</span> : undefined,
+        }
+      }),
+    [themeFilters]
+  )
+
+  function renderTypeChip(option: SearchableSelectOption) {
+    const lightColors = getPokemonTypeLightColors(option.value)
+    const logoUrl = getPokemonTypeLogoUrl(option.value)
+    return (
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
+        style={{
+          backgroundColor: lightColors.bg,
+          color: lightColors.text,
+          borderColor: lightColors.border,
+          borderWidth: '1px',
+          borderStyle: 'solid',
+        }}
+      >
+        {logoUrl ? (
+          <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(option.value)} />
+        ) : null}
+        {option.label}
+      </span>
+    )
+  }
+
+  function renderIconChip(option: SearchableSelectOption) {
+    return (
+      <span className="inline-flex items-center gap-1.5">
+        {option.icon}
+        <span>{option.label}</span>
+      </span>
+    )
+  }
+
   const activeFilterLabels = [
     groupedFilters.type,
     groupedFilters.generation,
     groupedFilters.list,
-    groupedFilters.collection,
+    groupedFilters.illustrator,
+    groupedFilters.expansion
+      ? (expansionFilters.find((entry) => entry.slug === groupedFilters.expansion)?.label ??
+        groupedFilters.expansion)
+      : null,
+    groupedFilters.pokemon
+      ? (pokemonFilters.find((entry) => entry.slug === groupedFilters.pokemon)?.label ??
+        groupedFilters.pokemon)
+      : null,
+    groupedFilters.themes,
     directFilter,
   ].filter((value): value is string => Boolean(value))
 
-  return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-4">
-        <div className="grid gap-3 md:hidden">
-          <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Type</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.type)}
-              onValueChange={(value) => applyGroupedFilter('type', filterFromSelectValue(value))}
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">
-                  <TypeFilterTriggerContent type={groupedFilters.type} typeVisuals={typeVisuals} />
-                </span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {typeFilters.map((type) => {
-                  const visuals = typeVisuals[type]
-                  const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-                  const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-                  return (
-                    <SelectItem key={`mobile-type-${type}`} value={type}>
-                      <span
-                        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
-                        style={{
-                          backgroundColor: lightColors.bg,
-                          color: lightColors.text,
-                          borderColor: lightColors.border,
-                          borderWidth: '1px',
-                          borderStyle: 'solid',
-                        }}
-                      >
-                        {logoUrl ? (
-                          <PokemonTypeLogo
-                            logoUrl={logoUrl}
-                            color={getPokemonTypeLogoColor(type)}
-                          />
-                        ) : null}
-                        {type}
-                      </span>
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Generation</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.generation)}
-              onValueChange={(value) =>
-                applyGroupedFilter('generation', filterFromSelectValue(value))
-              }
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">{groupedFilters.generation ?? 'All'}</span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {generationFilters.map((generation) => (
-                  <SelectItem key={`mobile-generation-${generation}`} value={generation}>
-                    <span
-                      className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                    >
-                      {generation}
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          {roundupListFilters.length > 0 ? (
-            <div className="grid gap-1.5">
-              <span className="text-sm font-medium text-muted-foreground">Lists</span>
-              <Select
-                value={selectValueFromFilter(groupedFilters.list)}
-                onValueChange={(value) => applyGroupedFilter('list', filterFromSelectValue(value))}
-              >
-                <SelectTrigger className="rounded-xl">
-                  <span className="line-clamp-1">{groupedFilters.list ?? 'All'}</span>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                  {roundupListFilters.map((listType) => (
-                    <SelectItem key={`mobile-list-${listType}`} value={listType}>
-                      <span
-                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                      >
-                        {listType}
-                      </span>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          ) : null}
-          <div className="grid gap-1.5">
-            <span className="text-sm font-medium text-muted-foreground">Collection</span>
-            <Select
-              value={selectValueFromFilter(groupedFilters.collection)}
-              onValueChange={(value) =>
-                applyGroupedFilter('collection', filterFromSelectValue(value))
-              }
-            >
-              <SelectTrigger className="rounded-xl">
-                <span className="line-clamp-1">
-                  <CollectionFilterTriggerContent collection={groupedFilters.collection} />
-                </span>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={FILTER_SELECT_ALL}>All</SelectItem>
-                {collectionFilters.map((collection) => {
-                  const icon = getCollectionBadgeIcon(collection)
-                  return (
-                    <SelectItem key={`mobile-collection-${collection}`} value={collection}>
-                      <span
-                        className={`${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
-                      >
-                        {icon ? <span aria-hidden>{icon}</span> : null}
-                        {collection}
-                      </span>
-                    </SelectItem>
-                  )
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-        <div className="hidden flex-col gap-4 md:flex">
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Type:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.type === null}
-              onClick={() => applyGroupedFilter('type', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {typeChipState.options.map((type) => {
-              const visuals = typeVisuals[type]
-              const colors = visuals?.colors ?? getPokemonTypeColors(type)
-              const lightColors = visuals?.lightColors ?? getPokemonTypeLightColors(type)
-              const logoUrl = visuals?.logoUrl ?? getPokemonTypeLogoUrl(type)
-              const isActive = groupedFilters.type === type
+  const pokemonFilterRowClass = 'grid grid-cols-1 gap-3 sm:grid-cols-3'
+  const metaFilterCount =
+    1 +
+    (expansionFilters.length > 0 ? 1 : 0) +
+    (illustratorFilters.length > 0 ? 1 : 0) +
+    (roundupListFilters.length > 0 ? 1 : 0)
+  const metaFilterRowClass =
+    metaFilterCount >= 4
+      ? 'grid grid-cols-2 gap-3 lg:grid-cols-4'
+      : metaFilterCount >= 3
+        ? 'grid grid-cols-2 gap-3 sm:grid-cols-3'
+        : 'grid grid-cols-2 gap-3'
 
-              return (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={isActive}
-                  key={type}
-                  onClick={() => applyGroupedFilter('type', isActive ? null : type)}
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                  style={{
-                    borderColor: isActive ? colors.bg : lightColors.border,
-                    backgroundColor: isActive ? colors.bg : lightColors.bg,
-                    color: isActive ? colors.text : lightColors.text,
-                  }}
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {logoUrl ? (
-                      <PokemonTypeLogo
-                        logoUrl={logoUrl}
-                        color={isActive ? colors.text : getPokemonTypeLogoColor(type)}
-                      />
-                    ) : null}
-                    <span>{type}</span>
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
+        <div className="flex flex-col gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-primary">Pokémon</p>
+            <div className={`mt-2.5 ${pokemonFilterRowClass}`}>
+              <div className="grid gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {BLOG_FILTER_GROUP_LABELS.type}
+                </span>
+                <SearchableSelect
+                  options={typeOptions}
+                  value={groupedFilters.type}
+                  onValueChange={(v) => applyGroupedFilter('type', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.type.toLowerCase()}`}
+                  renderSelected={renderTypeChip}
+                />
+              </div>
+              {pokemonFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-xs font-medium text-muted-foreground">
+                    {BLOG_FILTER_GROUP_LABELS.pokemon}
                   </span>
-                </Button>
-              )
-            })}
-            {typeChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('type')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {typeChipState.expanded ? 'less' : 'more'}
-              </Button>
-            ) : null}
+                  <SearchableSelect
+                    options={pokemonOptions}
+                    value={groupedFilters.pokemon}
+                    onValueChange={(v) => applyGroupedFilter('pokemon', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.pokemon.toLowerCase()}`}
+                    renderSelected={renderPokemonChip}
+                  />
+                </div>
+              ) : null}
+              <div className="grid gap-1.5">
+                <span className="text-xs font-medium text-muted-foreground">
+                  {BLOG_FILTER_GROUP_LABELS.themes}
+                </span>
+                <SearchableSelect
+                  options={themeOptions}
+                  value={groupedFilters.themes}
+                  onValueChange={(v) => applyGroupedFilter('themes', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.themes.toLowerCase()}`}
+                  renderSelected={renderIconChip}
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Generation:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.generation === null}
-              onClick={() => applyGroupedFilter('generation', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {generationChipState.options.map((generation) => (
-              <Button
-                variant="filterChip"
-                aria-pressed={groupedFilters.generation === generation}
-                key={generation}
-                onClick={() =>
-                  applyGroupedFilter(
-                    'generation',
-                    groupedFilters.generation === generation ? null : generation
-                  )
-                }
-                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-              >
-                {generation}
-              </Button>
-            ))}
-            {generationChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('generation')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {generationChipState.expanded ? 'less' : 'more'}
-              </Button>
-            ) : null}
-          </div>
-          {roundupListFilters.length > 0 ? (
-            <div className="flex flex-wrap items-start gap-2">
-              <span className="pt-1 text-sm font-medium text-muted-foreground">Lists:</span>
-              <Button
-                variant="filterChip"
-                aria-pressed={groupedFilters.list === null}
-                onClick={() => applyGroupedFilter('list', null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-              >
-                All
-              </Button>
-              {listChipState.options.map((listType) => (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={groupedFilters.list === listType}
-                  key={listType}
-                  onClick={() =>
-                    applyGroupedFilter('list', groupedFilters.list === listType ? null : listType)
-                  }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                >
-                  {listType}
-                </Button>
-              ))}
-              {listChipState.hasMore ? (
-                <Button
-                  variant="ghost"
-                  onClick={() => toggleExpandedGroup('list')}
-                  className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-                >
-                  Show {listChipState.expanded ? 'less' : 'more'}
-                </Button>
+
+          <div className="rounded-xl border border-dashed border-muted-foreground/20 bg-muted/40 px-3 py-3 sm:px-4">
+            <p className="text-[11px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Meta
+            </p>
+            <div className={`mt-2.5 ${metaFilterRowClass}`}>
+              <div className="grid gap-1.5">
+                <span className="text-[11px] font-medium text-muted-foreground/90">
+                  {BLOG_FILTER_GROUP_LABELS.generation}
+                </span>
+                <SearchableSelect
+                  options={generationOptions}
+                  value={groupedFilters.generation}
+                  onValueChange={(v) => applyGroupedFilter('generation', v)}
+                  label={`Filter by ${BLOG_FILTER_GROUP_LABELS.generation.toLowerCase()}`}
+                />
+              </div>
+              {expansionFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.expansion}
+                  </span>
+                  <SearchableSelect
+                    options={expansionOptions}
+                    value={groupedFilters.expansion}
+                    onValueChange={(v) => applyGroupedFilter('expansion', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.expansion.toLowerCase()}`}
+                  />
+                </div>
+              ) : null}
+              {illustratorFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.illustrator}
+                  </span>
+                  <SearchableSelect
+                    options={illustratorOptions}
+                    value={groupedFilters.illustrator}
+                    onValueChange={(v) => applyGroupedFilter('illustrator', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.illustrator.toLowerCase()}`}
+                    renderSelected={renderIconChip}
+                  />
+                </div>
+              ) : null}
+              {roundupListFilters.length > 0 ? (
+                <div className="grid gap-1.5">
+                  <span className="text-[11px] font-medium text-muted-foreground/90">
+                    {BLOG_FILTER_GROUP_LABELS.list}
+                  </span>
+                  <SearchableSelect
+                    options={listOptions}
+                    value={groupedFilters.list}
+                    onValueChange={(v) => applyGroupedFilter('list', v)}
+                    label={`Filter by ${BLOG_FILTER_GROUP_LABELS.list.toLowerCase()}`}
+                  />
+                </div>
               ) : null}
             </div>
-          ) : null}
-          <div className="flex flex-wrap items-start gap-2">
-            <span className="pt-1 text-sm font-medium text-muted-foreground">Collection:</span>
-            <Button
-              variant="filterChip"
-              aria-pressed={groupedFilters.collection === null}
-              onClick={() => applyGroupedFilter('collection', null)}
-              className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-            >
-              All
-            </Button>
-            {collectionChipState.options.map((collection) => {
-              const collectionIcon = getCollectionBadgeIcon(collection)
-              return (
-                <Button
-                  variant="filterChip"
-                  aria-pressed={groupedFilters.collection === collection}
-                  key={collection}
-                  onClick={() =>
-                    applyGroupedFilter(
-                      'collection',
-                      groupedFilters.collection === collection ? null : collection
-                    )
-                  }
-                  className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                >
-                  <span className="inline-flex items-center gap-1.5">
-                    {collectionIcon ? <span aria-hidden>{collectionIcon}</span> : null}
-                    <span>{collection}</span>
-                  </span>
-                </Button>
-              )
-            })}
-            {collectionChipState.hasMore ? (
-              <Button
-                variant="ghost"
-                onClick={() => toggleExpandedGroup('collection')}
-                className={`h-auto ${FILTER_SHOW_MORE_CLASS}`}
-              >
-                Show {collectionChipState.expanded ? 'less' : 'more'}
-              </Button>
-            ) : null}
           </div>
         </div>
-      </div>
 
-      {activeFilterLabels.length > 0 ? (
-        <p className="text-sm text-muted-foreground">
-          Showing <span className="font-semibold text-foreground">{filteredPosts.length}</span>{' '}
-          {`post${filteredPosts.length !== 1 ? 's' : ''}`} matching{' '}
-          <span className="font-medium text-primary">{activeFilterLabels.join(' + ')}</span>
-          <Button
-            variant="ghost"
-            onClick={clearAllFilters}
-            className="ml-2 h-auto p-0 text-muted-foreground underline underline-offset-2 hover:bg-transparent hover:text-foreground"
-          >
-            Clear
-          </Button>
-        </p>
-      ) : null}
+        {activeFilterLabels.length > 0 ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3">
+            {groupedFilters.type ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('type', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
+                style={{
+                  borderColor: getPokemonTypeLightColors(groupedFilters.type).border,
+                  backgroundColor: getPokemonTypeLightColors(groupedFilters.type).bg,
+                  color: getPokemonTypeLightColors(groupedFilters.type).text,
+                }}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getPokemonTypeLogoUrl(groupedFilters.type) ? (
+                    <PokemonTypeLogo
+                      logoUrl={getPokemonTypeLogoUrl(groupedFilters.type)!}
+                      color={getPokemonTypeLogoColor(groupedFilters.type)}
+                    />
+                  ) : null}
+                  <span>{groupedFilters.type}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
+              </Button>
+            ) : null}
+            {groupedFilters.generation ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('generation', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                {generationFilterLabel(groupedFilters.generation)}{' '}
+                <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.list ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('list', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                {groupedFilters.list} <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.illustrator ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('illustrator', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getCollectionBadgeIcon(groupedFilters.illustrator) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.illustrator)}</span>
+                  ) : null}
+                  <span>{groupedFilters.illustrator}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
+              </Button>
+            ) : null}
+            {groupedFilters.expansion ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('expansion', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                {expansionFilters.find((entry) => entry.slug === groupedFilters.expansion)?.label ??
+                  groupedFilters.expansion}{' '}
+                <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.pokemon ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('pokemon', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                #{groupedFilters.pokemon} <span className="ml-1 text-[10px] opacity-60">×</span>
+              </Button>
+            ) : null}
+            {groupedFilters.themes ? (
+              <Button
+                variant="filterChip"
+                aria-pressed
+                onClick={() => applyGroupedFilter('themes', null)}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
+              >
+                <span className="inline-flex items-center gap-1.5">
+                  {getCollectionBadgeIcon(groupedFilters.themes) ? (
+                    <span aria-hidden>{getCollectionBadgeIcon(groupedFilters.themes)}</span>
+                  ) : null}
+                  <span>{groupedFilters.themes}</span>
+                  <span className="text-[10px] opacity-60">×</span>
+                </span>
+              </Button>
+            ) : null}
+            <Button
+              variant="ghost"
+              onClick={clearAllFilters}
+              className="ml-auto h-auto px-2 py-1 text-xs text-muted-foreground hover:text-foreground"
+            >
+              Clear all
+            </Button>
+          </div>
+        ) : null}
+      </div>
 
       {filteredPosts.length ? (
         <>
@@ -846,13 +915,16 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                       ★ Legendary
                     </span>
                   ) : null}
-                  {post.speciesFilterTags.slice(0, 6).map((speciesSlug) => (
+                  {(post.featuredSpeciesFilterTags ?? []).map((speciesSlug) => (
                     <Button
                       variant="filterChip"
-                      aria-pressed={directFilter === speciesSlug}
+                      aria-pressed={isFilterValueActive(speciesSlug, groupedFilters, directFilter)}
                       key={`${post.slug}-${speciesSlug}`}
                       onClick={() =>
-                        applyDirectFilter(directFilter === speciesSlug ? null : speciesSlug)
+                        applyGroupedFilter(
+                          'pokemon',
+                          groupedFilters.pokemon === speciesSlug ? null : speciesSlug
+                        )
                       }
                       className={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground aria-pressed:bg-primary aria-pressed:text-primary-foreground [@media(hover:hover)]:hover:bg-muted/80`}
                     >
@@ -885,25 +957,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   )
 }
 
-/** Placeholder for blog index: filter chips + first row of posts (9). */
+/** Placeholder for blog index: filter box + first row of posts (9). */
 export function BlogGridSkeleton() {
   return (
-    <div className="flex flex-col gap-8" aria-busy="true" aria-label="Loading blog posts">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-wrap gap-2">
-          <div className="h-8 w-14 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-20 animate-pulse rounded-full bg-muted" />
-          <div className="h-8 w-16 animate-pulse rounded-full bg-muted" />
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {Array.from({ length: 6 }, (_, index) => (
-            <div key={index} className="h-8 w-24 animate-pulse rounded-full bg-muted" />
-          ))}
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {Array.from({ length: 4 }, (_, index) => (
-            <div key={index} className="h-8 w-28 animate-pulse rounded-full bg-muted" />
+    <div className="flex flex-col gap-6" aria-busy="true" aria-label="Loading blog posts">
+      <div className="rounded-2xl border bg-card/50 p-4 shadow-sm">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+          {Array.from({ length: 5 }, (_, index) => (
+            <div key={index} className="grid gap-1.5">
+              <div className="h-3.5 w-16 animate-pulse rounded bg-muted" />
+              <div className="h-9 animate-pulse rounded-xl bg-muted" />
+            </div>
           ))}
         </div>
       </div>

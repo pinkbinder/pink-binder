@@ -1,11 +1,18 @@
-import { buildScrydexCardImageUrls, resolveTcgCardImageUrls } from '@repo/marketplaces/tcgplayer'
+import {
+  buildScrydexCardImageUrls,
+  preferredTcgCardImageUrl,
+  resolveTcgCardImageUrls,
+} from '@repo/marketplaces/tcgplayer'
 
 export {
   buildPokemontcgImageFallbacks,
   buildScrydexCardImageUrls,
   buildTcgdexImageUrls,
+  heroStripImageCandidates,
   isDisplayableTcgCardImageUrl,
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
+  preferTcgdexStripImageUrl,
   resolveTcgCardImageUrls,
   tcgCardImageCandidates,
   tcgplayerProductUrl,
@@ -23,12 +30,18 @@ import { coercePokemonTcgCardImageUrls } from '../pokemon/image-urls'
 
 export { coercePokemonTcgCardImageUrls } from '../pokemon/image-urls'
 
+/** Blog hero strips — low-res first; matches {@link preferredTcgCardImageUrl} reliability. */
 export function tcgCardHeroImageUrl(cardId: string): string | undefined {
   const id = cardId.trim()
   if (!id) {
     return undefined
   }
-  return resolveTcgCardImageUrls(id).imageLarge
+  const urls = resolveTcgCardImageUrls(id)
+  const preferred = preferredTcgCardImageUrl(urls)
+  if (preferred) {
+    return preferred
+  }
+  return urls.imageSmall?.trim() || urls.imageLarge?.trim() || undefined
 }
 
 export function enrichPokemonTcgCardImages(card: PokemonTcgCard): PokemonTcgCard {

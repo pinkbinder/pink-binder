@@ -78,6 +78,9 @@ export type { TcgProductLine } from './types'
 export {
   isDisplayableTcgCardImageUrl,
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
+  preferTcgdexStripImageUrl,
+  heroStripImageCandidates,
   tcgCardImageCandidates,
   resolveTcgCardImageUrls,
   buildPokemontcgImageFallbacks,
@@ -160,14 +163,24 @@ const DEFAULT_SPECIES_LIMIT = 36
 export async function getPokemonTcgCards(
   options: GetPokemonTcgCardsOptions
 ): Promise<TcgCardRecord[]> {
-  const normalized: GetPokemonTcgCardsOptions = {
-    ...options,
-    speciesName: options.speciesName.trim(),
-    limit: options.limit ?? DEFAULT_SPECIES_LIMIT,
+  const speciesName = options.speciesName?.trim() ?? ''
+  const artistName = options.artistName?.trim()
+  const artistOnly = options.artistOnly === true
+
+  if (!artistOnly && !speciesName) {
+    return []
   }
 
-  if (!normalized.speciesName) {
+  if (artistOnly && !artistName) {
     return []
+  }
+
+  const normalized: GetPokemonTcgCardsOptions = {
+    ...options,
+    speciesName: speciesName || undefined,
+    artistName,
+    artistOnly,
+    limit: options.limit ?? DEFAULT_SPECIES_LIMIT,
   }
 
   const [tcgdexCards, pokemontcgCards] = await Promise.all([

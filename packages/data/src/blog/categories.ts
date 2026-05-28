@@ -2,5 +2,8 @@
 
 export const SPECIES_GUIDES_CATEGORY = 'Pokemon Species Guides'
 
-/** @deprecated Use {@link SPECIES_GUIDES_CATEGORY}. */
-export const CUTE_GUIDES_CATEGORY = SPECIES_GUIDES_CATEGORY
+/** Generation overview posts (`generation--generation-N` → `/posts/generation/N/overview`). */
+export const GENERATIONS_GUIDE_CATEGORY = 'Generations Guide'
+
+/** @deprecated Use {@link GENERATIONS_GUIDE_CATEGORY}. */
+export const GENERATIONS_GUIDES_CATEGORY = GENERATIONS_GUIDE_CATEGORY

@@ -21,7 +21,7 @@ export function BlogPostHeader({
 }) {
   return (
     <header className="mb-8">
-      <nav aria-label="Breadcrumb" className="mb-4">
+      <nav aria-label="Breadcrumb" className="mb-2 md:mb-4">
         <ol className="flex flex-wrap items-center gap-1.5 text-sm">
           {breadcrumbItems.map((item, index) => (
             <li key={`${item.label}-${index}`} className="contents">

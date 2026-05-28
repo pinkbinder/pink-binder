@@ -1,0 +1,31 @@
+---
+description: Always remove stale/dead code — no legacy fallbacks, feature flags for retired paths, or unused functions
+alwaysApply: true
+---
+
+# No stale code
+
+When a system is replaced or migrated, **immediately remove** all leftover artefacts from the old approach:
+
+- Feature flags that gate a retired path (e.g. `isDiskLoaderEnabled`, `BLOG_DISK_LOADER`)
+- Functions only reachable through a removed flag or deleted caller
+- In-memory caches that existed solely to speed up now-deleted runtime generation
+- Async wrappers whose only purpose was to warm a now-removed cache
+- Barrel re-exports of deleted functions
+- Imports of deleted modules
+- Dead fallback branches (`if (legacyEnabled) { … } else { newPath }` → keep only `newPath`)
+
+## Why
+
+Stale code misleads future contributors, inflates bundle size, and creates phantom type errors when the surrounding code evolves.
+
+## Workflow
+
+1. After completing a migration, grep for symbols from the old system across `src/`, `apps/`, and `packages/ui/`.
+2. If a symbol has zero external callers (apps, UI, or other packages), delete it.
+3. If a function is only called by transform scripts (not at runtime), it may still live in `src/` so scripts can import it — that is acceptable. But it must not be in the app's critical path.
+4. Run `pnpm validate` to confirm zero regressions.
+
+## Blog-specific note
+
+The blog is **CMS-backed**: pre-generated JSON in `cache/normalized/blogs/` is the single source of truth at render time. The `loader.ts` reader + `posts.ts` adapters read from disk unconditionally — no runtime template generation or roundup cache warming in the request path.

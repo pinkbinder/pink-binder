@@ -248,14 +248,14 @@ export const SPECIES_COLLECTIONS = {
   },
   'yuka-morii': {
     slug: 'yuka-morii',
-    title: 'Yuka Morii Art',
+    title: 'Yuka Morii',
     description:
       "Pokémon illustrated in Yuka Morii's signature clay-sculpture style — hand-crafted models photographed to create her iconic 3D card artwork.",
     featuredSpecies: ['Clefairy', 'Jigglypuff', 'Pikachu', 'Chansey', 'Froakie'],
   },
   'asako-ito': {
     slug: 'asako-ito',
-    title: 'Asako Ito Art',
+    title: 'Asako Ito',
     description:
       "Pokémon illustrated in Asako Ito's distinctive crochet amigurumi style — hand-knitted fabric models that give each Pokémon a soft, tactile charm.",
     featuredSpecies: ['Espurr', 'Swirlix', 'Goomy', 'Munna', 'Audino'],
@@ -457,6 +457,12 @@ export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
 ]
 
 const SORT_INDEX = new Map(SPECIES_COLLECTION_SORT_ORDER.map((slug, index) => [slug, index]))
+
+/** Artist-themed collections that ship roundup content via `illustrator--*` blog posts. */
+export const ARTIST_COLLECTIONS_WITH_ILLUSTRATOR_BLOG = new Set<SpeciesCollectionSlug>([
+  'asako-ito',
+  'yuka-morii',
+])
 
 export function sortSpeciesCollections(
   collections: SpeciesCollectionSlug[]
