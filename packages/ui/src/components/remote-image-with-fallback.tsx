@@ -12,6 +12,7 @@ export function RemoteImageWithFallback({
   fill = true,
   width,
   height,
+  priority = false,
   onExhausted,
 }: {
   candidates: string[]
@@ -21,6 +22,8 @@ export function RemoteImageWithFallback({
   fill?: boolean
   width?: number
   height?: number
+  /** Above-the-fold LCP candidates — sets eager loading in Next.js Image. */
+  priority?: boolean
   /** Called when every candidate URL failed to load. */
   onExhausted?: () => void
 }) {
@@ -45,6 +48,7 @@ export function RemoteImageWithFallback({
       height={fill ? undefined : height}
       className={className}
       sizes={sizes}
+      priority={priority}
       unoptimized={shouldBypassNextImageOptimization(src)}
       onError={() => {
         setIndex((current) => {

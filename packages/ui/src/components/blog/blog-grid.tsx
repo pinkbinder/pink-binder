@@ -15,6 +15,7 @@ import {
   BLOG_FILTER_GROUP_LABELS,
   extractIllustratorFilters,
   extractRoundupListFilters,
+  postMatchesListFilter,
   extractTypeFilters,
   getFilterValueForCategory,
   postMatchesExpansionFilter,
@@ -241,7 +242,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       if (groupedFilters.generation && !post.categories.includes(groupedFilters.generation)) {
         return false
       }
-      if (groupedFilters.list && !post.categories.includes(groupedFilters.list)) {
+      if (groupedFilters.list && !postMatchesListFilter(post, groupedFilters.list)) {
         return false
       }
       if (groupedFilters.illustrator && !post.categories.includes(groupedFilters.illustrator)) {

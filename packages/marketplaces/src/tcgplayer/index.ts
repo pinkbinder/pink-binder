@@ -78,6 +78,7 @@ export type { TcgProductLine } from './types'
 export {
   isDisplayableTcgCardImageUrl,
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
   preferTcgdexStripImageUrl,
   heroStripImageCandidates,
   tcgCardImageCandidates,

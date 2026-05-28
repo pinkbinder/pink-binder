@@ -11,6 +11,7 @@ export {
   heroStripImageCandidates,
   isDisplayableTcgCardImageUrl,
   preferredTcgCardImageUrl,
+  largestTcgCardImageUrl,
   preferTcgdexStripImageUrl,
   resolveTcgCardImageUrls,
   tcgCardImageCandidates,
