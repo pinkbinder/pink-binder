@@ -68,9 +68,11 @@ export {
   isTcgplayerCdnImageUrl,
   setTcgcsvPromoImageMap,
   tcgcsvGroupForCardId,
+  tcgplayerCdnImageUrlsFromSmallUrl,
   TCGCSV_PROMO_SET_TO_GROUP,
   type TcgcsvPromoCardRef,
   type TcgcsvPromoImageEntry,
+  type TcgplayerCdnImageUrls,
 } from './tcgcsv-promo-images'
 
 export type { TcgProductLine } from './types'

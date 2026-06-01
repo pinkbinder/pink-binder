@@ -45,7 +45,14 @@ const TCGCSV_NAME_ONLY_SETS = new Set(['mfb'])
 export type TcgcsvPromoImageEntry = {
   imageSmall: string
   imageLarge: string
+  imageLargeFallbacks?: string[]
   tcgplayerUrl?: string
+}
+
+export type TcgplayerCdnImageUrls = {
+  small: string
+  large: string
+  largeFallbacks: string[]
 }
 
 let injectedImageByCardId: Record<string, TcgcsvPromoImageEntry> | null = null
@@ -71,12 +78,35 @@ export function isTcgplayerCdnImageUrl(url: string | null | undefined): boolean 
   }
 }
 
-export function buildTcgplayerCdnImageUrls(productId: number): { small: string; large: string } {
+/** TCGPlayer CDN scan sizes: 200w thumbnail, 400w detail, 1000×1000 full scan. */
+export function buildTcgplayerCdnImageUrls(productId: number): TcgplayerCdnImageUrls {
   const base = `https://${TCGPLAYER_CDN.host}/product/${productId}`
   return {
     small: `${base}_200w.jpg`,
-    large: `${base}_in_1000x1000.jpg`,
+    large: `${base}_400w.jpg`,
+    largeFallbacks: [`${base}_in_1000x1000.jpg`],
   }
+}
+
+/** Build 400w + 1000×1000 URLs from a TCGPlayer CDN `_200w` product image URL. */
+export function tcgplayerCdnImageUrlsFromSmallUrl(
+  imageSmall: string
+): TcgplayerCdnImageUrls | null {
+  const trimmed = imageSmall.trim()
+  const match = trimmed.match(
+    new RegExp(
+      `^https://${TCGPLAYER_CDN.host.replace(/\./g, '\\.')}/product/(\\d+)_200w\\.jpg$`,
+      'i'
+    )
+  )
+  if (!match?.[1]) {
+    return null
+  }
+  const productId = Number.parseInt(match[1], 10)
+  if (!Number.isFinite(productId) || productId <= 0) {
+    return null
+  }
+  return buildTcgplayerCdnImageUrls(productId)
 }
 
 /** TCGPlayer CDN small scan from a TCGCSV product row (imageUrl or synthesized from productId). */
@@ -225,17 +255,15 @@ export async function buildTcgcsvPromoImageMap(
 
     const fromImageUrl = product.imageUrl?.trim()
     const cdn =
-      fromImageUrl && isTcgplayerCdnImageUrl(fromImageUrl)
-        ? {
-            small: fromImageUrl,
-            large: fromImageUrl.replace(/_200w\.jpg$/i, '_in_1000x1000.jpg'),
-          }
-        : buildTcgplayerCdnImageUrls(productId)
+      (fromImageUrl && isTcgplayerCdnImageUrl(fromImageUrl)
+        ? tcgplayerCdnImageUrlsFromSmallUrl(fromImageUrl)
+        : null) ?? buildTcgplayerCdnImageUrls(productId)
 
     const tcgplayerUrl = product.url?.trim()
     map[trimmedId.toLowerCase()] = {
       imageSmall: cdn.small,
       imageLarge: cdn.large,
+      ...(cdn.largeFallbacks.length ? { imageLargeFallbacks: cdn.largeFallbacks } : {}),
       ...(tcgplayerUrl?.includes('tcgplayer.com/product') ? { tcgplayerUrl } : {}),
     }
   }

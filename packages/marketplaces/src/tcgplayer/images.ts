@@ -87,6 +87,7 @@ export function resolveTcgCardImageUrls(
         imageLargeFallbacks: distinctUrlsExcluding(
           imageLarge,
           promo.imageLarge,
+          ...(promo.imageLargeFallbacks ?? []),
           tcgdex?.large,
           scrydexCatalog.large
         ),
@@ -104,6 +105,7 @@ export function resolveTcgCardImageUrls(
       ),
       imageLargeFallbacks: distinctUrlsExcluding(
         promo.imageLarge,
+        ...(promo.imageLargeFallbacks ?? []),
         tcgdex?.large,
         scrydexCatalog.large,
         scrydexTcgdex.large
