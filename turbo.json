@@ -1,7 +1,15 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://v2-9-16.turborepo.dev/schema.json",
   "globalDependencies": [".env", ".env.local"],
-  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "BLOB_*", "NEXT_PUBLIC_*"],
+  "globalEnv": [
+    "EBAY_*",
+    "ETSY_*",
+    "WHATNOT_*",
+    "LIVE_SHOWS_*",
+    "BLOG_*",
+    "BLOB_*",
+    "NEXT_PUBLIC_*"
+  ],
   "globalPassThroughEnv": [
     "EBAY_*",
     "ETSY_*",
