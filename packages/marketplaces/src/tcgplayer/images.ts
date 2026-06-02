@@ -13,6 +13,13 @@ import { getTcgcsvPromoImage } from './tcgcsv-promo-images'
 import { getTcgPocketImage } from './tcg-pocket-images'
 import { isTrainerKitCardId, isTcgPocketCardId } from './product-line'
 import { getTrainerKitTcgplayerImage } from './trainer-kit-tcgplayer'
+import { buildShinydevRegionalMcdImageUrls } from './shinydev-regional-mcd'
+
+export interface ResolveTcgCardImageOptions {
+  /** Species file slug (e.g. `slowpoke`) — required for French McDonald's ShinyDev scans. */
+  speciesSlug?: string
+  cardName?: string | null
+}
 
 export interface TcgCardImageUrls {
   imageSmall: string
@@ -55,7 +62,8 @@ export function resolveTcgCardImageUrls(
   cardId: string,
   apiImages?: { small?: string | null; large?: string | null } | null,
   tcgdexImageBase?: string | null,
-  tcgplayerUrl?: string | null
+  tcgplayerUrl?: string | null,
+  options?: ResolveTcgCardImageOptions
 ): TcgCardImageUrls {
   const promo =
     getTcgcsvPromoImage(cardId) ??
@@ -152,8 +160,34 @@ export function resolveTcgCardImageUrls(
   const pokemontcgLarge = pokemontcgApi.pokemontcgLarge
 
   const tcgdxSetUnsupported = isTcgdexUnsupportedSetId(tcgCardSetId(cardId))
+  const speciesSlug = options?.speciesSlug?.trim()
 
   if (tcgdxSetUnsupported) {
+    const shinydev =
+      speciesSlug && buildShinydevRegionalMcdImageUrls(cardId, speciesSlug, options?.cardName)
+
+    if (shinydev) {
+      return {
+        imageSmall: shinydev.imageSmall,
+        imageLarge: shinydev.imageLarge,
+        imageSmallFallbacks: distinctUrlsExcluding(
+          shinydev.imageSmall,
+          scrydexCatalog.small,
+          scrydexTcgdex.small,
+          pokemontcgSmall,
+          pokemontcgSynth?.small
+        ),
+        imageLargeFallbacks: distinctUrlsExcluding(
+          shinydev.imageLarge,
+          ...shinydev.imageLargeFallbacks,
+          scrydexCatalog.large,
+          scrydexTcgdex.large,
+          pokemontcgLarge,
+          pokemontcgSynth?.large
+        ),
+      }
+    }
+
     const imageSmall =
       firstDistinctUrl(
         scrydexCatalog.small,
