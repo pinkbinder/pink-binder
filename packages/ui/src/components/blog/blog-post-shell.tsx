@@ -5,12 +5,10 @@ import { BlogMainLayout } from './blog-main-layout'
 
 export function BlogPostShell({
   children,
-  returnHref,
   jsonLd,
   landingUrl,
 }: {
   children: ReactNode
-  returnHref?: string | null
   jsonLd?: unknown
   landingUrl: string
 }) {
@@ -18,7 +16,7 @@ export function BlogPostShell({
     <BlogMainLayout landingUrl={landingUrl} linkBlogTitleToHome compactMobile>
       {jsonLd ? <JsonLdScript data={jsonLd} /> : null}
       <article className="mx-auto w-full max-w-3xl">
-        <BlogBackLink returnHref={returnHref} />
+        <BlogBackLink />
         {children}
       </article>
     </BlogMainLayout>
