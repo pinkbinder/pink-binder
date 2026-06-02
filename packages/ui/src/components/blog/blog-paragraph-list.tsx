@@ -1,3 +1,4 @@
+import { BlogInlineText } from '../../lib/blog-inline-text'
 import { cn } from '../../lib/utils'
 
 export function BlogParagraphList({
@@ -15,9 +16,12 @@ export function BlogParagraphList({
 
   return (
     <div className={cn('space-y-3', className)}>
-      {paragraphs.map((paragraph) => (
-        <p key={paragraph} className={cn('leading-relaxed text-foreground/85', paragraphClassName)}>
-          {paragraph}
+      {paragraphs.map((paragraph, index) => (
+        <p
+          key={`${index}-${paragraph.slice(0, 48)}`}
+          className={cn('leading-relaxed text-foreground/85', paragraphClassName)}
+        >
+          <BlogInlineText text={paragraph} />
         </p>
       ))}
     </div>
