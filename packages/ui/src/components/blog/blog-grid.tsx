@@ -21,8 +21,13 @@ import {
   extractTypeFilters,
   extractTagCatalogOptions,
   filterTagCatalogOptionsBySearch,
+  catalogSelectValueFromFilters,
   getFilterValueForCategory,
+  isCatalogTagRedundantWithFacet,
   postMatchesExpansionFilter,
+  resolveCatalogTagToFacet,
+  type CatalogTagFacetContext,
+  type CatalogTagFacetGroup,
   postMatchesIllustratorFilter,
   postMatchesPokemonFilter,
   postMatchesTagFilter,
@@ -59,10 +64,15 @@ function isFilterValueActive(
   filterValue: string,
   grouped: GroupedFilters,
   direct: string | null,
-  tag: string | null
+  tag: string | null,
+  catalogSelectValue: string | null,
+  ctx: CatalogTagFacetContext,
+  catalogOptions: readonly TagCatalogOption[]
 ): boolean {
-  return (
+  const normalized = filterValue.toLowerCase()
+  if (
     tag === filterValue ||
+    tag === normalized ||
     direct === filterValue ||
     grouped.type === filterValue ||
     grouped.generation === filterValue ||
@@ -71,7 +81,23 @@ function isFilterValueActive(
     grouped.themes === filterValue ||
     grouped.expansion === filterValue ||
     grouped.pokemon === filterValue
-  )
+  ) {
+    return true
+  }
+
+  if (catalogSelectValue) {
+    const catalogEntry = catalogOptions.find((entry) => entry.value === catalogSelectValue)
+    const resolved = resolveCatalogTagToFacet(
+      catalogSelectValue,
+      catalogEntry?.label ?? catalogSelectValue,
+      ctx
+    )
+    if (resolved?.facetValue === filterValue) {
+      return true
+    }
+  }
+
+  return false
 }
 
 type FilterGroupKey =
@@ -166,6 +192,26 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     () => new Set(tagCatalogOptions.map((entry) => entry.value)),
     [tagCatalogOptions]
   )
+  const catalogFacetContext = useMemo<CatalogTagFacetContext>(
+    () => ({
+      typeFilters,
+      generationFilters,
+      illustratorFilters,
+      themeFilters,
+      roundupListFilters,
+      pokemonFilters,
+      expansionFilters,
+    }),
+    [
+      typeFilters,
+      generationFilters,
+      illustratorFilters,
+      themeFilters,
+      roundupListFilters,
+      pokemonFilters,
+      expansionFilters,
+    ]
+  )
   const typeVisuals = useMemo(
     () =>
       Object.fromEntries(
@@ -221,7 +267,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       nextDirect = null
     }
 
-    setGroupedFilters({
+    const nextGrouped: GroupedFilters = {
       type: nextType && typeFilterSet.has(nextType) ? nextType : null,
       generation: nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
       list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
@@ -230,9 +276,48 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       expansion: nextExpansion && expansionFilterSet.has(nextExpansion) ? nextExpansion : null,
       pokemon: nextPokemon && pokemonFilterSet.has(nextPokemon) ? nextPokemon : null,
       themes: nextThemes && themeFilterSet.has(nextThemes) ? nextThemes : null,
-    })
+    }
+
+    let nextTagNormalized =
+      nextTag && tagCatalogSet.has(nextTag.toLowerCase()) ? nextTag.toLowerCase() : null
+    if (nextTagNormalized) {
+      const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTagNormalized)
+      const promoted = resolveCatalogTagToFacet(
+        nextTagNormalized,
+        catalogEntry?.label ?? nextTagNormalized,
+        catalogFacetContext
+      )
+      if (promoted) {
+        const facetValid = (() => {
+          switch (promoted.group) {
+            case 'type':
+              return typeFilterSet.has(promoted.facetValue)
+            case 'generation':
+              return generationFilterSet.has(promoted.facetValue)
+            case 'list':
+              return roundupListFilterSet.has(promoted.facetValue)
+            case 'illustrator':
+              return illustratorFilterSet.has(promoted.facetValue)
+            case 'expansion':
+              return expansionFilterSet.has(promoted.facetValue)
+            case 'pokemon':
+              return pokemonFilterSet.has(promoted.facetValue)
+            case 'themes':
+              return themeFilterSet.has(promoted.facetValue)
+            default:
+              return false
+          }
+        })()
+        if (facetValid) {
+          nextGrouped[promoted.group] = promoted.facetValue
+          nextTagNormalized = null
+        }
+      }
+    }
+
+    setGroupedFilters(nextGrouped)
     setDirectFilter(nextDirect)
-    setTagFilter(nextTag && tagCatalogSet.has(nextTag.toLowerCase()) ? nextTag.toLowerCase() : null)
+    setTagFilter(nextTagNormalized)
   }, [
     searchParams,
     allGroupedFilterValues,
@@ -244,6 +329,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     expansionFilterSet,
     pokemonFilterSet,
     tagCatalogSet,
+    tagCatalogOptions,
+    catalogFacetContext,
   ])
 
   const hasActiveFilters = useMemo(
@@ -290,8 +377,17 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       if (groupedFilters.pokemon && !postMatchesPokemonFilter(post, groupedFilters.pokemon)) {
         return false
       }
-      if (tagFilter && !postMatchesTagFilter(post, tagFilter)) {
-        return false
+      if (tagFilter) {
+        const catalogEntry = tagCatalogOptions.find((entry) => entry.value === tagFilter)
+        const tagRedundant = isCatalogTagRedundantWithFacet(
+          tagFilter,
+          catalogEntry?.label ?? tagFilter,
+          groupedFilters,
+          catalogFacetContext
+        )
+        if (!tagRedundant && !postMatchesTagFilter(post, tagFilter)) {
+          return false
+        }
       }
       if (!directFilter) {
         return true
@@ -314,7 +410,15 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       return sortPostsForExpansionFilter(filtered, groupedFilters.expansion)
     }
     return filtered
-  }, [posts, groupedFilters, directFilter, tagFilter, illustratorFilterSet])
+  }, [
+    posts,
+    groupedFilters,
+    directFilter,
+    tagFilter,
+    illustratorFilterSet,
+    tagCatalogOptions,
+    catalogFacetContext,
+  ])
 
   const postsToRender = useMemo(() => {
     return filteredPosts.slice(0, visibleCount)
@@ -406,20 +510,93 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
     router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
   }
 
+  function clearTagIfMappedToGroup(
+    group: CatalogTagFacetGroup,
+    nextTag: string | null
+  ): string | null {
+    if (!nextTag) {
+      return nextTag
+    }
+    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTag)
+    const resolved = resolveCatalogTagToFacet(
+      nextTag,
+      catalogEntry?.label ?? nextTag,
+      catalogFacetContext
+    )
+    if (resolved?.group === group) {
+      return null
+    }
+    return nextTag
+  }
+
   function applyGroupedFilter(group: FilterGroupKey, nextValue: string | null) {
     const nextGroupedFilters = {
       ...groupedFilters,
       [group]: nextValue,
     }
+    const nextTag = clearTagIfMappedToGroup(group, tagFilter)
     setGroupedFilters(nextGroupedFilters)
     setDirectFilter(null)
-    pushFilterParams(nextGroupedFilters, null, tagFilter)
+    setTagFilter(nextTag)
+    pushFilterParams(nextGroupedFilters, null, nextTag)
   }
 
   function applyTagFilter(nextTag: string | null) {
+    if (!nextTag) {
+      setTagFilter(null)
+      setDirectFilter(null)
+      pushFilterParams(groupedFilters, null, null)
+      return
+    }
+
+    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTag)
+    const promoted = resolveCatalogTagToFacet(
+      nextTag,
+      catalogEntry?.label ?? nextTag,
+      catalogFacetContext
+    )
+    if (promoted) {
+      const current = groupedFilters[promoted.group]
+      const nextFacet = current === promoted.facetValue ? null : promoted.facetValue
+      applyGroupedFilter(promoted.group, nextFacet)
+      return
+    }
+
     setTagFilter(nextTag)
     setDirectFilter(null)
     pushFilterParams(groupedFilters, null, nextTag)
+  }
+
+  function applyCatalogFilter(nextCatalogValue: string | null) {
+    if (!nextCatalogValue) {
+      const mirrored = catalogSelectValueFromFilters(
+        tagFilter,
+        groupedFilters,
+        tagCatalogOptions,
+        catalogFacetContext
+      )
+      if (mirrored) {
+        const catalogEntry = tagCatalogOptions.find((entry) => entry.value === mirrored)
+        const resolved = resolveCatalogTagToFacet(
+          mirrored,
+          catalogEntry?.label ?? mirrored,
+          catalogFacetContext
+        )
+        if (resolved) {
+          applyGroupedFilter(resolved.group, null)
+          return
+        }
+      }
+      applyTagFilter(null)
+      return
+    }
+    const currentCatalog = catalogSelectValueFromFilters(
+      tagFilter,
+      groupedFilters,
+      tagCatalogOptions,
+      catalogFacetContext
+    )
+    applyTagFilter(nextCatalogValue === currentCatalog ? null : nextCatalogValue)
   }
 
   function applyDirectFilter(nextFilter: string | null) {
@@ -470,7 +647,14 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       return
     }
     if (tagCatalogSet.has(filterValue.toLowerCase())) {
-      applyTagFilter(tagFilter === filterValue.toLowerCase() ? null : filterValue.toLowerCase())
+      const catalogValue = filterValue.toLowerCase()
+      const currentCatalog = catalogSelectValueFromFilters(
+        tagFilter,
+        groupedFilters,
+        tagCatalogOptions,
+        catalogFacetContext
+      )
+      applyCatalogFilter(currentCatalog === catalogValue ? null : catalogValue)
       return
     }
     applyDirectFilter(directFilter === filterValue ? null : filterValue)
@@ -711,10 +895,34 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       .sort((a, b) => (order.get(a.value) ?? 0) - (order.get(b.value) ?? 0))
   }, [])
 
-  const selectedTagOption = useMemo(
-    () => tagOptions.find((entry) => entry.value === tagFilter) ?? null,
-    [tagOptions, tagFilter]
+  const catalogSelectValue = useMemo(
+    () =>
+      catalogSelectValueFromFilters(
+        tagFilter,
+        groupedFilters,
+        tagCatalogOptions,
+        catalogFacetContext
+      ),
+    [tagFilter, groupedFilters, tagCatalogOptions, catalogFacetContext]
   )
+
+  const selectedTagOption = useMemo(
+    () => tagOptions.find((entry) => entry.value === catalogSelectValue) ?? null,
+    [tagOptions, catalogSelectValue]
+  )
+
+  const showCatalogTagChip = useMemo(() => {
+    if (!tagFilter) {
+      return false
+    }
+    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === tagFilter)
+    return !isCatalogTagRedundantWithFacet(
+      tagFilter,
+      catalogEntry?.label ?? tagFilter,
+      groupedFilters,
+      catalogFacetContext
+    )
+  }, [tagFilter, tagCatalogOptions, groupedFilters, catalogFacetContext])
 
   const tagFilterLabel = selectedTagOption?.label ?? tagFilter
 
@@ -777,7 +985,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
         groupedFilters.pokemon)
       : null,
     groupedFilters.themes,
-    tagFilterLabel,
+    showCatalogTagChip ? tagFilterLabel : null,
     directFilter,
   ].filter((value): value is string => Boolean(value))
 
@@ -829,8 +1037,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
               </div>
               <SearchableSelect
                 options={tagOptions}
-                value={tagFilter}
-                onValueChange={(v) => applyTagFilter(v)}
+                value={catalogSelectValue}
+                onValueChange={(v) => applyCatalogFilter(v)}
                 placeholder="Find by tag…"
                 clearLabel="All tags"
                 filterOptions={filterTagOptions}
@@ -985,11 +1193,11 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
 
         {activeFilterLabels.length > 0 ? (
           <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3">
-            {tagFilter ? (
+            {showCatalogTagChip ? (
               <Button
                 variant="filterChip"
                 aria-pressed
-                onClick={() => applyTagFilter(null)}
+                onClick={() => applyCatalogFilter(null)}
                 className={`h-auto ${CLICKABLE_BADGE_CLASS} border-primary/30 bg-primary/10 text-primary`}
               >
                 <span className="inline-flex items-center gap-1.5">
@@ -1157,7 +1365,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                             filterValue,
                             groupedFilters,
                             directFilter,
-                            tagFilter
+                            tagFilter,
+                            catalogSelectValue,
+                            catalogFacetContext,
+                            tagCatalogOptions
                           )}
                           key={`${post.slug}-${category}`}
                           onClick={() => applyCategoryFilter(filterValue)}
@@ -1180,7 +1391,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                           filterValue,
                           groupedFilters,
                           directFilter,
-                          tagFilter
+                          tagFilter,
+                          catalogSelectValue,
+                          catalogFacetContext,
+                          tagCatalogOptions
                         )}
                         key={`${post.slug}-${category}`}
                         onClick={() => applyCategoryFilter(filterValue)}
@@ -1221,7 +1435,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
                         speciesSlug,
                         groupedFilters,
                         directFilter,
-                        tagFilter
+                        tagFilter,
+                        catalogSelectValue,
+                        catalogFacetContext,
+                        tagCatalogOptions
                       )}
                       key={`${post.slug}-${speciesSlug}`}
                       onClick={() =>
