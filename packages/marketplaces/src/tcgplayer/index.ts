@@ -91,8 +91,17 @@ export {
   buildScrydexCardImageUrls,
   buildTcgdexImageUrls,
   tcgplayerProductUrl,
+  type ResolveTcgCardImageOptions,
   type TcgCardImageUrls,
 } from './images'
+
+export {
+  SHINYDEV_CDN,
+  TCGDEX_REGIONAL_MCD_TO_SHINYDEV_SET,
+  buildShinydevRegionalMcdImageUrl,
+  buildShinydevRegionalMcdImageUrls,
+  isShinydevRegionalMcdSetId,
+} from './shinydev-regional-mcd'
 
 export {
   inferSetSeries,

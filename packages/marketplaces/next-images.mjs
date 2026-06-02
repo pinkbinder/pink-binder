@@ -8,6 +8,7 @@ const TCG_CARD_IMAGE_HOSTS = [
   'assets.tcgdex.net',
   'images.scrydex.com',
   'tcgplayer-cdn.tcgplayer.com',
+  'pokemon-cards-prod-public.shinydev.io',
 ]
 
 const POKEAPI_SPRITES_HOST = 'raw.githubusercontent.com'
