@@ -1,11 +1,12 @@
+'use client'
+
+import { buildBlogIndexReturnHref } from '@repo/data/client'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 
-interface BlogBackLinkProps {
-  returnHref?: string | null
-}
-
-export function BlogBackLink({ returnHref }: BlogBackLinkProps) {
-  const href = returnHref ?? '/'
+export function BlogBackLink() {
+  const searchParams = useSearchParams()
+  const href = buildBlogIndexReturnHref(Object.fromEntries(searchParams.entries()))
 
   return (
     <Link

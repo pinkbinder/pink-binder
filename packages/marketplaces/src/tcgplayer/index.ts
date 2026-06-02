@@ -68,9 +68,11 @@ export {
   isTcgplayerCdnImageUrl,
   setTcgcsvPromoImageMap,
   tcgcsvGroupForCardId,
+  tcgplayerCdnImageUrlsFromSmallUrl,
   TCGCSV_PROMO_SET_TO_GROUP,
   type TcgcsvPromoCardRef,
   type TcgcsvPromoImageEntry,
+  type TcgplayerCdnImageUrls,
 } from './tcgcsv-promo-images'
 
 export type { TcgProductLine } from './types'
@@ -82,14 +84,24 @@ export {
   preferTcgdexStripImageUrl,
   heroStripImageCandidates,
   tcgCardImageCandidates,
+  tcgCardThumbnailCandidates,
   resolveTcgCardImageUrls,
   buildPokemontcgImageFallbacks,
   buildPokemontcgImageUrlsFromCardId,
   buildScrydexCardImageUrls,
   buildTcgdexImageUrls,
   tcgplayerProductUrl,
+  type ResolveTcgCardImageOptions,
   type TcgCardImageUrls,
 } from './images'
+
+export {
+  SHINYDEV_CDN,
+  TCGDEX_REGIONAL_MCD_TO_SHINYDEV_SET,
+  buildShinydevRegionalMcdImageUrl,
+  buildShinydevRegionalMcdImageUrls,
+  isShinydevRegionalMcdSetId,
+} from './shinydev-regional-mcd'
 
 export {
   inferSetSeries,

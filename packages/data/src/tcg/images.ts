@@ -15,6 +15,7 @@ export {
   preferTcgdexStripImageUrl,
   resolveTcgCardImageUrls,
   tcgCardImageCandidates,
+  tcgCardThumbnailCandidates,
   tcgplayerProductUrl,
   type TcgCardImageUrls,
 } from '@repo/marketplaces/tcgplayer'

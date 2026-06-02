@@ -18,10 +18,14 @@ export interface SearchableSelectProps {
   value: string | null
   onValueChange: (value: string | null) => void
   placeholder?: string
+  /** Label for the clear row in the dropdown (defaults to placeholder, then "All"). */
+  clearLabel?: string
   label?: string
   className?: string
   /** Render a custom chip for the selected value (shown in trigger). */
   renderSelected?: (option: SearchableSelectOption) => React.ReactNode
+  /** Custom option filtering (e.g. fuzzy match); defaults to case-insensitive substring on label. */
+  filterOptions?: (options: SearchableSelectOption[], search: string) => SearchableSelectOption[]
 }
 
 export function SearchableSelect({
@@ -29,19 +33,25 @@ export function SearchableSelect({
   value,
   onValueChange,
   placeholder = 'All',
+  clearLabel,
   label,
   className,
   renderSelected,
+  filterOptions,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
   const inputRef = React.useRef<HTMLInputElement>(null)
+  const resolvedClearLabel = clearLabel ?? placeholder
 
   const filtered = React.useMemo(() => {
     if (!search) return options
+    if (filterOptions) {
+      return filterOptions(options, search)
+    }
     const lower = search.toLowerCase()
     return options.filter((opt) => opt.label.toLowerCase().includes(lower))
-  }, [options, search])
+  }, [options, search, filterOptions])
 
   const selectedOption = React.useMemo(
     () => options.find((opt) => opt.value === value) ?? null,
@@ -134,7 +144,7 @@ export function SearchableSelect({
               <span className="flex h-4 w-4 shrink-0 items-center justify-center">
                 {!value ? <Check className="h-3.5 w-3.5" /> : null}
               </span>
-              <span>{placeholder}</span>
+              <span>{resolvedClearLabel}</span>
             </button>
             {filtered.map((option) => (
               <button

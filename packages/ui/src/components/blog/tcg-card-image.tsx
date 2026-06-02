@@ -2,7 +2,7 @@
 
 import {
   preferredTcgCardImageUrl,
-  tcgCardImageCandidates,
+  tcgCardThumbnailCandidates,
   type PokemonTcgCard,
 } from '@repo/data/client'
 import { shouldBypassNextImageOptimization } from '@repo/data/client'
@@ -29,12 +29,12 @@ export function TcgCardImage({
   height,
 }: TcgCardImageProps) {
   const candidates = useMemo(() => {
-    const all = tcgCardImageCandidates(card)
+    const all = tcgCardThumbnailCandidates(card)
     const preferred = preferredTcgCardImageUrl(card)
     if (!preferred || all[0] === preferred) {
       return all
     }
-    return [preferred, ...all.filter((url) => url !== preferred)]
+    return [preferred, ...all.filter((url) => url !== preferred)].slice(0, 2)
   }, [card])
   const [candidateIndex, setCandidateIndex] = useState(0)
   const src = candidates[candidateIndex]

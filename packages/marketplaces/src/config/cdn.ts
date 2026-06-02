@@ -33,11 +33,14 @@ export const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com'] as cons
 /** Hostnames allowed in Next.js `images.remotePatterns` for Pokémon TCG card art. */
 export const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
 
+export const SHINYDEV_CDN_HOST = 'pokemon-cards-prod-public.shinydev.io' as const
+
 export const TCG_CARD_IMAGE_HOSTS = [
   POKEMON_TCG_CDN.imageHost,
   TCGDEX_CDN.assetsHost,
   SCRYDEX_CDN.host,
   TCGPLAYER_CDN_HOST,
+  SHINYDEV_CDN_HOST,
 ] as const
 
 export function buildScrydexCardImageUrls(
@@ -417,6 +420,18 @@ export function isTcgdexUnsupportedSetId(setId: string): boolean {
   return false
 }
 
+export function isShinydevCardImageUrl(url: string | null | undefined): boolean {
+  const trimmed = url?.trim()
+  if (!trimmed) {
+    return false
+  }
+  try {
+    return new URL(trimmed).hostname === SHINYDEV_CDN_HOST
+  } catch {
+    return false
+  }
+}
+
 export function isScrydexCardImageUrl(url: string | null | undefined): boolean {
   const trimmed = url?.trim()
   if (!trimmed) {
@@ -491,6 +506,7 @@ export function isDisplayableTcgCardImageUrl(url: string): boolean {
   if (
     isPokemontcgImageUrl(trimmed) ||
     isScrydexCardImageUrl(trimmed) ||
+    isShinydevCardImageUrl(trimmed) ||
     trimmed.includes(TCGPLAYER_CDN_HOST) ||
     isVercelBlobPublicUrl(trimmed)
   ) {

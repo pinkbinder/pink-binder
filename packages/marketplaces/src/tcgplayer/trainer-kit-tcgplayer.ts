@@ -58,6 +58,7 @@ export function getTrainerKitTcgplayerImage(cardId: string): TcgcsvPromoImageEnt
   return {
     imageSmall: cdn.small,
     imageLarge: cdn.large,
+    imageLargeFallbacks: cdn.largeFallbacks,
     tcgplayerUrl,
   }
 }

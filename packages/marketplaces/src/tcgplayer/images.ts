@@ -13,6 +13,13 @@ import { getTcgcsvPromoImage } from './tcgcsv-promo-images'
 import { getTcgPocketImage } from './tcg-pocket-images'
 import { isTrainerKitCardId, isTcgPocketCardId } from './product-line'
 import { getTrainerKitTcgplayerImage } from './trainer-kit-tcgplayer'
+import { buildShinydevRegionalMcdImageUrls } from './shinydev-regional-mcd'
+
+export interface ResolveTcgCardImageOptions {
+  /** Species file slug (e.g. `slowpoke`) — required for French McDonald's ShinyDev scans. */
+  speciesSlug?: string
+  cardName?: string | null
+}
 
 export interface TcgCardImageUrls {
   imageSmall: string
@@ -55,7 +62,8 @@ export function resolveTcgCardImageUrls(
   cardId: string,
   apiImages?: { small?: string | null; large?: string | null } | null,
   tcgdexImageBase?: string | null,
-  tcgplayerUrl?: string | null
+  tcgplayerUrl?: string | null,
+  options?: ResolveTcgCardImageOptions
 ): TcgCardImageUrls {
   const promo =
     getTcgcsvPromoImage(cardId) ??
@@ -87,6 +95,7 @@ export function resolveTcgCardImageUrls(
         imageLargeFallbacks: distinctUrlsExcluding(
           imageLarge,
           promo.imageLarge,
+          ...(promo.imageLargeFallbacks ?? []),
           tcgdex?.large,
           scrydexCatalog.large
         ),
@@ -104,6 +113,7 @@ export function resolveTcgCardImageUrls(
       ),
       imageLargeFallbacks: distinctUrlsExcluding(
         promo.imageLarge,
+        ...(promo.imageLargeFallbacks ?? []),
         tcgdex?.large,
         scrydexCatalog.large,
         scrydexTcgdex.large
@@ -150,8 +160,34 @@ export function resolveTcgCardImageUrls(
   const pokemontcgLarge = pokemontcgApi.pokemontcgLarge
 
   const tcgdxSetUnsupported = isTcgdexUnsupportedSetId(tcgCardSetId(cardId))
+  const speciesSlug = options?.speciesSlug?.trim()
 
   if (tcgdxSetUnsupported) {
+    const shinydev =
+      speciesSlug && buildShinydevRegionalMcdImageUrls(cardId, speciesSlug, options?.cardName)
+
+    if (shinydev) {
+      return {
+        imageSmall: shinydev.imageSmall,
+        imageLarge: shinydev.imageLarge,
+        imageSmallFallbacks: distinctUrlsExcluding(
+          shinydev.imageSmall,
+          scrydexCatalog.small,
+          scrydexTcgdex.small,
+          pokemontcgSmall,
+          pokemontcgSynth?.small
+        ),
+        imageLargeFallbacks: distinctUrlsExcluding(
+          shinydev.imageLarge,
+          ...shinydev.imageLargeFallbacks,
+          scrydexCatalog.large,
+          scrydexTcgdex.large,
+          pokemontcgLarge,
+          pokemontcgSynth?.large
+        ),
+      }
+    }
+
     const imageSmall =
       firstDistinctUrl(
         scrydexCatalog.small,
@@ -235,6 +271,19 @@ export function tcgCardImageCandidates(card: {
   const smallChain = chainUrls(card.imageSmall, card.imageSmallFallbacks)
   const largeChain = chainUrls(card.imageLarge, card.imageLargeFallbacks)
   return [...new Set([...smallChain, ...largeChain])]
+}
+
+/** Thumbnail contexts — small chain only, capped to limit fallback fetches. */
+export function tcgCardThumbnailCandidates(
+  card: {
+    imageLarge: string
+    imageSmall: string
+    imageSmallFallbacks?: string[]
+    imageLargeFallbacks?: string[]
+  },
+  maxCandidates = 2
+): string[] {
+  return tcgCardImageCandidates(card).slice(0, maxCandidates)
 }
 
 /** First URL in the fallback chain that is not a known-bad TCGdex asset path. */
