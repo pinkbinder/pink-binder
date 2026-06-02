@@ -649,6 +649,161 @@ export function extractTagCatalogOptions(posts: PostForTagCatalog[]): TagCatalog
     .sort((a, b) => a.label.localeCompare(b.label))
 }
 
+/** Facet groups that catalog tag search can drive (same axes as blog index dropdowns). */
+export type CatalogTagFacetGroup =
+  | 'type'
+  | 'generation'
+  | 'list'
+  | 'illustrator'
+  | 'expansion'
+  | 'pokemon'
+  | 'themes'
+
+export interface CatalogTagFacetResolution {
+  group: CatalogTagFacetGroup
+  facetValue: string
+}
+
+export interface CatalogTagFacetContext {
+  typeFilters: readonly string[]
+  generationFilters: readonly string[]
+  illustratorFilters: readonly string[]
+  themeFilters: readonly string[]
+  roundupListFilters: readonly string[]
+  pokemonFilters: readonly PokemonFilterOption[]
+  expansionFilters: readonly ExpansionFilterOption[]
+}
+
+const CATALOG_TAG_FACET_GROUP_ORDER: readonly CatalogTagFacetGroup[] = [
+  'type',
+  'generation',
+  'themes',
+  'illustrator',
+  'list',
+  'pokemon',
+  'expansion',
+]
+
+/** Map a catalog tag (URL `?tag=` value + label) to the matching index facet, if any. */
+export function resolveCatalogTagToFacet(
+  catalogValue: string,
+  catalogLabel: string,
+  ctx: CatalogTagFacetContext
+): CatalogTagFacetResolution | null {
+  const value = catalogValue.trim().toLowerCase()
+  const label = catalogLabel.trim()
+  if (!value) {
+    return null
+  }
+
+  const typeName =
+    parseTypeCategory(label) ?? ctx.typeFilters.find((type) => type.toLowerCase() === value) ?? null
+  if (typeName && ctx.typeFilters.includes(typeName)) {
+    return { group: 'type', facetValue: typeName }
+  }
+
+  const generation = ctx.generationFilters.find(
+    (gen) =>
+      gen.toLowerCase() === value ||
+      gen.toLowerCase() === label.toLowerCase() ||
+      generationFilterLabel(gen).toLowerCase() === label.toLowerCase()
+  )
+  if (generation) {
+    return { group: 'generation', facetValue: generation }
+  }
+
+  const theme = ctx.themeFilters.find((name) => name.toLowerCase() === value || name === label)
+  if (theme) {
+    return { group: 'themes', facetValue: theme }
+  }
+
+  const illustrator = ctx.illustratorFilters.find(
+    (name) => name.toLowerCase() === value || name === label
+  )
+  if (illustrator) {
+    return { group: 'illustrator', facetValue: illustrator }
+  }
+
+  const list = ctx.roundupListFilters.find((name) => name.toLowerCase() === value || name === label)
+  if (list) {
+    return { group: 'list', facetValue: list }
+  }
+
+  const pokemon = ctx.pokemonFilters.find(
+    (species) =>
+      species.slug === value ||
+      species.label.toLowerCase() === value ||
+      species.slug === label.trim().toLowerCase()
+  )
+  if (pokemon) {
+    return { group: 'pokemon', facetValue: pokemon.slug }
+  }
+
+  const expansion = ctx.expansionFilters.find(
+    (entry) => entry.slug === value || entry.label.toLowerCase() === value || entry.label === label
+  )
+  if (expansion) {
+    return { group: 'expansion', facetValue: expansion.slug }
+  }
+
+  return null
+}
+
+/** Catalog `?tag=` value for an active facet (for syncing the catalog search control). */
+export function findCatalogTagValueForFacet(
+  group: CatalogTagFacetGroup,
+  facetValue: string,
+  catalogOptions: readonly TagCatalogOption[],
+  ctx: CatalogTagFacetContext
+): string | null {
+  for (const entry of catalogOptions) {
+    const resolved = resolveCatalogTagToFacet(entry.value, entry.label, ctx)
+    if (resolved?.group === group && resolved.facetValue === facetValue) {
+      return entry.value
+    }
+  }
+  return null
+}
+
+export function isCatalogTagRedundantWithFacet(
+  catalogValue: string,
+  catalogLabel: string,
+  groupedFilters: Record<CatalogTagFacetGroup, string | null>,
+  ctx: CatalogTagFacetContext
+): boolean {
+  const resolved = resolveCatalogTagToFacet(catalogValue, catalogLabel, ctx)
+  if (!resolved) {
+    return false
+  }
+  return groupedFilters[resolved.group] === resolved.facetValue
+}
+
+/** Value for the catalog search select: explicit tag, or a single facet mirrored in the catalog. */
+export function catalogSelectValueFromFilters(
+  tagFilter: string | null,
+  groupedFilters: Record<CatalogTagFacetGroup, string | null>,
+  catalogOptions: readonly TagCatalogOption[],
+  ctx: CatalogTagFacetContext
+): string | null {
+  if (tagFilter) {
+    return tagFilter
+  }
+
+  const matches: string[] = []
+  for (const group of CATALOG_TAG_FACET_GROUP_ORDER) {
+    const facet = groupedFilters[group]
+    if (!facet) {
+      continue
+    }
+    const catalog = findCatalogTagValueForFacet(group, facet, catalogOptions, ctx)
+    if (catalog) {
+      matches.push(catalog)
+    }
+  }
+
+  return matches.length === 1 ? matches[0]! : null
+}
+
 function levenshteinDistance(a: string, b: string): number {
   if (a === b) {
     return 0
