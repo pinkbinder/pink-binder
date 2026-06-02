@@ -1,5 +1,6 @@
 import {
   ALL_ROUNDUP_LIST_CATEGORIES,
+  isRoundupListCategory,
   TCG_EXPANSIONS_CATEGORY,
   TCG_ILLUSTRATORS_CATEGORY,
 } from './roundup-list-categories'
@@ -13,6 +14,7 @@ import { parseTypeCategory } from '../ui/type-colors'
 
 /** Blog index filter box labels (display only; filter values unchanged). */
 export const BLOG_FILTER_GROUP_LABELS = {
+  tag: 'Catalog search',
   type: 'Pokémon Type',
   generation: 'Generation / Region',
   list: 'Post Format',
@@ -21,6 +23,39 @@ export const BLOG_FILTER_GROUP_LABELS = {
   pokemon: 'Pokémon Species',
   themes: 'Binder Themes',
 } as const
+
+export type BlogFilterGroupKey = keyof typeof BLOG_FILTER_GROUP_LABELS
+
+/** Display emoji for blog index filter group titles (catalog search uses the Search icon in UI). */
+export const BLOG_FILTER_GROUP_ICONS: Record<BlogFilterGroupKey, string | null> = {
+  tag: null,
+  type: '⚡',
+  pokemon: '🐾',
+  themes: '📒',
+  generation: '🗺️',
+  list: '📑',
+  illustrator: '🎨',
+  expansion: '🃏',
+}
+
+export const BLOG_FILTER_SECTION_LABELS = {
+  pokemon: 'Pokémon Filters',
+  meta: 'Meta',
+} as const
+
+export type BlogFilterSectionKey = keyof typeof BLOG_FILTER_SECTION_LABELS
+
+export const BLOG_FILTER_SECTION_ICONS: Record<BlogFilterSectionKey, string | null> = {
+  pokemon: null,
+  meta: '✦',
+}
+
+export interface TagCatalogOption {
+  /** Normalized tag value (lowercase) for URLs and matching. */
+  value: string
+  /** Human-readable label in the searchable dropdown. */
+  label: string
+}
 
 export interface ExpansionFilterOption {
   slug: string
@@ -39,6 +74,7 @@ export function isSpeciesBlogSlug(slug: string): boolean {
 }
 
 const BLOG_INDEX_FACET_QUERY_KEYS = [
+  'tag',
   'filter',
   'type',
   'generation',
@@ -55,6 +91,7 @@ export type BlogIndexFacetQueryKey = (typeof BLOG_INDEX_FACET_QUERY_KEYS)[number
 const LEGACY_THEME_FACET_QUERY_KEY = 'collection'
 
 export interface BlogIndexFacetSearchParams {
+  tag?: string
   filter?: string
   type?: string
   generation?: string
@@ -78,6 +115,7 @@ export function hasBlogIndexFacetQuery(searchParams: BlogIndexFacetSearchParams)
 /** Rebuild `/?type=…&themes=…` from post back-navigation query params. */
 export function buildBlogIndexReturnHref(searchParams: BlogIndexFacetSearchParams): string {
   const params = new URLSearchParams()
+  const tag = searchParams.tag?.trim()
   const filter = searchParams.filter?.trim()
   const type = searchParams.type?.trim()
   const generation = searchParams.generation?.trim()
@@ -87,6 +125,7 @@ export function buildBlogIndexReturnHref(searchParams: BlogIndexFacetSearchParam
   const pokemon = searchParams.pokemon?.trim()
   const themes = searchParams.themes?.trim() ?? searchParams[LEGACY_THEME_FACET_QUERY_KEY]?.trim()
 
+  if (tag) params.set('tag', tag)
   if (type) params.set('type', type)
   if (generation) params.set('generation', generation)
   if (list) params.set('list', list)
@@ -437,4 +476,264 @@ export function extractGenerationFilters(posts: PostWithCategories[]): string[] 
 
 export function getFilterValueForCategory(category: string): string {
   return parseTypeCategory(category) ?? category
+}
+
+interface PostWithTags {
+  tags: string[]
+}
+
+interface PostForTagCatalog extends PostWithTags {
+  slug: string
+  categories: string[]
+}
+
+const ROUNDUP_ANGLE_TAGS = new Set(['cutest', 'collect', 'popular', 'expensive', 'roundup'])
+
+const CATALOG_SEO_NOISE_TAGS = new Set([
+  'pokemon tcg illustrator',
+  'pokemon tcg expansion',
+  'pokemon set guide',
+  'pokemon generation',
+  'pokemon region',
+])
+
+const ROUNDUP_LIST_CATEGORY_LOWER = new Set(
+  ALL_ROUNDUP_LIST_CATEGORIES.map((entry) => entry.toLowerCase())
+)
+
+function isRoundupIndexSlug(slug: string): boolean {
+  return /--(?:cutest|collect|popular|expensive)$/.test(slug.trim())
+}
+
+function isCatalogSeoNoiseTag(tag: string): boolean {
+  const lower = tag.trim().toLowerCase()
+  if (!lower) {
+    return true
+  }
+  if (ROUNDUP_ANGLE_TAGS.has(lower) || CATALOG_SEO_NOISE_TAGS.has(lower)) {
+    return true
+  }
+  if (/\bcards\b/.test(lower) && !ROUNDUP_LIST_CATEGORY_LOWER.has(lower)) {
+    return true
+  }
+  return false
+}
+
+function preferCatalogLabel(current: string, next: string): string {
+  if (!current) {
+    return next
+  }
+  const currentHasCaps = /[A-Z]/.test(current)
+  const nextHasCaps = /[A-Z]/.test(next)
+  if (nextHasCaps && !currentHasCaps) {
+    return next
+  }
+  if (currentHasCaps && !nextHasCaps) {
+    return current
+  }
+  return current.length >= next.length ? current : next
+}
+
+function tagCatalogLabel(tag: string): string {
+  const trimmed = tag.trim()
+  if (!trimmed) {
+    return ''
+  }
+  if (/[A-Z]/.test(trimmed) || /\s/.test(trimmed)) {
+    return trimmed
+  }
+  return formatSlugTitle(trimmed)
+}
+
+function isRoundupCatalogPost(post: PostForTagCatalog): boolean {
+  if (isRoundupIndexSlug(post.slug)) {
+    return true
+  }
+  return post.categories.some((category) => isRoundupListCategory(category))
+}
+
+function collectPrimaryCatalogTags(post: PostForTagCatalog): string[] {
+  const primary: string[] = []
+
+  if (isSpeciesBlogSlug(post.slug)) {
+    const slugTag = post.tags[0]?.trim()
+    const nameTag = post.tags[1]?.trim()
+    if (slugTag && !isCatalogSeoNoiseTag(slugTag)) {
+      primary.push(slugTag)
+    }
+    if (nameTag && !isCatalogSeoNoiseTag(nameTag)) {
+      primary.push(nameTag)
+    }
+    return primary
+  }
+
+  if (post.slug.startsWith('illustrator--') && !isRoundupIndexSlug(post.slug)) {
+    const displayName = post.categories.find((cat) => cat !== TCG_ILLUSTRATORS_CATEGORY)
+    if (displayName && !isCatalogSeoNoiseTag(displayName)) {
+      primary.push(displayName)
+    }
+    const japaneseName = post.tags.find(
+      (tag) =>
+        !isCatalogSeoNoiseTag(tag) &&
+        tag !== displayName &&
+        !/^[A-Za-z0-9][A-Za-z0-9\s.'-]*$/.test(tag.trim())
+    )
+    if (japaneseName) {
+      primary.push(japaneseName)
+    }
+    return primary
+  }
+
+  if (post.slug.startsWith('expansion--')) {
+    const expansionSlug = post.slug.replace(/^expansion--/, '')
+    for (const tag of post.tags) {
+      if (isCatalogSeoNoiseTag(tag)) {
+        continue
+      }
+      const trimmed = tag.trim()
+      if (
+        trimmed.toLowerCase() === expansionSlug ||
+        trimmed.includes('—') ||
+        (/\s/.test(trimmed) && /[A-Z]/.test(trimmed))
+      ) {
+        primary.push(trimmed)
+      }
+    }
+    return primary
+  }
+
+  if (post.slug.startsWith('generation--')) {
+    const genCategory = post.categories.find((cat) => /^Gen [IVX]+$/.test(cat))
+    if (genCategory && !isCatalogSeoNoiseTag(genCategory)) {
+      primary.push(genCategory)
+    }
+    return primary
+  }
+
+  if (isRoundupCatalogPost(post)) {
+    for (const tag of post.tags) {
+      if (isCatalogSeoNoiseTag(tag)) {
+        continue
+      }
+      const trimmed = tag.trim()
+      if (isRoundupListCategory(trimmed) || isSpeciesBlogSlug(trimmed)) {
+        primary.push(trimmed)
+        continue
+      }
+      if (/\s/.test(trimmed) || /^[A-Z]/.test(trimmed)) {
+        primary.push(trimmed)
+      }
+    }
+  }
+
+  return primary
+}
+
+/** Primary catalog tags (species names, roundup categories, themes) — not SEO keyword tags. */
+export function extractTagCatalogOptions(posts: PostForTagCatalog[]): TagCatalogOption[] {
+  const byValue = new Map<string, string>()
+  for (const post of posts) {
+    for (const raw of collectPrimaryCatalogTags(post)) {
+      const trimmed = raw.trim()
+      if (!trimmed) {
+        continue
+      }
+      const value = trimmed.toLowerCase()
+      const label = tagCatalogLabel(trimmed)
+      byValue.set(value, preferCatalogLabel(byValue.get(value) ?? '', label))
+    }
+  }
+
+  return [...byValue.entries()]
+    .map(([value, label]) => ({ value, label }))
+    .sort((a, b) => a.label.localeCompare(b.label))
+}
+
+function levenshteinDistance(a: string, b: string): number {
+  if (a === b) {
+    return 0
+  }
+  if (a.length === 0) {
+    return b.length
+  }
+  if (b.length === 0) {
+    return a.length
+  }
+
+  const rows = a.length + 1
+  const cols = b.length + 1
+  const matrix: number[][] = Array.from({ length: rows }, () => Array<number>(cols).fill(0))
+
+  for (let row = 0; row < rows; row += 1) {
+    matrix[row]![0] = row
+  }
+  for (let col = 0; col < cols; col += 1) {
+    matrix[0]![col] = col
+  }
+
+  for (let row = 1; row < rows; row += 1) {
+    for (let col = 1; col < cols; col += 1) {
+      const cost = a[row - 1] === b[col - 1] ? 0 : 1
+      matrix[row]![col] = Math.min(
+        matrix[row - 1]![col]! + 1,
+        matrix[row]![col - 1]! + 1,
+        matrix[row - 1]![col - 1]! + cost
+      )
+    }
+  }
+
+  return matrix[a.length]![b.length]!
+}
+
+function tagCatalogSearchScore(query: string, option: TagCatalogOption): number {
+  const label = option.label.toLowerCase()
+  const value = option.value.toLowerCase()
+
+  if (label === query || value === query) {
+    return 1000
+  }
+  if (label.startsWith(query) || value.startsWith(query)) {
+    return 900 - Math.min(label.indexOf(query), 40)
+  }
+  if (label.includes(query) || value.includes(query)) {
+    return 800
+  }
+
+  const labelDistance = levenshteinDistance(query, label)
+  const valueDistance = levenshteinDistance(query, value)
+  const distance = Math.min(labelDistance, valueDistance)
+  const maxLen = Math.max(query.length, label.length, value.length)
+  const similarity = 1 - distance / maxLen
+
+  const maxDistance = query.length <= 4 ? 1 : query.length <= 7 ? 2 : 3
+  if (distance > maxDistance && similarity < 0.62) {
+    return -1
+  }
+
+  return Math.round(similarity * 500)
+}
+
+/** Typo-tolerant filter for catalog tag search (substring first, then edit distance). */
+export function filterTagCatalogOptionsBySearch(
+  options: TagCatalogOption[],
+  search: string
+): TagCatalogOption[] {
+  const query = search.trim().toLowerCase()
+  if (!query) {
+    return options
+  }
+
+  return options
+    .map((option) => ({ option, score: tagCatalogSearchScore(query, option) }))
+    .filter((entry) => entry.score >= 0)
+    .sort((a, b) => b.score - a.score || a.option.label.localeCompare(b.option.label))
+    .map((entry) => entry.option)
+}
+
+export function postMatchesTagFilter(post: PostWithTags, tag: string): boolean {
+  const needle = tag.trim().toLowerCase()
+  if (!needle) {
+    return true
+  }
+  return post.tags.some((entry) => entry.trim().toLowerCase() === needle)
 }
