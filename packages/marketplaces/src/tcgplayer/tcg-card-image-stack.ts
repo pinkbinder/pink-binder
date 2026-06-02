@@ -5,6 +5,7 @@ import {
   buildTcgdexImageUrls,
 } from '../config/cdn'
 import { toPokemontcgCatalogCardId, toScrydexCatalogCardId } from './card-id'
+import { buildTcgplayerCdnImageUrls } from './tcgcsv-promo-images'
 import { isTcgPocketCardId } from './product-line'
 import type { TcgCardImageUrls } from './images'
 
@@ -27,8 +28,8 @@ export type TcgCardImageStack = TcgCardImageUrls & {
 }
 
 /**
- * Physical TCG cards: TCGPlayer CDN small primary, TCGdex large primary,
- * ordered fallbacks (tcgdex → scrydex → pokemontcg.io).
+ * Physical TCG cards: TCGPlayer CDN 200w small primary, TCGPlayer 400w large primary
+ * when a product id is known; prior TCGdex/Scrydex large URLs move to fallbacks.
  */
 export function buildTcgCardImageStack(options: {
   cardId: string
@@ -49,7 +50,14 @@ export function buildTcgCardImageStack(options: {
   const tcgplayerSmall = options.tcgplayerImageSmall?.trim()
   const imageSmall =
     tcgplayerSmall ?? tcgdex?.small ?? scrydexCatalog.small ?? pokemontcg?.small ?? ''
-  const imageLarge = tcgdex?.large ?? scrydexCatalog.large ?? pokemontcg?.large ?? ''
+  const catalogImageLarge = tcgdex?.large ?? scrydexCatalog.large ?? pokemontcg?.large ?? ''
+
+  const productId =
+    options.tcgplayerProductId != null && options.tcgplayerProductId > 0
+      ? options.tcgplayerProductId
+      : undefined
+  const tcgplayerCdn = productId != null ? buildTcgplayerCdnImageUrls(productId) : null
+  const imageLarge = tcgplayerCdn?.large || catalogImageLarge
 
   const imageSmallFallbacks = distinctUrls(
     tcgdex?.small,
@@ -59,15 +67,12 @@ export function buildTcgCardImageStack(options: {
   ).filter((url) => url !== imageSmall)
 
   const imageLargeFallbacks = distinctUrls(
+    catalogImageLarge,
+    ...(tcgplayerCdn?.largeFallbacks ?? []),
     scrydexCatalog.large,
     scrydexTcgdex.large,
     pokemontcg?.large
   ).filter((url) => url !== imageLarge)
-
-  const productId =
-    options.tcgplayerProductId != null && options.tcgplayerProductId > 0
-      ? options.tcgplayerProductId
-      : undefined
 
   return {
     imageSmall,
