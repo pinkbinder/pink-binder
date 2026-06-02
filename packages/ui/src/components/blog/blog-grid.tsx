@@ -19,6 +19,7 @@ import {
   extractTypeFilters,
   getFilterValueForCategory,
   postMatchesExpansionFilter,
+  postMatchesIllustratorFilter,
   postMatchesPokemonFilter,
   sortPostsForExpansionFilter,
   sortPostsForPokemonFilter,
@@ -242,7 +243,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       if (groupedFilters.list && !postMatchesListFilter(post, groupedFilters.list)) {
         return false
       }
-      if (groupedFilters.illustrator && !post.categories.includes(groupedFilters.illustrator)) {
+      if (
+        groupedFilters.illustrator &&
+        !postMatchesIllustratorFilter(post, groupedFilters.illustrator)
+      ) {
         return false
       }
       if (groupedFilters.expansion && !postMatchesExpansionFilter(post, groupedFilters.expansion)) {
@@ -256,6 +260,9 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       }
       if (!directFilter) {
         return true
+      }
+      if (illustratorFilterSet.has(directFilter)) {
+        return postMatchesIllustratorFilter(post, directFilter)
       }
       const needle = directFilter.toLowerCase()
       if (post.categories.includes(`${directFilter} Type`)) return true
@@ -272,7 +279,7 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
       return sortPostsForExpansionFilter(filtered, groupedFilters.expansion)
     }
     return filtered
-  }, [posts, groupedFilters, directFilter])
+  }, [posts, groupedFilters, directFilter, illustratorFilterSet])
 
   const postsToRender = useMemo(() => {
     return filteredPosts.slice(0, visibleCount)

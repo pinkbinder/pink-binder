@@ -311,6 +311,24 @@ export function extractIllustratorFilters(posts: PostWithCategories[]): string[]
   return [...illustrators].sort()
 }
 
+/** Species guides tagged with illustrator credits — hidden from illustrator index filter only. */
+export function isIllustratorAffiliatedSpeciesGuide(
+  post: Pick<PostWithCategories, 'slug' | 'categories'>
+): boolean {
+  return isSpeciesBlogSlug(post.slug) && post.categories.includes(SPECIES_GUIDES_CATEGORY)
+}
+
+/** Illustrator facet: entity/roundup posts credited to the artist, not species guides. */
+export function postMatchesIllustratorFilter(
+  post: Pick<PostWithCategories, 'slug' | 'categories'>,
+  illustratorName: string
+): boolean {
+  if (!post.categories.includes(illustratorName)) {
+    return false
+  }
+  return !isIllustratorAffiliatedSpeciesGuide(post)
+}
+
 const BINDER_THEME_TITLES = new Set<string>(
   Object.values(SPECIES_COLLECTIONS).map((collection) => collection.title)
 )
