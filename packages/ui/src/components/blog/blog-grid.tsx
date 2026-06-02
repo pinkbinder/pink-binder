@@ -228,11 +228,8 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   )
 
   useEffect(() => {
-    if (hasActiveFilters) {
-      return
-    }
     setVisibleCount(INITIAL_VISIBLE_POSTS)
-  }, [hasActiveFilters])
+  }, [hasActiveFilters, groupedFilters, directFilter])
 
   const filteredPosts = useMemo(() => {
     const filtered = posts.filter((post) => {
@@ -278,13 +275,10 @@ export function BlogGrid({ posts, defaultPostThumbnail = '/images/logo.png' }: B
   }, [posts, groupedFilters, directFilter])
 
   const postsToRender = useMemo(() => {
-    if (hasActiveFilters) {
-      return filteredPosts
-    }
     return filteredPosts.slice(0, visibleCount)
-  }, [hasActiveFilters, filteredPosts, visibleCount])
+  }, [filteredPosts, visibleCount])
 
-  const hasMoreToRender = !hasActiveFilters && visibleCount < filteredPosts.length
+  const hasMoreToRender = visibleCount < filteredPosts.length
 
   const showMore = useCallback(() => {
     setVisibleCount((count) => Math.min(count + VISIBLE_POST_BATCH, filteredPosts.length))

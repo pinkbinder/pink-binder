@@ -1,7 +1,6 @@
 'use client'
 
-import { shouldBypassNextImageOptimization } from '@repo/data/client'
-import Image from 'next/image'
+import { cn } from '../lib/utils'
 import { useMemo, useState } from 'react'
 
 export function RemoteImageWithFallback({
@@ -18,15 +17,17 @@ export function RemoteImageWithFallback({
   candidates: string[]
   alt: string
   className?: string
+  /** Kept for API compatibility with former next/image usage. */
   sizes: string
   fill?: boolean
   width?: number
   height?: number
-  /** Above-the-fold LCP candidates — sets eager loading in Next.js Image. */
+  /** Above-the-fold LCP candidates — sets eager loading. */
   priority?: boolean
   /** Called when every candidate URL failed to load. */
   onExhausted?: () => void
 }) {
+  void sizes
   const urls = useMemo(
     () => [...new Set(candidates.map((url) => url.trim()).filter(Boolean))],
     [candidates]
@@ -39,17 +40,16 @@ export function RemoteImageWithFallback({
   }
 
   return (
-    <Image
+    <img
       key={src}
       src={src}
       alt={alt}
-      fill={fill}
       width={fill ? undefined : width}
       height={fill ? undefined : height}
-      className={className}
-      sizes={sizes}
-      priority={priority}
-      unoptimized={shouldBypassNextImageOptimization(src)}
+      className={cn(fill && 'absolute inset-0 h-full w-full', className)}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchPriority={priority ? 'high' : undefined}
+      decoding="async"
       onError={() => {
         setIndex((current) => {
           const next = current + 1

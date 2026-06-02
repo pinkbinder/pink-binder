@@ -33,6 +33,7 @@ export {
   preferTcgdexStripImageUrl,
   heroStripImageCandidates,
   tcgCardImageCandidates,
+  tcgCardThumbnailCandidates,
   tcgCardHeroImageUrl,
   enrichPokemonTcgCardImages,
   coercePokemonTcgCardImageUrls,

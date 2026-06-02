@@ -239,6 +239,19 @@ export function tcgCardImageCandidates(card: {
   return [...new Set([...smallChain, ...largeChain])]
 }
 
+/** Thumbnail contexts — small chain only, capped to limit fallback fetches. */
+export function tcgCardThumbnailCandidates(
+  card: {
+    imageLarge: string
+    imageSmall: string
+    imageSmallFallbacks?: string[]
+    imageLargeFallbacks?: string[]
+  },
+  maxCandidates = 2
+): string[] {
+  return tcgCardImageCandidates(card).slice(0, maxCandidates)
+}
+
 /** First URL in the fallback chain that is not a known-bad TCGdex asset path. */
 export function preferredTcgCardImageUrl(card: {
   imageLarge: string

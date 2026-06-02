@@ -84,6 +84,7 @@ export {
   preferTcgdexStripImageUrl,
   heroStripImageCandidates,
   tcgCardImageCandidates,
+  tcgCardThumbnailCandidates,
   resolveTcgCardImageUrls,
   buildPokemontcgImageFallbacks,
   buildPokemontcgImageUrlsFromCardId,

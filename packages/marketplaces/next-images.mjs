@@ -52,12 +52,12 @@ export function blogImageRemotePatterns() {
 }
 
 /**
- * Blog image settings. On Vercel, skip the image optimizer entirely — roundup pages
- * load dozens of remote sprites/cards per view and each unique URL×width counts as a transform.
+ * Blog image settings. Skip the image optimizer — roundup pages load dozens of
+ * remote sprites/cards per view and assets are pre-optimized on Vercel Blob CDN.
  */
 export function blogNextImagesConfig() {
   return {
-    unoptimized: process.env.VERCEL === '1',
+    unoptimized: true,
     minimumCacheTTL: NEXT_IMAGE_MINIMUM_CACHE_TTL,
     remotePatterns: blogImageRemotePatterns(),
   }
