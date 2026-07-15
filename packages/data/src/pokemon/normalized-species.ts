@@ -8,7 +8,6 @@ import {
 import { normalizeCollectCardArtIds } from './collect-card-art'
 import { resolveCollectCardArt } from './resolve-collect-card-art'
 import { coerceSpeciesDisplayArt } from './image-urls'
-import { enrichSceneArtEntriesWithFallbacks } from './scene-art-enrichment'
 import type { PokemonTcgCard } from './tcg-card'
 
 /** Current normalized species JSON schema version written by 3-transform. */
@@ -275,9 +274,9 @@ export function toPokemonDataFromParts(
   const art = coerceSpeciesDisplayArt(normalizedArt, species.pokedexNumber)
   const collectCardArtIds = normalizeCollectCardArtIds(normalizedArt.collectCardArt)
   const collectCardArt: PokemonTcgCard[] = resolveCollectCardArt(species.slug, collectCardArtIds)
-  const michiSceneArt = enrichSceneArtEntriesWithFallbacks(art.sceneArt, {
-    slug: species.slug,
-  })
+  // Scene attribution is baked into normalized images during transforms. Avoid raw-cache reads here
+  // so production article rendering stays on the small, explicitly traced normalized bundle.
+  const michiSceneArt = art.sceneArt
 
   return {
     slug: species.slug,

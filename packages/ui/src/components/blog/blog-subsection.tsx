@@ -22,7 +22,7 @@ export function BlogSubsection({
         <h3 className={cn('text-sm font-semibold tracking-tight', titleClassName)}>{title}</h3>
       ) : null}
       {description ? (
-        <p className={cn('mt-1 text-sm text-muted-foreground', descriptionClassName)}>
+        <p className={cn('text-muted-foreground mt-1 text-sm', descriptionClassName)}>
           {description}
         </p>
       ) : null}

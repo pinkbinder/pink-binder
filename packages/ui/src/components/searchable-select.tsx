@@ -85,7 +85,7 @@ export function SearchableSelect({
           aria-expanded={open}
           aria-label={label}
           className={cn(
-            'flex h-9 w-full items-center justify-between gap-2 rounded-xl border border-input bg-background px-3 py-2 text-sm ring-offset-background transition-colors hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            'border-input bg-background ring-offset-background hover:bg-accent/50 focus-visible:ring-ring flex h-9 w-full items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
             className
           )}
         >
@@ -115,21 +115,21 @@ export function SearchableSelect({
         <PopoverPrimitive.Content
           align="start"
           sideOffset={4}
-          className="z-50 w-[var(--radix-popover-trigger-width)] min-w-[200px] rounded-xl border bg-popover p-0 text-popover-foreground shadow-md outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2"
+          className="bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 z-50 w-[var(--radix-popover-trigger-width)] min-w-[200px] rounded-xl border p-0 shadow-md outline-hidden"
           onOpenAutoFocus={(e: Event) => {
             e.preventDefault()
             inputRef.current?.focus()
           }}
         >
           <div className="flex items-center gap-2 border-b px-3 py-2">
-            <Search className="h-4 w-4 shrink-0 text-muted-foreground" />
+            <Search className="text-muted-foreground h-4 w-4 shrink-0" />
             <input
               ref={inputRef}
               type="text"
               placeholder="Search…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+              className="placeholder:text-muted-foreground flex-1 bg-transparent text-sm outline-hidden"
             />
           </div>
           <div className="max-h-[240px] overflow-y-auto p-1">
@@ -137,7 +137,7 @@ export function SearchableSelect({
               type="button"
               onClick={handleClear}
               className={cn(
-                'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent',
+                'hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
                 !value && 'font-medium'
               )}
             >
@@ -152,7 +152,7 @@ export function SearchableSelect({
                 type="button"
                 onClick={() => handleSelect(option.value)}
                 className={cn(
-                  'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-accent',
+                  'hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
                   value === option.value && 'font-medium'
                 )}
               >
@@ -166,7 +166,7 @@ export function SearchableSelect({
               </button>
             ))}
             {filtered.length === 0 ? (
-              <p className="px-2 py-4 text-center text-sm text-muted-foreground">No results</p>
+              <p className="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
             ) : null}
           </div>
         </PopoverPrimitive.Content>

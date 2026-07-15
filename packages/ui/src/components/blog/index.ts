@@ -14,6 +14,8 @@ export {
 export { BlogInfoPill } from './blog-info-pill'
 export { BlogLinkPillList, type BlogLinkPillListItem } from './blog-link-pill-list'
 export { BlogPostShell } from './blog-post-shell'
+export { BlogReadingProgress } from './blog-reading-progress'
+export { BlogTableOfContents } from './blog-table-of-contents'
 export { BlogRankedListItem } from './blog-ranked-list-item'
 export { BlogRankedItemDetail } from './blog-ranked-item-detail'
 export { BlogSectionCard } from './blog-section-card'

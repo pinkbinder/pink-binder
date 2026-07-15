@@ -34,7 +34,7 @@ export function BlogLinkPillList({
             variant="ghost"
             asChild
             className={cn(
-              'h-auto rounded-full bg-muted px-3 py-1 text-sm font-medium transition-colors hover:bg-muted/80',
+              'bg-muted hover:bg-muted/80 h-auto rounded-full px-3 py-1 text-sm font-medium transition-colors',
               externalItemClassName
             )}
           >
@@ -47,7 +47,7 @@ export function BlogLinkPillList({
             key={item.key}
             href={item.href}
             className={cn(
-              'rounded-full bg-muted px-3 py-1 text-sm font-medium transition-colors hover:bg-muted/80',
+              'bg-muted hover:bg-muted/80 rounded-full px-3 py-1 text-sm font-medium transition-colors',
               itemClassName
             )}
           >
