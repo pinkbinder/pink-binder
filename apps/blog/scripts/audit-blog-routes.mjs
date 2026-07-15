@@ -20,10 +20,23 @@ function localUrl(pathname) {
 }
 
 async function fetchChecked(pathname, options = {}) {
-  const response = await fetch(localUrl(pathname), {
-    redirect: options.redirect ?? 'follow',
-    signal: AbortSignal.timeout(options.timeout ?? 30_000),
-  })
+  let response
+  let lastError
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      response = await fetch(localUrl(pathname), {
+        redirect: options.redirect ?? 'follow',
+        signal: AbortSignal.timeout(options.timeout ?? 30_000),
+      })
+      if (![500, 502, 503, 504].includes(response.status) || attempt === 1) break
+      await response.body?.cancel()
+    } catch (error) {
+      lastError = error
+      if (attempt === 1) throw error
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)))
+  }
+  if (!response) throw lastError ?? new Error('Request failed without a response')
   if (options.status ? response.status !== options.status : !response.ok) {
     throw new Error(`HTTP ${response.status}`)
   }
