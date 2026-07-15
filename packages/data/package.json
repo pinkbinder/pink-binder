@@ -27,7 +27,9 @@
     "images": "tsx scripts/2-images/index.ts",
     "transform": "tsx scripts/3-transform/index.ts",
     "full-sync": "pnpm extract && pnpm images && pnpm transform",
-    "refresh": "tsx scripts/3-transform/index.ts --only prices"
+    "refresh": "tsx scripts/3-transform/index.ts --only prices",
+    "build:gallery-manifests": "tsx scripts/3-transform/5-blog/12-build-gallery-manifests.ts",
+    "audit:blog-publishing": "tsx scripts/audit/blog-publishing-qa.ts"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
