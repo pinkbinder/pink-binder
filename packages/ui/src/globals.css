@@ -1,14 +1,69 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss' source(none);
+@import 'tw-animate-css';
+
+@source '../../data/src/ui/badge-styles.ts';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-brand-pink: hsl(335 77% 73%);
+  --color-brand-light-pink: hsl(335 77% 88%);
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --font-body:
+    'Avenir Next', 'Nunito', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Arial Rounded MT',
+    Arial, sans-serif;
+  --font-title:
+    'Avenir Next', 'Trebuchet MS', 'Segoe UI', 'Arial Rounded MT', 'Gill Sans', Arial, sans-serif;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --animate-accordion-down: accordion-down 200ms ease-out;
+  --animate-accordion-up: accordion-up 200ms ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
 
 @layer base {
   :root {
-    --font-body:
-      'Avenir Next', 'Nunito', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Arial Rounded MT',
-      Arial, sans-serif;
-    --font-title:
-      'Avenir Next', 'Trebuchet MS', 'Segoe UI', 'Arial Rounded MT', 'Gill Sans', Arial, sans-serif;
     --background: 335 77% 88%;
     --foreground: 330 57% 15%;
     --card: 0 0% 100%;
@@ -52,22 +107,12 @@
     --input: 330 22% 28%;
     --ring: 335 70% 72%;
   }
-}
 
-@layer base {
   * {
-    @apply border-border;
+    @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
-    font-family: var(--font-body);
-  }
-
-  .font-title {
-    font-family: var(--font-title);
-  }
-
-  .font-body {
-    font-family: var(--font-body);
+    @apply bg-background font-body text-foreground;
   }
 }

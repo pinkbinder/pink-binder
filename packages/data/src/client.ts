@@ -9,7 +9,7 @@ export {
   SPECIES_GUIDES_CATEGORY,
 } from './blog/categories'
 export * from './blog/post-filters'
-export { getPostHref, getLegacyPostRedirectPath } from './blog/post-path'
+export { getPostHref, getLegacyPostRedirectPath, isRoundupCanonicalSlug } from './blog/post-path'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
   TCG_EXPANSIONS_CATEGORY,
@@ -21,6 +21,8 @@ export {
 } from './blog/roundup-list-categories'
 export type {
   BlogFilterPost,
+  BlogGridFacets,
+  BlogGridQuery,
   BlogIndexInitialPayload,
   EnrichedPostForGrid,
 } from './blog/blog-grid-types'

@@ -13,7 +13,7 @@ export function BlogCardHighlightItem({
     <div className="space-y-2">
       {children}
       {supportingSlot}
-      <p className="text-xs leading-relaxed text-muted-foreground">{supportingText}</p>
+      <p className="text-muted-foreground text-xs leading-relaxed">{supportingText}</p>
     </div>
   )
 }

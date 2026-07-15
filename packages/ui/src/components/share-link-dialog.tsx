@@ -212,7 +212,7 @@ export function ShareLinkDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="px-5 pb-5 pt-5">
+      <DialogContent className="px-5 pt-5 pb-5">
         <DialogHeader className="pr-6">
           <DialogTitle>Share link</DialogTitle>
           {item ? (
@@ -223,7 +223,7 @@ export function ShareLinkDialog({
         {item ? (
           <>
             {/* Link preview */}
-            <div className="mt-4 flex gap-3 rounded-xl bg-muted p-3">
+            <div className="bg-muted mt-4 flex gap-3 rounded-xl p-3">
               <img
                 src={item.thumbnail}
                 alt={item.thumbnailAlt}
@@ -233,14 +233,14 @@ export function ShareLinkDialog({
               />
               <div className="min-w-0">
                 <p className="text-sm font-semibold">{item.label}</p>
-                <p className="mt-1 text-xs text-muted-foreground">{item.shareDescription}</p>
-                <p className="mt-2 truncate text-xs text-muted-foreground">{shareUrl}</p>
+                <p className="text-muted-foreground mt-1 text-xs">{item.shareDescription}</p>
+                <p className="text-muted-foreground mt-2 truncate text-xs">{shareUrl}</p>
               </div>
             </div>
 
             {/* Social platform icon buttons */}
             <div className="mt-5">
-              <p className="mb-3 text-xs font-medium uppercase tracking-widest text-muted-foreground">
+              <p className="text-muted-foreground mb-3 text-xs font-medium tracking-widest uppercase">
                 Share via
               </p>
               <div className="flex flex-wrap justify-center gap-3">
@@ -258,7 +258,7 @@ export function ShareLinkDialog({
                     >
                       <SharePlatformIcon id={platform.id} label={platform.label} />
                     </IconButton>
-                    <span className="text-[10px] font-medium capitalize text-muted-foreground">
+                    <span className="text-muted-foreground text-[10px] font-medium capitalize">
                       {platform.id === 'x'
                         ? 'X'
                         : platform.id.charAt(0).toUpperCase() + platform.id.slice(1)}
@@ -280,7 +280,7 @@ export function ShareLinkDialog({
                   >
                     <CopyIcon label="Copy link" />
                   </IconButton>
-                  <span className="text-[10px] font-medium text-muted-foreground">
+                  <span className="text-muted-foreground text-[10px] font-medium">
                     {copyStatus === 'copied' ? 'Copied!' : 'Copy'}
                   </span>
                 </div>
@@ -297,7 +297,7 @@ export function ShareLinkDialog({
                     >
                       <NativeShareIcon label="More options" />
                     </IconButton>
-                    <span className="text-[10px] font-medium text-muted-foreground">More</span>
+                    <span className="text-muted-foreground text-[10px] font-medium">More</span>
                   </div>
                 ) : null}
               </div>

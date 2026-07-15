@@ -73,7 +73,7 @@ export function isSpeciesBlogSlug(slug: string): boolean {
   return Boolean(trimmed) && !trimmed.includes('--')
 }
 
-const BLOG_INDEX_FACET_QUERY_KEYS = [
+export const BLOG_INDEX_FACET_QUERY_KEYS = [
   'tag',
   'filter',
   'type',

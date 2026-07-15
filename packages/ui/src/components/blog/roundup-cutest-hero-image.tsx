@@ -8,8 +8,8 @@ export function RoundupCutestHeroImage({ candidates, alt }: { candidates: string
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border bg-card">
-      <div className="relative aspect-[16/10] w-full bg-muted/20 sm:aspect-[2/1]">
+    <section className="bg-card overflow-hidden rounded-2xl border">
+      <div className="bg-muted/20 relative aspect-[16/10] w-full sm:aspect-[2/1]">
         <RemoteImageWithFallback
           candidates={candidates}
           alt={alt}

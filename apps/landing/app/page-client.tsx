@@ -59,7 +59,7 @@ export default function LandingPageClient({
                 })
                 setCopyStatus('idle')
               }}
-              className="rounded-full border-pink-200/80 bg-white/90 font-semibold text-foreground shadow-sm hover:bg-white hover:text-primary"
+              className="text-foreground hover:text-primary rounded-full border-pink-200/80 bg-white/90 font-semibold shadow-xs hover:bg-white"
             >
               <ShareIcon />
               <span>Share</span>
@@ -76,13 +76,13 @@ export default function LandingPageClient({
               priority
               fetchPriority="high"
             />
-            <h1 className="font-title text-3xl font-bold tracking-tight text-primary">
+            <h1 className="font-title text-primary text-3xl font-bold tracking-tight">
               {BRAND.name}
             </h1>
-            <p className="text-lg font-semibold leading-relaxed">
+            <p className="text-lg leading-relaxed font-semibold">
               <span className="text-primary">{BRAND.subtitle}</span>
             </p>
-            <p className="max-w-sm text-sm font-semibold leading-relaxed text-muted-foreground">
+            <p className="text-muted-foreground max-w-sm text-sm leading-relaxed font-semibold">
               {BRAND.description}
             </p>
           </header>
@@ -93,22 +93,22 @@ export default function LandingPageClient({
               return (
                 <div
                   key={link.href}
-                  className="group flex w-full items-center rounded-xl border border-pink-200/70 bg-white shadow-sm transition-colors hover:bg-pink-50/50"
+                  className="group flex w-full items-center rounded-xl border border-pink-200/70 bg-white shadow-xs transition-colors hover:bg-pink-50/50"
                 >
                   <a
                     href={link.href}
                     target={link.external ? '_blank' : undefined}
                     rel={link.external ? 'noopener noreferrer' : undefined}
-                    className="flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold text-foreground"
+                    className="text-foreground flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold"
                   >
                     <Image
                       src={link.thumbnail}
                       alt={link.thumbnailAlt}
-                      className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1 shadow-sm"
+                      className="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1 shadow-xs"
                       width={36}
                       height={36}
                     />
-                    <span className="truncate text-primary">Shop on {link.marketplace}</span>
+                    <span className="text-primary truncate">Shop on {link.marketplace}</span>
                   </a>
 
                   <Button
@@ -121,7 +121,7 @@ export default function LandingPageClient({
                       })
                       setCopyStatus('idle')
                     }}
-                    className="mr-2 h-auto w-auto rounded-full p-2 text-muted-foreground hover:bg-pink-100 hover:text-foreground"
+                    className="text-muted-foreground hover:text-foreground mr-2 h-auto w-auto rounded-full p-2 hover:bg-pink-100"
                   >
                     <ThreeDotsIcon />
                   </Button>
@@ -132,7 +132,7 @@ export default function LandingPageClient({
 
           <SocialBar socials={socials} aria-label="Social media links" />
 
-          <p className="text-lg font-semibold leading-relaxed">
+          <p className="text-lg leading-relaxed font-semibold">
             <span className="text-muted-foreground/80">{BRAND.location}</span>
           </p>
 
@@ -152,7 +152,7 @@ export default function LandingPageClient({
         onCopy={() => copyShareLink(shareDialogState?.url ?? '', setCopyStatus)}
       />
 
-      <div className="pointer-events-none fixed bottom-6 right-6 hidden md:block">
+      <div className="pointer-events-none fixed right-6 bottom-6 hidden md:block">
         <Image
           src="/images/QR-Code.svg"
           alt="Scan to visit Pink Binder"

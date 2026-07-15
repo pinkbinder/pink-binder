@@ -19,7 +19,7 @@ export function BlogParagraphList({
       {paragraphs.map((paragraph, index) => (
         <p
           key={`${index}-${paragraph.slice(0, 48)}`}
-          className={cn('leading-relaxed text-foreground/85', paragraphClassName)}
+          className={cn('text-foreground/85 leading-relaxed', paragraphClassName)}
         >
           <BlogInlineText text={paragraph} />
         </p>

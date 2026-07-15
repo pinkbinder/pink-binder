@@ -76,7 +76,7 @@ export function Pokemon3dSpriteShowcase({
   return (
     <div className="mt-8 border-t pt-6">
       <h3 className="text-sm font-semibold tracking-tight">3D battle sprites</h3>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-1 text-sm">
         Animated Showdown-style models for {displayName} — normal and shiny.
       </p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -93,7 +93,7 @@ export function Pokemon3dSpriteShowcase({
           onFailed={handleSpriteError}
         />
       </div>
-      <p className="mt-4 text-xs text-muted-foreground">
+      <p className="text-muted-foreground mt-4 text-xs">
         Sprites via{' '}
         <a
           href="https://projectpokemon.org/home/docs/Sprite_Resource_148"
@@ -132,7 +132,7 @@ function ShowdownSpriteSection({
   return (
     <div className="mt-8 border-t pt-6">
       <h3 className="text-sm font-semibold tracking-tight">Battle sprite</h3>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-1 text-sm">
         Animated Showdown sprite for {displayName} (from our species art cache — 3D Project Pokémon
         models are not available for this species yet).
       </p>
@@ -169,8 +169,8 @@ function SpriteTile({
   onFailed: () => void
 }) {
   return (
-    <figure className="flex flex-col items-center overflow-visible rounded-xl border bg-muted/30 px-3 pb-3 pt-2.5">
-      <figcaption className="mb-1.5 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+    <figure className="bg-muted/30 flex flex-col items-center overflow-visible rounded-xl border px-3 pt-2.5 pb-3">
+      <figcaption className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
         {label}
       </figcaption>
       <div

@@ -9,6 +9,29 @@ export interface BlogFilterPost {
   expansionFilterTags: string[]
 }
 
+export interface BlogGridFacets {
+  types: string[]
+  generations: string[]
+  lists: string[]
+  illustrators: string[]
+  expansions: Array<{ slug: string; label: string }>
+  pokemon: Array<{ slug: string; label: string }>
+  themes: string[]
+  tags: Array<{ value: string; label: string }>
+}
+
+export interface BlogGridQuery {
+  type?: string | null
+  generation?: string | null
+  list?: string | null
+  illustrator?: string | null
+  expansion?: string | null
+  pokemon?: string | null
+  themes?: string | null
+  tag?: string | null
+  filter?: string | null
+}
+
 export interface EnrichedPostForGrid {
   slug: string
   title: string
@@ -30,6 +53,6 @@ export interface EnrichedPostForGrid {
 
 export interface BlogIndexInitialPayload {
   posts: EnrichedPostForGrid[]
-  filterPosts: BlogFilterPost[]
+  facets: BlogGridFacets
   total: number
 }

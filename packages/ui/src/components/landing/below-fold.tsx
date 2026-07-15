@@ -34,14 +34,14 @@ function MarketplaceSkeleton() {
   return (
     <LandingSection className="w-full" aria-busy="true" aria-label="Loading shop listings">
       <div className="flex flex-col gap-2">
-        <div className="h-3 w-36 animate-pulse rounded-full bg-muted" />
-        <div className="h-7 w-56 animate-pulse rounded-md bg-muted" />
+        <div className="bg-muted h-3 w-36 animate-pulse rounded-full" />
+        <div className="bg-muted h-7 w-56 animate-pulse rounded-md" />
       </div>
       <div className="flex gap-3 overflow-hidden pt-1">
         {Array.from({ length: 3 }, (_, index) => (
           <div
             key={index}
-            className="h-52 w-40 shrink-0 animate-pulse rounded-2xl bg-muted"
+            className="bg-muted h-52 w-40 shrink-0 animate-pulse rounded-2xl"
             aria-hidden
           />
         ))}
@@ -59,12 +59,12 @@ function BlogSkeleton() {
     >
       <div className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <div className="h-3 w-40 animate-pulse rounded-full bg-muted" />
-          <div className="h-7 w-48 animate-pulse rounded-md bg-muted" />
+          <div className="bg-muted h-3 w-40 animate-pulse rounded-full" />
+          <div className="bg-muted h-7 w-48 animate-pulse rounded-md" />
         </div>
-        <div className="h-4 w-24 shrink-0 animate-pulse rounded-full bg-muted" />
+        <div className="bg-muted h-4 w-24 shrink-0 animate-pulse rounded-full" />
       </div>
-      <div className="h-72 animate-pulse rounded-3xl bg-muted" />
+      <div className="bg-muted h-72 animate-pulse rounded-3xl" />
     </LandingSection>
   )
 }
@@ -87,7 +87,7 @@ export function LandingBlogHighlight({
       />
       <a
         href={post.href}
-        className="block rounded-3xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        className="focus-visible:ring-ring block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
       >
         {post.heroArtworkUrls && post.heroArtworkUrls.length > 0 ? (
           <RoundupPostCard
@@ -101,7 +101,7 @@ export function LandingBlogHighlight({
         ) : (
           <PostCard post={post} />
         )}
-        <span className="mt-3 inline-flex text-sm font-bold text-primary transition-colors hover:text-primary/80">
+        <span className="text-primary hover:text-primary/80 mt-3 inline-flex text-sm font-bold transition-colors">
           {readMoreLabel}
         </span>
       </a>

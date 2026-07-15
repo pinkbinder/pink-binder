@@ -14,7 +14,7 @@ export function RoundupPickArtwork({
   }
 
   return (
-    <div className="flex shrink-0 items-center justify-center rounded-lg bg-muted/30 p-2">
+    <div className="bg-muted/30 flex shrink-0 items-center justify-center rounded-lg p-2">
       <div className="relative h-[88px] w-[88px]">
         <RemoteImageWithFallback
           candidates={candidates}
