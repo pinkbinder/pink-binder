@@ -6,9 +6,9 @@ export function RoundupMethodologyCard({
   methodology: string
 }) {
   return (
-    <section className="rounded-2xl border bg-card p-5">
-      <p className="leading-relaxed text-foreground/85">{intro}</p>
-      <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{methodology}</p>
+    <section className="bg-card rounded-2xl border p-5">
+      <p className="text-foreground/85 leading-relaxed">{intro}</p>
+      <p className="text-muted-foreground mt-4 text-sm leading-relaxed">{methodology}</p>
     </section>
   )
 }

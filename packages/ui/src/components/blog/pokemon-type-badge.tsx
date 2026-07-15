@@ -13,7 +13,7 @@ export function PokemonTypeBadge({ type, href }: { type: string; href: string })
   return (
     <Link
       href={href}
-      className={`${CLICKABLE_BADGE_CLASS} uppercase tracking-wider`}
+      className={`${CLICKABLE_BADGE_CLASS} tracking-wider uppercase`}
       style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.bg }}
     >
       <span className="inline-flex items-center gap-1.5">

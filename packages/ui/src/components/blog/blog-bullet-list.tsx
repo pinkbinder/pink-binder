@@ -16,7 +16,7 @@ export function BlogBulletList({
   return (
     <ul className={cn('list-disc space-y-2 pl-5', className)}>
       {items.map((item) => (
-        <li key={item} className={cn('leading-relaxed text-foreground/85', itemClassName)}>
+        <li key={item} className={cn('text-foreground/85 leading-relaxed', itemClassName)}>
           {item}
         </li>
       ))}

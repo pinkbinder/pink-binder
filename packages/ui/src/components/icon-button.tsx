@@ -4,7 +4,7 @@ import { cn } from '../lib/utils'
 import { Button } from './button'
 
 const ICON_BUTTON_CN =
-  'h-12 w-12 shrink-0 rounded-full bg-primary p-0 text-primary-foreground ring-1 ring-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:!size-7'
+  'h-12 w-12 shrink-0 rounded-full bg-primary p-0 text-primary-foreground ring-1 ring-primary/20 transition-colors hover:bg-primary/90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 [&_svg]:!size-7'
 
 const SOCIAL_ICON_SVG_CN = 'size-7'
 

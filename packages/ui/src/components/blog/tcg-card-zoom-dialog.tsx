@@ -26,7 +26,7 @@ function ZoomedCardImage({ card, alt }: { card: PokemonTcgCard; alt: string }) {
 
   if (!src) {
     return (
-      <p className="rounded-lg bg-card px-4 py-8 text-center text-sm text-muted-foreground">
+      <p className="bg-card text-muted-foreground rounded-lg px-4 py-8 text-center text-sm">
         High-resolution art is not available for this card.
       </p>
     )
@@ -77,7 +77,7 @@ export function TcgCardZoomDialog({
         <button
           type="button"
           className={cn(
-            'cursor-zoom-in rounded-xl text-left transition-opacity hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            'focus-visible:ring-ring cursor-zoom-in rounded-xl text-left transition-opacity hover:opacity-95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
             className
           )}
           aria-label={`View larger image: ${alt}`}
@@ -85,7 +85,7 @@ export function TcgCardZoomDialog({
           {children}
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-[min(92vw,24rem)] border-0 bg-transparent p-2 shadow-none sm:max-w-md [&>button]:bg-card/90">
+      <DialogContent className="[&>button]:bg-card/90 max-w-[min(92vw,24rem)] border-0 bg-transparent p-2 shadow-none sm:max-w-md">
         <DialogTitle className="sr-only">{alt}</DialogTitle>
         {open ? <ZoomedCardImage card={card} alt={alt} /> : null}
       </DialogContent>

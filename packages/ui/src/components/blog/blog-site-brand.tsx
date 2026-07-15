@@ -27,7 +27,7 @@ export function BlogSiteBrand({
         <a
           href={landingUrl}
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2.5 rounded-full transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="focus-visible:ring-ring inline-flex items-center gap-2.5 rounded-full transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:outline-hidden"
           aria-label="Back to The Pink Binder homepage"
         >
           <Image
@@ -35,16 +35,16 @@ export function BlogSiteBrand({
             alt="The Pink Binder logo"
             width={40}
             height={40}
-            className="rounded-full border border-pink-200 bg-white object-cover shadow-sm"
+            className="rounded-full border border-pink-200 bg-white object-cover shadow-xs"
           />
-          <span className="text-base font-bold text-primary sm:text-lg">The Pink Binder</span>
+          <span className="text-primary text-base font-bold sm:text-lg">The Pink Binder</span>
         </a>
       </div>
 
       {blogHomeHref ? (
         <Link
           href={blogHomeHref}
-          className={cn(titleClasses, 'text-center transition-colors hover:text-primary/80')}
+          className={cn(titleClasses, 'hover:text-primary/80 text-center transition-colors')}
         >
           Pink Binder Blog
         </Link>
