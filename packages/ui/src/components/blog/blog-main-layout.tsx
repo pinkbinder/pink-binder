@@ -23,7 +23,7 @@ export function BlogMainLayout({
 }: BlogMainLayoutProps) {
   return (
     <main
-      className={cn('min-h-screen px-4', compactMobile ? 'pb-12 pt-6 sm:pt-8 md:py-16' : 'py-16')}
+      className={cn('min-h-screen px-4', compactMobile ? 'pt-6 pb-12 sm:pt-8 md:py-16' : 'py-16')}
     >
       <div
         className={cn(

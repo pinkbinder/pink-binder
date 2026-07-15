@@ -22,6 +22,27 @@ function statBarColor(value: number): string {
   return '#FF6B6B'
 }
 
+function statCommentary(name: string, value: number): string {
+  if (name === 'speed') {
+    if (value >= 110) return 'Sweeper-tier pace'
+    if (value >= 85) return 'Quick mover'
+    if (value < 50) return 'Deliberately slow'
+  }
+  if (name === 'attack' || name === 'special-attack') {
+    if (value >= 120) return 'Heavy hitter'
+    if (value >= 95) return 'Strong pressure'
+  }
+  if (name === 'defense' || name === 'special-defense') {
+    if (value >= 120) return 'Wall-level bulk'
+    if (value >= 95) return 'Sturdy matchup'
+  }
+  if (name === 'hp' && value >= 100) return 'Deep HP pool'
+  if (value >= 100) return 'Standout stat'
+  if (value >= 75) return 'Solid range'
+  if (value < 50) return 'Clear trade-off'
+  return 'Balanced range'
+}
+
 export function PokemonStatList({
   stats,
   total,
@@ -39,24 +60,37 @@ export function PokemonStatList({
           const emoji = STAT_EMOJI_BY_NAME[stat.name] ?? '•'
 
           return (
-            <div key={stat.name} className="flex items-center gap-3">
-              <p className="inline-flex w-20 shrink-0 items-center justify-end gap-1 text-right text-xs text-muted-foreground">
+            <div
+              key={stat.name}
+              className="grid grid-cols-[5.5rem_2.5rem_1fr] items-center gap-x-3 gap-y-1 sm:grid-cols-[7rem_2.5rem_1fr_8rem]"
+            >
+              <p className="text-muted-foreground inline-flex items-center justify-end gap-1 text-right text-xs">
                 <span aria-hidden>{emoji}</span>
                 <span>{stat.label}</span>
               </p>
-              <p className="w-8 shrink-0 text-sm font-semibold tabular-nums">{stat.value}</p>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
+              <p className="text-sm font-semibold tabular-nums">{stat.value}</p>
+              <div
+                className="bg-muted h-2 overflow-hidden rounded-full"
+                role="progressbar"
+                aria-label={`${stat.label}: ${stat.value}`}
+                aria-valuenow={stat.value}
+                aria-valuemin={0}
+                aria-valuemax={255}
+              >
                 <div
                   className="h-full rounded-full"
                   style={{ width: `${pct}%`, backgroundColor: statBarColor(stat.value) }}
                 />
               </div>
+              <p className="text-muted-foreground col-start-3 text-xs font-medium sm:col-start-4 sm:text-right">
+                {statCommentary(stat.name, stat.value)}
+              </p>
             </div>
           )
         })}
       </div>
-      <p className="mt-4 text-sm text-muted-foreground">
-        Total: <span className="font-semibold text-foreground">{total}</span>
+      <p className="text-muted-foreground mt-4 text-sm">
+        Total: <span className="text-foreground font-semibold">{total}</span>
       </p>
     </div>
   )

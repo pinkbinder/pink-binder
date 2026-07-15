@@ -54,7 +54,7 @@ export function RoundupHeroArtworkGrid({
   return (
     <div
       className={cn(
-        'grid grid-rows-1 divide-x divide-pink-100/80 bg-muted',
+        'bg-muted grid grid-rows-1 divide-x divide-pink-100/80',
         variant === 'article' ? 'aspect-[12/5]' : 'aspect-[16/10]',
         gridColumnClass(lists.length),
         className

@@ -69,7 +69,7 @@ export function CollectCardHighlightGrid({
     <div className={cn('space-y-3', className)}>
       <div
         className={cn(
-          'grid w-full rounded-xl border bg-muted',
+          'bg-muted grid w-full rounded-xl border',
           portraitCard && PORTRAIT_CARD_MEDIA_CLASS,
           stripLayout && 'gap-3 p-2 sm:aspect-[12/5] sm:grid-rows-1 sm:gap-3 sm:p-3',
           !stripLayout && !portraitCard && 'aspect-[12/5] grid-rows-1',
@@ -127,7 +127,7 @@ export function CollectCardHighlightGrid({
             <div key={`meta-${item.card.id}`} className="min-w-0 space-y-1">
               {item.supportingSlot}
               {item.supportingText ? (
-                <p className="text-xs leading-relaxed text-muted-foreground">
+                <p className="text-muted-foreground text-xs leading-relaxed">
                   {item.supportingText}
                 </p>
               ) : null}

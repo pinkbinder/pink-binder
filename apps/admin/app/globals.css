@@ -1,6 +1,5 @@
-/*
- * Theme, brand colors, fonts, and base styles are defined in @repo/ui.
- * See packages/ui/src/globals.css for the canonical theme and
- * packages/ui/tailwind.config.ts for Tailwind customization.
- * Add app-specific styles here only.
- */
+@import '@repo/ui/globals.css';
+
+@source './**/*.{ts,tsx}';
+@source '../components/**/*.{ts,tsx}';
+@source '../../../packages/ui/src/**/*.{ts,tsx}';

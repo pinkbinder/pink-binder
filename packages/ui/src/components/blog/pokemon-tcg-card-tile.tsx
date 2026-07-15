@@ -33,7 +33,7 @@ export function PokemonTcgCardTile({
   const imageBlock = (
     <div
       className={cn(
-        'relative aspect-[5/7] overflow-hidden rounded-xl border shadow-sm transition-shadow group-hover:shadow-md',
+        'relative aspect-[5/7] overflow-hidden rounded-xl border shadow-xs transition-shadow group-hover:shadow-md',
         TILE_SIZE_CLASS[size]
       )}
     >
@@ -64,7 +64,7 @@ export function PokemonTcgCardTile({
         >
           <p className="truncate text-xs font-medium">{card.setName}</p>
           {card.rarity ? (
-            <p className="truncate text-xs text-muted-foreground">{card.rarity}</p>
+            <p className="text-muted-foreground truncate text-xs">{card.rarity}</p>
           ) : null}
         </div>
       ) : null}

@@ -27,7 +27,7 @@ export function BlogPostHeroArtworkSection({
   }
 
   return (
-    <section className="overflow-hidden rounded-2xl border bg-card">
+    <section className="bg-card overflow-hidden rounded-2xl border">
       <RoundupHeroArtworkGrid
         artworkUrls={urls}
         artworkCandidateLists={artworkCandidateLists}

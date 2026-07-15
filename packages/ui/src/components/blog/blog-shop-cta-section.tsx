@@ -19,7 +19,7 @@ export function BlogShopCtaSection({
         <a
           href={shopUrl}
           rel="noopener noreferrer"
-          className="group relative mx-auto block w-full max-w-[420px] overflow-hidden rounded-xl border border-pink-200 bg-pink-50 shadow-sm transition-transform hover:-translate-y-0.5 sm:mx-0 sm:w-[272px]"
+          className="group relative mx-auto block w-full max-w-[420px] overflow-hidden rounded-xl border border-pink-200 bg-pink-50 shadow-xs transition-transform hover:-translate-y-0.5 sm:mx-0 sm:w-[272px]"
           aria-label="Open The Pink Binder Shop"
         >
           <Image
@@ -32,12 +32,12 @@ export function BlogShopCtaSection({
             sizes="(max-width: 640px) 100vw, 272px"
             priority={false}
           />
-          <span className="pointer-events-none absolute inset-x-2 bottom-2 rounded-md bg-black/55 px-2 py-1 text-[10px] font-semibold uppercase tracking-wide text-white">
+          <span className="pointer-events-none absolute inset-x-2 bottom-2 rounded-md bg-black/55 px-2 py-1 text-[10px] font-semibold tracking-wide text-white uppercase">
             Shop now
           </span>
         </a>
         <div className="flex flex-col gap-3">
-          <p className="text-sm leading-relaxed text-muted-foreground">
+          <p className="text-muted-foreground text-sm leading-relaxed">
             Ready to buy? Visit The Pink Binder Shop hub for direct links to our latest card
             listings across marketplaces.
           </p>

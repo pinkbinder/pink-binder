@@ -1,4 +1,4 @@
-import '@repo/ui/globals.css'
+import './globals.css'
 import type { Metadata } from 'next'
 import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from '@repo/config'
 import { LANDING_SEO } from '@repo/data'

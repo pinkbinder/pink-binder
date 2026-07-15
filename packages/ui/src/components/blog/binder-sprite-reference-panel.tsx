@@ -72,7 +72,7 @@ export function BinderSpriteReferencePanel({
             {cells.map((item) => (
               <div
                 key={item.url}
-                className="relative flex min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-lg border bg-muted/30 p-2.5 sm:p-3"
+                className="bg-muted/30 relative flex min-h-0 min-w-0 items-center justify-center overflow-hidden rounded-lg border p-2.5 sm:p-3"
               >
                 <RemoteImageWithFallback
                   candidates={[item.url, ...(item.fallbackUrls ?? [])]}
@@ -96,7 +96,7 @@ export function BinderSpriteReferencePanel({
             {cells.map((item) => (
               <p
                 key={`label-${item.url}`}
-                className="text-center text-[10px] font-medium leading-tight text-muted-foreground"
+                className="text-muted-foreground text-center text-[10px] leading-tight font-medium"
               >
                 {item.label}
               </p>
@@ -114,7 +114,7 @@ export function BinderSpriteReferencePanel({
       {!isCompact ? (
         <>
           <h3 className="text-sm font-semibold tracking-tight">Species art references</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
+          <p className="text-muted-foreground mt-1 text-sm">
             Character renders for colour matching, pose ideas, and silhouette checks.
           </p>
         </>
@@ -127,15 +127,15 @@ export function BinderSpriteReferencePanel({
             key={item.url}
             className={
               isCompact
-                ? 'flex flex-col items-center gap-1.5 rounded-lg border bg-muted/20 p-2'
-                : 'flex flex-col gap-3 rounded-xl border bg-muted/20 p-3 sm:flex-row'
+                ? 'bg-muted/20 flex flex-col items-center gap-1.5 rounded-lg border p-2'
+                : 'bg-muted/20 flex flex-col gap-3 rounded-xl border p-3 sm:flex-row'
             }
           >
             <div
               className={
                 isCompact
-                  ? 'relative flex aspect-square w-full max-w-[72px] items-center justify-center rounded-md bg-muted/30 p-1'
-                  : 'relative mx-auto flex aspect-square w-full max-w-[120px] shrink-0 items-center justify-center rounded-lg border bg-muted/30 p-2 sm:mx-0'
+                  ? 'bg-muted/30 relative flex aspect-square w-full max-w-[72px] items-center justify-center rounded-md p-1'
+                  : 'bg-muted/30 relative mx-auto flex aspect-square w-full max-w-[120px] shrink-0 items-center justify-center rounded-lg border p-2 sm:mx-0'
               }
             >
               <RemoteImageWithFallback
@@ -157,18 +157,18 @@ export function BinderSpriteReferencePanel({
             {!isCompact ? (
               <figcaption className="min-w-0 flex-1">
                 <p className="text-sm font-medium">{item.label}</p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{item.usage}</p>
+                <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{item.usage}</p>
               </figcaption>
             ) : (
               <figcaption className="text-center">
-                <p className="text-[10px] font-medium leading-tight">{item.label}</p>
+                <p className="text-[10px] leading-tight font-medium">{item.label}</p>
               </figcaption>
             )}
           </figure>
         ))}
       </div>
       {!isCompact ? (
-        <p className="mt-4 text-xs text-muted-foreground">
+        <p className="text-muted-foreground mt-4 text-xs">
           Art via{' '}
           <a
             href="https://github.com/PokeAPI/sprites"

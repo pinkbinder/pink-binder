@@ -42,7 +42,7 @@ export function TcgCardImage({
   if (!src) {
     return (
       <div
-        className={`flex items-center justify-center bg-muted text-xl ${className ?? ''}`}
+        className={`bg-muted flex items-center justify-center text-xl ${className ?? ''}`}
         aria-hidden
       >
         🎴

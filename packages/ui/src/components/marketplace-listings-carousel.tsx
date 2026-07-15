@@ -52,8 +52,8 @@ function MarketplaceListingsCarousel({
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="left-1 z-10 border-pink-200/70 bg-white/90 shadow-sm hover:bg-pink-50 sm:left-2" />
-        <CarouselNext className="right-1 z-10 border-pink-200/70 bg-white/90 shadow-sm hover:bg-pink-50 sm:right-2" />
+        <CarouselPrevious className="left-1 z-10 border-pink-200/70 bg-white/90 shadow-xs hover:bg-pink-50 sm:left-2" />
+        <CarouselNext className="right-1 z-10 border-pink-200/70 bg-white/90 shadow-xs hover:bg-pink-50 sm:right-2" />
       </Carousel>
     </LandingSection>
   )
