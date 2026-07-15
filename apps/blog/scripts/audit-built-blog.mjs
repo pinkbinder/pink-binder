@@ -32,6 +32,8 @@ try {
       baseUrl,
       '--max-posts',
       process.env.BLOG_AUDIT_MAX_POSTS ?? '0',
+      '--concurrency',
+      process.env.BLOG_AUDIT_CONCURRENCY ?? '8',
     ],
     { cwd: process.cwd(), stdio: 'inherit' }
   )
