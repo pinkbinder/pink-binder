@@ -7,7 +7,7 @@
     "prebuild": "pnpm data:expansion-galleries",
     "predev": "pnpm data:expansion-galleries",
     "build": "next build",
-    "postbuild": "node scripts/sync-blog-route-trace.mjs",
+    "postbuild": "node scripts/verify-blog-route-trace.mjs",
     "dev": "next dev --port 3002",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
