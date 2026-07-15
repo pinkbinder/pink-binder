@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "data:expansion-galleries": "node scripts/sync-expansion-gallery-manifests.mjs",
+    "prebuild": "pnpm data:expansion-galleries",
+    "predev": "pnpm data:expansion-galleries",
     "build": "next build",
     "dev": "next dev --port 3002",
     "lint": "eslint . --max-warnings 0",
