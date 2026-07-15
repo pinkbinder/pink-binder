@@ -7,6 +7,7 @@ const monorepoRoot = path.resolve(appDir, '../..')
 const blogsDir = path.join(monorepoRoot, 'packages/data/cache/normalized/blogs')
 const indexPath = path.join(blogsDir, 'index.json')
 const tracePath = path.join(appDir, '.next/server/app/posts/[...slug]/page.js.nft.json')
+const galleryTracePath = path.join(appDir, '.next/server/app/api/card-gallery/route.js.nft.json')
 
 function fail(message) {
   console.error(`Blog route trace validation failed: ${message}`)
@@ -50,4 +51,30 @@ console.log(
     1024 /
     1024
   ).toFixed(2)} MiB).`
+)
+
+if (!fs.existsSync(galleryTracePath)) {
+  fail(`missing ${path.relative(monorepoRoot, galleryTracePath)}`)
+}
+const galleryTrace = JSON.parse(fs.readFileSync(galleryTracePath, 'utf8'))
+const galleryTraceDir = path.dirname(galleryTracePath)
+const galleryFiles = galleryTrace.files.map((file) => path.resolve(galleryTraceDir, file))
+const forbiddenGalleryData = galleryFiles.filter(
+  (file) =>
+    file.includes('/packages/data/cache/normalized/pokemon/') ||
+    file.includes('/packages/data/cache/normalized/meta/cards/illustrators/')
+)
+if (forbiddenGalleryData.length > 0) {
+  fail(`gallery API still traces ${forbiddenGalleryData.length} species/illustrator data files`)
+}
+const galleryTraceBytes = galleryFiles.reduce(
+  (total, file) => total + (fs.existsSync(file) ? fs.statSync(file).size : 0),
+  0
+)
+console.log(
+  `Verified gallery API trace excludes species/illustrator data (${(
+    galleryTraceBytes /
+    1024 /
+    1024
+  ).toFixed(2)} MiB total trace).`
 )

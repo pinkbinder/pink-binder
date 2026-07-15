@@ -29,7 +29,9 @@ yarn-error.log*
 .vercel
 
 # build-synced static gallery manifests
+apps/blog/public/data/card-galleries/
 apps/blog/public/data/expansion-galleries/
+packages/data/cache/normalized/meta/cards/blog-galleries/
 
 # typescript
 *.tsbuildinfo

@@ -29,5 +29,11 @@ jobs:
       - name: Lint, type-check, and format
         run: pnpm validate
 
+      - name: Audit generated publishing data
+        run: pnpm --filter @repo/data audit:blog-publishing
+
       - name: Build blog
         run: pnpm exec turbo run build --filter=@repo/blog
+
+      - name: Crawl every compiled blog route
+        run: pnpm --filter @repo/blog audit:routes

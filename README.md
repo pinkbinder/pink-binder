@@ -36,7 +36,7 @@ pnpm dev
 pnpm build
 ```
 
-Environment variables are managed in Vercel — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example).
+Environment variables are managed in Vercel — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example). Blog release, monitoring, Pinterest, and SEO operations are documented in [`docs/BLOG_PRODUCTION_OPERATIONS.md`](docs/BLOG_PRODUCTION_OPERATIONS.md).
 
 ## eBay marketplace account deletion notifications
 

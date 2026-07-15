@@ -18,7 +18,13 @@ export function BlogPostShell({
   return (
     <BlogMainLayout landingUrl={landingUrl} linkBlogTitleToHome compactMobile>
       {jsonLd ? <JsonLdScript data={jsonLd} /> : null}
-      <BlogReadingProgress articleId={BLOG_POST_ARTICLE_ID} />
+      <div
+        className="pointer-events-none fixed inset-x-0 top-0 z-50 h-1 bg-transparent motion-reduce:hidden"
+        data-reading-progress="reduced-motion-hidden"
+        aria-hidden
+      >
+        <BlogReadingProgress articleId={BLOG_POST_ARTICLE_ID} />
+      </div>
       <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,48rem)_minmax(13rem,1fr)] lg:items-start lg:gap-8 xl:gap-10">
         <article
           id={BLOG_POST_ARTICLE_ID}
