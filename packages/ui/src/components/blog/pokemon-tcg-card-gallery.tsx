@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/data/client'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { Button } from '../button'
@@ -30,9 +30,11 @@ export function PokemonTcgCardGallery({
   source?: PokemonTcgCardGallerySource
 }) {
   const [visibleCards, setVisibleCards] = useState(() => cards.slice(0, INITIAL_VISIBLE))
+  const [availableCount, setAvailableCount] = useState(totalCount)
   const [isLoading, setIsLoading] = useState(false)
   const [loadError, setLoadError] = useState(false)
-  const hiddenCount = Math.max(0, totalCount - visibleCards.length)
+  const expansionManifestCards = useRef<PokemonTcgCard[] | null>(null)
+  const hiddenCount = Math.max(0, availableCount - visibleCards.length)
   const primarySource = TCG_CARD_DATA_ATTRIBUTION[0]!
   const backupSource = TCG_CARD_DATA_ATTRIBUTION[1]!
   const introLine =
@@ -44,15 +46,44 @@ export function PokemonTcgCardGallery({
     setLoadError(false)
 
     try {
-      const params = new URLSearchParams({
-        kind: source.kind,
-        slug: source.slug,
-        offset: String(visibleCards.length),
-        limit: String(LOAD_MORE_COUNT),
-      })
-      const response = await fetch(`/api/card-gallery?${params.toString()}`)
-      if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
-      const page = (await response.json()) as { cards: PokemonTcgCard[]; total: number }
+      let page: { cards: PokemonTcgCard[]; total: number }
+      if (source.kind === 'expansion') {
+        if (!expansionManifestCards.current) {
+          const response = await fetch(
+            `/data/expansion-galleries/${encodeURIComponent(source.slug)}.json`
+          )
+          if (!response.ok) throw new Error(`Expansion gallery request failed (${response.status})`)
+          const manifest = (await response.json()) as {
+            version?: unknown
+            slug?: unknown
+            cards?: unknown
+          }
+          if (
+            manifest.version !== 1 ||
+            manifest.slug !== source.slug ||
+            !Array.isArray(manifest.cards)
+          ) {
+            throw new Error('Invalid expansion gallery manifest')
+          }
+          expansionManifestCards.current = manifest.cards as PokemonTcgCard[]
+        }
+        const allCards = expansionManifestCards.current
+        page = {
+          cards: allCards.slice(visibleCards.length, visibleCards.length + LOAD_MORE_COUNT),
+          total: allCards.length,
+        }
+      } else {
+        const params = new URLSearchParams({
+          kind: source.kind,
+          slug: source.slug,
+          offset: String(visibleCards.length),
+          limit: String(LOAD_MORE_COUNT),
+        })
+        const response = await fetch(`/api/card-gallery?${params.toString()}`)
+        if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
+        page = (await response.json()) as { cards: PokemonTcgCard[]; total: number }
+      }
+      setAvailableCount(page.total)
       setVisibleCards((current) => {
         const byId = new Map(current.map((card) => [card.id, card]))
         for (const card of page.cards) byId.set(card.id, card)
@@ -89,7 +120,7 @@ export function PokemonTcgCardGallery({
         </p>
       ) : null}
       <p className="text-muted-foreground mt-4 text-xs">
-        Showing {visibleCards.length} of {totalCount} cards · card data from{' '}
+        Showing {visibleCards.length} of {availableCount} cards · card data from{' '}
         <a
           href={primarySource.href}
           target="_blank"

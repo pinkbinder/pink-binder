@@ -10,3 +10,4 @@ pnpm-lock.yaml
 
 # Generated Pokémon / TCG JSON cache (hand-edited source lives in src/ and scripts/)
 packages/data/cache/
+apps/blog/public/data/expansion-galleries/
