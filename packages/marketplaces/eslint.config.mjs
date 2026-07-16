@@ -21,4 +21,12 @@ export default [
     },
     ignorePatterns: ['next-images.mjs'],
   }),
+  {
+    files: ['test/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: false,
+      },
+    },
+  },
 ]

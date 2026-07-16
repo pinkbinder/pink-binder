@@ -2,9 +2,12 @@ name: CI
 
 on:
   pull_request:
-    branches: [main, master]
+    branches: [main, staging]
   push:
-    branches: [main, master]
+    branches: [main, staging]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -13,14 +16,15 @@ concurrency:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24.18.0
           cache: pnpm
 
       - name: Install dependencies
@@ -28,6 +32,12 @@ jobs:
 
       - name: Lint, type-check, and format
         run: pnpm validate
+
+      - name: Test with coverage
+        run: pnpm test:coverage
+
+      - name: Audit high-severity dependencies
+        run: pnpm audit --audit-level=high
 
       - name: Build blog
         run: pnpm exec turbo run build --filter=@repo/blog
