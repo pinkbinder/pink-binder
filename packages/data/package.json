@@ -21,6 +21,9 @@
   "scripts": {
     "lint": "eslint src scripts --max-warnings 0",
     "type-check": "tsc --noEmit",
+    "test": "vitest run --root ../.. --project data",
+    "test:watch": "vitest --root ../.. --project data",
+    "test:coverage": "vitest run --root ../.. --project data --coverage --coverage.include='src/**/*.ts' --coverage.reportsDirectory=coverage/packages-data --coverage.thresholds.lines=0 --coverage.thresholds.functions=0 --coverage.thresholds.branches=0 --coverage.thresholds.statements=0",
     "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",
@@ -36,7 +39,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@vercel/blob": "^2.3.0",
+    "@vercel/blob": "^2.6.1",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",

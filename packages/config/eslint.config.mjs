@@ -20,4 +20,12 @@ export default [
       project: true,
     },
   }),
+  {
+    files: ['test/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: false,
+      },
+    },
+  },
 ]

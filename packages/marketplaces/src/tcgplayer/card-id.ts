@@ -73,7 +73,7 @@ export function pokemontcgCatalogCardIdFromImageUrl(url: string | null | undefin
     return null
   }
   const setId = match[1].trim().toLowerCase()
-  const local = normalizeTcgCardNumber(match[2])
+  const local = normalizeTcgCardNumber(match[2].replace(/_hires$/i, ''))
   return local ? `${setId}-${local}` : null
 }
 
