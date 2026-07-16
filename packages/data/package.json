@@ -39,16 +39,16 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@vercel/blob": "^2.6.1",
-    "@eslint/eslintrc": "^3.3.5",
-    "@eslint/js": "^9.39.4",
+    "@eslint/eslintrc": "^3.3.6",
+    "@eslint/js": "^9.39.5",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^25.8.0",
-    "eslint": "^9.39.4",
-    "prettier": "^3.8.3",
+    "@types/node": "^25.9.5",
+    "@vercel/blob": "^2.6.1",
+    "eslint": "^9.39.5",
+    "prettier": "^3.9.5",
     "sharp": "^0.34.5",
-    "tsx": "^4.22.0",
+    "tsx": "^4.23.1",
     "typescript": "6.0.3"
   }
 }
