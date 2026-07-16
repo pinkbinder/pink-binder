@@ -29,7 +29,9 @@
     "full-sync": "pnpm extract && pnpm images && pnpm transform",
     "refresh": "tsx scripts/3-transform/index.ts --only prices",
     "build:gallery-manifests": "tsx scripts/3-transform/5-blog/12-build-gallery-manifests.ts",
-    "audit:blog-publishing": "tsx scripts/audit/blog-publishing-qa.ts"
+    "audit:blog-publishing": "tsx scripts/audit/blog-publishing-qa.ts",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
@@ -38,16 +40,18 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
-    "@vercel/blob": "^2.3.0",
     "@eslint/eslintrc": "^3.3.5",
     "@eslint/js": "^9.39.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^25.8.0",
+    "@vercel/blob": "^2.3.0",
     "eslint": "^9.39.4",
+    "jsdom": "^29.1.1",
     "prettier": "^3.8.3",
     "sharp": "^0.34.5",
     "tsx": "^4.22.0",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "vitest": "^2.1.9"
   }
 }
