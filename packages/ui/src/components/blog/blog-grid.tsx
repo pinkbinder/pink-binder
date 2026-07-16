@@ -87,13 +87,7 @@ function isFilterValueActive(
 }
 
 type FilterGroupKey =
-  | 'type'
-  | 'generation'
-  | 'list'
-  | 'illustrator'
-  | 'expansion'
-  | 'pokemon'
-  | 'themes'
+  'type' | 'generation' | 'list' | 'illustrator' | 'expansion' | 'pokemon' | 'themes'
 
 interface GroupedFilters {
   type: string | null
