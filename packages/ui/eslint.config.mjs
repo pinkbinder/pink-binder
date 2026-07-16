@@ -25,4 +25,12 @@ export default [
       'react/prop-types': 'off',
     },
   }),
+  {
+    files: ['test/**/*.{ts,tsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: false,
+      },
+    },
+  },
 ]

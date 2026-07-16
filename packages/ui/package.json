@@ -14,6 +14,9 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
+    "test": "vitest run --root ../.. --project ui",
+    "test:watch": "vitest --root ../.. --project ui",
+    "test:coverage": "vitest run --root ../.. --project ui --coverage --coverage.include='src/**/*.{ts,tsx}' --coverage.reportsDirectory=coverage/packages-ui --coverage.thresholds.lines=0 --coverage.thresholds.functions=0 --coverage.thresholds.branches=0 --coverage.thresholds.statements=0",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
   },
@@ -49,7 +52,10 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.4",
+    "next": "16.2.10",
     "prettier": "^3.8.3",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
     "tailwindcss": "^4.3.2",
     "typescript": "6.0.3"
   }
