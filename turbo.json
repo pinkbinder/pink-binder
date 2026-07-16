@@ -54,6 +54,9 @@
     "type-check": {
       "dependsOn": ["^type-check"]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "format": {},
     "format:fix": {
       "cache": false
@@ -62,6 +65,10 @@
       "cache": false,
       "persistent": true,
       "inputs": [".env", ".env.local", ".env.development", ".env.development.local"]
+    },
+    "format:check": {
+      "dependsOn": ["^format:check"],
+      "cache": true
     }
   }
 }
