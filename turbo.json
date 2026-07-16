@@ -54,6 +54,14 @@
     "type-check": {
       "dependsOn": ["^type-check"]
     },
+    "test": {
+      "dependsOn": ["^test"],
+      "outputs": []
+    },
+    "test:coverage": {
+      "dependsOn": ["^test:coverage"],
+      "cache": false
+    },
     "format": {},
     "format:fix": {
       "cache": false

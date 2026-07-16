@@ -8,6 +8,9 @@
     "dev:webpack": "next dev --port 3000 --webpack",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
+    "test": "vitest run --root ../.. --project landing",
+    "test:watch": "vitest --root ../.. --project landing",
+    "test:coverage": "vitest run --root ../.. --project landing --coverage --coverage.include='{app,components,lib}/**/*.{ts,tsx}' --coverage.reportsDirectory=coverage/apps-landing --coverage.thresholds.lines=0 --coverage.thresholds.functions=0 --coverage.thresholds.branches=0 --coverage.thresholds.statements=0",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore",
     "start": "next start"

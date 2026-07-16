@@ -17,6 +17,9 @@
   "scripts": {
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
+    "test": "vitest run --root ../.. --project marketplaces",
+    "test:watch": "vitest --root ../.. --project marketplaces",
+    "test:coverage": "vitest run --root ../.. --project marketplaces --coverage --coverage.include='src/**/*.ts' --coverage.reportsDirectory=coverage/packages-marketplaces --coverage.thresholds.lines=0 --coverage.thresholds.functions=0 --coverage.thresholds.branches=0 --coverage.thresholds.statements=0",
     "format": "prettier --check . --ignore-path ../../.prettierignore",
     "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
   },
