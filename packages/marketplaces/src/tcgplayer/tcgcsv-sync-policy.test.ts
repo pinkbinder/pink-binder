@@ -10,7 +10,9 @@ import {
 describe('tcgplayer/tcgcsv-sync-policy', () => {
   describe('parseTcgcsvTimestamp', () => {
     it('parses a valid ISO stamp', () => {
-      expect(parseTcgcsvTimestamp('2026-01-02T00:00:00.000Z')).toBe(Date.parse('2026-01-02T00:00:00.000Z'))
+      expect(parseTcgcsvTimestamp('2026-01-02T00:00:00.000Z')).toBe(
+        Date.parse('2026-01-02T00:00:00.000Z')
+      )
     })
 
     it('returns null for empty/undefined', () => {
@@ -34,25 +36,28 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
     })
 
     it('compares parsed timestamps', () => {
-      expect(
-        tcgcsvRemoteBuildIsNewer('2026-02-01T00:00:00.000Z', '2026-01-01T00:00:00.000Z'),
-      ).toBe(true)
-      expect(
-        tcgcsvRemoteBuildIsNewer('2026-01-01T00:00:00.000Z', '2026-02-01T00:00:00.000Z'),
-      ).toBe(false)
+      expect(tcgcsvRemoteBuildIsNewer('2026-02-01T00:00:00.000Z', '2026-01-01T00:00:00.000Z')).toBe(
+        true
+      )
+      expect(tcgcsvRemoteBuildIsNewer('2026-01-01T00:00:00.000Z', '2026-02-01T00:00:00.000Z')).toBe(
+        false
+      )
     })
   })
 
   describe('tcgcsvFullSyncAllowedWithin24h', () => {
     it('allows when force/frequent flag is set', () => {
       expect(
-        tcgcsvFullSyncAllowedWithin24h({ lastFullSyncAt: '2026-01-01T00:00:00.000Z', allowFrequentSync: true }),
+        tcgcsvFullSyncAllowedWithin24h({
+          lastFullSyncAt: '2026-01-01T00:00:00.000Z',
+          allowFrequentSync: true,
+        })
       ).toBe(true)
     })
 
     it('allows when no previous sync recorded', () => {
       expect(
-        tcgcsvFullSyncAllowedWithin24h({ lastFullSyncAt: null, allowFrequentSync: false }),
+        tcgcsvFullSyncAllowedWithin24h({ lastFullSyncAt: null, allowFrequentSync: false })
       ).toBe(true)
     })
 
@@ -60,7 +65,11 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
       const now = Date.parse('2026-06-01T12:00:00.000Z')
       const last = now - TCGCSV_MIN_FULL_SYNC_INTERVAL_MS + 1000
       expect(
-        tcgcsvFullSyncAllowedWithin24h({ lastFullSyncAt: new Date(last).toISOString(), allowFrequentSync: false, nowMs: now }),
+        tcgcsvFullSyncAllowedWithin24h({
+          lastFullSyncAt: new Date(last).toISOString(),
+          allowFrequentSync: false,
+          nowMs: now,
+        })
       ).toBe(false)
     })
 
@@ -68,7 +77,11 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
       const now = Date.parse('2026-06-01T12:00:00.000Z')
       const last = now - TCGCSV_MIN_FULL_SYNC_INTERVAL_MS - 1000
       expect(
-        tcgcsvFullSyncAllowedWithin24h({ lastFullSyncAt: new Date(last).toISOString(), allowFrequentSync: false, nowMs: now }),
+        tcgcsvFullSyncAllowedWithin24h({
+          lastFullSyncAt: new Date(last).toISOString(),
+          allowFrequentSync: false,
+          nowMs: now,
+        })
       ).toBe(true)
     })
   })
@@ -83,7 +96,7 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
           hasLocalIndex: false,
           force: false,
           allowFrequentSync: false,
-        }),
+        })
       ).toBeNull()
     })
 
@@ -96,7 +109,7 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
           hasLocalIndex: true,
           force: false,
           allowFrequentSync: false,
-        }),
+        })
       ).toBe('up-to-date')
     })
 
@@ -109,7 +122,7 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
           hasLocalIndex: true,
           force: false,
           allowFrequentSync: false,
-        }),
+        })
       ).toBeNull()
     })
 
@@ -125,7 +138,7 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
           force: false,
           allowFrequentSync: false,
           nowMs: now,
-        }),
+        })
       ).toBe('up-to-date')
     })
 
@@ -141,7 +154,7 @@ describe('tcgplayer/tcgcsv-sync-policy', () => {
           force: false,
           allowFrequentSync: false,
           nowMs: now,
-        }),
+        })
       ).toBeNull()
     })
   })
