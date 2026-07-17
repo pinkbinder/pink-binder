@@ -11,6 +11,8 @@
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
+    "type:check": "turbo run type-check",
+    "start": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
     "format": "turbo run format",
     "format:fix": "turbo run format:fix",
     "test": "bun test",
