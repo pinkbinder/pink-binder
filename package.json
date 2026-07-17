@@ -21,7 +21,7 @@
     "lint-staged": "lint-staged",
     "validate": "node scripts/with-env.mjs turbo run format lint type-check",
     "validate:pre-commit": "node scripts/with-env.mjs turbo run lint type-check",
-    "prepare": "husky"
+    "prepare": "husky || true"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,mdc,css,yml,yaml}": "prettier --write --ignore-unknown"
