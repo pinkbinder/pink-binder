@@ -1,9 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import {
-  buildSetToGroupIdMap,
-  normalizeTcgSetTitle,
-  resolveTcgcsvGroupIdForCard,
-} from './tcgcsv-set-groups'
+import { normalizeTcgSetTitle, resolveTcgcsvGroupIdForCard } from './tcgcsv-set-groups'
 
 describe('tcgplayer/tcgcsv-set-groups', () => {
   describe('normalizeTcgSetTitle', () => {

@@ -1,13 +1,20 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { render } from '@testing-library/react'
 
-const nextGtmMock = vi.fn(() => null)
-vi.mock('@next/third-parties/google', () => ({ GoogleTagManager: (props: { gtmId: string }) => { nextGtmMock(props.gtmId); return null } }))
+const nextGtmMock = vi.fn()
+vi.mock('@next/third-parties/google', () => ({
+  GoogleTagManager: (props: { gtmId: string }) => {
+    nextGtmMock(props.gtmId)
+    return null
+  },
+}))
 
 import { GoogleTagManager } from './gtm'
 
 describe('ui/components/gtm', () => {
-  beforeEach(() => { nextGtmMock.mockReset() })
+  beforeEach(() => {
+    nextGtmMock.mockReset()
+  })
 
   it('renders the next GTM component with a valid prop id', () => {
     render(<GoogleTagManager gtmId="GTM-ABC123" />)
