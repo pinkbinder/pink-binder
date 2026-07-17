@@ -30,12 +30,12 @@ Next.js loads each app's `.env.local` when that app runs. You do **not** need a 
 
 ## Where variables live
 
-| Scope | Location | Notes |
-| ----- | -------- | ----- |
-| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Pulled from the landing Vercel project |
-| Blog (GTM, Blob token) | `apps/blog/.env.local` | Pulled from the blog Vercel project |
-| Data scripts (Blob upload) | `apps/blog/.env.local` | `@repo/data` publish scripts read the blog token |
-| Optional overrides | Root `.env.local` | Legacy; merged by `scripts/with-env.mjs` only |
+| Scope                         | Location                  | Notes                                            |
+| ----------------------------- | ------------------------- | ------------------------------------------------ |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Pulled from the landing Vercel project           |
+| Blog (GTM, Blob token)        | `apps/blog/.env.local`    | Pulled from the blog Vercel project              |
+| Data scripts (Blob upload)    | `apps/blog/.env.local`    | `@repo/data` publish scripts read the blog token |
+| Optional overrides            | Root `.env.local`         | Legacy; merged by `scripts/with-env.mjs` only    |
 
 Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Vercel project that needs them.
 
@@ -98,11 +98,11 @@ Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish 
 
 ### Sharing `blob-manifest.json` across machines
 
-| Artifact | Commit to git? | Why |
-| -------- | -------------- | --- |
-| `cache/normalized/species/*.json` | **Yes** (already) | Apps read Blob URLs from here at runtime |
-| `cache/blob-manifest.json` | **Recommended for teams** | Lets others run `transform` (apply URLs) and `images` publish skips without re-uploading |
-| `cache/images/` | **No** | Staging only; cleaned up after publish |
+| Artifact                          | Commit to git?            | Why                                                                                      |
+| --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
+| `cache/normalized/species/*.json` | **Yes** (already)         | Apps read Blob URLs from here at runtime                                                 |
+| `cache/blob-manifest.json`        | **Recommended for teams** | Lets others run `transform` (apply URLs) and `images` publish skips without re-uploading |
+| `cache/images/`                   | **No**                    | Staging only; cleaned up after publish                                                   |
 
 The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
 

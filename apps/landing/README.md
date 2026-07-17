@@ -8,7 +8,7 @@ Environment variables are managed in **Vercel** (source of truth). Sync them loc
 
 ```bash
 # Link this project to its Vercel project (one-time)
-vercel link 
+vercel link
 
 # Pull all env vars into .env.local (gitignored)
 vercel env pull .env.local
