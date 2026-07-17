@@ -21,7 +21,8 @@
     "lint-staged": "lint-staged",
     "validate": "node scripts/with-env.mjs turbo run format lint type-check",
     "validate:pre-commit": "node scripts/with-env.mjs turbo run lint type-check",
-    "prepare": "husky || true"
+    "prepare": "husky || true",
+    "format:check": "prettier --check ."
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,mdc,css,yml,yaml}": "prettier --write --ignore-unknown"
@@ -30,7 +31,12 @@
     "@happy-dom/global-registrator": "^20.10.6",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
+    "@types/bun": "^1.3.14",
+    "@typescript-eslint/eslint-plugin": "^8.64.0",
+    "@typescript-eslint/parser": "^8.64.0",
     "eslint": "^9.39.5",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
     "husky": "^9.1.7",
     "lint-staged": "^16.4.0",
     "prettier": "^3.9.5",

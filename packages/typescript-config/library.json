@@ -3,7 +3,7 @@
   "extends": "./base.json",
   "compilerOptions": {
     "lib": ["ES2022"],
-    "types": ["node"],
+    "types": ["node", "bun"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "noEmit": true
