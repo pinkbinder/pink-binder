@@ -1,0 +1,4 @@
+[test]
+isolate = true
+preload = ["./test/preload.ts", "./test/setup.ts"]
+exclude = ["dist/**", "node_modules/**", "coverage/**", "**/*.test.js"]

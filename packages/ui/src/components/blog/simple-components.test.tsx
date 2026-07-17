@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, mock } from 'bun:test'
 import { render, screen } from '@testing-library/react'
 
-vi.mock('../../lib/blog-inline-text', () => ({
+mock.module('../../lib/blog-inline-text', () => ({
   BlogInlineText: ({ text }: { text: string }) => <span data-testid="inline">{text}</span>,
 }))
 

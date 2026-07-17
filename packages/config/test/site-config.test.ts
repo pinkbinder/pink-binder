@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'bun:test'
 import {
   DEV_BLOG_URL,
   DEV_LANDING_URL,
@@ -12,8 +12,17 @@ import {
 import { MARKETPLACE_DISPLAYS, MARKETPLACE_SLUGS, getMarketplaceDisplay } from '../src/marketplaces'
 import { BRAND, CONTACT_EMAIL, SHOP_LINKS, SITE_URL, SOCIAL_LINKS } from '../src/site'
 
+const stubbedEnvKeys = new Set<string>()
+function stubEnv(key: string, value: string) {
+  stubbedEnvKeys.add(key)
+  process.env[key] = value
+}
+
 afterEach(() => {
-  vi.unstubAllEnvs()
+  for (const key of stubbedEnvKeys) {
+    delete process.env[key]
+  }
+  stubbedEnvKeys.clear()
 })
 
 describe('site URLs', () => {
@@ -25,8 +34,8 @@ describe('site URLs', () => {
   })
 
   it('honors explicit app URLs and trims one trailing slash', () => {
-    vi.stubEnv('NEXT_PUBLIC_BLOG_URL', ' https://preview.blog/ ')
-    vi.stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://preview.shop/')
+    stubEnv('NEXT_PUBLIC_BLOG_URL', ' https://preview.blog/ ')
+    stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://preview.shop/')
     expect(getPublicBlogUrl()).toBe('https://preview.blog')
     expect(getSitemapBlogUrl()).toBe('https://preview.blog')
     expect(getPublicLandingUrl()).toBe('https://preview.shop')
@@ -34,12 +43,12 @@ describe('site URLs', () => {
   })
 
   it('falls back through shared and server-only blog environment variables', () => {
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://shared.preview/')
-    vi.stubEnv('BLOG_URL', 'https://server.blog/')
+    stubEnv('NEXT_PUBLIC_SITE_URL', 'https://shared.preview/')
+    stubEnv('BLOG_URL', 'https://server.blog/')
     expect(getPublicBlogUrl()).toBe('https://shared.preview')
     expect(getPublicLandingUrl()).toBe('https://shared.preview')
 
-    vi.stubEnv('NEXT_PUBLIC_SITE_URL', '')
+    stubEnv('NEXT_PUBLIC_SITE_URL', '')
     expect(getPublicBlogUrl()).toBe('https://server.blog')
   })
 })

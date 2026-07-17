@@ -21,9 +21,9 @@
   "scripts": {
     "lint": "eslint src scripts --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "test": "vitest run --root ../.. --project data",
-    "test:watch": "vitest --root ../.. --project data",
-    "test:coverage": "vitest run --root ../.. --project data --coverage --coverage.include='src/**/*.ts' --coverage.reportsDirectory=coverage/packages-data --coverage.thresholds.lines=0 --coverage.thresholds.functions=0 --coverage.thresholds.branches=0 --coverage.thresholds.statements=0",
+    "test": "cd ../.. && bun test packages/data",
+    "test:watch": "cd ../.. && bun test --watch packages/data",
+    "test:coverage": "cd ../.. && bun test --coverage packages/data",
     "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
     "extract": "tsx scripts/1-extract/index.ts",

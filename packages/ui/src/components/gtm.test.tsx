@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import { render } from '@testing-library/react'
 
-const nextGtmMock = vi.fn()
-vi.mock('@next/third-parties/google', () => ({
+const nextGtmMock = mock()
+mock.module('@next/third-parties/google', () => ({
   GoogleTagManager: (props: { gtmId: string }) => {
     nextGtmMock(props.gtmId)
     return null
