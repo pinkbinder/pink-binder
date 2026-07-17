@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from '@testing-library/react'
 import { JsonLdScript } from './json-ld-script'
 
 describe('ui/components/json-ld-script', () => {

@@ -19,7 +19,8 @@ describe('ui/components/blog simple components', () => {
 
     it('applies custom class names', () => {
       const { container } = render(<BlogInfoPill label="L" value="V" className="my-pill" />)
-      expect(container.firstChild?.className).toContain('my-pill')
+      const el = container.firstChild as HTMLElement
+      expect(el.className).toContain('my-pill')
     })
   })
 
