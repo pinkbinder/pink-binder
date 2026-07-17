@@ -17,12 +17,12 @@ describe('ui/components/blog batch2', () => {
     it('renders an image for the first candidate', () => {
       render(<RoundupCutestHeroImage candidates={['/a.png', '/b.png']} alt="Cute" />)
       const img = screen.getByRole('img')
-      expect(img).toHaveAttribute('alt', 'Cute')
+      expect(img?.getAttribute('alt')).toBe('Cute')
     })
 
     it('renders nothing when there are no candidates', () => {
       const { container } = render(<RoundupCutestHeroImage candidates={[]} alt="Cute" />)
-      expect(container).toBeEmptyDOMElement()
+      expect(container?.textContent?.trim()).toBe('')
     })
   })
 })

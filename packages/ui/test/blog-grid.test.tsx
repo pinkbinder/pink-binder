@@ -150,9 +150,8 @@ describe('BlogGrid', () => {
     const user = userEvent.setup()
     render(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
-    expect(screen.getByText('Pikachu binder guide')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'Pikachu binder guide' })).toHaveAttribute(
-      'href',
+    expect(screen.getByText('Pikachu binder guide')).not.toBeNull()
+    expect(screen.getByRole('link', { name: 'Pikachu binder guide' })?.getAttribute('href')).toBe(
       '/posts/species/pikachu'
     )
 
@@ -185,7 +184,7 @@ describe('BlogGrid', () => {
       )
     })
 
-    expect(await screen.findByText('Eevee binder guide')).toBeInTheDocument()
+    expect(await screen.findByText('Eevee binder guide')).not.toBeNull()
     expect(fetchMock).toHaveBeenCalledWith(
       '/api/posts-grid?offset=1&limit=24',
       expect.objectContaining({ signal: expect.any(AbortSignal) })
@@ -202,12 +201,12 @@ describe('BlogGrid', () => {
 
     render(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
-    expect(await screen.findByRole('heading', { name: 'Posts could not load' })).toBeInTheDocument()
-    expect(screen.getByText('Please try the catalog again.')).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Posts could not load' })).not.toBeNull()
+    expect(screen.getByText('Please try the catalog again.')).not.toBeNull()
   })
 
   it('renders a stable accessible loading skeleton', () => {
     render(<BlogGridSkeleton />)
-    expect(screen.getByLabelText('Loading blog posts')).toHaveAttribute('aria-busy', 'true')
+    expect(screen.getByLabelText('Loading blog posts')?.getAttribute('aria-busy')).toBe('true')
   })
 })

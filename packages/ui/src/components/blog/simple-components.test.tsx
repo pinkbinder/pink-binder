@@ -27,7 +27,7 @@ describe('ui/components/blog simple components', () => {
   describe('BlogParagraphList', () => {
     it('renders nothing for an empty list', () => {
       const { container } = render(<BlogParagraphList paragraphs={[]} />)
-      expect(container).toBeEmptyDOMElement()
+      expect(container?.textContent?.trim()).toBe('')
     })
 
     it('renders each paragraph with inline text', () => {

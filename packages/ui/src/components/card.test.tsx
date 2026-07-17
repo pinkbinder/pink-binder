@@ -12,7 +12,7 @@ describe('ui/components/card', () => {
     const card = screen.getByTestId('card')
     expect(card.className).toContain('bg-card')
     expect(card.className).toContain('custom-card')
-    expect(card).toHaveTextContent('content')
+    expect(card?.textContent).toContain('content')
   })
 
   it('forwards a ref to the underlying element', () => {
