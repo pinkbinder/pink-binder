@@ -5,9 +5,12 @@ on:
     branches: [main, staging]
   push:
     branches: [main, staging]
+<<<<<<< HEAD
 
 permissions:
   contents: read
+=======
+>>>>>>> staging
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -20,18 +23,27 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
+<<<<<<< HEAD
       - uses: pnpm/action-setup@v6
 
       - uses: actions/setup-node@v7
         with:
           node-version: 24.18.0
           cache: pnpm
+=======
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.3.14'
+>>>>>>> staging
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
-      - name: Lint, type-check, and format
-        run: pnpm validate
+      - name: Lint, type-check, and format check
+        run: bun run validate
+
+      - name: Audit generated publishing data
+        run: bun --filter @repo/data audit:blog-publishing
 
       - name: Test with coverage
         run: pnpm test:coverage
@@ -40,4 +52,7 @@ jobs:
         run: pnpm audit --audit-level=high
 
       - name: Build blog
-        run: pnpm exec turbo run build --filter=@repo/blog
+        run: bunx turbo run build --filter=@repo/blog
+
+      - name: Crawl every compiled blog route
+        run: bun --filter @repo/blog audit:routes

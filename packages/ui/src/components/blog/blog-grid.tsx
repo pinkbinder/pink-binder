@@ -30,6 +30,7 @@ import {
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
+import { trackSearch, trackSelectContent } from '../../lib/gtm-events'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
@@ -152,10 +153,13 @@ export function BlogGrid({
   const [resultTotal, setResultTotal] = useState(total)
   const [isLoadingPosts, setIsLoadingPosts] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [liveMessage, setLiveMessage] = useState('')
   const [filtersReady, setFiltersReady] = useState(
     () => !FACET_QUERY_KEYS.some((key) => searchParams.has(key))
   )
   const loadMoreRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  const pendingKeyboardFocusIndex = useRef<number | null>(null)
   const firstGridQuery = useRef(true)
   const activeGridRequest = useRef<AbortController | null>(null)
 
@@ -381,6 +385,7 @@ export function BlogGrid({
     setResultTotal(0)
     setLoadError(null)
     setIsLoadingPosts(true)
+    setLiveMessage('Loading collector guides.')
 
     void fetch(`/api/posts-grid?${params.toString()}`, { signal: controller.signal })
       .then(async (response) => {
@@ -391,10 +396,12 @@ export function BlogGrid({
         if (controller.signal.aborted) return
         setLoadedPosts(page.posts)
         setResultTotal(page.total)
+        setLiveMessage(`${page.total} collector guides found.`)
       })
       .catch((error: unknown) => {
         if (controller.signal.aborted) return
         setLoadError(error instanceof Error ? error.message : 'Unable to load posts')
+        setLiveMessage('Collector guides could not be loaded. Use Retry to try again.')
       })
       .finally(() => {
         if (!controller.signal.aborted) setIsLoadingPosts(false)
@@ -406,39 +413,61 @@ export function BlogGrid({
   const postsToRender = loadedPosts
   const hasMoreToRender = postsToRender.length < resultTotal
 
-  const showMore = useCallback(async () => {
-    if (isLoadingPosts || !hasMoreToRender) return
+  const showMore = useCallback(
+    async (focusNewResults = false) => {
+      if (isLoadingPosts || !hasMoreToRender) return
 
-    activeGridRequest.current?.abort()
-    const controller = new AbortController()
-    activeGridRequest.current = controller
-    const params = new URLSearchParams(gridQuery)
-    params.set('offset', String(postsToRender.length))
-    params.set('limit', String(VISIBLE_POST_BATCH))
-    setLoadError(null)
-    setIsLoadingPosts(true)
+      activeGridRequest.current?.abort()
+      const controller = new AbortController()
+      activeGridRequest.current = controller
+      const params = new URLSearchParams(gridQuery)
+      params.set('offset', String(postsToRender.length))
+      params.set('limit', String(VISIBLE_POST_BATCH))
+      setLoadError(null)
+      setIsLoadingPosts(true)
+      setLiveMessage('Loading more collector guides.')
+      if (focusNewResults) pendingKeyboardFocusIndex.current = postsToRender.length
 
-    try {
-      const response = await fetch(`/api/posts-grid?${params.toString()}`, {
-        signal: controller.signal,
-      })
-      if (!response.ok) throw new Error(`Blog grid request failed (${response.status})`)
-      const page = (await response.json()) as BlogGridPageResponse
-      if (controller.signal.aborted) return
-      setLoadedPosts((current) => {
-        const bySlug = new Map(current.map((post) => [post.slug, post]))
-        for (const post of page.posts) bySlug.set(post.slug, post)
-        return [...bySlug.values()]
-      })
-      setResultTotal(page.total)
-    } catch (error: unknown) {
-      if (!controller.signal.aborted) {
-        setLoadError(error instanceof Error ? error.message : 'Unable to load more posts')
+      try {
+        const response = await fetch(`/api/posts-grid?${params.toString()}`, {
+          signal: controller.signal,
+        })
+        if (!response.ok) throw new Error(`Blog grid request failed (${response.status})`)
+        const page = (await response.json()) as BlogGridPageResponse
+        if (controller.signal.aborted) return
+        setLoadedPosts((current) => {
+          const bySlug = new Map(current.map((post) => [post.slug, post]))
+          for (const post of page.posts) bySlug.set(post.slug, post)
+          return [...bySlug.values()]
+        })
+        setResultTotal(page.total)
+        setLiveMessage(
+          `Loaded ${page.posts.length} more collector guides. ${page.total} guides available.`
+        )
+      } catch (error: unknown) {
+        if (!controller.signal.aborted) {
+          setLoadError(error instanceof Error ? error.message : 'Unable to load more posts')
+          pendingKeyboardFocusIndex.current = null
+          setLiveMessage(
+            'More collector guides could not be loaded. Use Try loading more to retry.'
+          )
+        }
+      } finally {
+        if (!controller.signal.aborted) setIsLoadingPosts(false)
       }
-    } finally {
-      if (!controller.signal.aborted) setIsLoadingPosts(false)
-    }
-  }, [gridQuery, hasMoreToRender, isLoadingPosts, postsToRender.length])
+    },
+    [gridQuery, hasMoreToRender, isLoadingPosts, postsToRender.length]
+  )
+
+  useEffect(() => {
+    const index = pendingKeyboardFocusIndex.current
+    if (index === null || loadedPosts.length <= index) return
+    const link = gridRef.current?.querySelector<HTMLElement>(
+      `[data-blog-card-index="${index}"] a[href]`
+    )
+    pendingKeyboardFocusIndex.current = null
+    link?.focus()
+  }, [loadedPosts.length])
 
   useEffect(() => {
     if (!hasMoreToRender) {
@@ -453,7 +482,7 @@ export function BlogGrid({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry?.isIntersecting) {
-          showMore()
+          void showMore(false)
         }
       },
       { rootMargin: LOAD_MORE_ROOT_MARGIN }
@@ -600,6 +629,7 @@ export function BlogGrid({
       applyTagFilter(null)
       return
     }
+    trackSearch({ searchTerm: nextCatalogValue })
     const currentCatalog = catalogSelectValueFromFilters(
       tagFilter,
       groupedFilters,
@@ -1034,6 +1064,9 @@ export function BlogGrid({
 
   return (
     <div className="flex flex-col gap-6">
+      <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
+        {liveMessage}
+      </p>
       <div className="bg-card/50 rounded-2xl border p-4 shadow-xs">
         <div className="flex flex-col gap-4">
           {tagCatalogOptions.length > 0 ? (
@@ -1332,7 +1365,14 @@ export function BlogGrid({
 
       {postsToRender.length ? (
         <>
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+          <p id="blog-grid-result-count" className="text-muted-foreground text-sm">
+            Showing {postsToRender.length} of {resultTotal} collector guides
+          </p>
+          <div
+            ref={gridRef}
+            className="grid grid-cols-1 gap-6 md:grid-cols-3"
+            aria-busy={isLoadingPosts}
+          >
             {postsToRender.map((post, index) => {
               const primaryType = post.categories
                 .map((category) => parseTypeCategory(category))
@@ -1340,9 +1380,16 @@ export function BlogGrid({
               const typeAura = primaryType ? getPokemonTypeLightColors(primaryType) : null
 
               return (
-                <article key={post.slug} className="flex h-full flex-col rounded-3xl">
+                <article
+                  key={post.slug}
+                  data-blog-card-index={index}
+                  className="flex h-full flex-col rounded-3xl"
+                >
                   <Link
                     href={buildPostHref(post.slug)}
+                    onClick={() =>
+                      trackSelectContent({ contentType: 'blog_post', itemId: post.slug })
+                    }
                     className="group focus-visible:ring-ring block flex-1 rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
                     style={
                       typeAura
@@ -1483,7 +1530,16 @@ export function BlogGrid({
             })}
           </div>
           {hasMoreToRender && !loadError ? (
-            <div ref={loadMoreRef} className="h-8" aria-hidden />
+            <div ref={loadMoreRef} className="flex justify-center pt-2">
+              <Button
+                variant="outline"
+                disabled={isLoadingPosts}
+                onClick={(event) => void showMore(event.detail === 0)}
+                aria-describedby="blog-grid-result-count"
+              >
+                {isLoadingPosts ? 'Loading guides…' : 'Load more guides'}
+              </Button>
+            </div>
           ) : null}
           {isLoadingPosts ? (
             <p className="text-muted-foreground text-center text-sm" role="status">
@@ -1492,7 +1548,7 @@ export function BlogGrid({
           ) : null}
           {loadError && hasMoreToRender ? (
             <div className="text-center">
-              <Button variant="outline" onClick={() => void showMore()}>
+              <Button variant="outline" onClick={(event) => void showMore(event.detail === 0)}>
                 Try loading more
               </Button>
             </div>
