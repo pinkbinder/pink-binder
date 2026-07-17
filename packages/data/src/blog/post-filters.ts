@@ -651,13 +651,7 @@ export function extractTagCatalogOptions(posts: PostForTagCatalog[]): TagCatalog
 
 /** Facet groups that catalog tag search can drive (same axes as blog index dropdowns). */
 export type CatalogTagFacetGroup =
-  | 'type'
-  | 'generation'
-  | 'list'
-  | 'illustrator'
-  | 'expansion'
-  | 'pokemon'
-  | 'themes'
+  'type' | 'generation' | 'list' | 'illustrator' | 'expansion' | 'pokemon' | 'themes'
 
 export interface CatalogTagFacetResolution {
   group: CatalogTagFacetGroup
