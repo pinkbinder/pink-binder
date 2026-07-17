@@ -17,6 +17,7 @@ function rec(overrides: Partial<TcgCardRecord>): TcgCardRecord {
     setSeries: 'Base',
     number: '1',
     artist: 'Ken Sugimori',
+    metadataSource: 'pokemontcg' as TcgCardRecord['metadataSource'],
     ...overrides,
   }
 }
@@ -40,7 +41,12 @@ describe('tcgplayer/merge', () => {
     })
 
     it('prefers the McDonald catalog id (mcd##-) within the same dedup key', () => {
-      const a = rec({ id: 'mcd18-1', setName: "McDonald's Collection 2018", name: 'Pikachu', number: '1' })
+      const a = rec({
+        id: 'mcd18-1',
+        setName: "McDonald's Collection 2018",
+        name: 'Pikachu',
+        number: '1',
+      })
       const b = rec({
         id: 'sm1-1',
         setName: "McDonald's Collection 2018",
@@ -55,8 +61,18 @@ describe('tcgplayer/merge', () => {
 
   describe('collapseTrainerKitDuplicates', () => {
     it('collapses two trainer-kit slots on the same species page', () => {
-      const a = rec({ id: 'tk-ex-m-4', setName: 'XY Trainer Kit', name: 'Mega Charizard', number: '4' })
-      const b = rec({ id: 'tk2b-4', setName: 'XY Trainer Kit', name: 'Mega Charizard', number: '4' })
+      const a = rec({
+        id: 'tk-ex-m-4',
+        setName: 'XY Trainer Kit',
+        name: 'Mega Charizard',
+        number: '4',
+      })
+      const b = rec({
+        id: 'tk2b-4',
+        setName: 'XY Trainer Kit',
+        name: 'Mega Charizard',
+        number: '4',
+      })
       const result = collapseTrainerKitDuplicates([a, b])
       expect(result).toHaveLength(1)
     })
@@ -84,10 +100,7 @@ describe('tcgplayer/merge', () => {
     })
 
     it('dedupes primary cards by canonical id', () => {
-      const primary = [
-        rec({ id: 'base1-1', name: 'A' }),
-        rec({ id: 'base1-1', name: 'B' }),
-      ]
+      const primary = [rec({ id: 'base1-1', name: 'A' }), rec({ id: 'base1-1', name: 'B' })]
       const result = mergeTcgCardRecords(primary, [])
       expect(result).toHaveLength(1)
     })

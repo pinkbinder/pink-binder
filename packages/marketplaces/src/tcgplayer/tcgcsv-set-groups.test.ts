@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest'
-import { buildSetToGroupIdMap, normalizeTcgSetTitle, resolveTcgcsvGroupIdForCard } from './tcgcsv-set-groups'
+import {
+  buildSetToGroupIdMap,
+  normalizeTcgSetTitle,
+  resolveTcgcsvGroupIdForCard,
+} from './tcgcsv-set-groups'
 
 describe('tcgplayer/tcgcsv-set-groups', () => {
   describe('normalizeTcgSetTitle', () => {
@@ -23,7 +27,6 @@ describe('tcgplayer/tcgcsv-set-groups', () => {
       expect(normalizeTcgSetTitle('Base    Set')).toBe('base set')
     })
   })
-
 
   describe('resolveTcgcsvGroupIdForCard', () => {
     it('returns null for empty input', () => {
