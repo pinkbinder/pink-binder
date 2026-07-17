@@ -2,8 +2,7 @@
   "name": "pink-binder",
   "private": true,
   "engines": {
-    "node": "24.18.0",
-    "pnpm": "11.13.1"
+    "node": "24.18.0"
   },
   "scripts": {
     "build": "node scripts/with-env.mjs turbo run build",
@@ -39,5 +38,5 @@
     "turbo": "2.10.5",
     "vitest": "4.1.10"
   },
-  "packageManager": "pnpm@11.13.1"
+  "packageManager": "bun@1.3.14"
 }
