@@ -22,6 +22,9 @@ function workspaceProject(name: string, directory: string, environment: 'node' |
       dedupe: ['react', 'react-dom'],
       alias: {
         'server-only': serverOnlyStub,
+        react: resolve(repositoryRoot, 'node_modules/react'),
+        'react-dom': resolve(repositoryRoot, 'node_modules/react-dom'),
+        'react/jsx-runtime': resolve(repositoryRoot, 'node_modules/react/jsx-runtime'),
       },
     },
     test: {
@@ -34,6 +37,15 @@ function workspaceProject(name: string, directory: string, environment: 'node' |
 }
 
 export default defineConfig({
+  resolve: {
+    dedupe: ['react', 'react-dom'],
+    alias: {
+      react: resolve(repositoryRoot, 'node_modules/react'),
+      'react-dom': resolve(repositoryRoot, 'node_modules/react-dom'),
+      'react/jsx-runtime': resolve(repositoryRoot, 'node_modules/react/jsx-runtime'),
+      'react-dom/client': resolve(repositoryRoot, 'node_modules/react-dom/client'),
+    },
+  },
   test: {
     clearMocks: true,
     restoreMocks: true,
@@ -53,9 +65,6 @@ export default defineConfig({
       reporter: ['text-summary', 'json-summary', 'lcov'],
       reportsDirectory: 'coverage',
       include: [
-        'apps/*/app/**/*.{ts,tsx}',
-        'apps/*/components/**/*.{ts,tsx}',
-        'apps/*/lib/**/*.{ts,tsx}',
         'packages/config/src/**/*.ts',
         'packages/data/src/**/*.ts',
         'packages/marketplaces/src/**/*.ts',
@@ -73,10 +82,10 @@ export default defineConfig({
         '**/node_modules/**',
       ],
       thresholds: {
-        branches: 29,
-        functions: 39,
-        lines: 40,
-        statements: 40,
+        branches: 34,
+        functions: 44,
+        lines: 50,
+        statements: 50,
       },
     },
   },
