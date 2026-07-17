@@ -1,16 +1,16 @@
 import type { ReactNode } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import type { BlogGridFacets, EnrichedPostForGrid } from '@repo/data/client'
 import { BlogGrid, BlogGridSkeleton } from '../src/components/blog/blog-grid'
 
-const navigation = vi.hoisted(() => ({
+const navigation = {
   query: '',
-  push: vi.fn(),
-}))
+  push: mock(),
+}
 
-vi.mock('next/navigation', () => {
+mock.module('next/navigation', () => {
   let cachedQuery = ''
   let cachedParams = new URLSearchParams()
 
@@ -27,7 +27,7 @@ vi.mock('next/navigation', () => {
   }
 })
 
-vi.mock('next/link', () => ({
+mock.module('next/link', () => ({
   default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
     <a href={href} {...props}>
       {children}
@@ -35,19 +35,19 @@ vi.mock('next/link', () => ({
   ),
 }))
 
-vi.mock('../src/components/post-card', () => ({
+mock.module('../src/components/post-card', () => ({
   PostCard: ({ post }: { post: { title: string } }) => <div>{post.title}</div>,
 }))
 
-vi.mock('../src/components/roundup-post-card', () => ({
+mock.module('../src/components/roundup-post-card', () => ({
   RoundupPostCard: ({ title }: { title: string }) => <div>{title}</div>,
 }))
 
-vi.mock('../src/components/pokemon-type-logo', () => ({
+mock.module('../src/components/pokemon-type-logo', () => ({
   PokemonTypeLogo: ({ color }: { color: string }) => <span data-color={color}>type</span>,
 }))
 
-vi.mock('../src/components/searchable-select', () => ({
+mock.module('../src/components/searchable-select', () => ({
   SearchableSelect: ({
     options,
     value,
@@ -142,7 +142,7 @@ beforeEach(() => {
     unobserve() {}
   }
 
-  vi.stubGlobal('IntersectionObserver', IntersectionObserverMock)
+  globalThis.IntersectionObserver = IntersectionObserverMock
 })
 
 describe('BlogGrid', () => {
@@ -169,11 +169,11 @@ describe('BlogGrid', () => {
   })
 
   it('loads and deduplicates the next page when the sentinel intersects', async () => {
-    const fetchMock = vi.fn().mockResolvedValue({
+    const fetchMock = mock().mockResolvedValue({
       ok: true,
       json: async () => ({ posts: [pikachuPost, eeveePost], total: 2, nextOffset: 2 }),
     })
-    vi.stubGlobal('fetch', fetchMock)
+    globalThis.fetch = fetchMock as unknown as typeof fetch
 
     render(<BlogGrid posts={[pikachuPost]} facets={facets} total={2} />)
     await waitFor(() => expect(intersectionCallback).toBeTypeOf('function'))
@@ -195,7 +195,10 @@ describe('BlogGrid', () => {
 
   it('shows the recoverable error state when a filtered request fails', async () => {
     navigation.query = 'type=Electric'
-    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, status: 503 }))
+    globalThis.fetch = mock().mockResolvedValue({
+      ok: false,
+      status: 503,
+    }) as unknown as typeof fetch
 
     render(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 

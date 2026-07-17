@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { normalizeTcgSetTitle, resolveTcgcsvGroupIdForCard } from './tcgcsv-set-groups'
 
 describe('tcgplayer/tcgcsv-set-groups', () => {

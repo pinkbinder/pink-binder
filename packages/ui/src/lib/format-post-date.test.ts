@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'bun:test'
 import { formatPostDate } from './format-post-date'
 
 describe('ui/lib/format-post-date', () => {

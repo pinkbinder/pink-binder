@@ -1,11 +1,20 @@
 import { createHash } from 'node:crypto'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it } from 'bun:test'
 import { EBAY_NOTIFICATION_TOPIC } from '@repo/marketplaces/ebay'
 import { EBAY_ENV } from '@repo/marketplaces/config'
 import { GET, POST } from './route'
 
+const stubbedEnvKeys = new Set<string>()
+function stubEnv(key: string, value: string) {
+  stubbedEnvKeys.add(key)
+  process.env[key] = value
+}
+
 afterEach(() => {
-  vi.unstubAllEnvs()
+  for (const key of stubbedEnvKeys) {
+    delete process.env[key]
+  }
+  stubbedEnvKeys.clear()
 })
 
 describe('eBay account deletion endpoint', () => {
@@ -19,8 +28,8 @@ describe('eBay account deletion endpoint', () => {
 
   it('hashes the challenge, token, and configured callback endpoint', async () => {
     const endpoint = 'https://preview.example/api/ebay/account-deletion'
-    vi.stubEnv(EBAY_ENV.verificationToken, 'verification-secret')
-    vi.stubEnv(EBAY_ENV.accountDeletionEndpoint, endpoint)
+    stubEnv(EBAY_ENV.verificationToken, 'verification-secret')
+    stubEnv(EBAY_ENV.accountDeletionEndpoint, endpoint)
 
     const response = await GET(
       new Request('https://internal.test/api/ebay/account-deletion?challenge_code=challenge')
