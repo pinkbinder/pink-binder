@@ -1,20 +1,20 @@
-import { describe, expect, it } from 'bun:test'
-import { formatPostDate } from './format-post-date'
+import { describe, expect, it } from 'bun:test';
+import { formatPostDate } from './format-post-date';
 
-describe('ui/lib/format-post-date', () => {
-  it('formats an ISO date in UTC long form', () => {
-    expect(formatPostDate('2026-07-16')).toBe('July 16, 2026')
-  })
+describe('formatPostDate', () => {
+  it('formats an ISO date string into a long UTC date', () => {
+    expect(formatPostDate('2024-01-15T00:00:00Z')).toBe('January 15, 2024');
+  });
 
-  it('formats a full ISO timestamp', () => {
-    expect(formatPostDate('2026-01-02T00:00:00.000Z')).toBe('January 2, 2026')
-  })
+  it('handles end-of-year dates', () => {
+    expect(formatPostDate('2023-12-31T12:00:00Z')).toBe('December 31, 2023');
+  });
 
-  it('returns the input unchanged when unparseable', () => {
-    expect(formatPostDate('not-a-date')).toBe('not-a-date')
-  })
+  it('returns the input unchanged when the date is invalid', () => {
+    expect(formatPostDate('not-a-real-date')).toBe('not-a-real-date');
+  });
 
-  it('returns the input when given an empty string', () => {
-    expect(formatPostDate('')).toBe('')
-  })
-})
+  it('returns the input unchanged for an empty string', () => {
+    expect(formatPostDate('')).toBe('');
+  });
+});
