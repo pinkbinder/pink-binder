@@ -23,17 +23,18 @@ A modern NextJS Turborepo monorepo for Pink Binder apps.
 
 ```bash
 # Install dependencies
-pnpm install
+bun install
 
 # Link Vercel projects and pull env (once per app you run locally)
 cd apps/landing && vercel link && vercel env pull .env.local
 cd ../blog && vercel link && vercel env pull .env.local
+cd ../admin && vercel link && vercel env pull .env.local
 
 # Run all apps in development
-pnpm dev
+bun dev
 
 # Build all apps
-pnpm build
+bun build
 ```
 
 Environment variables are managed in Vercel — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example). Blog release, monitoring, Pinterest, and SEO operations are documented in [`docs/BLOG_PRODUCTION_OPERATIONS.md`](docs/BLOG_PRODUCTION_OPERATIONS.md).
