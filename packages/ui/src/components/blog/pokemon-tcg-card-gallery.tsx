@@ -33,7 +33,7 @@ export function PokemonTcgCardGallery({
   const [availableCount, setAvailableCount] = useState(totalCount)
   const [isLoading, setIsLoading] = useState(false)
   const [loadError, setLoadError] = useState(false)
-  const expansionManifestCards = useRef<PokemonTcgCard[] | null>(null)
+  const manifestCards = useRef<PokemonTcgCard[] | null>(null)
   const hiddenCount = Math.max(0, availableCount - visibleCards.length)
   const primarySource = TCG_CARD_DATA_ATTRIBUTION[0]!
   const backupSource = TCG_CARD_DATA_ATTRIBUTION[1]!
@@ -46,42 +46,31 @@ export function PokemonTcgCardGallery({
     setLoadError(false)
 
     try {
-      let page: { cards: PokemonTcgCard[]; total: number }
-      if (source.kind === 'expansion') {
-        if (!expansionManifestCards.current) {
-          const response = await fetch(
-            `/data/expansion-galleries/${encodeURIComponent(source.slug)}.json`
-          )
-          if (!response.ok) throw new Error(`Expansion gallery request failed (${response.status})`)
-          const manifest = (await response.json()) as {
-            version?: unknown
-            slug?: unknown
-            cards?: unknown
-          }
-          if (
-            manifest.version !== 1 ||
-            manifest.slug !== source.slug ||
-            !Array.isArray(manifest.cards)
-          ) {
-            throw new Error('Invalid expansion gallery manifest')
-          }
-          expansionManifestCards.current = manifest.cards as PokemonTcgCard[]
-        }
-        const allCards = expansionManifestCards.current
-        page = {
-          cards: allCards.slice(visibleCards.length, visibleCards.length + LOAD_MORE_COUNT),
-          total: allCards.length,
-        }
-      } else {
-        const params = new URLSearchParams({
-          kind: source.kind,
-          slug: source.slug,
-          offset: String(visibleCards.length),
-          limit: String(LOAD_MORE_COUNT),
-        })
-        const response = await fetch(`/api/card-gallery?${params.toString()}`)
+      if (!manifestCards.current) {
+        const response = await fetch(
+          `/data/card-galleries/${encodeURIComponent(source.kind)}/${encodeURIComponent(source.slug)}.json`
+        )
         if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
-        page = (await response.json()) as { cards: PokemonTcgCard[]; total: number }
+        const manifest = (await response.json()) as {
+          version?: unknown
+          kind?: unknown
+          slug?: unknown
+          cards?: unknown
+        }
+        if (
+          manifest.version !== 1 ||
+          manifest.slug !== source.slug ||
+          (source.kind !== 'expansion' && manifest.kind !== source.kind) ||
+          !Array.isArray(manifest.cards)
+        ) {
+          throw new Error('Invalid card gallery manifest')
+        }
+        manifestCards.current = manifest.cards as PokemonTcgCard[]
+      }
+      const allCards = manifestCards.current
+      const page = {
+        cards: allCards.slice(visibleCards.length, visibleCards.length + LOAD_MORE_COUNT),
+        total: allCards.length,
       }
       setAvailableCount(page.total)
       setVisibleCards((current) => {

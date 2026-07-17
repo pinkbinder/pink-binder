@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './dialog'
 import { IconButton } from './icon-button'
+import { trackShare } from '../lib/gtm-events'
 
 export interface ShareLinkItem {
   label: string
@@ -201,12 +202,14 @@ export function ShareLinkDialog({
     if (!item || !navigator.share) return
     try {
       await navigator.share({ title: item.label, text: item.shareDescription, url: shareUrl })
+      trackShare({ method: 'native', contentType: 'shared_link', itemId: shareUrl })
     } catch {
       // User dismissed or sharing failed.
     }
   }
 
-  function handlePlatformShare(buildUrl: (url: string, text: string) => string) {
+  function handlePlatformShare(method: string, buildUrl: (url: string, text: string) => string) {
+    trackShare({ method, contentType: 'shared_link', itemId: shareUrl })
     window.open(buildUrl(shareUrl, shareText), '_blank', 'noopener,noreferrer')
   }
 
@@ -253,7 +256,7 @@ export function ShareLinkDialog({
                       label={platform.label}
                       onClick={(e) => {
                         e.preventDefault()
-                        handlePlatformShare(platform.buildUrl)
+                        handlePlatformShare(platform.id, platform.buildUrl)
                       }}
                     >
                       <SharePlatformIcon id={platform.id} label={platform.label} />
@@ -275,6 +278,7 @@ export function ShareLinkDialog({
                     }
                     onClick={(e) => {
                       e.preventDefault()
+                      trackShare({ method: 'copy', contentType: 'shared_link', itemId: shareUrl })
                       onCopy()
                     }}
                   >

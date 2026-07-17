@@ -1,6 +1,9 @@
+'use client'
+
 import * as React from 'react'
 import { type MarketplaceListing } from '@repo/marketplaces'
 import { cn } from '../lib/utils'
+import { trackViewItem } from '../lib/gtm-events'
 
 export type { MarketplaceListing }
 
@@ -19,6 +22,7 @@ function MarketplaceListingCard({
   marketplaceLogoUrl,
   marketplaceName,
   className,
+  onClick,
   ...props
 }: MarketplaceListingCardProps) {
   const formattedPrice =
@@ -41,6 +45,15 @@ function MarketplaceListingCard({
         'group flex w-36 shrink-0 flex-col overflow-hidden rounded-2xl border border-pink-200/70 bg-white shadow-xs transition-colors hover:bg-pink-50/50',
         className
       )}
+      onClick={(event) => {
+        trackViewItem({
+          itemId: listing.id,
+          itemName: listing.title,
+          itemCategory: listing.source ?? marketplaceName,
+          currency: listing.currency || 'USD',
+        })
+        onClick?.(event)
+      }}
       {...props}
     >
       <div

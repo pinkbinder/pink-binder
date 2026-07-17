@@ -107,6 +107,8 @@ export function BlogTableOfContents({
   const detailsRef = useRef<HTMLDetailsElement>(null)
   const [items, setItems] = useState<BlogTableOfContentsItem[]>([])
   const [activeId, setActiveId] = useState<string>()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const mobileNavId = useId()
 
   useEffect(() => {
     const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY)
@@ -188,9 +190,14 @@ export function BlogTableOfContents({
     return (
       <details
         ref={detailsRef}
+        onToggle={(event) => setMobileOpen(event.currentTarget.open)}
         className="group bg-card/80 mt-5 rounded-xl border px-4 py-3 lg:hidden"
       >
-        <summary className="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden">
+        <summary
+          aria-expanded={mobileOpen}
+          aria-controls={mobileNavId}
+          className="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden"
+        >
           <span className="inline-flex items-center gap-2">
             <List className="text-primary h-4 w-4" aria-hidden />
             On this page
@@ -199,8 +206,13 @@ export function BlogTableOfContents({
             className="text-muted-foreground h-4 w-4 transition-transform group-open:rotate-180"
             aria-hidden
           />
+          <span className="sr-only" aria-live="polite">
+            {activeId
+              ? `Current section: ${items.find((item) => item.id === activeId)?.label ?? ''}`
+              : ''}
+          </span>
         </summary>
-        <nav aria-label="Table of contents" className="mt-3 border-t pt-3">
+        <nav id={mobileNavId} aria-label="Table of contents" className="mt-3 border-t pt-3">
           <TableOfContentsLinks
             items={items}
             activeId={activeId}
@@ -208,6 +220,7 @@ export function BlogTableOfContents({
               if (detailsRef.current) {
                 detailsRef.current.open = false
               }
+              setMobileOpen(false)
             }}
           />
         </nav>
