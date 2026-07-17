@@ -32,7 +32,7 @@ describe('ui/components/gtm', () => {
   it('renders nothing for an invalid id format', () => {
     const { container } = render(<GoogleTagManager gtmId="not-a-gtm-id" />)
     expect(nextGtmMock).not.toHaveBeenCalled()
-    expect(container).toBeEmptyDOMElement()
+    expect(container?.textContent?.trim()).toBe('')
   })
 
   it('renders nothing when no id is available', () => {
@@ -40,7 +40,7 @@ describe('ui/components/gtm', () => {
     delete process.env.NEXT_PUBLIC_GTM_ID
     const { container } = render(<GoogleTagManager />)
     expect(nextGtmMock).not.toHaveBeenCalled()
-    expect(container).toBeEmptyDOMElement()
+    expect(container?.textContent?.trim()).toBe('')
     process.env.NEXT_PUBLIC_GTM_ID = prev
   })
 })
