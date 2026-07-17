@@ -30,7 +30,7 @@ jobs:
         run: bun --filter @repo/data audit:blog-publishing
 
       - name: Build blog
-        run: bun exec turbo run build --filter=@repo/blog
+        run: bunx turbo run build --filter=@repo/blog
 
       - name: Crawl every compiled blog route
         run: bun --filter @repo/blog audit:routes
