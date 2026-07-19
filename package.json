@@ -15,7 +15,7 @@
     "start": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
     "format": "turbo run format",
     "format:fix": "turbo run format:fix",
-    "test": "bun test",
+    "test": "bun test --isolate",
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage",
     "lint-staged": "lint-staged",
