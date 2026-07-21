@@ -21,9 +21,9 @@ vercel env pull .env.local
 From the repo root, start dev as usual:
 
 ```bash
-pnpm dev          # all apps
-pnpm dev:landing  # landing only
-pnpm dev:blog     # blog only
+bun dev            # all apps (turbo)
+bun dev:landing    # landing only
+bun dev:blog       # blog only
 ```
 
 Next.js loads each app's `.env.local` when that app runs. You do **not** need a root `.env.local` unless you want local-only overrides.
@@ -60,7 +60,7 @@ Never put secrets in `NEXT_PUBLIC_*` variables.
 
 ## Root scripts and Turbo
 
-`pnpm validate` / `pnpm build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `NEXT_PUBLIC_*`, etc.).
+`bun run validate` / `bun run build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `NEXT_PUBLIC_*`, etc.).
 
 Each Next.js app still loads its own `.env.local` at runtime.
 
@@ -71,7 +71,7 @@ Sprites, scene art, and Blob upload live in the **`images`** command (~yearly). 
 **Daily TCG prices + roundup caches:**
 
 ```bash
-pnpm --filter @repo/data refresh
+bun --filter @repo/data refresh
 ```
 
 (`refresh` is an alias for `transform --only prices`.)
@@ -79,17 +79,17 @@ pnpm --filter @repo/data refresh
 **When new sets or generations ship (catalog metadata only):**
 
 ```bash
-pnpm --filter @repo/data extract --only pokemontcg tcgdex
-pnpm --filter @repo/data transform
-pnpm --filter @repo/data refresh
+bun --filter @repo/data extract --only pokemontcg tcgdex
+bun --filter @repo/data transform
+bun --filter @repo/data refresh
 ```
 
 **When sprites or scene art change (new species, art refresh):**
 
 ```bash
 cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
-pnpm --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
-pnpm --filter @repo/data transform           # normalized JSON + URL patch
+bun --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
+bun --filter @repo/data transform           # normalized JSON + URL patch
 ```
 
 Re-runs are safe — unchanged files are skipped at each step. Step 5 removes local `cache/images/` after validating every file is in `blob-manifest.json` (use `--skip-cleanup` to keep local copies).

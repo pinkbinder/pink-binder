@@ -1,6 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
-  "buildCommand": "cd ../.. && pnpm exec turbo run build --filter=@repo/store",
+  "installCommand": "cd ../.. && bun install --frozen-lockfile",
+  "buildCommand": "cd ../.. && bunx turbo run build --filter=@repo/store",
   "ignoreCommand": "cd ../.. && bash scripts/vercel-ignore.sh @repo/store"
 }

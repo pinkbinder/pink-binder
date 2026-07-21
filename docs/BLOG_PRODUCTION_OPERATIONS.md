@@ -7,10 +7,10 @@ The blog remains a local-data Next.js application hosted on Vercel. Its route, f
 Run the same checks used by CI before publishing:
 
 ```bash
-pnpm validate
-pnpm --filter @repo/data audit:blog-publishing
-pnpm exec turbo run build --filter=@repo/blog
-pnpm --filter @repo/blog audit:routes
+bun run validate
+bun --filter @repo/data audit:blog-publishing
+bunx turbo run build --filter=@repo/blog
+bun --filter @repo/blog audit:routes
 ```
 
 `audit:blog-publishing` validates unique slugs/routes, required metadata, dates, feed-image coverage, related-post targets, exact duplicate metadata, and repeated description openers. Errors fail the command; scheduled posts and repetitive-openers are reported separately. Add `-- --json` for machine-readable output.
@@ -29,7 +29,7 @@ Common remediation:
 
 The prebuild creates deterministic manifests for species, illustrators, and expansions under `/data/card-galleries/{kind}/{slug}.json`. The UI reads those CDN-cacheable assets directly. `/api/card-gallery` remains as a 307 compatibility redirect and does not trace the Pokémon or illustrator card corpus into its serverless function.
 
-Run `pnpm --filter @repo/blog data:gallery-manifests` to rebuild and verify the manifests. The verifier prints counts, bytes, and a SHA-256 digest; identical data must produce an identical digest.
+Run `bun --filter @repo/blog data:gallery-manifests` to rebuild and verify the manifests. The verifier prints counts, bytes, and a SHA-256 digest; identical data must produce an identical digest.
 
 ## Production monitoring
 
