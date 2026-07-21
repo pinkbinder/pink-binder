@@ -72,7 +72,7 @@ describe('resolveOfficialArtworkUrl', () => {
 
   it('returns gen10 fallback for gen10 slug', () => {
     expect(resolveOfficialArtworkUrl({ slug: 'browt', generation: 10 })).toBe(
-      GEN10_FALLBACK_ARTWORK['browt']
+      GEN10_FALLBACK_ARTWORK['browt'] as any
     )
   })
 
