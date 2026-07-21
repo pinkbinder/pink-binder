@@ -56,6 +56,6 @@ Set this environment variable for `apps/landing`:
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS + ShadCN/ui
 - **Build**: Turborepo
-- **Package Manager**: pnpm
+- **Package Manager**: bun (`bun install --frozen-lockfile`)
 - **Linting**: ESLint + Prettier
 - **Git Hooks**: Husky + lint-staged
