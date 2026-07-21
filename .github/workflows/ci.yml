@@ -3,8 +3,6 @@ name: CI
 on:
   push:
     branches: [main, staging]
-  pull_request:
-    branches: [main, staging]
 
 permissions:
   contents: read
@@ -44,3 +42,27 @@ jobs:
       - run: bun install --frozen-lockfile
       - name: Test
         run: bun run test
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jdx/mise-action@v2
+        with:
+          cache: true
+      - run: bun install --frozen-lockfile
+      - name: Install osv-scanner
+        env:
+          OSV_SCANNER_VERSION: v2.4.0
+          OSV_SCANNER_SHA256: 15314940c10d26af9c6649f150b8a47c1262e8fc7e17b1d1029b0e479e8ed8a0
+        run: |
+          OSV_SCANNER_PATH="$RUNNER_TEMP/osv-scanner"
+          curl -fsSL \
+            "https://github.com/google/osv-scanner/releases/download/${OSV_SCANNER_VERSION}/osv-scanner_linux_amd64" \
+            -o "$OSV_SCANNER_PATH"
+          echo "${OSV_SCANNER_SHA256}  ${OSV_SCANNER_PATH}" | sha256sum -c -
+          chmod +x "$OSV_SCANNER_PATH"
+          echo "$RUNNER_TEMP" >> "$GITHUB_PATH"
+      - name: Scan lockfile (fails on NEW vulns)
+        run: bash scripts/audit.sh

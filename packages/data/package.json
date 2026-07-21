@@ -31,7 +31,7 @@
     "transform": "tsx scripts/3-transform/index.ts",
     "full-sync": "bun extract && bun images && bun transform",
     "refresh": "tsx scripts/3-transform/index.ts --only prices",
-    "build:gallery-manifests": "bun extract"
+    "build:gallery-manifests": "tsx scripts/3-transform/5-blog/12-build-gallery-manifests.ts"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
