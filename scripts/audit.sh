@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ALLOWLIST=()
+ALLOWLIST=(
+  "GHSA-f88m-g3jw-g9cj"  # sharp ≤0.34.5 — Medium severity; 0.35.0 breaks TypeScript type resolution
+)
 
 SCAN_JSON=$(mktemp)
 SCAN_ERR=$(mktemp)
