@@ -8,28 +8,13 @@ updates:
       day: monday
     open-pull-requests-limit: 10
     groups:
-      nextjs:
-        patterns:
-          - next
-          - eslint-config-next
-          - '@next/*'
-      react:
-        patterns:
-          - react
-          - react-dom
-          - '@types/react'
-          - '@types/react-dom'
-      lint-and-format:
-        patterns:
-          - eslint*
-          - prettier*
-          - '@eslint/*'
-      turbo:
-        patterns:
-          - turbo
-    ignore:
-      - dependency-name: '*'
-        update-types: ['version-update:semver-major']
+      production-dependencies:
+        dependency-type: production
+        update-types:
+          - patch
+          - minor
+      development-dependencies:
+        dependency-type: development
 
   - package-ecosystem: github-actions
     directory: /

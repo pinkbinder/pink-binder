@@ -1,65 +1,38 @@
 # Security Policy
 
-We take the security of our store, user data, and automated inventory services seriously. If you believe you have found a security vulnerability, please read this document to learn how to report it responsibly.
-
----
-
 ## Supported Versions
 
-We actively maintain and patch the main branch of our repository. Security updates are deployed directly to our live production environments.
+Only the **latest commit on `staging`** receives security patches.  
+Patches are fast-forwarded to `main` on the next release cycle.
 
-| Version | Supported          |
-| ------- | ------------------ |
-| Active  | :white_check_mark: |
-| Legacy  | :x:                |
-
----
+| Branch           | Supported                     |
+| ---------------- | ----------------------------- |
+| `staging`        | ✅                            |
+| `main`           | ✅ (via staging→main release) |
+| Feature branches | ❌                            |
 
 ## Reporting a Vulnerability
 
-**Please do not report security vulnerabilities via public GitHub Issues, Pull Requests, or social media channels (Discord, Twitter/X, Twitch streams).**
+**Do not open a public GitHub issue for security vulnerabilities.**
 
-Instead, please report vulnerabilities via one of the following private methods:
+Report privately via one of the following channels:
 
-1. **Email:** Send a detailed report to `security@yourdomain.com`
-2. **GitHub Security Advisories:** If applicable, use the "Report a vulnerability" private channel under the **Security** tab of this repository.
+1. **Discord** — DM NiftyAndy (`0xPlayerOne`) directly in the [Pink Binder Discord](https://discord.gg/niftyleague)
+2. **Email** — Contact Andrew Mahoney-Fernandes at the email listed on [niftyleague.com](https://niftyleague.com)
 
-### What to Include in Your Report
+Within 48 hours you will receive:
 
-To help us triage and fix the issue as quickly as possible, please include:
+- Confirmation of receipt
+- An assessment timeline
+- A target date for the fix
 
-- A detailed description of the vulnerability.
-- Clear, step-by-step instructions to reproduce the issue (or a proof-of-concept script/exploit).
-- The potential impact (e.g., unauthorized access, data leak, inventory manipulation).
-- Your name/handle if you wish to be credited when the issue is resolved.
+## Disclosure Policy
 
----
+- The reporter and the Pink Binder team coordinate disclosure.
+- Public disclosure happens **after** a fix has been deployed to production.
+- We appreciate responsible disclosure and will acknowledge reporters in release notes (unless anonymity is requested).
 
-## Our Response Process
+## Scope
 
-- **Acknowledgment:** We will acknowledge receipt of your report within **48 hours**.
-- **Triage & Fix:** We will evaluate the report and work on a fix immediately. Because we manage our stack in-house, critical patches are typically deployed within **3 to 7 business days**.
-- **Disclosure:** Once the vulnerability is patched, we will coordinate with you regarding public disclosure if necessary.
-
----
-
-## Scope & Guidelines
-
-### Out of Scope
-
-Please do not engage in activities that could degrade or disrupt our infrastructure or business operations:
-
-- Denial of Service (DoS / DDoS) attacks.
-- Spam, social engineering, or phishing attacks against our staff or streaming moderators.
-- Third-party integrations (e.g., attempting to hack eBay, Etsy, TCGplayer, or Supabase directly).
-
-### Compensation (Bug Bounties)
-
-As an independent, developer-run shop, we **do not currently offer a monetary bug bounty program**. However, we are deeply grateful for the help of the security community and will gladly:
-
-- Credit you publicly in our release notes/security advisories.
-- Send you some free Pokémon cards as a token of our appreciation!
-
----
-
-Thank you for helping keep our card community safe!
+This policy covers all code in the `0xPlayerOne/pink-binder` repository, including all apps and packages within the monorepo.  
+For vulnerabilities in smart contracts, see `nifty-smart-contracts` security policy.
