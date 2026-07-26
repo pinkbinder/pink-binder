@@ -164,7 +164,6 @@ export {
 export {
   TCGDEX_API,
   POKEMON_TCG_API,
-  POKEMON_TCG_API_BASE,
   TCG_CARD_DATA_ATTRIBUTION,
   TCG_CARD_IMAGE_ATTRIBUTION,
 } from '../config'
@@ -238,7 +237,3 @@ export {
 } from './expensive'
 
 export const getTcgPlayerCards = getPokemonTcgCards
-
-export async function getTcgPlayerListings(): Promise<never[]> {
-  return []
-}
