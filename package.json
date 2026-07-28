@@ -1,6 +1,7 @@
 {
   "name": "pink-binder",
   "private": true,
+  "license": "AGPL-3.0-or-later",
   "engines": {
     "node": "24.18.0"
   },
@@ -17,11 +18,11 @@
     "format:fix": "turbo run format:fix",
     "test": "bun test --isolate",
     "test:watch": "bun test --watch",
-    "test:coverage": "bun test --coverage",
+    "pretest:coverage": "bun --filter @repo/blog data:gallery-manifests",
+    "test:coverage": "bun test --coverage --isolate --max-concurrency=4",
     "lint-staged": "lint-staged",
     "validate": "node scripts/with-env.mjs turbo run format lint type-check",
     "validate:pre-commit": "node scripts/with-env.mjs turbo run lint type-check",
-    "prepare": "husky || true",
     "format:check": "prettier --check ."
   },
   "lint-staged": {
@@ -37,7 +38,6 @@
     "eslint": "^10.8.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "husky": "^9.1.7",
     "lint-staged": "^17.2.0",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
@@ -53,7 +53,7 @@
     "apps/*"
   ],
   "dependencies": {
-    "next": "^16.2.11",
+    "next": "^16.2.12",
     "sharp": "^0.35.3"
   }
 }

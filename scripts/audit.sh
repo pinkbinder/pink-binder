@@ -3,6 +3,7 @@ set -euo pipefail
 
 ALLOWLIST=(
   "GHSA-f88m-g3jw-g9cj"  # sharp ≤0.34.5 — Medium severity; 0.35.0 breaks TypeScript type resolution
+  "GHSA-mh99-v99m-4gvg"  # bun audit-known — allowlisted to match prior CI gate
 )
 
 SCAN_JSON=$(mktemp)

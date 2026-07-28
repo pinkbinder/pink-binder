@@ -6,5 +6,5 @@ if (!(globalThis as { happyDOM?: unknown }).happyDOM) {
   GlobalRegistrator.register()
 }
 
-// Replicate the vitest `server-only` alias stub so importing `server-only` is a no-op.
+// Keep the `server-only` import as a no-op in the Bun test environment.
 mock.module('server-only', () => ({}))

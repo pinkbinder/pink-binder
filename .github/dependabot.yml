@@ -1,25 +1,42 @@
 version: 2
 updates:
-  - package-ecosystem: npm
-    directory: /
-    target-branch: staging
-    schedule:
-      interval: weekly
-      day: monday
-    open-pull-requests-limit: 10
-    groups:
-      production-dependencies:
-        dependency-type: production
-        update-types:
-          - patch
-          - minor
-      development-dependencies:
-        dependency-type: development
-
   - package-ecosystem: github-actions
     directory: /
     target-branch: staging
     schedule:
       interval: weekly
-      day: monday
-    open-pull-requests-limit: 5
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      github-actions:
+        patterns: ['*']
+  - package-ecosystem: npm
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      npm-dependencies:
+        patterns: ['*']
+  - package-ecosystem: cargo
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      cargo-dependencies:
+        patterns: ['*']
+  - package-ecosystem: pip
+    directory: /
+    target-branch: staging
+    schedule:
+      interval: weekly
+      day: sunday
+    open-pull-requests-limit: 99
+    groups:
+      python-dependencies:
+        patterns: ['*']
