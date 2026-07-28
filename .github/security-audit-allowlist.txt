@@ -1,0 +1,4 @@
+# GHSA-mh99-v99m-4gvg remains transitive through ESLint plugins using minimatch 3.
+# Do not force brace-expansion 5.x: it breaks minimatch 3's API. Revisit when the
+# remaining ESLint plugins support minimatch 10 or later.
+GHSA-mh99-v99m-4gvg

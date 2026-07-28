@@ -1,21 +1,29 @@
-## Description
+## Summary
 
-<!-- Summarize the change. Link to any related issues. -->
+<!-- What changed, why was it needed, and which issue or requirement does it address? -->
 
-## CI Status (do not merge until all pass)
+## Validation
 
-- [ ] `Build, Format, Lint & Type Check` — `bun run lint && bun run type:check && bun run build`
-- [ ] `Test` — `bun run test`
-- [ ] Preview deployment passes (if applicable)
+<!-- List the commands, local checks, CI links, screenshots, or recordings used to validate this change. Required repository checks are enforced automatically. -->
 
-## Compliance Checklist
+- Commands run:
+- CI or deployment links:
+- Screenshots/recordings, when applicable:
 
-- [ ] My commits follow [Conventional Commits](https://www.conventionalcommits.org/) (`type(scope): message`)
-- [ ] I have run `bun run format:fix` before committing (or let lint-staged handle it)
-- [ ] New dependencies — used `bun --filter <workspace> add <pkg>`, not `npm`/`yarn`/`pnpm`
-- [ ] No `.env*.local`, `node_modules`, or lockfile churn from another package manager
-- [ ] No generated artifacts committed (cache output, build output, etc.)
+## Impact and rollout
 
-## Additional Context
+- [ ] No migration or rollout action is required
+- [ ] Migration or rollout steps are documented below
+- [ ] Environment or secret changes are documented below
+- [ ] Security, privacy, compatibility, or performance impact is documented below
+- [ ] Rollback or follow-up work is documented below
 
-<!-- Anything reviewers should know: migration steps, env changes, breaking changes, related PRs. -->
+<!-- Add the relevant details here. -->
+
+## Review notes
+
+<!-- Call out tradeoffs, known limitations, generated files, dependency changes, or areas that need focused review. -->
+
+## Related issue
+
+<!-- Use `Closes #123` when applicable. -->

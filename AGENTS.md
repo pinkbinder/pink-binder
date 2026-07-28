@@ -1,75 +1,155 @@
-## Stack
+# Agent Instructions
 
-- Next.js 15 (App Router) Turborepo monorepo; 4 thin apps on Vercel: `apps/landing` (3000), `apps/store` (3001), `apps/blog` (3002), `apps/admin` (3003).
-- Shared packages: `@repo/ui` (ShadCN/Radix, Tailwind v4), `@repo/data` (ETL → local JSON), `@repo/config`, `@repo/marketplaces` (eBay/Etsy/TCGplayer/Whatnot), `@repo/eslint-config`, `@repo/typescript-config`.
-- Bun-only. `packageManager: bun@1.3.14`. Toolchain pinned in `mise.toml` (node `24.18.0` + bun `1.3.14`); CI uses `jdx/mise-action`. Do not introduce `npm`/`yarn`/`pnpm`/`volta` — no `node_modules` churn from another manager.
-- Turborepo `2.10.5`, ESLint 9 (flat config, per-package `eslint.config.mjs`, `--max-warnings 0`), Prettier `3.9.5` (no semis, single quotes, `es5` trailing comma, 2 spaces, 100-col, `prettier-plugin-tailwindcss`).
+These instructions are the repository-level operating contract for coding agents, including Hermes, OpenCode, and other automation.
 
-## Commands
+They complement `CONTRIBUTING.md`. More specific instructions in nested `AGENTS.md` files and project documentation take precedence for their directory.
 
-All scripts are at repo root. `scripts/with-env.mjs` merges an optional root `.env.local` (via `scripts/load-monorepo-env.mjs`) before invoking Turbo for build/lint/type-check/validate. Per-app secrets come from Vercel, not the root env.
+## Mission
 
-```bash
-# Install (CI-style: frozen lockfile; local dev also accepts plain `bun install`)
-bun install --frozen-lockfile
+- Keep formatting, linting, type checking, builds, tests, and coverage reproducible locally and in CI.
+- Prefer the versions pinned in `.mise.toml`.
+- Do not commit secrets, generated credentials, local environment files, or machine-specific paths.
+- Add tests for behavior changes and keep coverage thresholds explicit in the project configuration.
+- Make the smallest complete, well-tested change that solves the requested problem without disturbing unrelated work.
 
-# Build (turbo)
-bun run build
+This repository may contain TypeScript, Rust, Python, or any combination of them. Detect the active stack from the files present; do not assume every check applies.
 
-# Test runner: bun's built-in `bun test` (NOT vitest, NOT jest) with happy-dom
-# preload via test/preload.ts + test/setup.ts. Pass a path to avoid scanning everything.
-bun test                    # all
-bun test packages/data      # single package
+## Read before acting
 
-# Type-check / lint (turbo)
-bun run type-check          # alias also exists: bun run type:check
-bun run lint
+Before editing:
 
-# Format
-bun run format              # turbo format (per-package prettier)
-bun run format:fix          # turbo format:fix (per-package prettier --write)
-bun run format:check        # root: prettier --check .
+1. Read this file and `.github/CONTRIBUTING.md`.
+2. Find and read any nested `AGENTS.md` that covers the files you will touch.
+3. Read the nearest README, package manifest, build configuration, and relevant tests.
+4. Inspect the current branch, worktree, remotes, and recent history:
 
-# Pre-PR combined gate
-bun run validate            # turbo: format + lint + type-check
+   ```sh
+   git status --short --branch
+   git remote -v
+   git log -5 --oneline
+   ```
+
+5. Identify the repository's package manager, lockfile, runtime versions, test commands, deployment assumptions, and generated files.
+
+If the worktree is dirty, preserve existing changes and avoid overlapping edits until their ownership is clear.
+
+## Priorities
+
+When instructions conflict, use this order:
+
+1. System and user instructions
+2. This repository's instructions and explicit task scope
+3. Nested directory instructions
+4. Existing project conventions
+5. General best practices
+
+Ask for clarification when a missing decision would materially change the implementation. Otherwise make the smallest reasonable assumption and document it.
+
+## Safety boundaries
+
+- Do not discard, reset, overwrite, or rewrite user-owned changes.
+- Do not expose or commit secrets, credentials, tokens, private keys, local environment files, or personal machine paths.
+- Do not modify production resources, repository settings, branch protections, secrets, deployments, or external systems unless explicitly requested.
+- Do not add organization- or product-specific details to this reusable baseline.
+- Do not change dependency managers or lockfiles unnecessarily.
+- Do not bypass hooks, tests, review requirements, or required checks to hide a failure.
+- Do not claim completion while required validation, review, deployment, or user decisions remain pending.
+- Publishing, committing, or opening a pull request requires explicit task scope or user authorization.
+
+## Standard workflow
+
+1. Restate the desired outcome and identify the files or systems in scope.
+2. Inspect before editing; preserve unrelated work.
+3. Plan the smallest coherent change.
+4. Implement with existing project patterns.
+5. Run bash .github/scripts/bootstrap.sh for a new checkout, or bash .github/scripts/doctor.sh to diagnose setup drift.
+6. Run focused checks while iterating.
+7. Inspect the final diff for accidental changes, secrets, formatting, and generated files.
+8. Run the broadest applicable validation available.
+9. Report what changed, exact checks and results, skipped checks with reasons, risks, and remaining work.
+
+For normal feature work, branch from `staging` and target pull requests at `staging`. Treat `main` as the protected release branch. Follow `.github/CONTRIBUTING.md` for the complete internal and external contribution flow.
+
+## Toolchain and dependencies
+
+- Use the versions pinned in `.mise.toml`; run `mise install` when needed.
+- Use the package manager indicated by the existing lockfile:
+  - `bun.lock` or `bun.lockb` → Bun
+  - `pnpm-lock.yaml` → pnpm
+  - `yarn.lock` → Yarn
+  - `package-lock.json` → npm
+- Use the existing Python environment and dependency manifest. Prefer a project-managed virtual environment.
+- Use Cargo commands and the committed Cargo lockfile for Rust projects.
+- Do not mix package managers or regenerate lockfiles as a side effect.
+- Keep dependency additions narrowly scoped and explain security, licensing, and runtime impact.
+
+## Validation
+
+Use the shared scripts when present. They detect supported tools and skip inapplicable checks:
+
+```sh
+bash .github/scripts/ci.sh format
+bash .github/scripts/ci.sh lint
+bash .github/scripts/ci.sh type_check
+bash .github/scripts/ci.sh build
+bash .github/scripts/ci.sh unit
+bash .github/scripts/ci.sh integration
+bash .github/scripts/ci.sh e2e
+bash .github/scripts/ci.sh smoke
+bash .github/scripts/security.sh
 ```
 
-## Structure
+Run focused tests first, then the complete applicable set for release, security, workflow, dependency, and configuration changes.
 
+At minimum:
+
+- TypeScript/JavaScript: Prettier formatting, ESLint linting, type-check, build, and Bun's native test runner for unit/integration tests; use the project's native browser runner for E2E tests
+- Do not add Vitest. Preserve specialized native runners such as Matchstick for The Graph and Hardhat for smart contracts.
+- Rust: default rustfmt, Clippy with warnings treated as errors, check, unit/integration tests, and dependency audit
+- Python: Ruff formatting and linting, compile or type checks, pytest, coverage, and dependency audit
+- Mixed projects: validate each active ecosystem and its integration boundaries
+
+If a check cannot run, state the exact reason. A skipped check is not a passing check.
+
+## Tests and coverage
+
+- Add or update tests for behavior changes and regressions.
+- Keep unit, integration, E2E, and smoke coverage in the suite where each applies.
+- Preserve project-specific coverage thresholds; do not lower them to make CI green.
+- Keep test data deterministic and remove secrets from logs and fixtures.
+- Use the narrowest test command while iterating, then run the affected package or workspace suite.
+
+## GitHub workflows and configuration
+
+- Keep workflows concise, independently runnable, and safe to re-run.
+- Use `push` for `main, staging` and `pull_request` for `staging` unless a workflow has a documented event-specific reason.
+- Give workflows clear names and jobs concise names; avoid repeating the workflow name in the job name.
+- Use per-workflow concurrency groups that cancel superseded runs while allowing independent workflows to run in parallel.
+- Keep setup language-aware and cache dependency downloads by lockfile; do not cache secrets, `node_modules`, virtual environments, or broad build output without a measured reason.
+- Use least-privilege permissions and pin action versions consistently with the template.
+- Keep CI, Test, Security, CodeQL, Draft PR, Release PR, and Release concerns separated.
+- Security and CodeQL may skip when repository visibility or GitHub plan support does not permit them. Do not make an unavailable check required.
+- Optional Turborepo Remote Caching uses `TURBO_TOKEN` and `TURBO_TEAM`; do not add Vercel deployment behavior just to enable caching.
+- Update branch protection when adding or renaming required job checks; verify the actual GitHub status context.
+
+## Documentation and generated files
+
+- Update documentation when behavior, setup, configuration, commands, or operational procedures change.
+- Keep `.env.example` limited to variable names and safe placeholders.
+- Do not commit build output, caches, coverage output, dependency directories, generated credentials, or temporary files.
+- Preserve formatting and line-ending conventions from `.editorconfig` and `.gitattributes`.
+
+## Completion report
+
+End every agent task with:
+
+```text
+Summary:
+Files changed:
+Validation:
+Skipped checks:
+Risks or follow-up:
+Branch/PR:
 ```
-apps/                  Thin Next.js shells — routing, metadata, API routes, wiring only
-  landing/             port 3000 — eBay/Etsy/Whatnot integrations; hosts eBay account-deletion challenge
-  store/               port 3001
-  blog/                port 3002 — reads pre-generated JSON; no runtime CMS fetch
-  admin/               port 3003
-packages/
-  ui/                  @repo/ui — ShadCN/Radix only; new Radix deps go here, re-export from src/index.ts
-  data/                @repo/data — ETL (extract → images → transform) + blog loaders
-  config/              @repo/config — URLs, brand, env-backed config
-  marketplaces/        @repo/marketplaces — eBay / Etsy / TCGplayer / Whatnot clients
-  eslint-config/       @repo/eslint-config (base | library | next | react-internal)
-  typescript-config/   @repo/typescript-config
-scripts/               Repo-wide Node helpers (with-env.mjs, load-monorepo-env.mjs, kill-dev-ports.mjs)
-test/                  preload.ts + setup.ts (bun test setup, server-only mock, RTL cleanup)
-docs/                  ENV_SETUP.md, BLOG_PRODUCTION_OPERATIONS.md
-.cursor/rules/         Project rules (ui-components, monorepo-packages, no-stale-code, data-pipeline, …)
-```
 
-## Conventions & Gotchas
-
-- **Bun-only.** `packageManager: bun@1.3.14` is authoritative. Never use `npm`/`yarn`/`pnpm`; do not add `engines.npm` or alternate lockfiles. `bun install --frozen-lockfile` in CI-style runs.
-- **husky + lint-staged are active.** Pre-commit runs `lint-staged` (Prettier write on staged files only). Never use `--no-verify` / `-n` to skip hooks. `prepare: husky || true` — install hooks before your first commit.
-- **Test runner is `bun test` (Bun native), not vitest/jest.** Config in `bunfig.toml`: `isolate = true`, preload `./test/preload.ts` + `./test/setup.ts`. `happy-dom` is registered globally before any `@testing-library/dom` import. `@testing-library/react` cleanup runs in `afterEach`. Coverage lands in `./coverage/`. Vitest/Jest configs/imports are wrong — don't add them. (Solidity subdirs are the only exception and don't exist here.)
-- **Never edit generated artifacts.** `packages/data/cache/**` and `apps/blog/public/data/**` are gitignored and rebuilt by the ETL. To change them, re-run the pipeline: `bun --filter @repo/data extract --only …` → `images` → `transform`. Per-entity files must not carry `extractedAt`/`transformedAt` — pipeline timestamps live only in `cache/normalized/meta/pipeline.json` via `writePipelineMeta()`.
-- **Apps are thin shells.** UI → `packages/ui`. Domain/data → `packages/data`. Config → `packages/config`. Marketplace API clients → `packages/marketplaces`. Do not put business logic in `apps/`.
-- **UI must use ShadCN/Radix.** New Radix packages are added to `packages/ui/package.json` and re-exported from `packages/ui/src/index.ts`. No raw HTML controls in apps when a Radix primitive exists.
-- **No stale code.** After a migration, delete retired feature flags, dead branches, unused barrels, and orphan imports immediately, then `bun validate`. Re-grep the codebase for any symbol you removed.
-- **Env vars are Vercel per-project.** `cd apps/<app> && vercel link && vercel env pull .env.local`. Root `.env.local` is legacy/overrides only. Server-only: `EBAY_*`, `ETSY_*`, `WHATNOT_*`, `BLOG_*`, `BLOB_*`, `LIVE_SHOWS_*`, `BLOB_READ_WRITE_TOKEN`. Client-visible (must start with `NEXT_PUBLIC_`): `NEXT_PUBLIC_LANDING_URL`, `NEXT_PUBLIC_BLOG_URL`, `NEXT_PUBLIC_GTM_ID`, `NEXT_PUBLIC_SHOWS_POLL_INTERVAL_MS`. `GOOGLE_SITE_VERIFICATION` is public-by-design. Turbo pass-through env in `turbo.json` (`globalEnv` / `globalPassThroughEnv`).
-- **Long ETL loops must log progress.** Start with totals + flags, every 50/250 items, end with a summary. Use `processRecords({ progressEvery })` from `scripts/lib/core/process-queue.ts`.
-- **One-off scripts go in `packages/data/scripts/temp/`** (gitignored). Long-lived steps belong in `scripts/1-extract/`, `scripts/2-images/`, or `scripts/3-transform/`. Shared helpers in `scripts/lib/`.
-- **Cache wipe policy.** Safe to delete `cache/raw/**` (except `popularity/*.csv`), `cache/normalized/**`, `cache/images/**`, `cache/scratch/**`, `cache/extract-manifest.json`. **Keep** `cache/blob-manifest.json` (publish checkpoint) and `src/collections/pokemon-collections.json` (curated, not built by transform).
-- **Dev ports collide.** `bun dev` runs `scripts/kill-dev-ports.mjs` first to clear 3000–3003. If a port sticks, that's the script's job, not yours.
-- **`tsconfig` strict at the root;** per-package tsconfigs extend `@repo/typescript-config`. React is hoisted via root `tsconfig.json` `paths`. No comments unless asked; match the file's existing style. Server code that imports `server-only` works in tests because `test/preload.ts` mocks it.
-- **PR gates (run locally before pushing).** `bun run validate` → `bun test` → `bun run build`. CI (`.github/workflows/ci.yml`) runs `format:check` → `lint` → `type-check` → `build` → `test` on `main` and `staging`.
-- **Git:** branch from `staging`; PRs target `staging`, then `main` for release. Conventional-style commits (`chore(deps): …`, `feat: …`, `fix: …`, `ci: …`, `test: …`). Never commit secrets, `.env*.local`, lockfile churn from casual `bun install`, or `packages/data/cache/` outputs.
-- **Security reports** go through `.github/SECURITY.md` — no public issues for vulns.
+Use exact command names and outcomes. Mention external changes separately from local changes, and distinguish completed work from recommendations.

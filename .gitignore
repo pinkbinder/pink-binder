@@ -1,44 +1,77 @@
-# dependencies
-node_modules
-.pnp
-.pnp.js
-
-# testing
-coverage
-
-# next.js
-.next/
-out/
-build
-
-# misc
+# Operating system
 .DS_Store
-*.pem
+Thumbs.db
+.Trashes
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-
-# local env files
-.env*.local
+# Secrets and local environment
 .env
+.env.*
 !.env.example
+*.pem
+*.key
 
-# vercel
-.vercel
-
-# build-synced static gallery manifests
-apps/blog/public/data/card-galleries/
-apps/blog/public/data/expansion-galleries/
-packages/data/cache/normalized/meta/cards/blog-galleries/
-
-# typescript
+# JavaScript and TypeScript
+node_modules/
+.pnp/
+.pnp.js
+.turbo/
 *.tsbuildinfo
 next-env.d.ts
 
-# turbo
-.turbo
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
 
-# cursor
+# Rust
+target/
+
+# Build and test output
+dist/
+build/
+out/
+coverage/
+htmlcov/
+.coverage*
+.next/
+artifacts/
+cache/
+!.github/actions/cache/
+!.github/actions/cache/action.yml
+typechain/
+coverage.json
+tests/.bin/
+**/.app/
+
+# Logs and temporary files
+*.log
+*.tmp
+*.pid
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Editors, agents, and local tools
+.claude/
+.kilo/
+.codex/
 .cursor/
+.windsurf/
+.vscode/
+.idea/
+.zed/
+.fleet/
+.opencode/
+.kluster/
+.direnv/
+.envrc
+.vercel/
+mise.local.toml
+.mise.local.toml
+mise.local.lock
+.mise.local.lock
+*.code-workspace
