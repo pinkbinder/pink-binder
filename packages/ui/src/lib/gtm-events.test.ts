@@ -51,13 +51,15 @@ describe('ui/lib/gtm-events', () => {
 
     it('defaults currency to USD when omitted', () => {
       trackViewItem({ itemId: 'x', itemName: 'y' })
-      const call = sendGTMEventMock.mock.calls[0]
+      expect(sendGTMEventMock).toHaveBeenCalledTimes(1)
+      const call = sendGTMEventMock.mock.calls[0]!
       expect(call[0].ecommerce.currency).toBe('USD')
     })
 
     it('honors an explicit currency', () => {
       trackViewItem({ itemId: 'x', itemName: 'y', currency: 'EUR' })
-      const call = sendGTMEventMock.mock.calls[0]
+      expect(sendGTMEventMock).toHaveBeenCalledTimes(1)
+      const call = sendGTMEventMock.mock.calls[0]!
       expect(call[0].ecommerce.currency).toBe('EUR')
     })
 
