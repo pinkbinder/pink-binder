@@ -1,6 +1,7 @@
 .next
 next-env.d.ts
 node_modules
+.code-foundry
 dist
 build
 coverage
