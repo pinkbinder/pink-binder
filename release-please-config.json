@@ -2,15 +2,91 @@
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "bump-minor-pre-major": true,
   "changelog-sections": [
-    { "type": "feat", "section": "Features" },
-    { "type": "fix", "section": "Bug Fixes" },
-    { "type": "perf", "section": "Performance" },
-    { "type": "revert", "section": "Reverts" },
-    { "type": "deps", "section": "Dependencies" },
-    { "type": "docs", "section": "Documentation" },
-    { "type": "test", "section": "Tests" },
-    { "type": "ci", "section": "CI" },
-    { "type": "refactor", "section": "Maintenance" },
-    { "type": "chore", "section": "Maintenance" }
-  ]
+    {
+      "type": "feat",
+      "section": "Features"
+    },
+    {
+      "type": "fix",
+      "section": "Bug Fixes"
+    },
+    {
+      "type": "perf",
+      "section": "Performance"
+    },
+    {
+      "type": "revert",
+      "section": "Reverts"
+    },
+    {
+      "type": "deps",
+      "section": "Dependencies"
+    },
+    {
+      "type": "docs",
+      "section": "Documentation"
+    },
+    {
+      "type": "test",
+      "section": "Tests"
+    },
+    {
+      "type": "ci",
+      "section": "CI"
+    },
+    {
+      "type": "refactor",
+      "section": "Maintenance"
+    },
+    {
+      "type": "chore",
+      "section": "Maintenance"
+    }
+  ],
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "pink-binder"
+    },
+    "apps/admin": {
+      "release-type": "node",
+      "package-name": "@repo/admin"
+    },
+    "apps/blog": {
+      "release-type": "node",
+      "package-name": "@repo/blog"
+    },
+    "apps/landing": {
+      "release-type": "node",
+      "package-name": "@repo/landing"
+    },
+    "apps/store": {
+      "release-type": "node",
+      "package-name": "@repo/store"
+    },
+    "packages/config": {
+      "release-type": "node",
+      "package-name": "@repo/config"
+    },
+    "packages/data": {
+      "release-type": "node",
+      "package-name": "@repo/data"
+    },
+    "packages/eslint-config": {
+      "release-type": "node",
+      "package-name": "@repo/eslint-config"
+    },
+    "packages/marketplaces": {
+      "release-type": "node",
+      "package-name": "@repo/marketplaces"
+    },
+    "packages/typescript-config": {
+      "release-type": "node",
+      "package-name": "@repo/typescript-config"
+    },
+    "packages/ui": {
+      "release-type": "node",
+      "package-name": "@repo/ui"
+    }
+  }
 }
