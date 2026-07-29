@@ -1,3 +1,10 @@
+# Generated release metadata is intentionally managed by Release Please.
+CHANGELOG.md
+
+# Runtime files are checked out under .github during CI.
+.github/.code-foundry
+
+# Repository-specific rules
 .next
 next-env.d.ts
 node_modules
@@ -8,7 +15,6 @@ coverage
 .turbo
 *.lock
 pnpm-lock.yaml
-
 # Generated Pokémon / TCG JSON cache (hand-edited source lives in src/ and scripts/)
 packages/data/cache/
 apps/blog/public/data/card-galleries/
