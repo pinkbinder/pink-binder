@@ -12,8 +12,7 @@ export async function marketplaceFetchJson<T>(
   init?: CachedFetchInit & { revalidateSeconds?: number }
 ): Promise<T | null> {
   const revalidate = init?.revalidateSeconds ?? DEFAULT_REVALIDATE_SECONDS
-  const { revalidateSeconds: _omit, next: nextInit, ...rest } = init ?? {}
-  void _omit
+  const { next: nextInit, ...rest } = init ?? {}
 
   const fetchInit: CachedFetchInit = {
     ...rest,
