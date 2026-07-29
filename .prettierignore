@@ -5,6 +5,7 @@ CHANGELOG.md
 .github/.code-foundry
 
 # Repository-specific rules
+# Repository-specific rules
 .next
 next-env.d.ts
 node_modules
