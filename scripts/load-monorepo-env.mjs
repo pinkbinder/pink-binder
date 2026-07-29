@@ -26,14 +26,26 @@ export function parseEnvValue(raw) {
 }
 
 /**
- * Walk up from `startDir` to find the monorepo root (pnpm-workspace.yaml).
+ * Walk up from `startDir` to find the monorepo root (turbo.json or package.json with workspaces).
  */
 export function findMonorepoRoot(startDir = process.cwd()) {
   let current = startDir
 
   while (true) {
-    if (existsSync(join(current, 'pnpm-workspace.yaml'))) {
+    if (existsSync(join(current, 'turbo.json'))) {
       return current
+    }
+
+    const pkgPath = join(current, 'package.json')
+    if (existsSync(pkgPath)) {
+      try {
+        const pkg = JSON.parse(readFileSync(pkgPath, 'utf8'))
+        if (pkg.workspaces) {
+          return current
+        }
+      } catch {
+        // invalid JSON — keep walking
+      }
     }
 
     const parent = dirname(current)

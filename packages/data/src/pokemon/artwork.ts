@@ -53,9 +53,6 @@ export interface BinderSpriteReference {
   fallbackUrls?: string[]
 }
 
-/** @deprecated Use BinderSpriteReference */
-export type MichiArtReference = BinderSpriteReference
-
 /** Character sprites for colour, pose, and silhouette — not Michi Method scene prints. */
 export function buildBinderSpriteReferences(options: {
   pokedexNumber: number
@@ -110,9 +107,6 @@ export function buildBinderSpriteReferences(options: {
 
   return items
 }
-
-/** @deprecated Use buildBinderSpriteReferences */
-export const buildMichiArtReferences = buildBinderSpriteReferences
 
 /**
  * Resolve display artwork when cache/API omits sprites (common for species whose
