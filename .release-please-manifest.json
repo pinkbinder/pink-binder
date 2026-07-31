@@ -1,0 +1,13 @@
+{
+  ".": "0.0.0",
+  "apps/admin": "0.1.0",
+  "apps/blog": "0.1.0",
+  "apps/landing": "0.1.0",
+  "apps/store": "0.1.0",
+  "packages/config": "0.0.0",
+  "packages/data": "0.0.0",
+  "packages/eslint-config": "0.0.0",
+  "packages/marketplaces": "0.0.0",
+  "packages/typescript-config": "0.0.0",
+  "packages/ui": "0.0.0"
+}
