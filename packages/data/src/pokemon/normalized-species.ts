@@ -1,10 +1,6 @@
 import type { SpeciesCollectionSlug } from '../collections/types'
 import type { PokemonData } from './types'
-import {
-  resolvePipelineCompetitiveAppliedAt,
-  resolvePipelineExtractedAt,
-  resolvePipelineTcgTypeProfilesAppliedAt,
-} from '../pipeline-meta'
+import { readPipelineMetaFields } from '../pipeline-meta'
 import { normalizeCollectCardArtIds } from './collect-card-art'
 import { resolveCollectCardArt } from './resolve-collect-card-art'
 import { coerceSpeciesDisplayArt } from './image-urls'
@@ -277,6 +273,11 @@ export function toPokemonDataFromParts(
   // Scene attribution is baked into normalized images during transforms. Avoid raw-cache reads here
   // so production article rendering stays on the small, explicitly traced normalized bundle.
   const michiSceneArt = art.sceneArt
+  const {
+    extractedAt,
+    competitiveAppliedAt: competitiveEnrichedAt,
+    tcgTypeProfilesAppliedAt: tcgTypeProfileEnrichedAt,
+  } = readPipelineMetaFields('extractedAt', 'competitiveAppliedAt', 'tcgTypeProfilesAppliedAt')
 
   return {
     slug: species.slug,
@@ -314,10 +315,10 @@ export function toPokemonDataFromParts(
     michiSceneArt,
     collectCardArtIds: collectCardArtIds.length > 0 ? collectCardArtIds : undefined,
     collectCardArt: collectCardArt.length > 0 ? collectCardArt : undefined,
-    extractedAt: resolvePipelineExtractedAt(),
+    extractedAt,
     smogonTier: species.competitive?.smogonTier,
     notableMoves: species.competitive?.notableMoves,
-    competitiveEnrichedAt: resolvePipelineCompetitiveAppliedAt(),
+    competitiveEnrichedAt,
     competitiveSnippetSource: species.competitive?.source,
     genderRate: species.pokedex.genderRate,
     weaknesses: species.pokedex.weaknesses,
@@ -326,7 +327,7 @@ export function toPokemonDataFromParts(
     tcgEnergyType: species.pokedex.tcgEnergyType,
     tcgWeakness: species.pokedex.tcgWeakness,
     tcgResistance: species.pokedex.tcgResistance,
-    tcgTypeProfileEnrichedAt: resolvePipelineTcgTypeProfilesAppliedAt(),
+    tcgTypeProfileEnrichedAt,
   }
 }
 
