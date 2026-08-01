@@ -2,5 +2,11 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "cd ../.. && bun install --frozen-lockfile",
   "buildCommand": "cd ../.. && bunx turbo run build --filter=@repo/landing",
-  "ignoreCommand": "cd ../.. && bash scripts/vercel-ignore.sh @repo/landing"
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true,
+      "staging": true
+    }
+  }
 }
