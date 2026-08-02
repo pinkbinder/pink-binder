@@ -1,6 +1,6 @@
 {
   "name": "@repo/blog",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "data:gallery-manifests": "bun --filter @repo/data build:gallery-manifests && node scripts/sync-gallery-manifests.mjs && node scripts/verify-gallery-manifests.mjs",
