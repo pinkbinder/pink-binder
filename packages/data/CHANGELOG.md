@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/data-v1.0.0...data-v1.0.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* unblock staging-&gt;main promotion PR and clear audit gate ([d5214c4](https://github.com/0xPlayerOne/pink-binder/commit/d5214c4e901af74dc9a948ae6d37f5f5b22deab0))
+
 ## 1.0.0 (2026-08-02)
 
 
