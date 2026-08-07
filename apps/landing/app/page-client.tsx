@@ -2,9 +2,10 @@
 
 import { Button, ShareLinkDialog, SocialBar, type ShareLinkItem } from '@repo/ui'
 import { BRAND, SOCIAL_LINKS, getPublicLandingUrl } from '@repo/config'
+import type { ShopLink } from '@repo/config'
 import Image from 'next/image'
 import { useState, type ReactNode } from 'react'
-import { LANDING_LINKS, type LandingLink } from './config/link-in-bio'
+import { LANDING_LINKS } from './config/link-in-bio'
 import { LandingBlogLazy, LandingMarketplaceLazy, type LandingMarketplacePayload } from '@repo/ui'
 
 const LANDING_SITE_URL = getPublicLandingUrl()
@@ -189,7 +190,7 @@ function ThreeDotsIcon() {
   )
 }
 
-function resolveShareUrl(link: LandingLink) {
+function resolveShareUrl(link: ShopLink) {
   if (link.external) {
     return link.href
   }

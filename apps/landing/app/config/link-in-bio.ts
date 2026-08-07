@@ -1,15 +1,3 @@
-export {
-  BRAND,
-  CONTACT_EMAIL,
-  SHOP_LINKS,
-  SITE_URL,
-  SOCIAL_LINKS,
-  type ShopLink,
-  type ShopLink as LandingLink,
-  type SocialIcon,
-  type SocialLink,
-} from '@repo/config'
-
 import { SHOP_LINKS, type ShopLink } from '@repo/config'
 
 // LANDING_LINKS extends the global SHOP_LINKS with links that are specific to the landing page
