@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/pink-binder-v1.0.0...pink-binder-v1.0.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* dead-code-and-performance ([#127](https://github.com/0xPlayerOne/pink-binder/issues/127)) ([a6030ba](https://github.com/0xPlayerOne/pink-binder/commit/a6030ba2af573e52b6f07779b4cd87333d6ccedf))
+* unblock staging-&gt;main promotion PR and clear audit gate ([d5214c4](https://github.com/0xPlayerOne/pink-binder/commit/d5214c4e901af74dc9a948ae6d37f5f5b22deab0))
+
+
+### Tests
+
+* **ui:** add coverage for blog-inline-text markdown/Bulbapedia link parser ([39e8a4f](https://github.com/0xPlayerOne/pink-binder/commit/39e8a4f92193dca1ccc46a1a973d422949cd76e2))
+
+
+### Maintenance
+
+* **code-foundry:** flip to direct main workflow, pin runtime v0.36.0 ([9f6edf7](https://github.com/0xPlayerOne/pink-binder/commit/9f6edf7304e6642e57e6cfb2e1811fafe31c23ec))
+* **code-foundry:** restore staging-release workflow, retire direct-main flip ([949ed38](https://github.com/0xPlayerOne/pink-binder/commit/949ed381a8ae58b578da7f4e742ddf353f056410))
+* **deps:** weekly update ([fbaf976](https://github.com/0xPlayerOne/pink-binder/commit/fbaf976a696e6d2e7ade6f44b37d3650569de5cf))
+* **release:** promote staging to main ([48b5a37](https://github.com/0xPlayerOne/pink-binder/commit/48b5a37076ba39b300d08f5545991831469d244b))
+
 ## 1.0.0 (2026-08-02)
 
 

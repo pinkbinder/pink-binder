@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/ui-v1.0.0...ui-v1.0.1) (2026-08-07)
+
+
+### Tests
+
+* **ui:** add coverage for blog-inline-text markdown/Bulbapedia link parser ([39e8a4f](https://github.com/0xPlayerOne/pink-binder/commit/39e8a4f92193dca1ccc46a1a973d422949cd76e2))
+
 ## 1.0.0 (2026-08-02)
 
 

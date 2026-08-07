@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/0xPlayerOne/pink-binder/compare/blog-v0.2.0...blog-v0.2.1) (2026-08-07)
+
+
+### Bug Fixes
+
+* dead-code-and-performance ([#127](https://github.com/0xPlayerOne/pink-binder/issues/127)) ([a6030ba](https://github.com/0xPlayerOne/pink-binder/commit/a6030ba2af573e52b6f07779b4cd87333d6ccedf))
+
 ## [0.2.0](https://github.com/0xPlayerOne/pink-binder/compare/blog-v0.1.0...blog-v0.2.0) (2026-08-02)
 
 
