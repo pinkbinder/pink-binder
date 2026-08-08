@@ -235,5 +235,3 @@ export {
   buildTcgTypeSearchQuery,
   type ExpensiveTcgCardSnapshot,
 } from './expensive'
-
-export const getTcgPlayerCards = getPokemonTcgCards

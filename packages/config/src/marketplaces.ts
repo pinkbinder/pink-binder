@@ -4,7 +4,7 @@ import {
 } from '@repo/marketplaces/config'
 
 export const MARKETPLACE_SLUGS = ['ebay', 'etsy', 'tcgplayer', 'whatnot'] as const
-export type MarketplaceSlug = (typeof MARKETPLACE_SLUGS)[number]
+type MarketplaceSlug = (typeof MARKETPLACE_SLUGS)[number]
 
 /**
  * Native listing-image aspect ratios per marketplace so cards use `object-contain`
