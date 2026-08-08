@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/0xPlayerOne/pink-binder/compare/data-v1.0.1...data-v1.0.2) (2026-08-08)
+
+
+### Performance
+
+* **data:** cache generated roundup posts; remove dead exports; fix nanoid audit ([#128](https://github.com/0xPlayerOne/pink-binder/issues/128)) ([1ff2082](https://github.com/0xPlayerOne/pink-binder/commit/1ff2082b2c436b6c46aa72425987165104e8a7d4))
+
 ## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/data-v1.0.0...data-v1.0.1) (2026-08-07)
 
 
