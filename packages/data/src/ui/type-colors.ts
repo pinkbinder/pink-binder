@@ -1,4 +1,4 @@
-export const POKEMON_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
+const POKEMON_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
   Normal: { bg: '#A8A77A', text: '#FFFFFF' },
   Fire: { bg: '#EE8130', text: '#FFFFFF' },
   Water: { bg: '#6390F0', text: '#FFFFFF' },

@@ -7,7 +7,7 @@ import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
 /** Vercel Blob public store host suffix (e.g. `{storeId}.public.blob.vercel-storage.com`). */
 export const VERCEL_BLOB_PUBLIC_HOST_SUFFIX = '.public.blob.vercel-storage.com'
 
-export const REMOTE_IMAGE_BYPASS_HOSTS = [
+const REMOTE_IMAGE_BYPASS_HOSTS = [
   ...TCG_CARD_IMAGE_HOSTS,
   ...EBAY_CDN_HOSTS,
   'raw.githubusercontent.com',
@@ -41,29 +41,4 @@ export function shouldBypassNextImageOptimization(src: string): boolean {
   } catch {
     return false
   }
-}
-
-export interface NextImageRemotePattern {
-  protocol: 'https'
-  hostname: string
-  pathname?: string
-}
-
-function httpsHost(hostname: string, pathname?: string): NextImageRemotePattern {
-  return pathname ? { protocol: 'https', hostname, pathname } : { protocol: 'https', hostname }
-}
-
-/** Remote patterns for Pokémon TCG card images in Next.js apps. */
-export function tcgCardImageRemotePatterns(): NextImageRemotePattern[] {
-  return TCG_CARD_IMAGE_HOSTS.map((hostname) => httpsHost(hostname))
-}
-
-/** Remote patterns for eBay listing thumbnails. */
-export function ebayListingImageRemotePatterns(): NextImageRemotePattern[] {
-  return EBAY_CDN_HOSTS.map((hostname) => httpsHost(hostname))
-}
-
-/** Favicon URLs used on shop / link-in-bio surfaces. */
-export function googleFaviconRemotePatterns(): NextImageRemotePattern[] {
-  return [httpsHost('www.google.com', '/s2/favicons/**')]
 }

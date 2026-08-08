@@ -402,7 +402,7 @@ export const SPECIES_COLLECTIONS = {
 >
 
 /** Lower index = higher priority when sorting `collections` (primary = first entry). */
-export const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
+const SPECIES_COLLECTION_SORT_ORDER: SpeciesCollectionSlug[] = [
   'dogs-and-canines',
   'cats-and-felines',
   'bunnies-and-rabbits',
