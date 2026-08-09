@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/0xPlayerOne/pink-binder/compare/marketplaces-v1.0.1...marketplaces-v1.0.2) (2026-08-09)
+
+
+### Maintenance
+
+* remove dead modules and unused SEO exports ([#130](https://github.com/0xPlayerOne/pink-binder/issues/130)) ([3b76545](https://github.com/0xPlayerOne/pink-binder/commit/3b76545762e1c3a6370c5fabefe47d5d5dd08af6))
+
 ## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/marketplaces-v1.0.0...marketplaces-v1.0.1) (2026-08-08)
 
 
