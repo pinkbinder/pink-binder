@@ -52,7 +52,7 @@ Set this environment variable for `apps/landing`:
 
 ## Stack
 
-- **Framework**: Next.js 15 (App Router)
+- **Framework**: Next.js 16 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS + ShadCN/ui
 - **Build**: Turborepo

@@ -66,7 +66,7 @@ export function buildShinydevRegionalMcdImageUrl(
 }
 
 /** Alternate species slug paths when the primary ShinyDev URL 404s (e.g. Alolan forms). */
-export function buildShinydevRegionalMcdImageFallbacks(
+function buildShinydevRegionalMcdImageFallbacks(
   cardId: string,
   speciesSlug: string,
   cardName?: string | null

@@ -9,8 +9,7 @@ import { TcgCardZoomDialog } from './tcg-card-zoom-dialog'
 export const COLLECT_CARD_HIGHLIGHT_MAX = 3
 
 /** Matches `aspect-[5/7]` at max-w-[11rem] / sm:max-w-[13rem] for popular pick rows. */
-export const PORTRAIT_CARD_MEDIA_CLASS =
-  'mx-auto aspect-[5/7] w-full max-w-[11rem] sm:max-w-[13rem]'
+const PORTRAIT_CARD_MEDIA_CLASS = 'mx-auto aspect-[5/7] w-full max-w-[11rem] sm:max-w-[13rem]'
 export const PORTRAIT_CARD_MIN_HEIGHT_CLASS = 'min-h-[15.4rem] sm:min-h-[18.2rem]'
 
 export type CollectCardHighlightGridItem = {

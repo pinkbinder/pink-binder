@@ -19,6 +19,7 @@ concurrency:
 
 jobs:
   health-check:
+    if: vars.CI_BILLING_PAUSED != 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
