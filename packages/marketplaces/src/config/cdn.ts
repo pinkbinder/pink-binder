@@ -1,4 +1,3 @@
-import { POKEMON_TCG_API } from './apis'
 import {
   resolveScrydexCardId,
   tcgplayerUrlCardId,
@@ -7,7 +6,7 @@ import {
 import { isTrainerKitCardId } from '../tcgplayer/product-line'
 import { getTrainerKitTcgplayerUrl } from '../tcgplayer/trainer-kit-tcgplayer'
 
-export const SCRYDEX_CDN = {
+const SCRYDEX_CDN = {
   cardImageBase: 'https://images.scrydex.com/pokemon',
   host: 'images.scrydex.com',
 } as const
@@ -16,7 +15,7 @@ export const SCRYDEX_CDN = {
 export const SCRYDEX_PLACEHOLDER_SMALL_BYTES = 45_551
 export const SCRYDEX_PLACEHOLDER_LARGE_BYTES = 186_316
 
-export const POKEMON_TCG_CDN = {
+const POKEMON_TCG_CDN = {
   imageHost: 'images.pokemontcg.io',
 } as const
 
@@ -24,16 +23,16 @@ export const TCGDEX_CDN = {
   assetsHost: 'assets.tcgdex.net',
 } as const
 
-export const POKEMON_TCG_PRICES_CDN = {
+const POKEMON_TCG_PRICES_CDN = {
   tcgplayerPriceBase: 'https://prices.pokemontcg.io/tcgplayer',
 } as const
 
 export const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com'] as const
 
 /** Hostnames allowed in Next.js `images.remotePatterns` for Pokémon TCG card art. */
-export const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
+const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
 
-export const SHINYDEV_CDN_HOST = 'pokemon-cards-prod-public.shinydev.io' as const
+const SHINYDEV_CDN_HOST = 'pokemon-cards-prod-public.shinydev.io' as const
 
 export const TCG_CARD_IMAGE_HOSTS = [
   POKEMON_TCG_CDN.imageHost,
@@ -566,7 +565,7 @@ export function isKnownTcgplayerPricesRedirectId(cardId: string): boolean {
   return true
 }
 
-export type TcgplayerProductUrlOptions = {
+type TcgplayerProductUrlOptions = {
   /**
    * Trustworthy pokemontcg.io catalog id (e.g. parsed from `images.pokemontcg.io` fallback URLs).
    * Used to correct naive TCGdex `*.5` → `*pt5` synthesis on Scrydex redirect links.
@@ -625,6 +624,3 @@ export function tcgplayerProductUrl(
 
   return `${POKEMON_TCG_PRICES_CDN.tcgplayerPriceBase}/${encodeURIComponent(catalogId)}`
 }
-
-/** @deprecated Use {@link POKEMON_TCG_API} from `./apis`. */
-export const POKEMON_TCG_API_BASE = POKEMON_TCG_API.baseUrl

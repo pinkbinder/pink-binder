@@ -50,7 +50,7 @@ function tcgcsvFetchHeaders(): Record<string, string> {
   }
 }
 
-export type TcgcsvFetchStats = {
+type TcgcsvFetchStats = {
   requestCount: number
 }
 
@@ -108,7 +108,7 @@ export async function fetchTcgcsvGroupPrices(
   )
 }
 
-export type FetchAllTcgcsvPokemonGroupsOptions = {
+type FetchAllTcgcsvPokemonGroupsOptions = {
   delayMs?: number
   onProgress?: (completed: number, total: number, groupId: number) => void
 }

@@ -1,6 +1,6 @@
 import { MARKETPLACE_WEB } from './apis'
 
-export interface MarketplaceAttributionLink {
+interface MarketplaceAttributionLink {
   label: string
   href: string
 }
