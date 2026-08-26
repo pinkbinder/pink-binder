@@ -4,7 +4,7 @@ preload = ["./test/preload.ts", "./test/setup.ts"]
 exclude = ["dist/**", "node_modules/**", "coverage/**", "**/*.test.js"]
 coverageSkipTestFiles = true
 coverageReporter = ["text", "lcov"]
-# Bun 1.3.14 reports a non-zero exit for detailed thresholds despite passing
+# Bun reports a non-zero exit for detailed thresholds despite passing
 # aggregate coverage; the shared CI script enforces the 80% aggregate minimum.
 coverageThreshold = 0
 coveragePathIgnorePatterns = [
