@@ -9,7 +9,7 @@ import { withMonorepoDevSupport } from '../../scripts/next-monorepo-config.mjs'
 
 const appDir = path.dirname(fileURLToPath(import.meta.url))
 
-// Fallback when Next is started directly from apps/landing (not via root `pnpm dev`).
+// Fallback when Next is started directly from apps/landing (not via root `bun run dev`).
 loadMonorepoEnv({ startDir: appDir })
 
 /** @type {import('next').NextConfig} */

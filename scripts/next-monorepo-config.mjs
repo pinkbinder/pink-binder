@@ -9,7 +9,7 @@ export function getMonorepoRoot(appDir) {
 }
 
 /**
- * Webpack watch settings so HMR picks up changes in pnpm workspace packages (`@repo/*`).
+ * Webpack watch settings so HMR picks up changes in Bun workspace packages (`@repo/*`).
  * @param {import('webpack').Configuration} config
  * @param {{ dev: boolean }} ctx
  */
