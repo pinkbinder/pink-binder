@@ -75,3 +75,7 @@ mise.local.toml
 mise.local.lock
 .mise.local.lock
 *.code-workspace
+
+# Cloudflare OpenNext / Wrangler build output
+.open-next/
+.wrangler/
