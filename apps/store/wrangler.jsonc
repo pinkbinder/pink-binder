@@ -1,26 +1,35 @@
 {
-	"$schema": "node_modules/wrangler/config-schema.json",
-	"name": "store",
-	"compatibility_date": "2026-08-29",
-	"compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-	"main": ".open-next/worker.js",
-	"assets": {
-		"directory": ".open-next/assets",
-		"binding": "ASSETS"
-	},
-	"services": [
-		{
-			"binding": "WORKER_SELF_REFERENCE",
-			"service": "store"
-		}
-	],
-	"r2_buckets": [
-		{
-			"binding": "NEXT_INC_CACHE_R2_BUCKET",
-			"bucket_name": "store-opennext-cache"
-		}
-	],
-	"images": {
-		"binding": "IMAGES"
-	}
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "store",
+  "compatibility_date": "2026-08-29",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "main": ".open-next/worker.js",
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "store"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "NEXT_INC_CACHE_R2_BUCKET",
+      "bucket_name": "store-opennext-cache"
+    }
+  ],
+  "images": {
+    "binding": "IMAGES"
+  },
+  "build": {
+    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/store && bunx --cwd apps/store opennextjs-cloudflare build",
+    "cwd": ".",
+    "watch_dir": "apps/store"
+  },
+  "workers_dev": true
 }
