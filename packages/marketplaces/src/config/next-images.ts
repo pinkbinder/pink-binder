@@ -6,6 +6,8 @@ import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
  */
 /** Vercel Blob public store host suffix (e.g. `{storeId}.public.blob.vercel-storage.com`). */
 export const VERCEL_BLOB_PUBLIC_HOST_SUFFIX = '.public.blob.vercel-storage.com'
+/** R2 public host for Pink Binder images (Cloudflare). */
+export const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
 
 const REMOTE_IMAGE_BYPASS_HOSTS = [
   ...TCG_CARD_IMAGE_HOSTS,
@@ -13,6 +15,7 @@ const REMOTE_IMAGE_BYPASS_HOSTS = [
   'raw.githubusercontent.com',
   'www.artofpkm.com',
   'projectpokemon.org',
+  R2_PUBLIC_HOST,
 ] as const
 
 const BYPASS_HOSTS = new Set<string>(REMOTE_IMAGE_BYPASS_HOSTS)
@@ -37,6 +40,7 @@ export function shouldBypassNextImageOptimization(src: string): boolean {
     if (BYPASS_HOSTS.has(hostname)) {
       return true
     }
+    if (hostname === R2_PUBLIC_HOST) return true
     return hostname.endsWith(VERCEL_BLOB_PUBLIC_HOST_SUFFIX)
   } catch {
     return false

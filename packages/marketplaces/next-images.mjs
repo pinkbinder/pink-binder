@@ -21,6 +21,12 @@ const VERCEL_BLOB_REMOTE_PATTERN = {
   hostname: '*.public.blob.vercel-storage.com',
 }
 
+const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
+const R2_REMOTE_PATTERN = {
+  protocol: 'https',
+  hostname: R2_PUBLIC_HOST,
+}
+
 const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com']
 
 function httpsHost(hostname, pathname) {
@@ -47,6 +53,7 @@ export function blogImageRemotePatterns() {
       pathname: '/PokeAPI/sprites/**',
     },
     VERCEL_BLOB_REMOTE_PATTERN,
+    R2_REMOTE_PATTERN,
     ...tcgCardImageRemotePatterns(),
     ...BLOG_ART_REMOTE_HOSTS.map((hostname) => httpsHost(hostname)),
   ]
@@ -54,7 +61,7 @@ export function blogImageRemotePatterns() {
 
 /**
  * Blog image settings. Skip the image optimizer — roundup pages load dozens of
- * remote sprites/cards per view and assets are pre-optimized on Vercel Blob CDN.
+ * remote sprites/cards per view and assets are pre-optimized on R2 / Vercel Blob CDN.
  */
 export function blogNextImagesConfig() {
   return {
