@@ -25,10 +25,11 @@ A modern NextJS Turborepo monorepo for Pink Binder apps.
 # Install dependencies
 bun install
 
-# Link Vercel projects and pull env (once per app you run locally)
-cd apps/landing && vercel link && vercel env pull .env.local
-cd ../blog && vercel link && vercel env pull .env.local
-cd ../admin && vercel link && vercel env pull .env.local
+# Pull env from Cloudflare (once per app you run locally)
+# Secrets live in Cloudflare Workers (wrangler secret) per app
+# For local dev, copy from Cloudflare dashboard or use wrangler:
+#   CLOUDFLARE_ACCOUNT_ID=e9b73b1b6c312b889732f29b884a5166 bunx wrangler secret list --name landing  (or check dashboard)
+# Or duplicate from apps/landing/.env.local if you have it
 
 # Run all apps in development
 bun dev
@@ -37,7 +38,7 @@ bun dev
 bun build
 ```
 
-Environment variables are managed in Vercel — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example). Blog release, monitoring, Pinterest, and SEO operations are documented in [`docs/BLOG_PRODUCTION_OPERATIONS.md`](docs/BLOG_PRODUCTION_OPERATIONS.md).
+Environment variables are managed in Cloudflare Workers — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example). Blog release, monitoring, Pinterest, and SEO operations are documented in [`docs/BLOG_PRODUCTION_OPERATIONS.md`](docs/BLOG_PRODUCTION_OPERATIONS.md).
 
 ## eBay marketplace account deletion notifications
 
