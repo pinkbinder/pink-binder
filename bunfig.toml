@@ -15,3 +15,5 @@ coveragePathIgnorePatterns = [
   "test/**",
   "**/*.config.*",
 ]
+[install]
+linker = "hoisted"
