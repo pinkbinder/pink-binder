@@ -28,7 +28,7 @@
   },
   "workers_dev": true,
   "build": {
-    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/landing && bunx --cwd apps/landing opennextjs-cloudflare build",
+    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/landing && cd apps/landing && bunx opennextjs-cloudflare build",
     "cwd": ".",
     "watch_dir": "apps/landing"
   }
