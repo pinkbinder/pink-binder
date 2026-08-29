@@ -1,21 +1,14 @@
 # Environment Variables
 
-Secrets live in **Vercel** (per project). Local dev uses `vercel env pull` into each app directory.
+Secrets live in **Cloudflare Workers** (per app, via `wrangler secret`). Local dev uses `.env.local` per app.
 
 ## Quick start
 
 ```bash
-# One-time: link a project (from the app folder)
-cd apps/landing
-vercel link
-
-# Pull Development env into that app (creates apps/landing/.env.local)
-vercel env pull .env.local
-
-# Repeat for other apps you run locally, e.g. apps/blog
-cd ../blog
-vercel link
-vercel env pull .env.local
+# Secrets are stored in Cloudflare Workers per app (Pink Binder account e9b73b1b6c312b889732f29b884a5166)
+# Pull via wrangler or copy from dashboard:
+#   CLOUDFLARE_ACCOUNT_ID=e9b73b1b6c312b889732f29b884a5166 bunx wrangler secret list --name landing
+# For local dev, ensure apps/landing/.env.local and apps/blog/.env.local exist (ask team or copy from dashboard)
 ```
 
 From the repo root, start dev as usual:
@@ -32,12 +25,12 @@ Next.js loads each app's `.env.local` when that app runs. You do **not** need a 
 
 | Scope                         | Location                  | Notes                                            |
 | ----------------------------- | ------------------------- | ------------------------------------------------ |
-| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Pulled from the landing Vercel project           |
-| Blog (GTM, Blob token)        | `apps/blog/.env.local`    | Pulled from the blog Vercel project              |
-| Data scripts (Blob upload)    | `apps/blog/.env.local`    | `@repo/data` publish scripts read the blog token |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Stored in Cloudflare Worker `landing` (R2 + secrets) |
+| Blog (GTM, R2)                | `apps/blog/.env.local`    | Stored in Cloudflare Worker `blog` (R2 + secrets)    |
+| Data scripts (R2 upload)      | `apps/blog/.env.local` or `CLOUDFLARE_ACCOUNT_ID` | `@repo/data` publish scripts use R2 (images.pinkbinder.shop) |
 | Optional overrides            | Root `.env.local`         | Legacy; merged by `scripts/with-env.mjs` only    |
 
-Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Vercel project that needs them.
+Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Cloudflare Worker that needs them (via `wrangler secret put`).
 
 ## Server vs client
 
@@ -87,7 +80,7 @@ bun --filter @repo/data refresh
 **When sprites or scene art change (new species, art refresh):**
 
 ```bash
-cd apps/blog && vercel env pull .env.local   # ensures BLOB_READ_WRITE_TOKEN
+# R2 uses CLOUDFLARE_ACCOUNT_ID + wrangler OAuth, no BLOB token needed. Legacy Vercel Blob fallback still works if BLOB_READ_WRITE_TOKEN is set.
 bun --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
 bun --filter @repo/data transform           # normalized JSON + URL patch
 ```
