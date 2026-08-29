@@ -23,6 +23,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "9.39.5",
+    "@opennextjs/cloudflare": "^1.20.4",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
@@ -35,6 +36,7 @@
     "postcss": "8.5.25",
     "prettier": "^3.9.6",
     "tailwindcss": "^4.3.3",
-    "typescript": "6.0.3"
+    "typescript": "6.0.3",
+    "wrangler": "^4.127.1"
   }
 }
