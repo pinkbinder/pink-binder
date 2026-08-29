@@ -27,7 +27,7 @@
     "binding": "IMAGES"
   },
   "build": {
-    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/store && bunx --cwd apps/store opennextjs-cloudflare build",
+    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/store && cd apps/store && bunx opennextjs-cloudflare build",
     "cwd": ".",
     "watch_dir": "apps/store"
   },

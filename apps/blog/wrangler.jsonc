@@ -28,7 +28,7 @@
   },
   "workers_dev": true,
   "build": {
-    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/blog && bunx --cwd apps/blog opennextjs-cloudflare build",
+    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/blog && cd apps/blog && bunx opennextjs-cloudflare build",
     "cwd": ".",
     "watch_dir": "apps/blog"
   }
