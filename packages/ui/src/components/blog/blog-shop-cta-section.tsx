@@ -2,7 +2,7 @@ import Image from 'next/image'
 import { Button } from '../button'
 import { BlogSectionCard } from './blog-section-card'
 
-export interface BlogShopCtaSectionProps {
+interface BlogShopCtaSectionProps {
   shopUrl: string
   promoImageSrc?: string
   logoImageSrc?: string

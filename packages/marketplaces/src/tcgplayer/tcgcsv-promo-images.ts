@@ -33,7 +33,7 @@ export const TCGCSV_PROMO_SET_TO_GROUP: Record<string, number> = {
   ttbb24: 23561,
 }
 
-export const TCGPLAYER_CDN = {
+const TCGPLAYER_CDN = {
   host: 'tcgplayer-cdn.tcgplayer.com',
 } as const
 

@@ -27,7 +27,9 @@ export type {
   EnrichedPostForGrid,
 } from './blog/blog-grid-types'
 export type { LandingBlogFeaturedPayload, LandingBlogFeaturedPost } from './landing/types'
-export * from './utils'
+// Keep this entrypoint browser-safe. Node-backed helpers, such as JSON cache
+// readers, remain available through the server entrypoint only.
+export * from './utils/slug'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
   preferredTcgCardImageUrl,

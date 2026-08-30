@@ -57,12 +57,12 @@ export interface TagCatalogOption {
   label: string
 }
 
-export interface ExpansionFilterOption {
+interface ExpansionFilterOption {
   slug: string
   label: string
 }
 
-export interface PokemonFilterOption {
+interface PokemonFilterOption {
   slug: string
   label: string
 }
@@ -85,12 +85,10 @@ export const BLOG_INDEX_FACET_QUERY_KEYS = [
   'themes',
 ] as const
 
-export type BlogIndexFacetQueryKey = (typeof BLOG_INDEX_FACET_QUERY_KEYS)[number]
-
 /** Legacy index URLs used `collection` before the themes rename. */
 const LEGACY_THEME_FACET_QUERY_KEY = 'collection'
 
-export interface BlogIndexFacetSearchParams {
+interface BlogIndexFacetSearchParams {
   tag?: string
   filter?: string
   type?: string
@@ -415,9 +413,6 @@ export function extractThemeFilters(posts: PostWithCategories[]): string[] {
   return [...themes].sort()
 }
 
-/** @deprecated Use {@link extractThemeFilters}. */
-export const extractCollectionFilters = extractThemeFilters
-
 /** Blog index “Lists” chips: species guides + roundup angles, stable order. */
 const ALL_LIST_FILTER_CATEGORIES: readonly string[] = [
   SPECIES_GUIDES_CATEGORY,
@@ -653,7 +648,7 @@ export function extractTagCatalogOptions(posts: PostForTagCatalog[]): TagCatalog
 export type CatalogTagFacetGroup =
   'type' | 'generation' | 'list' | 'illustrator' | 'expansion' | 'pokemon' | 'themes'
 
-export interface CatalogTagFacetResolution {
+interface CatalogTagFacetResolution {
   group: CatalogTagFacetGroup
   facetValue: string
 }

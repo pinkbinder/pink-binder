@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '../lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
-export interface PostCardPost {
+interface PostCardPost {
   title: string
   excerpt: string
   thumbnail?: string

@@ -13,7 +13,7 @@ export interface SearchableSelectOption {
   emphasized?: boolean
 }
 
-export interface SearchableSelectProps {
+interface SearchableSelectProps {
   options: SearchableSelectOption[]
   value: string | null
   onValueChange: (value: string | null) => void

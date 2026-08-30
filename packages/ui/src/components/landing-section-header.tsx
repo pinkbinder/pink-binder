@@ -3,23 +3,19 @@ import { cn } from '../lib/utils'
 import { Button } from './button'
 
 /** Eyebrow label above a landing section title (e.g. "Latest from the blog"). */
-export const LANDING_SECTION_EYEBROW_CLASSNAME =
+const LANDING_SECTION_EYEBROW_CLASSNAME =
   'text-primary text-sm font-bold uppercase tracking-[0.3em]'
 
 /** Primary heading for a landing section (e.g. "Fresh from Pink Binder"). */
-export const LANDING_SECTION_TITLE_CLASSNAME = 'font-title mt-2 text-2xl font-semibold'
+const LANDING_SECTION_TITLE_CLASSNAME = 'font-title mt-2 text-2xl font-semibold'
 
-/** Trailing link in the section header row (e.g. "Visit blog →"). */
-export const LANDING_SECTION_ACTION_CLASSNAME =
-  'text-primary hover:text-primary/80 shrink-0 text-sm font-bold transition-colors'
-
-export interface LandingSectionHeaderAction {
+interface LandingSectionHeaderAction {
   href: string
   label: string
   external?: boolean
 }
 
-export interface LandingSectionHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+interface LandingSectionHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   eyebrow: string
   title: string
   action?: LandingSectionHeaderAction
@@ -58,9 +54,9 @@ function LandingSectionHeader({
 }
 
 /** Standard vertical spacing for landing sections that use {@link LandingSectionHeader}. */
-export const LANDING_SECTION_LAYOUT_CLASSNAME = 'flex flex-col gap-4'
+const LANDING_SECTION_LAYOUT_CLASSNAME = 'flex flex-col gap-4'
 
-export interface LandingSectionProps extends React.HTMLAttributes<HTMLElement> {
+interface LandingSectionProps extends React.HTMLAttributes<HTMLElement> {
   children: React.ReactNode
 }
 

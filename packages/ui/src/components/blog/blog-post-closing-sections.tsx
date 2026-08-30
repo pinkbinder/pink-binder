@@ -2,7 +2,7 @@ import { BlogRelatedPostsSection } from './blog-related-posts-section'
 import { BlogShopCtaSection } from './blog-shop-cta-section'
 import type { BlogLinkPillListItem } from './blog-link-pill-list'
 
-export interface BlogPostClosingSectionsProps {
+interface BlogPostClosingSectionsProps {
   relatedItems: BlogLinkPillListItem[]
   shopUrl: string
   relatedTitle?: string

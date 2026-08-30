@@ -64,7 +64,7 @@ export interface NormalizedSceneArtEntry {
   height?: number
 }
 
-export type NormalizedCollectCardArtIds = string[]
+type NormalizedCollectCardArtIds = string[]
 
 export interface NormalizedSpeciesPokedex {
   genus: string | null
