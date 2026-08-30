@@ -1,7 +1,7 @@
 import { BlogLinkPillList, type BlogLinkPillListItem } from './blog-link-pill-list'
 import { BlogSectionCard } from './blog-section-card'
 
-export interface BlogRelatedPostsSectionProps {
+interface BlogRelatedPostsSectionProps {
   items: BlogLinkPillListItem[]
   title?: string
   description?: string

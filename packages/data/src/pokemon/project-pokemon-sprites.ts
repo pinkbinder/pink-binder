@@ -19,7 +19,7 @@ const SPRITE_SLUG_OVERRIDES: Record<string, string> = {
   'kommo-o': 'kommo-o',
 }
 
-export interface ProjectPokemonSpriteUrls {
+interface ProjectPokemonSpriteUrls {
   normal: string
   shiny: string
 }

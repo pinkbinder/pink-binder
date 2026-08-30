@@ -10,7 +10,7 @@ import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 const INITIAL_VISIBLE = 12
 const LOAD_MORE_COUNT = 24
 
-export interface PokemonTcgCardGallerySource {
+interface PokemonTcgCardGallerySource {
   kind: 'species' | 'illustrator' | 'expansion'
   slug: string
 }

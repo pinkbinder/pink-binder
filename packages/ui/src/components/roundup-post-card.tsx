@@ -3,7 +3,7 @@
 import { RoundupHeroArtworkGrid } from './blog/roundup-hero-artwork-grid'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
-export interface RoundupPostCardProps {
+interface RoundupPostCardProps {
   title: string
   excerpt: string
   artworkUrls: string[]
