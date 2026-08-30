@@ -4,21 +4,17 @@ Part of the Pink Binder Turborepo monorepo.
 
 ## Environment Variables
 
-Environment variables are managed in **Vercel** (source of truth). Sync them locally:
+Environment variables are managed in the **Cloudflare Worker** (source of truth). Set local values separately:
 
 ```bash
-# Link this project to its Vercel project (one-time)
-vercel link
-
-# Pull all env vars into .env.local (gitignored)
-vercel env pull .env.local
+# Create apps/landing/.env.local (gitignored) with the values needed for local development.
 ```
 
-To push local changes back to Vercel:
+To update deployed values:
 
 ```bash
-vercel env push .env.local
-# or set them per-environment (Production / Preview) in the Vercel dashboard
+wrangler secret put <NAME> --config apps/landing/wrangler.jsonc
+# or set secrets and variables in the Cloudflare Worker dashboard
 ```
 
-> Never commit `.env.local` — it is gitignored. For team projects use `vercel --scope niftyleague`.
+> Never commit `.env.local` — it is gitignored.

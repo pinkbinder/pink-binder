@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:cloudflare": "bun run --cwd ../.. build:cloudflare -- landing",
     "dev": "next dev --port 3000",
     "dev:webpack": "next dev --port 3000 --webpack",
     "lint": "eslint . --max-warnings 0",

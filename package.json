@@ -7,6 +7,7 @@
   },
   "scripts": {
     "build": "node scripts/with-env.mjs turbo run build",
+    "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
     "dev": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",

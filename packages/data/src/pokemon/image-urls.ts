@@ -1,6 +1,5 @@
 import {
   TCGDEX_CDN,
-  VERCEL_BLOB_PUBLIC_HOST_SUFFIX,
   isDisplayableTcgCardImageUrl,
   isLikelyBrokenTcgdexAssetUrl,
   isTcgdexUnsupportedSetId,
@@ -23,14 +22,17 @@ import type { NormalizedSpeciesArt, NormalizedSpeciesSprites } from './normalize
 import type { PokemonTcgCard } from './tcg-card'
 import type { MichiSceneArtSource } from './michi-scene-art'
 
-/** Public Vercel Blob CDN URLs baked into normalized cache. */
+/** Legacy Vercel Blob host suffix, retained only to provide a fallback for stale cached data. */
+const LEGACY_VERCEL_BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com'
+
+/** Detect a legacy Vercel Blob URL in stale cached data. */
 export function isVercelBlobPublicUrl(url: string | null | undefined): boolean {
   const trimmed = url?.trim()
   if (!trimmed) {
     return false
   }
   try {
-    return new URL(trimmed).hostname.endsWith(VERCEL_BLOB_PUBLIC_HOST_SUFFIX)
+    return new URL(trimmed).hostname.endsWith(LEGACY_VERCEL_BLOB_HOST_SUFFIX)
   } catch {
     return false
   }

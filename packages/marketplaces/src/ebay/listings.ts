@@ -49,7 +49,7 @@ export async function getEbayListings(): Promise<EbayListing[]> {
 
     console.warn(
       `eBay Browse API: missing ${missing.join(' and ')}. ` +
-        'Add them to the repo root `.env.local` (local) or Vercel project env (deployed). ' +
+        'Add them to the repo root `.env.local` (local) or Cloudflare Worker env (deployed). ' +
         'Restart the dev server after changing env files.'
     )
     return []

@@ -23,12 +23,12 @@ Next.js loads each app's `.env.local` when that app runs. You do **not** need a 
 
 ## Where variables live
 
-| Scope                         | Location                  | Notes                                            |
-| ----------------------------- | ------------------------- | ------------------------------------------------ |
-| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Stored in Cloudflare Worker `landing` (R2 + secrets) |
-| Blog (GTM, R2)                | `apps/blog/.env.local`    | Stored in Cloudflare Worker `blog` (R2 + secrets)    |
+| Scope                         | Location                                          | Notes                                                        |
+| ----------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local`                         | Stored in Cloudflare Worker `landing` (R2 + secrets)         |
+| Blog (GTM, R2)                | `apps/blog/.env.local`                            | Stored in Cloudflare Worker `blog` (R2 + secrets)            |
 | Data scripts (R2 upload)      | `apps/blog/.env.local` or `CLOUDFLARE_ACCOUNT_ID` | `@repo/data` publish scripts use R2 (images.pinkbinder.shop) |
-| Optional overrides            | Root `.env.local`         | Legacy; merged by `scripts/with-env.mjs` only    |
+| Optional overrides            | Root `.env.local`                                 | Legacy; merged by `scripts/with-env.mjs` only                |
 
 Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Cloudflare Worker that needs them (via `wrangler secret put`).
 
@@ -39,7 +39,6 @@ Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Cloudflare Worker th
 ```env
 EBAY_APP_ID=
 EBAY_CLIENT_SECRET=
-BLOB_READ_WRITE_TOKEN=
 ```
 
 **Client-visible** — must use `NEXT_PUBLIC_`:
@@ -80,26 +79,26 @@ bun --filter @repo/data refresh
 **When sprites or scene art change (new species, art refresh):**
 
 ```bash
-# R2 uses CLOUDFLARE_ACCOUNT_ID + wrangler OAuth, no BLOB token needed. Legacy Vercel Blob fallback still works if BLOB_READ_WRITE_TOKEN is set.
-bun --filter @repo/data images              # sprites, artofpkm, backfill, Blob upload
+# R2 uses CLOUDFLARE_ACCOUNT_ID + wrangler OAuth.
+bun --filter @repo/data images              # sprites, artofpkm, backfill, R2 upload
 bun --filter @repo/data transform           # normalized JSON + URL patch
 ```
 
 Re-runs are safe — unchanged files are skipped at each step. Step 5 removes local `cache/images/` after validating every file is in `blob-manifest.json` (use `--skip-cleanup` to keep local copies).
 
-Requires `BLOB_READ_WRITE_TOKEN` in `apps/blog/.env.local` for `images` publish (step 4). Apply URLs (transform) reads the manifest only — no token.
+Requires Cloudflare Wrangler authentication (or R2 S3 API credentials) for `images` publish. Apply URLs (transform) reads the manifest only — no credentials.
 
 ### Sharing `blob-manifest.json` across machines
 
 | Artifact                          | Commit to git?            | Why                                                                                      |
 | --------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
-| `cache/normalized/species/*.json` | **Yes** (already)         | Apps read Blob URLs from here at runtime                                                 |
+| `cache/normalized/species/*.json` | **Yes** (already)         | Apps read R2 URLs from here at runtime                                                   |
 | `cache/blob-manifest.json`        | **Recommended for teams** | Lets others run `transform` (apply URLs) and `images` publish skips without re-uploading |
 | `cache/images/`                   | **No**                    | Staging only; cleaned up after publish                                                   |
 
 The manifest is large (~10k+ entries) but changes infrequently (annual image runs). Without it, `transform` step 2 exits early and cannot refresh `art.sprites` / `sceneArt` from CDN paths.
 
-To commit: remove `/blob-manifest.json` from `packages/data/cache/.gitignore`, then add the file. Teammates who only run the prices group do not need the manifest if species JSON in git already has current art URLs.
+`blob-manifest.json` is intentionally tracked. Teammates who only run the prices group do not need it if species JSON in git already has current art URLs.
 
 ## Reference
 

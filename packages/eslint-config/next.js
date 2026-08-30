@@ -3,6 +3,9 @@ const eslintConfigPrettier = require('eslint-config-prettier')
 
 /** @type {import('eslint').Linter.Config[]} */
 module.exports = [
+  {
+    ignores: ['**/.next/**', '**/.open-next/**', '**/.wrangler/**'],
+  },
   ...nextCoreWebVitals,
   eslintConfigPrettier,
   {

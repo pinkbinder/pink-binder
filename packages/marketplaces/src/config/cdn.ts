@@ -455,14 +455,6 @@ export function isTcgdexAssetImageUrl(url: string | null | undefined): boolean {
   }
 }
 
-function isVercelBlobPublicUrl(url: string): boolean {
-  try {
-    return new URL(url.trim()).hostname.endsWith('.public.blob.vercel-storage.com')
-  } catch {
-    return false
-  }
-}
-
 /**
  * Hero strips and blog headers: prefer TCGdex `low.webp`.
  * `high.webp` is often missing (e.g. Crown Zenith Galarian Gallery `GG19`).
@@ -506,8 +498,7 @@ export function isDisplayableTcgCardImageUrl(url: string): boolean {
     isPokemontcgImageUrl(trimmed) ||
     isScrydexCardImageUrl(trimmed) ||
     isShinydevCardImageUrl(trimmed) ||
-    trimmed.includes(TCGPLAYER_CDN_HOST) ||
-    isVercelBlobPublicUrl(trimmed)
+    trimmed.includes(TCGPLAYER_CDN_HOST)
   ) {
     return true
   }

@@ -2,10 +2,8 @@ import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
 
 /**
  * Remote hosts served with `unoptimized` on `next/image` so the browser loads CDNs directly.
- * Pair with `blogNextImagesConfig().unoptimized` on Vercel so new Image usages cannot bill transforms.
+ * Pair with `blogNextImagesConfig().unoptimized` on Cloudflare so new Image usages bypass transforms.
  */
-/** Vercel Blob public store host suffix (e.g. `{storeId}.public.blob.vercel-storage.com`). */
-export const VERCEL_BLOB_PUBLIC_HOST_SUFFIX = '.public.blob.vercel-storage.com'
 /** R2 public host for Pink Binder images (Cloudflare). */
 export const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
 
@@ -40,8 +38,7 @@ export function shouldBypassNextImageOptimization(src: string): boolean {
     if (BYPASS_HOSTS.has(hostname)) {
       return true
     }
-    if (hostname === R2_PUBLIC_HOST) return true
-    return hostname.endsWith(VERCEL_BLOB_PUBLIC_HOST_SUFFIX)
+    return hostname === R2_PUBLIC_HOST
   } catch {
     return false
   }
