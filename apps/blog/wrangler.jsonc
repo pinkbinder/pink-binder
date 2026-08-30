@@ -1,35 +1,33 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "blog",
+  "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-08-29",
-  "compatibility_flags": [
-    "nodejs_compat",
-    "global_fetch_strictly_public"
-  ],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "main": ".open-next/worker.js",
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "blog"
-    }
+      "service": "blog",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "blog-opennext-cache"
-    }
+      "bucket_name": "blog-opennext-cache",
+    },
   ],
   "images": {
-    "binding": "IMAGES"
+    "binding": "IMAGES",
   },
   "workers_dev": true,
   "build": {
-    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/blog && cd apps/blog && bunx opennextjs-cloudflare build",
-    "cwd": ".",
-    "watch_dir": "apps/blog"
-  }
+    "command": "bun run build:cloudflare -- blog",
+    "cwd": "../..",
+    "watch_dir": "apps/blog",
+  },
 }

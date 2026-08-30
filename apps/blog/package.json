@@ -7,6 +7,7 @@
     "prebuild": "bun data:gallery-manifests",
     "predev": "bun data:gallery-manifests",
     "build": "next build",
+    "build:cloudflare": "bun run --cwd ../.. build:cloudflare -- blog",
     "postbuild": "node scripts/verify-blog-route-trace.mjs",
     "audit:routes": "node scripts/audit-built-blog.mjs",
     "audit:production": "node scripts/audit-blog-routes.mjs --base-url https://pinkbinder.blog --max-posts 3",

@@ -24,6 +24,13 @@ jobs:
         with:
           cache: true
       - run: bun install --frozen-lockfile
+      - name: Restore Turborepo cache
+        uses: actions/cache@v5
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-
       - name: Format check
         run: bun run format:check
       - name: Lint

@@ -1,33 +1,19 @@
 {
   "$schema": "https://v2-9-16.turborepo.dev/schema.json",
-  "globalDependencies": [
-    ".env",
-    ".env.local"
-  ],
-  "globalEnv": [
-    "EBAY_*",
-    "ETSY_*",
-    "WHATNOT_*",
-    "LIVE_SHOWS_*",
-    "BLOG_*",
-    "BLOB_*",
-    "NEXT_PUBLIC_*"
-  ],
+  "globalDependencies": [".env", ".env.local"],
+  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"],
   "globalPassThroughEnv": [
     "EBAY_*",
     "ETSY_*",
     "WHATNOT_*",
     "LIVE_SHOWS_*",
     "BLOG_*",
-    "BLOB_*",
     "NEXT_PUBLIC_*",
     "NODE_ENV"
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env",
@@ -39,11 +25,7 @@
         "../../packages/data/cache/normalized/blogs/**",
         "../../packages/data/cache/normalized/cards/**"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**",
-        "!.next/dev/**"
-      ],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"],
       "env": [
         "EBAY_*",
         "ETSY_*",
@@ -55,25 +37,17 @@
       ]
     },
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ]
+      "dependsOn": ["^lint"]
     },
     "type-check": {
-      "dependsOn": [
-        "^type-check"
-      ]
+      "dependsOn": ["^type-check"]
     },
     "test": {
-      "dependsOn": [
-        "^test"
-      ],
+      "dependsOn": ["^test"],
       "outputs": []
     },
     "test:coverage": {
-      "dependsOn": [
-        "^test:coverage"
-      ],
+      "dependsOn": ["^test:coverage"],
       "cache": false
     },
     "format": {},
@@ -83,12 +57,7 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "inputs": [
-        ".env",
-        ".env.local",
-        ".env.development",
-        ".env.development.local"
-      ]
+      "inputs": [".env", ".env.local", ".env.development", ".env.development.local"]
     }
   }
 }

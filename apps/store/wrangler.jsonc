@@ -1,35 +1,33 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "store",
+  "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-08-29",
-  "compatibility_flags": [
-    "nodejs_compat",
-    "global_fetch_strictly_public"
-  ],
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "main": ".open-next/worker.js",
   "assets": {
     "directory": ".open-next/assets",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
   },
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
-      "service": "store"
-    }
+      "service": "store",
+    },
   ],
   "r2_buckets": [
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "store-opennext-cache"
-    }
+      "bucket_name": "store-opennext-cache",
+    },
   ],
   "images": {
-    "binding": "IMAGES"
+    "binding": "IMAGES",
   },
   "build": {
-    "command": "bun install --frozen-lockfile && bunx turbo run build --filter=@repo/store && cd apps/store && bunx opennextjs-cloudflare build",
-    "cwd": ".",
-    "watch_dir": "apps/store"
+    "command": "bun run build:cloudflare -- store",
+    "cwd": "../..",
+    "watch_dir": "apps/store",
   },
-  "workers_dev": true
+  "workers_dev": true,
 }

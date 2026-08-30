@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "build:cloudflare": "bun run --cwd ../.. build:cloudflare -- admin",
     "dev": "next dev --port 3003",
     "lint": "eslint . --max-warnings 0",
     "type-check": "tsc --noEmit",
