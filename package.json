@@ -31,16 +31,16 @@
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,mdc,css,yml,yaml}": "prettier --write --ignore-unknown"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^20.11.6",
+    "@happy-dom/global-registrator": "^20.12.0",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
     "@types/bun": "^1.4.0",
-    "@typescript-eslint/eslint-plugin": "^8.67.0",
-    "@typescript-eslint/parser": "^8.67.0",
+    "@typescript-eslint/eslint-plugin": "^8.68.0",
+    "@typescript-eslint/parser": "^8.68.0",
     "eslint": "10.8.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
-    "lint-staged": "^17.3.0",
+    "lint-staged": "^17.4.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "turbo": "2.10.8"
@@ -57,7 +57,7 @@
   ],
   "dependencies": {
     "nanoid": "3.3.18",
-    "next": "^16.3.2",
+    "next": "^16.3.3",
     "sharp": "^0.35.3"
   },
   "version": "1.0.3"
