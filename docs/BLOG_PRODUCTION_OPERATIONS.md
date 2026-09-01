@@ -23,13 +23,7 @@ Common remediation:
 - `duplicate-description`: diversify the source template before rebuilding; do not patch thousands of generated files by hand.
 - `repetitive-opener`: treat the warning as a content-quality queue and adjust the relevant template family.
 
-`audit:routes` starts the compiled blog, crawls every sitemap post, and validates canonical metadata, structured data, RSS feeds, APIs, compatibility redirects, and static gallery assets. A failure prints the exact route. It intentionally runs after `next build`, because source-level tests cannot detect missing production output-file traces.
-
-## Static card galleries
-
-The prebuild creates deterministic manifests for species, illustrators, and expansions under `/data/card-galleries/{kind}/{slug}.json`. The UI reads those CDN-cacheable assets directly. `/api/card-gallery` remains as a 307 compatibility redirect and does not trace the Pokémon or illustrator card corpus into its serverless function.
-
-Run `bun --filter @repo/blog data:gallery-manifests` to rebuild and verify the manifests. The verifier prints counts, bytes, and a SHA-256 digest; identical data must produce an identical digest.
+`audit:routes` starts the compiled blog, crawls every sitemap post, and validates canonical metadata, structured data, RSS feeds, APIs, and R2 gallery manifests. A failure prints the exact route. It intentionally runs after `next build`, because source-level tests cannot detect missing production output-file traces.
 
 ## Production monitoring
 
@@ -38,8 +32,8 @@ The `Blog production monitor` GitHub Actions workflow runs every six hours and c
 - homepage, robots, sitemap, and grid API;
 - all five Pinterest/RSS feeds;
 - a first, middle, and long-tail sitemap article;
-- species, illustrator, and expansion static galleries;
-- legacy gallery redirects, canonical metadata, and structured data.
+- species, illustrator, and expansion R2 gallery APIs;
+- canonical metadata and structured data.
 
 GitHub emails repository notification subscribers when the scheduled workflow fails. The job summary contains the failing URL. To test a Cloudflare preview, open **Actions → Blog production monitor → Run workflow** and provide its base URL. Locally, run:
 
