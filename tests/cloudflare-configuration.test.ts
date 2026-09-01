@@ -35,4 +35,10 @@ describe('Cloudflare build configuration', () => {
     expect(script).not.toContain('patchBlog')
     expect(script).not.toContain('writeFileSync')
   })
+
+  test('provides the image binding required by the OpenNext Worker wrapper', async () => {
+    const config = await readFile(resolve(repoRoot, 'apps/blog/wrangler.jsonc'), 'utf8')
+
+    expect(config).toMatch(/"images"\s*:\s*\{[\s\S]*?"binding"\s*:\s*"IMAGES"/)
+  })
 })
