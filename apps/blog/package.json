@@ -1,6 +1,6 @@
 {
   "name": "@repo/blog",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "publish:gallery-manifests": "bun scripts/publish-gallery-manifests.ts",
