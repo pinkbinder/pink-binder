@@ -90,9 +90,82 @@ function patchBlogInstrumentationLoader() {
   console.log('Patched the blog worker instrumentation loader for an instrumentation-free app.')
 }
 
+function patchBlogNextServerImport() {
+  const appPath = resolve(repositoryRoot, 'apps', 'blog')
+  const serverHandlerPath = resolve(
+    appPath,
+    '.open-next',
+    'server-functions',
+    'default',
+    'apps',
+    'blog',
+    'handler.mjs'
+  )
+  const nextServerPath = resolve(
+    appPath,
+    '.open-next',
+    'server-functions',
+    'default',
+    'node_modules',
+    'next',
+    'dist',
+    'server',
+    'next-server.js'
+  )
+
+  if (!existsSync(serverHandlerPath) || !existsSync(nextServerPath)) {
+    throw new Error('OpenNext did not generate the expected blog Next server files.')
+  }
+
+  const source = readFileSync(serverHandlerPath, 'utf8')
+  if (source.includes('var require_next_server=')) {
+    console.log('OpenNext generated a self-contained Next server import; no import patch needed.')
+    return
+  }
+
+  const unresolvedImport = 'var import_next_server=__toESM(require_next_server(),1);'
+  const matches = source.split(unresolvedImport).length - 1
+  if (matches !== 1) {
+    throw new Error(`Expected one unresolved Next server import, found ${matches}.`)
+  }
+
+  const replacement =
+    'import nextServerModule from "../../node_modules/next/dist/server/next-server.js";var import_next_server=__toESM(nextServerModule,1);'
+  writeFileSync(serverHandlerPath, source.replace(unresolvedImport, replacement))
+  console.log('Patched the blog worker to import the traced Next server module explicitly.')
+}
+
+function patchBlogNextServerBuildId() {
+  const appPath = resolve(repositoryRoot, 'apps', 'blog')
+  const nextServerPath = resolve(
+    appPath,
+    '.open-next',
+    'server-functions',
+    'default',
+    'node_modules',
+    'next',
+    'dist',
+    'server',
+    'next-server.js'
+  )
+  const source = readFileSync(nextServerPath, 'utf8')
+  const buildIdPattern = /getBuildId\(\)\{[\s\S]*?\}getEnabledDirectories/
+  const matches = source.match(buildIdPattern)
+
+  if (!matches || matches.length !== 1) {
+    throw new Error(`Expected one Next server getBuildId method, found ${matches?.length ?? 0}.`)
+  }
+
+  const replacement = 'getBuildId(){return process.env.NEXT_BUILD_ID}getEnabledDirectories'
+  writeFileSync(nextServerPath, source.replace(buildIdPattern, replacement))
+  console.log('Patched the traced Next server to use the OpenNext build ID at runtime.')
+}
+
 runBun(['install', '--frozen-lockfile'])
 runBun(['x', 'opennextjs-cloudflare', 'build'], resolve(repositoryRoot, 'apps', app))
 
 if (app === 'blog') {
   patchBlogInstrumentationLoader()
+  patchBlogNextServerBuildId()
+  patchBlogNextServerImport()
 }
