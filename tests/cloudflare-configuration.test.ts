@@ -41,4 +41,11 @@ describe('Cloudflare build configuration', () => {
 
     expect(config).toMatch(/"images"\s*:\s*\{[\s\S]*?"binding"\s*:\s*"IMAGES"/)
   })
+
+  test('keeps the blog proxy on Web APIs to avoid bundling next/server', async () => {
+    const proxy = await readFile(resolve(repoRoot, 'apps/blog/proxy.ts'), 'utf8')
+
+    expect(proxy).not.toContain("from 'next/server'")
+    expect(proxy).toContain("response.headers.set('x-middleware-next', '1')")
+  })
 })
