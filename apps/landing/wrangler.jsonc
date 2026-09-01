@@ -28,6 +28,6 @@
   "build": {
     "command": "bun run build:cloudflare -- landing",
     "cwd": "../..",
-    "watch_dir": "apps/landing",
+    "watch_dir": ["app", "lib", "public"],
   },
 }

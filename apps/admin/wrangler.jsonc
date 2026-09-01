@@ -28,6 +28,6 @@
   "build": {
     "command": "bun run build:cloudflare -- admin",
     "cwd": "../..",
-    "watch_dir": "apps/admin",
+    "watch_dir": ["app"],
   },
 }
