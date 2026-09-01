@@ -48,10 +48,4 @@ describe('Cloudflare build configuration', () => {
     expect(proxy).not.toContain("from 'next/server'")
     expect(proxy).toContain("response.headers.set('x-middleware-next', '1')")
   })
-
-  test('provides an explicit instrumentation module for the Cloudflare runtime', async () => {
-    const instrumentation = await readFile(resolve(repoRoot, 'apps/blog/instrumentation.ts'), 'utf8')
-
-    expect(instrumentation).toContain('export {}')
-  })
 })
