@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.1.0...pink-binder-v1.1.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **blog:** run one Workers OpenNext build ([#174](https://github.com/PinkBinder/pink-binder/issues/174)) ([6200071](https://github.com/PinkBinder/pink-binder/commit/62000718d93594da63d78246f3d6b8177215e996))
+
 ## [1.1.0](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.0.3...pink-binder-v1.1.0) (2026-09-01)
 
 
