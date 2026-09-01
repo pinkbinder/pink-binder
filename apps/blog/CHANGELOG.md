@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.0...blog-v0.3.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* **blog:** run one Workers OpenNext build ([#174](https://github.com/PinkBinder/pink-binder/issues/174)) ([6200071](https://github.com/PinkBinder/pink-binder/commit/62000718d93594da63d78246f3d6b8177215e996))
+
 ## [0.3.0](https://github.com/PinkBinder/pink-binder/compare/blog-v0.2.1...blog-v0.3.0) (2026-09-01)
 
 
