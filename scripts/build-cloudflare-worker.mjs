@@ -27,5 +27,4 @@ function runBun(args, cwd = repositoryRoot) {
 }
 
 runBun(['install', '--frozen-lockfile'])
-runBun(['x', 'turbo', 'run', 'build', `--filter=@repo/${app}`])
 runBun(['x', 'opennextjs-cloudflare', 'build'], resolve(repositoryRoot, 'apps', app))
