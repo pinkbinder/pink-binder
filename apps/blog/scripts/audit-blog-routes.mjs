@@ -201,17 +201,6 @@ async function main() {
     ['expansion', 'base-set'],
   ]
   for (const [kind, slug] of gallerySamples) {
-    const asset = `/data/card-galleries/${kind}/${slug}.json`
-    await safe(asset, () =>
-      fetchChecked(asset, {
-        contentType: 'application/json',
-        headers: {
-          'cache-control': ['max-age=300', 's-maxage=86400', 'stale-while-revalidate=604800'],
-          'x-content-type-options': 'nosniff',
-        },
-        includes: '"cards"',
-      })
-    )
     await safe(`R2 gallery API ${kind}`, () =>
       fetchChecked(`/api/card-gallery?kind=${kind}&slug=${slug}`, {
         contentType: 'application/json',

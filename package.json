@@ -20,7 +20,6 @@
     "test": "bun test --isolate",
     "test:unit": "bun run test:coverage",
     "test:watch": "bun test --watch",
-    "pretest:coverage": "bun --filter @repo/blog data:gallery-manifests",
     "test:coverage": "bun test --coverage --isolate --max-concurrency=4",
     "lint-staged": "lint-staged",
     "validate": "node scripts/with-env.mjs turbo run format lint type-check",

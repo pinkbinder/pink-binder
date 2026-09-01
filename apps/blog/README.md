@@ -30,7 +30,8 @@ bun --cwd apps/blog publish:gallery-manifests --dry-run
 bun --cwd apps/blog publish:gallery-manifests
 ```
 
-The Worker serves R2 manifests through `/api/card-gallery`. The upload command
+The Worker serves R2 manifests exclusively through `/api/card-gallery`; the
+repository does not ship a duplicate public gallery directory. The upload command
 prefers the persistent bucket-scoped R2 S3 credentials in `apps/blog/.env.local`
 and falls back to Wrangler OAuth when they are not configured.
 
