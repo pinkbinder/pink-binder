@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/PinkBinder/pink-binder/compare/data-v1.1.0...data-v1.1.1) (2026-09-01)
+
+
+### Performance
+
+* **blog:** restore reliable Cloudflare Free deployment ([#185](https://github.com/PinkBinder/pink-binder/issues/185)) ([60ea6a6](https://github.com/PinkBinder/pink-binder/commit/60ea6a6f179308875b7fc75278d382eb466d60c7))
+
 ## [1.1.0](https://github.com/PinkBinder/pink-binder/compare/data-v1.0.3...data-v1.1.0) (2026-09-01)
 
 
