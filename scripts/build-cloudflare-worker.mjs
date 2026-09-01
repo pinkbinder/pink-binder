@@ -58,19 +58,33 @@ function patchBlogInstrumentationLoader() {
   const source = readFileSync(serverHandlerPath, 'utf8')
   const loaderPattern =
     /async\s+loadInstrumentationModule\s*\(\s*\)\s*\{[\s\S]*?getInstrumentationModule[\s\S]*?return\s+this\.instrumentation\s*;?\s*\}/g
-  const matches = [...source.matchAll(loaderPattern)]
+  const instrumentationHookPattern =
+    /async\s+runInstrumentationHookIfAvailable\s*\(\s*\)\s*\{\s*await\s*\(0,\s*_instrumentationglobalsexternal\.ensureInstrumentationRegistered\)\(this\.dir,\s*this\.nextConfig\.distDir\)\s*;?\s*\}/g
+  const loaderMatches = [...source.matchAll(loaderPattern)]
+  const instrumentationHookMatches = [...source.matchAll(instrumentationHookPattern)]
 
-  if (matches.length !== 1) {
+  if (loaderMatches.length !== 1 || instrumentationHookMatches.length !== 1) {
     throw new Error(
-      `Expected exactly one unpatched Next instrumentation loader, found ${matches.length}.`
+      `Expected one Next instrumentation loader and hook, found ${loaderMatches.length} loaders and ${instrumentationHookMatches.length} hooks.`
     )
   }
 
-  const match = matches[0]
-  const replacement =
+  const loaderMatch = loaderMatches[0]
+  const hookMatch = instrumentationHookMatches[0]
+  const loaderReplacement =
     'async loadInstrumentationModule() { this.instrumentation = null; return this.instrumentation; }'
-  const patchedSource =
-    source.slice(0, match.index) + replacement + source.slice(match.index + match[0].length)
+  const hookReplacement = 'async runInstrumentationHookIfAvailable() {}'
+  const replacements = [
+    { match: loaderMatch, replacement: loaderReplacement },
+    { match: hookMatch, replacement: hookReplacement },
+  ].sort((left, right) => right.match.index - left.match.index)
+  const patchedSource = replacements.reduce(
+    (currentSource, { match, replacement }) =>
+      currentSource.slice(0, match.index) +
+      replacement +
+      currentSource.slice(match.index + match[0].length),
+    source
+  )
 
   writeFileSync(serverHandlerPath, patchedSource)
   console.log('Patched the blog worker instrumentation loader for an instrumentation-free app.')
