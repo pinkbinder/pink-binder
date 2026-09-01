@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.4.0](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.2...blog-v0.4.0) (2026-09-01)
+
+
+### Features
+
+* **blog:** publish agent discovery metadata ([#178](https://github.com/PinkBinder/pink-binder/issues/178)) ([df2758c](https://github.com/PinkBinder/pink-binder/commit/df2758cf6980096c7ba144fcf593b633af836d19))
+
+
+### Bug Fixes
+
+* **blog:** align Next and OpenNext versions ([b69b7fc](https://github.com/PinkBinder/pink-binder/commit/b69b7fc5b5ccdf1c3e2fe704c375e954c070b669))
+* **blog:** annotate compatible OpenNext config ([#187](https://github.com/PinkBinder/pink-binder/issues/187)) ([b3c5fa4](https://github.com/PinkBinder/pink-binder/commit/b3c5fa41d02357499979ffb5dbce0af9b6292ec7))
+* **blog:** avoid recursive OpenNext build ([#182](https://github.com/PinkBinder/pink-binder/issues/182)) ([1c72b1f](https://github.com/PinkBinder/pink-binder/commit/1c72b1f84faeca2e3e47fa5c1a3928af53634347))
+* **blog:** make OpenNext worker runtime loadable ([#191](https://github.com/PinkBinder/pink-binder/issues/191)) ([a0ad0a7](https://github.com/PinkBinder/pink-binder/commit/a0ad0a7eeadc47895b6224ac32152a60b5177b74))
+* **blog:** pin compatible OpenNext adapter ([#186](https://github.com/PinkBinder/pink-binder/issues/186)) ([6c719cf](https://github.com/PinkBinder/pink-binder/commit/6c719cf9122a484cd69aec77ea4018af5c166835))
+* **blog:** use Next proxy for markdown negotiation ([#180](https://github.com/PinkBinder/pink-binder/issues/180)) ([1b7030c](https://github.com/PinkBinder/pink-binder/commit/1b7030c84fe7aca62b4645971d2ba8dbf0584951))
+
+
+### Performance
+
+* **blog:** restore reliable Cloudflare Free deployment ([#185](https://github.com/PinkBinder/pink-binder/issues/185)) ([60ea6a6](https://github.com/PinkBinder/pink-binder/commit/60ea6a6f179308875b7fc75278d382eb466d60c7))
+
+
+### Tests
+
+* **blog:** move markdown coverage to proxy ([#181](https://github.com/PinkBinder/pink-binder/issues/181)) ([2262831](https://github.com/PinkBinder/pink-binder/commit/2262831a079f356d77c5b71662a4883502982afc))
+
 ## [0.3.2](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.1...blog-v0.3.2) (2026-09-01)
 
 
