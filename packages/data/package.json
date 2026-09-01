@@ -6,6 +6,8 @@
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
+    "./blog/post-path": "./src/blog/post-path.ts",
+    "./blog/types/blog-post": "./src/blog/types/blog-post.ts",
     "./card-gallery-server": "./src/blog/card-gallery-server.ts",
     "./package.json": "./package.json"
   },
