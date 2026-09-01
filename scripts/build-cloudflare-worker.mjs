@@ -1,7 +1,8 @@
 import { spawnSync } from 'node:child_process'
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs'
+import { relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { runInNewContext } from 'node:vm'
 
 const repositoryRoot = fileURLToPath(new URL('..', import.meta.url))
 const app = process.argv[2]
@@ -161,11 +162,180 @@ function patchBlogNextServerBuildId() {
   console.log('Patched the traced Next server to use the OpenNext build ID at runtime.')
 }
 
+function collectFiles(directory) {
+  const files = []
+
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const entryPath = resolve(directory, entry.name)
+    if (entry.isDirectory()) {
+      files.push(...collectFiles(entryPath))
+    } else {
+      files.push(entryPath)
+    }
+  }
+
+  return files
+}
+
+function readBlogManifestData() {
+  const appPath = resolve(repositoryRoot, 'apps', 'blog')
+  const dotNextPath = resolve(
+    appPath,
+    '.open-next',
+    'server-functions',
+    'default',
+    'apps',
+    'blog',
+    '.next'
+  )
+  const manifestLoaderPath = resolve(
+    appPath,
+    '.open-next',
+    'server-functions',
+    'default',
+    'node_modules',
+    'next',
+    'dist',
+    'server',
+    'load-manifest.external.js'
+  )
+
+  if (!existsSync(dotNextPath) || !existsSync(manifestLoaderPath)) {
+    throw new Error('OpenNext did not generate the expected blog manifest files.')
+  }
+
+  const manifestData = {}
+  const manifestFiles = collectFiles(dotNextPath).filter((file) => {
+    const name = file.slice(file.lastIndexOf('/') + 1)
+    return (
+      file.endsWith('.json') &&
+      (name.endsWith('-manifest.json') ||
+        name === 'required-server-files.json' ||
+        name === 'prefetch-hints.json')
+    )
+  })
+
+  for (const file of manifestFiles) {
+    const key = relative(dotNextPath, file).split(sep).join('/')
+    manifestData[key] = JSON.parse(readFileSync(file, 'utf8'))
+  }
+
+  const rscManifestData = {}
+  const rscManifestFiles = collectFiles(dotNextPath).filter((file) =>
+    file.endsWith('_client-reference-manifest.js')
+  )
+
+  for (const file of rscManifestFiles) {
+    const key = relative(dotNextPath, file).split(sep).join('/')
+    const source = readFileSync(file, 'utf8')
+    const context = {}
+    context.globalThis = context
+    runInNewContext(source, context, { filename: file })
+    const manifest = context.__RSC_MANIFEST
+    if (!manifest || typeof manifest !== 'object') {
+      throw new Error(`Could not evaluate the blog RSC manifest: ${file}`)
+    }
+
+    rscManifestData[key] = manifest
+  }
+
+  return { manifestLoaderPath, manifestData, rscManifestData }
+}
+
+function patchBlogNextManifestLoader() {
+  const { manifestLoaderPath, manifestData, rscManifestData } = readBlogManifestData()
+  const source = readFileSync(manifestLoaderPath, 'utf8')
+
+  if (source.includes('Patched blog manifest loader')) {
+    console.log('The traced blog manifest loader is already patched.')
+    return
+  }
+
+  const replacement = `/* Patched blog manifest loader */
+"use strict";
+const manifestData = ${JSON.stringify(manifestData)};
+const rscManifestData = ${JSON.stringify(rscManifestData)};
+const sharedCache = new Map();
+
+function normalizeManifestPath(path) {
+  return String(path).replaceAll("\\\\", "/");
+}
+
+function findManifest(path) {
+  const normalizedPath = normalizeManifestPath(path);
+  for (const [suffix, manifest] of Object.entries(manifestData)) {
+    if (normalizedPath.endsWith(".next/" + suffix) || normalizedPath.endsWith("/" + suffix)) {
+      return { found: true, manifest };
+    }
+  }
+  return { found: false, manifest: undefined };
+}
+
+function loadManifest(path, shouldCache = true, cache = sharedCache, skipParse = false, handleMissing) {
+  const cacheKey = normalizeManifestPath(path);
+  const cached = shouldCache && cache.get(cacheKey);
+  if (cached) return cached;
+  if (cacheKey.endsWith(".next/BUILD_ID")) return process.env.NEXT_BUILD_ID;
+
+  const result = findManifest(cacheKey);
+  if (!result.found) {
+    if (handleMissing) {
+      const emptyManifest = {};
+      if (shouldCache) cache.set(cacheKey, emptyManifest);
+      return emptyManifest;
+    }
+    throw new Error("Unexpected loadManifest(" + path + ") call!");
+  }
+
+  if (shouldCache) cache.set(cacheKey, result.manifest);
+  return result.manifest;
+}
+
+function evalManifest(path, shouldCache = true, cache = sharedCache, handleMissing) {
+  const cacheKey = normalizeManifestPath(path);
+  const cached = shouldCache && cache.get(cacheKey);
+  if (cached) return cached;
+
+  for (const [suffix, manifest] of Object.entries(rscManifestData)) {
+    if (cacheKey.endsWith(".next/" + suffix) || cacheKey.endsWith("/" + suffix)) {
+      const result = { __RSC_MANIFEST: manifest };
+      if (shouldCache) cache.set(cacheKey, result);
+      return result;
+    }
+  }
+
+  if (handleMissing) {
+    const emptyManifest = { __RSC_MANIFEST: {} };
+    if (shouldCache) cache.set(cacheKey, emptyManifest);
+    return emptyManifest;
+  }
+  throw new Error("Unexpected evalManifest(" + path + ") call!");
+}
+
+function loadManifestFromRelativePath({ projectDir, distDir, manifest, shouldCache, cache, skipParse, handleMissing, useEval }) {
+  const path = [projectDir, distDir, manifest].filter(Boolean).join("/");
+  return useEval
+    ? evalManifest(path, shouldCache, cache, handleMissing)
+    : loadManifest(path, shouldCache, cache, skipParse, handleMissing);
+}
+
+function clearManifestCache(path, cache = sharedCache) {
+  return cache.delete(path);
+}
+
+module.exports = { clearManifestCache, evalManifest, loadManifest, loadManifestFromRelativePath };
+`
+
+  writeFileSync(manifestLoaderPath, replacement)
+  console.log('Patched the traced blog manifest loader with bundled Next manifests.')
+}
+
 runBun(['install', '--frozen-lockfile'])
 runBun(['x', 'opennextjs-cloudflare', 'build'], resolve(repositoryRoot, 'apps', app))
 
 if (app === 'blog') {
   patchBlogInstrumentationLoader()
   patchBlogNextServerBuildId()
+  patchBlogNextManifestLoader()
   patchBlogNextServerImport()
 }
