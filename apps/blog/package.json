@@ -9,7 +9,7 @@
     "publish:blog-assets": "bun scripts/publish-blog-assets.ts",
     "publish:pokemon-images": "bun scripts/publish-pokemon-image-variants.ts",
     "normalize:r2-image-keys": "bun scripts/normalize-r2-image-keys.ts",
-    "build": "next build",
+    "build": "node scripts/build-blog.mjs",
     "build:cloudflare": "bun run --cwd ../.. build:cloudflare -- blog",
     "postbuild": "node scripts/verify-blog-route-trace.mjs",
     "audit:routes": "node scripts/audit-built-blog.mjs",
