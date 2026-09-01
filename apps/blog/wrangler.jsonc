@@ -26,9 +26,4 @@
     },
   ],
   "workers_dev": true,
-  "build": {
-    "command": "bun run build:cloudflare -- blog",
-    "cwd": ".",
-    "watch_dir": "apps/blog",
-  },
 }
