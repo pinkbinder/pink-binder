@@ -4,6 +4,12 @@
   "private": true,
   "scripts": {
     "data:gallery-manifests": "bun --filter @repo/data build:gallery-manifests && node scripts/sync-gallery-manifests.mjs && node scripts/verify-gallery-manifests.mjs",
+    "publish:gallery-manifests": "bun scripts/publish-gallery-manifests.ts",
+    "publish:blog-index": "bun scripts/publish-blog-index.ts",
+    "publish:blog-posts": "bun scripts/publish-blog-posts.ts",
+    "publish:blog-assets": "bun scripts/publish-blog-assets.ts",
+    "publish:pokemon-images": "bun scripts/publish-pokemon-image-variants.ts",
+    "normalize:r2-image-keys": "bun scripts/normalize-r2-image-keys.ts",
     "prebuild": "bun data:gallery-manifests",
     "predev": "bun data:gallery-manifests",
     "build": "next build",
@@ -32,6 +38,7 @@
     "react-dom": "^19.2.8"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "3.984.0",
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "9.39.5",
     "@opennextjs/cloudflare": "^1.20.4",

@@ -20,7 +20,9 @@ const BYPASS_HOSTS = new Set<string>(REMOTE_IMAGE_BYPASS_HOSTS)
 
 /**
  * Use `unoptimized` on `next/image` for remote CDN assets. Local `/public` paths may
- * still use the optimizer when the hosting plan allows it.
+ * still use the optimizer when the hosting plan allows it. The Wrangler `IMAGES`
+ * binding is not an automatic Next.js loader; a Cloudflare transformation path
+ * must be explicitly configured with `loaderFile` or a per-image loader.
  */
 export function shouldBypassNextImageOptimization(src: string): boolean {
   const trimmed = src.trim()

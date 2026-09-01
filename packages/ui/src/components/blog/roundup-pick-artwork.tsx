@@ -24,6 +24,7 @@ export function RoundupPickArtwork({
           height={88}
           className="drop-shadow-md"
           sizes="88px"
+          imageVariant="small"
         />
       </div>
     </div>

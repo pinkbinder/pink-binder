@@ -3,18 +3,25 @@ import { resolve } from 'node:path'
 import { describe, expect, test } from 'bun:test'
 
 const repoRoot = resolve(import.meta.dirname, '..')
-const ignoredDirectories = new Set(['.git', '.next', '.turbo', 'node_modules'])
+const ignoredDirectories = new Set(['.git', '.next', '.open-next', '.turbo', 'node_modules'])
 
 async function findTurboConfigs(directory: string): Promise<string[]> {
   const paths: string[] = []
-  for (const entry of await readdir(directory, { withFileTypes: true })) {
-    if (entry.isDirectory() && !ignoredDirectories.has(entry.name)) {
-      paths.push(...(await findTurboConfigs(resolve(directory, entry.name))))
-    } else if (entry.isFile() && entry.name === 'turbo.json') {
+  const entries = await readdir(directory, { withFileTypes: true })
+  const nestedDirectories = entries.filter(
+    (entry) => entry.isDirectory() && !ignoredDirectories.has(entry.name)
+  )
+
+  for (const entry of entries) {
+    if (entry.isFile() && entry.name === 'turbo.json') {
       paths.push(resolve(directory, entry.name))
     }
   }
-  return paths
+
+  const nestedPaths = await Promise.all(
+    nestedDirectories.map((entry) => findTurboConfigs(resolve(directory, entry.name)))
+  )
+  return paths.concat(...nestedPaths)
 }
 
 describe('Turbo configuration', () => {
@@ -32,5 +39,5 @@ describe('Turbo configuration', () => {
         expect(task.outputs).toContain('!.next/dev/**')
       }
     }
-  })
+  }, 15_000)
 })

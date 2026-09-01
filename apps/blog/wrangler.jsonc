@@ -18,16 +18,17 @@
   "r2_buckets": [
     {
       "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "blog-opennext-cache",
+      "bucket_name": "blog-opennext-cache-v3",
+    },
+    {
+      "binding": "BLOG_GALLERY_BUCKET",
+      "bucket_name": "pink-binder",
     },
   ],
-  "images": {
-    "binding": "IMAGES",
-  },
   "workers_dev": true,
   "build": {
     "command": "bun run build:cloudflare -- blog",
-    "cwd": "../..",
+    "cwd": ".",
     "watch_dir": "apps/blog",
   },
 }

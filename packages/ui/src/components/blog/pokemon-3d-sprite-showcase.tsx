@@ -3,6 +3,7 @@
 import {
   buildProjectPokemonSpriteUrls,
   projectPokemonSpriteSlugCandidates,
+  pokemonR2ImageVariantCandidates,
   spriteUrlCandidates,
 } from '@repo/data/client'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -120,7 +121,7 @@ function ShowdownSpriteSection({
 }) {
   const [candidateIndex, setCandidateIndex] = useState(0)
   const candidates = useMemo(
-    () => [url, ...fallbackUrls].filter((entry, index, list) => list.indexOf(entry) === index),
+    () => pokemonR2ImageVariantCandidates([url, ...fallbackUrls], 'small'),
     [url, fallbackUrls]
   )
   const src = candidates[candidateIndex]

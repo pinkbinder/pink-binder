@@ -6,6 +6,7 @@ export type CachedFetchInit = RequestInit & {
 }
 
 const DEFAULT_REVALIDATE_SECONDS = 60 * 60 * 24
+const DEFAULT_REQUEST_TIMEOUT_MS = 10_000
 
 export async function marketplaceFetchJson<T>(
   url: string,
@@ -16,6 +17,7 @@ export async function marketplaceFetchJson<T>(
 
   const fetchInit: CachedFetchInit = {
     ...rest,
+    signal: rest.signal ?? AbortSignal.timeout(DEFAULT_REQUEST_TIMEOUT_MS),
     next: { revalidate, ...nextInit },
   }
 

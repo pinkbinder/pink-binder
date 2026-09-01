@@ -48,7 +48,7 @@ export function PokemonTcgCardGallery({
     try {
       if (!manifestCards.current) {
         const response = await fetch(
-          `/data/card-galleries/${encodeURIComponent(source.kind)}/${encodeURIComponent(source.slug)}.json`
+          `/api/card-gallery?kind=${encodeURIComponent(source.kind)}&slug=${encodeURIComponent(source.slug)}`
         )
         if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
         const manifest = (await response.json()) as {

@@ -21,9 +21,14 @@ import {
 import type { NormalizedSpeciesArt, NormalizedSpeciesSprites } from './normalized-species'
 import type { PokemonTcgCard } from './tcg-card'
 import type { MichiSceneArtSource } from './michi-scene-art'
+import { pokemonImageVariantObjectKey, R2_IMAGE_EXTENSIONS } from './r2-image-key'
 
 /** Legacy Vercel Blob host suffix, retained only to provide a fallback for stale cached data. */
 const LEGACY_VERCEL_BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com'
+const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
+const R2_POKEMON_PATH_PREFIX = '/pokemon/'
+
+export type PokemonR2ImageVariant = 'small' | 'large'
 
 /** Detect a legacy Vercel Blob URL in stale cached data. */
 export function isVercelBlobPublicUrl(url: string | null | undefined): boolean {
@@ -36,6 +41,62 @@ export function isVercelBlobPublicUrl(url: string | null | undefined): boolean {
   } catch {
     return false
   }
+}
+
+/**
+ * Resolve a published, immutable WebP variant for an existing R2 pokemon URL.
+ * Source extensions are normalized away because the published object is always
+ * WebP. ArtofPkm sources are renamed before deployment when clean names need a
+ * deterministic collision suffix.
+ */
+export function pokemonR2ImageVariantUrl(
+  url: string | null | undefined,
+  variant: PokemonR2ImageVariant
+): string | null {
+  const trimmed = url?.trim()
+  if (!trimmed) {
+    return null
+  }
+
+  try {
+    const parsed = new URL(trimmed)
+    if (parsed.hostname !== R2_PUBLIC_HOST || !parsed.pathname.startsWith(R2_POKEMON_PATH_PREFIX)) {
+      return null
+    }
+
+    const sourceKey = parsed.pathname.slice(R2_POKEMON_PATH_PREFIX.length)
+    if (!sourceKey) {
+      return null
+    }
+    if (!R2_IMAGE_EXTENSIONS.test(sourceKey)) {
+      return null
+    }
+
+    const objectKey = pokemonImageVariantObjectKey(`pokemon/${sourceKey}`, variant)
+    return `${parsed.origin}/${objectKey}`
+  } catch {
+    return null
+  }
+}
+
+/** Expand R2 source URLs with a preferred static WebP variant and source fallback. */
+export function pokemonR2ImageVariantCandidates(
+  candidates: readonly (string | null | undefined)[],
+  variant: PokemonR2ImageVariant
+): string[] {
+  const expanded: string[] = []
+  for (const candidate of candidates) {
+    const trimmed = candidate?.trim()
+    if (!trimmed) {
+      continue
+    }
+    const variantUrl = pokemonR2ImageVariantUrl(trimmed, variant)
+    if (variantUrl) {
+      expanded.push(variantUrl)
+    }
+    expanded.push(trimmed)
+  }
+  return [...new Set(expanded)]
 }
 
 export function isTcgdexImageUrl(url: string | null | undefined): boolean {

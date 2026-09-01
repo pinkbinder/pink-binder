@@ -29,6 +29,7 @@ export function MichiSceneArtImage({
       fill
       className="object-cover object-center"
       sizes={sizes}
+      imageVariant="large"
     />
   )
 }

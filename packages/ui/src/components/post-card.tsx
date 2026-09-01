@@ -1,6 +1,7 @@
 'use client'
 
 import * as React from 'react'
+import { pokemonR2ImageVariantUrl } from '@repo/data/client'
 import { cn } from '../lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
@@ -10,6 +11,7 @@ interface PostCardPost {
   thumbnail?: string
   thumbnailAlt?: string
   thumbnailFallback?: string
+  imageVariant?: 'small' | 'large'
   thumbnailFit?: 'cover' | 'contain'
   imagePriority?: boolean
   meta?: string
@@ -22,12 +24,20 @@ interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
 function PostCard({ post, className, ...props }: PostCardProps) {
   const thumbnailFit = post.thumbnailFit ?? 'cover'
   const primaryThumbnail = post.thumbnail ?? post.thumbnailFallback
-  const thumbnailKey = primaryThumbnail ?? ''
-  const [failedThumbnailKey, setFailedThumbnailKey] = React.useState<string | null>(null)
-  const thumbnailSrc =
-    failedThumbnailKey === thumbnailKey && post.thumbnailFallback
-      ? post.thumbnailFallback
-      : primaryThumbnail
+  const thumbnailCandidates = React.useMemo(() => {
+    const optimized =
+      post.imageVariant && primaryThumbnail
+        ? pokemonR2ImageVariantUrl(primaryThumbnail, post.imageVariant)
+        : null
+    return [
+      ...new Set([optimized, primaryThumbnail, post.thumbnailFallback].filter(Boolean)),
+    ] as string[]
+  }, [post.imageVariant, post.thumbnailFallback, primaryThumbnail])
+  const [thumbnailIndex, setThumbnailIndex] = React.useState(0)
+  React.useEffect(() => {
+    setThumbnailIndex(0)
+  }, [thumbnailCandidates])
+  const thumbnailSrc = thumbnailCandidates[thumbnailIndex]
 
   return (
     <Card
@@ -50,9 +60,9 @@ function PostCard({ post, className, ...props }: PostCardProps) {
               thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
             )}
             onError={() => {
-              if (post.thumbnailFallback && failedThumbnailKey !== thumbnailKey) {
-                setFailedThumbnailKey(thumbnailKey)
-              }
+              setThumbnailIndex((current) =>
+                current + 1 < thumbnailCandidates.length ? current + 1 : current
+              )
             }}
           />
         ) : (

@@ -1417,6 +1417,7 @@ export function BlogGrid({
                           thumbnail: post.image || defaultPostThumbnail,
                           thumbnailAlt: `${post.title} artwork`,
                           thumbnailFallback: defaultPostThumbnail,
+                          imageVariant: 'small',
                           thumbnailFit: 'contain',
                           imagePriority: index === 0,
                           meta: formatPostDate(post.date),

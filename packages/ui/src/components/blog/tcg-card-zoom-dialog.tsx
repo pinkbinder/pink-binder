@@ -2,6 +2,7 @@
 
 import {
   largestTcgCardImageUrl,
+  pokemonR2ImageVariantCandidates,
   shouldBypassNextImageOptimization,
   type PokemonTcgCard,
 } from '@repo/data/client'
@@ -19,7 +20,7 @@ function ZoomedCardImage({ card, alt }: { card: PokemonTcgCard; alt: string }) {
     }
     const fallbacks = (card.imageLargeFallbacks ?? []).filter(Boolean)
     const chain = [large, ...fallbacks.filter((url) => url !== large)]
-    return [...new Set(chain)]
+    return pokemonR2ImageVariantCandidates(chain, 'large')
   }, [card])
 
   const src = candidates[candidateIndex]
