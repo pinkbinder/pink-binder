@@ -81,6 +81,7 @@ export function RoundupHeroArtworkGrid({
               className="object-cover"
               sizes="(max-width: 768px) 33vw, 240px"
               priority={variant === 'article' && index === 0}
+              imageVariant={variant === 'article' ? 'large' : 'small'}
             />
           ) : (
             <div
@@ -96,6 +97,7 @@ export function RoundupHeroArtworkGrid({
                 className="object-contain drop-shadow-lg"
                 sizes="(max-width: 768px) 33vw, 240px"
                 priority={variant === 'article' && index === 0}
+                imageVariant={variant === 'article' ? 'large' : 'small'}
               />
             </div>
           )}

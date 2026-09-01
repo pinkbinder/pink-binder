@@ -6,6 +6,7 @@ CHANGELOG.md
 
 # Repository-specific rules
 .next
+.open-next
 next-env.d.ts
 node_modules
 .code-foundry
@@ -14,8 +15,10 @@ build
 coverage
 .turbo
 *.lock
+*.env.example
 pnpm-lock.yaml
 # Generated Pokémon / TCG JSON cache (hand-edited source lives in src/ and scripts/)
 packages/data/cache/
 apps/blog/public/data/card-galleries/
 apps/blog/public/data/expansion-galleries/
+apps/blog/public/_headers

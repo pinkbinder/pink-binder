@@ -1,8 +1,5 @@
 /** Plain ESM for Next.js `next.config.mjs` (Node cannot load TS config barrels). */
 
-/** Edge cache TTL for `/_next/image` (seconds). */
-export const NEXT_IMAGE_MINIMUM_CACHE_TTL = 60 * 60 * 24 * 31
-
 const TCG_CARD_IMAGE_HOSTS = [
   'images.pokemontcg.io',
   'assets.tcgdex.net',
@@ -54,12 +51,13 @@ export function blogImageRemotePatterns() {
 
 /**
  * Blog image settings. Skip the image optimizer — roundup pages load dozens of
- * remote sprites/cards per view and assets are pre-optimized on the R2 CDN.
+ * remote sprites/cards per view and blog-owned assets are pre-optimized on the
+ * R2 CDN. Do not add an Images binding or a custom Cloudflare loader to the
+ * blog: both would make runtime transformations an available cost path.
  */
 export function blogNextImagesConfig() {
   return {
     unoptimized: true,
-    minimumCacheTTL: NEXT_IMAGE_MINIMUM_CACHE_TTL,
     remotePatterns: blogImageRemotePatterns(),
   }
 }

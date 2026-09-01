@@ -47,9 +47,20 @@ export {
 } from './tcg/images'
 export {
   isVercelBlobPublicUrl,
+  pokemonR2ImageVariantCandidates,
+  pokemonR2ImageVariantUrl,
   sceneArtUrlCandidates,
   spriteUrlCandidates,
+  type PokemonR2ImageVariant,
 } from './pokemon/image-urls'
+export {
+  buildLegacyPokemonImageSourceKeyMap,
+  buildPokemonImageSourceKeyMap,
+  normalizeArtofPkmStem,
+  pokemonImageVariantObjectKey,
+  R2_IMAGE_EXTENSIONS,
+  stripR2ImageExtensions,
+} from './pokemon/r2-image-key'
 export {
   MICHI_SCENE_BINDER_POOL_MAX,
   MICHI_SCENE_DISPLAY_MAX,

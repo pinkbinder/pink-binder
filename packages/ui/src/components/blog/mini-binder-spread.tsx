@@ -179,6 +179,7 @@ function BinderPage({
                       height={48}
                       className="object-contain"
                       sizes="48px"
+                      imageVariant="small"
                     />
                   </div>
                 </div>

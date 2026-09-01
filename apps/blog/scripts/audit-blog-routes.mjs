@@ -48,6 +48,17 @@ async function fetchChecked(pathname, options = {}) {
       )
     }
   }
+  if (options.headers) {
+    for (const [name, expected] of Object.entries(options.headers)) {
+      const actual = response.headers.get(name) ?? ''
+      const expectedValues = Array.isArray(expected) ? expected : [expected]
+      for (const value of expectedValues) {
+        if (!actual.includes(value)) {
+          throw new Error(`header ${name} ${JSON.stringify(actual)} does not include ${value}`)
+        }
+      }
+    }
+  }
   const body = options.body === false ? '' : await response.text()
   if (options.includes && !body.includes(options.includes)) {
     throw new Error(`response does not contain ${JSON.stringify(options.includes)}`)
@@ -192,13 +203,23 @@ async function main() {
   for (const [kind, slug] of gallerySamples) {
     const asset = `/data/card-galleries/${kind}/${slug}.json`
     await safe(asset, () =>
-      fetchChecked(asset, { contentType: 'application/json', includes: '"cards"' })
+      fetchChecked(asset, {
+        contentType: 'application/json',
+        headers: {
+          'cache-control': ['max-age=300', 's-maxage=86400', 'stale-while-revalidate=604800'],
+          'x-content-type-options': 'nosniff',
+        },
+        includes: '"cards"',
+      })
     )
-    await safe(`legacy gallery ${kind}`, () =>
-      fetchChecked(`/api/card-gallery?kind=${kind}&slug=${slug}&offset=0&limit=1`, {
-        status: 307,
-        redirect: 'manual',
-        body: false,
+    await safe(`R2 gallery API ${kind}`, () =>
+      fetchChecked(`/api/card-gallery?kind=${kind}&slug=${slug}`, {
+        contentType: 'application/json',
+        headers: {
+          'cache-control': ['max-age=300', 's-maxage=86400', 'stale-while-revalidate=604800'],
+          'x-content-type-options': 'nosniff',
+        },
+        includes: '"cards"',
       })
     )
   }

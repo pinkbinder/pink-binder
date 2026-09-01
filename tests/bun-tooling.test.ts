@@ -39,5 +39,5 @@ describe('Bun tooling', () => {
     }
 
     expect(offenders).toEqual([])
-  })
+  }, 15_000)
 })

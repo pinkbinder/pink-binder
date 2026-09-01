@@ -46,4 +46,31 @@ describe('http (marketplaceFetchJson)', () => {
     await marketplaceFetchJson('https://example.com/x')
     expect((captured as { next?: { revalidate?: number } }).next?.revalidate).toBe(60 * 60 * 24)
   })
+
+  it('adds a request deadline signal when the caller does not provide one', async () => {
+    let captured: RequestInit | undefined
+    globalThis.fetch = mock(async (_url: string, init: RequestInit) => {
+      captured = init
+      return okJson({})
+    }) as never
+    const { marketplaceFetchJson } = await import('./http')
+
+    await marketplaceFetchJson('https://example.com/x')
+
+    expect(captured?.signal).toBeInstanceOf(AbortSignal)
+  })
+
+  it('preserves a caller-provided request signal', async () => {
+    let captured: RequestInit | undefined
+    const controller = new AbortController()
+    globalThis.fetch = mock(async (_url: string, init: RequestInit) => {
+      captured = init
+      return okJson({})
+    }) as never
+    const { marketplaceFetchJson } = await import('./http')
+
+    await marketplaceFetchJson('https://example.com/x', { signal: controller.signal })
+
+    expect(captured?.signal).toBe(controller.signal)
+  })
 })

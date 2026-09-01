@@ -1,5 +1,6 @@
 'use client'
 
+import { pokemonR2ImageVariantCandidates, type PokemonR2ImageVariant } from '@repo/data/client'
 import { cn } from '../lib/utils'
 import { useMemo, useState } from 'react'
 
@@ -12,6 +13,7 @@ export function RemoteImageWithFallback({
   width,
   height,
   priority = false,
+  imageVariant,
   onExhausted,
 }: {
   candidates: string[]
@@ -24,13 +26,18 @@ export function RemoteImageWithFallback({
   height?: number
   /** Above-the-fold LCP candidates — sets eager loading. */
   priority?: boolean
+  /** Prefer a prebuilt R2 WebP variant for blog-owned pokemon images. */
+  imageVariant?: PokemonR2ImageVariant
   /** Called when every candidate URL failed to load. */
   onExhausted?: () => void
 }) {
   void sizes
   const urls = useMemo(
-    () => [...new Set(candidates.map((url) => url.trim()).filter(Boolean))],
-    [candidates]
+    () =>
+      imageVariant
+        ? pokemonR2ImageVariantCandidates(candidates, imageVariant)
+        : [...new Set(candidates.map((url) => url.trim()).filter(Boolean))],
+    [candidates, imageVariant]
   )
   const [index, setIndex] = useState(0)
   const src = urls[index]

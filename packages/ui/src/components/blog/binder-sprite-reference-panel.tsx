@@ -80,6 +80,7 @@ export function BinderSpriteReferencePanel({
                   fill
                   sizes="(max-width: 768px) 22vw, 120px"
                   className="object-contain drop-shadow-md"
+                  imageVariant="small"
                   onExhausted={() => {
                     setFailedUrls((prev) => {
                       if (prev.has(item.url)) return prev
@@ -144,6 +145,7 @@ export function BinderSpriteReferencePanel({
                 fill
                 sizes={isCompact ? '72px' : '120px'}
                 className="object-contain drop-shadow-md"
+                imageVariant="small"
                 onExhausted={() => {
                   setFailedUrls((prev) => {
                     if (prev.has(item.url)) return prev
