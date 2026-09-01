@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.1](https://github.com/PinkBinder/pink-binder/compare/typescript-config-v1.0.0...typescript-config-v1.0.1) (2026-09-01)
+
+
+### Bug Fixes
+
+* promote Bun 1.4 compatibility ([#159](https://github.com/PinkBinder/pink-binder/issues/159)) ([388d616](https://github.com/PinkBinder/pink-binder/commit/388d6163e0a6ffb51a12acb1f8c6dced1537d267))
+
+
+### Documentation
+
+* **tooling:** promote Bun-only instructions ([#161](https://github.com/PinkBinder/pink-binder/issues/161)) ([e24bc49](https://github.com/PinkBinder/pink-binder/commit/e24bc49f693b186f5c65f334ea7a9fe18064f166))
+* **tooling:** promote final Bun-only guidance ([#163](https://github.com/PinkBinder/pink-binder/issues/163)) ([62e9b66](https://github.com/PinkBinder/pink-binder/commit/62e9b668b102397a7801dff1381bcfd800c9810f))
+
 ## 1.0.0 (2026-08-02)
 
 

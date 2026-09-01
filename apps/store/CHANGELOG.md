@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/PinkBinder/pink-binder/compare/store-v0.2.0...store-v0.3.0) (2026-09-01)
+
+
+### Features
+
+* **cloudflare:** add Workers configs for landing/blog/admin/store (OpenNext + R2 cache) ([5481721](https://github.com/PinkBinder/pink-binder/commit/5481721c82eed785dea032a61d0ea96ce1a27ead))
+
+
+### Bug Fixes
+
+* **build:** hoist bun linker to fix Turbopack symlink for @next/third-parties ([2d16905](https://github.com/PinkBinder/pink-binder/commit/2d16905883377308649dcd995aa77d139e80c61d))
+* **cloudflare:** add Workers Builds build command for GitHub (opennext) ([86450b4](https://github.com/PinkBinder/pink-binder/commit/86450b41c0bc7837dec03f63d6b8f9506f6352a4))
+* **cloudflare:** complete R2 migration and Worker builds ([e4e748e](https://github.com/PinkBinder/pink-binder/commit/e4e748e9b2c9ce421f87d958fca03bb094c24327))
+* **cloudflare:** correct Workers Builds command (cd not bunx --cwd) ([f18f91d](https://github.com/PinkBinder/pink-binder/commit/f18f91dba21b937720ab221de00a6550fb8058e6))
+
 ## [0.2.0](https://github.com/0xPlayerOne/pink-binder/compare/store-v0.1.0...store-v0.2.0) (2026-08-02)
 
 

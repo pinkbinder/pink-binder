@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.1.0](https://github.com/PinkBinder/pink-binder/compare/marketplaces-v1.0.2...marketplaces-v1.1.0) (2026-09-01)
+
+
+### Features
+
+* **data:** migrate image pipeline from Vercel Blob to Cloudflare R2 ([d4e248a](https://github.com/PinkBinder/pink-binder/commit/d4e248ae20689b4d12f189645d68a2f9313ea485))
+
+
+### Bug Fixes
+
+* blog-asset-delivery ([#172](https://github.com/PinkBinder/pink-binder/issues/172)) ([461002b](https://github.com/PinkBinder/pink-binder/commit/461002bd11c8559c5afa25b5680ab1ab01d442fb))
+
+
+### Maintenance
+
+* **data:** extract shared JSON file helpers and deduplicate cache readers ([#168](https://github.com/PinkBinder/pink-binder/issues/168)) ([0df6d42](https://github.com/PinkBinder/pink-binder/commit/0df6d4208398211d33ebaee84097d81faee4d890))
+
 ## [1.0.2](https://github.com/0xPlayerOne/pink-binder/compare/marketplaces-v1.0.1...marketplaces-v1.0.2) (2026-08-09)
 
 

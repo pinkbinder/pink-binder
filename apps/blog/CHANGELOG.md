@@ -1,5 +1,38 @@
 # Changelog
 
+## [0.3.0](https://github.com/PinkBinder/pink-binder/compare/blog-v0.2.1...blog-v0.3.0) (2026-09-01)
+
+
+### Features
+
+* **cloudflare:** add Workers configs for landing/blog/admin/store (OpenNext + R2 cache) ([5481721](https://github.com/PinkBinder/pink-binder/commit/5481721c82eed785dea032a61d0ea96ce1a27ead))
+
+
+### Bug Fixes
+
+* blog-asset-delivery ([#172](https://github.com/PinkBinder/pink-binder/issues/172)) ([461002b](https://github.com/PinkBinder/pink-binder/commit/461002bd11c8559c5afa25b5680ab1ab01d442fb))
+* **build:** hoist bun linker to fix Turbopack symlink for @next/third-parties ([2d16905](https://github.com/PinkBinder/pink-binder/commit/2d16905883377308649dcd995aa77d139e80c61d))
+* **cloudflare:** add Workers Builds build command for GitHub (opennext) ([86450b4](https://github.com/PinkBinder/pink-binder/commit/86450b41c0bc7837dec03f63d6b8f9506f6352a4))
+* **cloudflare:** complete R2 migration and Worker builds ([e4e748e](https://github.com/PinkBinder/pink-binder/commit/e4e748e9b2c9ce421f87d958fca03bb094c24327))
+* **cloudflare:** correct Workers Builds command (cd not bunx --cwd) ([f18f91d](https://github.com/PinkBinder/pink-binder/commit/f18f91dba21b937720ab221de00a6550fb8058e6))
+* promote Bun 1.4 compatibility ([#159](https://github.com/PinkBinder/pink-binder/issues/159)) ([388d616](https://github.com/PinkBinder/pink-binder/commit/388d6163e0a6ffb51a12acb1f8c6dced1537d267))
+
+
+### Performance
+
+* **blog:** serve gallery manifests only from R2 ([#173](https://github.com/PinkBinder/pink-binder/issues/173)) ([5b6db6c](https://github.com/PinkBinder/pink-binder/commit/5b6db6c3f3501944385394431dceff6ad4fac24e))
+
+
+### Documentation
+
+* **tooling:** promote Bun-only instructions ([#161](https://github.com/PinkBinder/pink-binder/issues/161)) ([e24bc49](https://github.com/PinkBinder/pink-binder/commit/e24bc49f693b186f5c65f334ea7a9fe18064f166))
+* **tooling:** promote final Bun-only guidance ([#163](https://github.com/PinkBinder/pink-binder/issues/163)) ([62e9b66](https://github.com/PinkBinder/pink-binder/commit/62e9b668b102397a7801dff1381bcfd800c9810f))
+
+
+### Maintenance
+
+* **main:** release staging ([#157](https://github.com/PinkBinder/pink-binder/issues/157)) ([be5ea96](https://github.com/PinkBinder/pink-binder/commit/be5ea96c45e7c247ea36f0231996460d82fa9521))
+
 ## [0.2.1](https://github.com/0xPlayerOne/pink-binder/compare/blog-v0.2.0...blog-v0.2.1) (2026-08-07)
 
 
