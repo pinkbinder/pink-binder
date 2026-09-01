@@ -1,7 +1,7 @@
 {
-  ".": "1.1.1",
+  ".": "1.1.2",
   "apps/admin": "0.3.0",
-  "apps/blog": "0.3.1",
+  "apps/blog": "0.3.2",
   "apps/landing": "0.3.0",
   "apps/store": "0.3.0",
   "packages/config": "1.0.1",

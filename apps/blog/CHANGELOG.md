@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.1...blog-v0.3.2) (2026-09-01)
+
+
+### Bug Fixes
+
+* **cloudflare:** avoid duplicate OpenNext builds ([#176](https://github.com/PinkBinder/pink-binder/issues/176)) ([fc3a885](https://github.com/PinkBinder/pink-binder/commit/fc3a885bf635f9964633c279568790d2a698e187))
+
 ## [0.3.1](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.0...blog-v0.3.1) (2026-09-01)
 
 
