@@ -1,5 +1,35 @@
 # Changelog
 
+## [1.2.0](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.1.2...pink-binder-v1.2.0) (2026-09-01)
+
+
+### Features
+
+* **blog:** publish agent discovery metadata ([#178](https://github.com/PinkBinder/pink-binder/issues/178)) ([df2758c](https://github.com/PinkBinder/pink-binder/commit/df2758cf6980096c7ba144fcf593b633af836d19))
+
+
+### Bug Fixes
+
+* **blog:** align Next and OpenNext versions ([b69b7fc](https://github.com/PinkBinder/pink-binder/commit/b69b7fc5b5ccdf1c3e2fe704c375e954c070b669))
+* **blog:** annotate compatible OpenNext config ([#187](https://github.com/PinkBinder/pink-binder/issues/187)) ([b3c5fa4](https://github.com/PinkBinder/pink-binder/commit/b3c5fa41d02357499979ffb5dbce0af9b6292ec7))
+* **blog:** avoid recursive OpenNext build ([#182](https://github.com/PinkBinder/pink-binder/issues/182)) ([1c72b1f](https://github.com/PinkBinder/pink-binder/commit/1c72b1f84faeca2e3e47fa5c1a3928af53634347))
+* **blog:** guard OpenNext instrumentation loader ([#189](https://github.com/PinkBinder/pink-binder/issues/189)) ([a9033f2](https://github.com/PinkBinder/pink-binder/commit/a9033f247215499c667ff0ba2b3134d2c9e6d2db))
+* **blog:** inline traced Next manifests for worker runtime ([#192](https://github.com/PinkBinder/pink-binder/issues/192)) ([6ed34d4](https://github.com/PinkBinder/pink-binder/commit/6ed34d4a4c2f7d1985603dd2498ef7358d5d6cfb))
+* **blog:** make OpenNext worker runtime loadable ([#191](https://github.com/PinkBinder/pink-binder/issues/191)) ([a0ad0a7](https://github.com/PinkBinder/pink-binder/commit/a0ad0a7eeadc47895b6224ac32152a60b5177b74))
+* **blog:** pin compatible OpenNext adapter ([#186](https://github.com/PinkBinder/pink-binder/issues/186)) ([6c719cf](https://github.com/PinkBinder/pink-binder/commit/6c719cf9122a484cd69aec77ea4018af5c166835))
+* **blog:** skip unused instrumentation registration ([#190](https://github.com/PinkBinder/pink-binder/issues/190)) ([5d655dd](https://github.com/PinkBinder/pink-binder/commit/5d655dd9f131341b1ca039524169bdbf1b4df697))
+* **blog:** use Next proxy for markdown negotiation ([#180](https://github.com/PinkBinder/pink-binder/issues/180)) ([1b7030c](https://github.com/PinkBinder/pink-binder/commit/1b7030c84fe7aca62b4645971d2ba8dbf0584951))
+
+
+### Performance
+
+* **blog:** restore reliable Cloudflare Free deployment ([#185](https://github.com/PinkBinder/pink-binder/issues/185)) ([60ea6a6](https://github.com/PinkBinder/pink-binder/commit/60ea6a6f179308875b7fc75278d382eb466d60c7))
+
+
+### Tests
+
+* **blog:** move markdown coverage to proxy ([#181](https://github.com/PinkBinder/pink-binder/issues/181)) ([2262831](https://github.com/PinkBinder/pink-binder/commit/2262831a079f356d77c5b71662a4883502982afc))
+
 ## [1.1.2](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.1.1...pink-binder-v1.1.2) (2026-09-01)
 
 
