@@ -25,5 +25,17 @@
       "bucket_name": "pink-binder",
     },
   ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true,
+      "head_sampling_rate": 0.1,
+      "persist": true,
+    },
+    "traces": {
+      "enabled": false,
+    },
+  },
   "workers_dev": true,
 }
