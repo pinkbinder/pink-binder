@@ -38,7 +38,7 @@
     "@aws-sdk/client-s3": "3.984.0",
     "@eslint/eslintrc": "^3.3.6",
     "@eslint/js": "9.39.5",
-    "@opennextjs/cloudflare": "^1.20.4",
+    "@opennextjs/cloudflare": "1.20.2",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
