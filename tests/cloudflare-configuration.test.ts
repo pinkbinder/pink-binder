@@ -28,12 +28,15 @@ describe('Cloudflare build configuration', () => {
     }
   })
 
-  test('uses the standard OpenNext build without generated-file rewrites', async () => {
+  test('uses the OpenNext build with a frozen install and runtime compatibility patches', async () => {
     const script = await readFile(resolve(repoRoot, 'scripts/build-cloudflare-worker.mjs'), 'utf8')
 
     expect(script).toContain("opennextjs-cloudflare', 'build")
-    expect(script).not.toContain('patchBlog')
-    expect(script).not.toContain('writeFileSync')
+    expect(script).toContain("install', '--frozen-lockfile")
+    expect(script).toContain('patchBlogInstrumentationLoader')
+    expect(script).toContain('directInstrumentationPattern')
+    expect(script).toContain('patchBlogComposableCacheHandlers')
+    expect(script).toContain('writeFileSync(serverHandlerPath')
   })
 
   test('provides the image binding required by the OpenNext Worker wrapper', async () => {
@@ -42,10 +45,12 @@ describe('Cloudflare build configuration', () => {
     expect(config).toMatch(/"images"\s*:\s*\{[\s\S]*?"binding"\s*:\s*"IMAGES"/)
   })
 
-  test('keeps the blog proxy on Web APIs to avoid bundling next/server', async () => {
-    const proxy = await readFile(resolve(repoRoot, 'apps/blog/proxy.ts'), 'utf8')
+  test('keeps the blog edge middleware on Web APIs to avoid bundling next/server', async () => {
+    const middleware = await readFile(resolve(repoRoot, 'apps/blog/middleware.ts'), 'utf8')
 
-    expect(proxy).not.toContain("from 'next/server'")
-    expect(proxy).toContain("response.headers.set('x-middleware-next', '1')")
+    expect(middleware).not.toContain("from 'next/server'")
+    expect(middleware).toContain("response.headers.set('x-middleware-next', '1')")
+    expect(middleware).toContain("'Content-Type': 'text/markdown; charset=utf-8'")
+    expect(middleware).toContain("runtime: 'experimental-edge'")
   })
 })
