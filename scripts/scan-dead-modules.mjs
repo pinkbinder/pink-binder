@@ -34,7 +34,7 @@ const allFiles = walk(ROOT).filter(
     !f.includes('/coverage/')
 )
 
-const isTestFile = (f) => /\.(test|spec)\.(ts|tsx|mts|cts)$/.test(f) || f.includes('__probe')
+const isTestFile = (f) => /\.(test|spec)\.(ts|tsx|mts|cts)$/.test(f)
 
 // Build import specifier set from every non-test source file
 const importSpecifiers = new Set()
