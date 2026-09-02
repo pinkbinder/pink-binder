@@ -40,6 +40,10 @@ bun build
 
 Environment variables are managed in Cloudflare Workers — see [`docs/ENV_SETUP.md`](docs/ENV_SETUP.md) and [`.env.example`](.env.example). Blog release, monitoring, Pinterest, and SEO operations are documented in [`docs/BLOG_PRODUCTION_OPERATIONS.md`](docs/BLOG_PRODUCTION_OPERATIONS.md).
 
+Cloudflare Workers Builds setup, monorepo watch paths, build caching, and the
+GitHub deployment-status behavior are documented in
+[`docs/CLOUDFLARE_BUILDS.md`](docs/CLOUDFLARE_BUILDS.md).
+
 ## eBay marketplace account deletion notifications
 
 Configure this callback URL in your eBay marketplace account deletion notification settings:

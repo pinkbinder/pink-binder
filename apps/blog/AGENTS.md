@@ -13,16 +13,25 @@ Run the build from the repository root:
 bun run build:cloudflare -- blog
 ```
 
-Run Wrangler from this directory because `wrangler.jsonc` uses a repository
-relative custom-build directory:
+Run Wrangler from this directory after the OpenNext build. Cloudflare Workers
+Builds owns the build command; Wrangler only bundles and deploys the generated
+Worker:
 
 ```bash
 bunx wrangler deploy --dry-run --config wrangler.jsonc
 ```
 
 Do not edit `.next/`, `.open-next/`, or `.wrangler/`; they are generated and
-ignored. The Wrangler watcher is intentionally limited to source directories
-so a generated build cannot restart its own build.
+ignored. The Wrangler config intentionally has no `build` block: adding one
+causes a second OpenNext build during `wrangler deploy` and can make Cloudflare
+fail while copying generated dependencies. Configure Workers Builds watch
+paths in the Cloudflare dashboard; see [`docs/CLOUDFLARE_BUILDS.md`](../../docs/CLOUDFLARE_BUILDS.md).
+
+The app intentionally retains `middleware.ts` and the Web API-only middleware
+implementation. Next 16's `proxy.ts` uses the Node.js runtime, which OpenNext
+does not yet support for middleware. OpenNext packages this external middleware
+as its Cloudflare edge bundle; migrate to `proxy.ts` only when that adapter
+support is available.
 
 ## R2 publishing
 

@@ -24,10 +24,5 @@
   "images": {
     "binding": "IMAGES",
   },
-  "build": {
-    "command": "bun run build:cloudflare -- store",
-    "cwd": "../..",
-    "watch_dir": ["app"],
-  },
   "workers_dev": true,
 }

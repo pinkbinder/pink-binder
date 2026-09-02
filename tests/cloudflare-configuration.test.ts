@@ -3,28 +3,14 @@ import { resolve } from 'node:path'
 import { describe, expect, test } from 'bun:test'
 
 const repoRoot = resolve(import.meta.dirname, '..')
-const appWatchDirectories: Record<string, string[]> = {
-  admin: ['app'],
-  blog: ['app', 'lib', 'content', 'public'],
-  landing: ['app', 'lib', 'public'],
-  store: ['app'],
-}
-
-function getWatchDirectoryExpression(config: string): string {
-  const match = config.match(/"watch_dir"\s*:\s*(\[[\s\S]*?\]|"[^"]+")/)
-  if (!match) throw new Error('Missing Wrangler build.watch_dir')
-  return match[1]
-}
 
 describe('Cloudflare build configuration', () => {
-  test('watches source directories instead of generated Worker output', async () => {
-    for (const [app, directories] of Object.entries(appWatchDirectories)) {
+  test('leaves build ownership with Cloudflare Workers Builds', async () => {
+    for (const app of ['admin', 'blog', 'landing', 'store']) {
       const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
-      const expression = getWatchDirectoryExpression(config)
 
-      expect(expression.startsWith('[')).toBe(true)
-      expect(expression).not.toContain(`apps/${app}`)
-      for (const directory of directories) expect(expression).toContain(`"${directory}"`)
+      expect(config).not.toMatch(/"build"\s*:/)
+      expect(config).toMatch(/"main"\s*:\s*"\.open-next\/worker\.js"/)
     }
   })
 
@@ -45,12 +31,21 @@ describe('Cloudflare build configuration', () => {
     expect(config).toMatch(/"images"\s*:\s*\{[\s\S]*?"binding"\s*:\s*"IMAGES"/)
   })
 
+  test('hardens normal blog responses without allowing dynamic policy values', async () => {
+    const nextConfig = await readFile(resolve(repoRoot, 'apps/blog/next.config.mjs'), 'utf8')
+
+    expect(nextConfig).toContain("{ key: 'Content-Security-Policy', value: contentSecurityPolicy }")
+    expect(nextConfig).toContain('poweredByHeader: false')
+    expect(nextConfig).not.toContain('unsafe-eval')
+  })
+
   test('keeps the blog edge middleware on Web APIs to avoid bundling next/server', async () => {
     const middleware = await readFile(resolve(repoRoot, 'apps/blog/middleware.ts'), 'utf8')
 
     expect(middleware).not.toContain("from 'next/server'")
     expect(middleware).toContain("response.headers.set('x-middleware-next', '1')")
     expect(middleware).toContain("'Content-Type': 'text/markdown; charset=utf-8'")
-    expect(middleware).toContain("runtime: 'experimental-edge'")
+    expect(middleware).toContain("'Content-Security-Policy': CONTENT_SECURITY_POLICY")
+    expect(middleware).not.toContain("runtime: 'experimental-edge'")
   })
 })
