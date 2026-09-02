@@ -28,11 +28,6 @@
   "images": {
     "binding": "IMAGES",
   },
-  "build": {
-    "command": "bun run build:cloudflare -- blog",
-    "cwd": "../..",
-    "watch_dir": ["app", "lib", "content", "public"],
-  },
   "observability": {
     "enabled": true,
     "logs": {

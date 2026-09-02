@@ -25,9 +25,4 @@
     "binding": "IMAGES",
   },
   "workers_dev": true,
-  "build": {
-    "command": "bun run build:cloudflare -- landing",
-    "cwd": "../..",
-    "watch_dir": ["app", "lib", "public"],
-  },
 }
