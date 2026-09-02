@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { type MarketplaceListing } from '@repo/marketplaces'
 import { cn } from '../lib/utils'
-import { trackViewItem } from '../lib/gtm-events'
+import { trackViewItem } from '../lib/zaraz-events'
 
 export type { MarketplaceListing }
 

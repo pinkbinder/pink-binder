@@ -30,7 +30,7 @@ import {
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
-import { trackSearch, trackSelectContent } from '../../lib/gtm-events'
+import { trackSearch, trackSelectContent } from '../../lib/zaraz-events'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'

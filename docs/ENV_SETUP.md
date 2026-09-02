@@ -26,7 +26,7 @@ Next.js loads each app's `.env.local` when that app runs. You do **not** need a 
 | Scope                         | Location                                          | Notes                                                        |
 | ----------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
 | Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local`                         | Stored in Cloudflare Worker `landing` (R2 + secrets)         |
-| Blog (GTM, R2)                | `apps/blog/.env.local`                            | Stored in Cloudflare Worker `blog` (R2 + secrets)            |
+| Blog (Zaraz, R2)              | `apps/blog/.env.local`                            | Stored in Cloudflare Worker `blog` (R2 + secrets)            |
 | Data scripts (R2 upload)      | `apps/blog/.env.local` or `CLOUDFLARE_ACCOUNT_ID` | `@repo/data` publish scripts use R2 (images.pinkbinder.shop) |
 | Optional overrides            | Root `.env.local`                                 | Legacy; merged by `scripts/with-env.mjs` only                |
 
@@ -44,7 +44,6 @@ EBAY_CLIENT_SECRET=
 **Client-visible** — must use `NEXT_PUBLIC_`:
 
 ```env
-NEXT_PUBLIC_GTM_ID=
 NEXT_PUBLIC_BLOG_URL=
 ```
 

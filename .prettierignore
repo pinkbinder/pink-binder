@@ -7,6 +7,7 @@ CHANGELOG.md
 # Repository-specific rules
 .next
 .open-next
+.wrangler
 next-env.d.ts
 node_modules
 .code-foundry

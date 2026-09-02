@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './dialog'
 import { IconButton } from './icon-button'
-import { trackShare } from '../lib/gtm-events'
+import { trackShare } from '../lib/zaraz-events'
 
 export interface ShareLinkItem {
   label: string
