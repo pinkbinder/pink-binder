@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/PinkBinder/pink-binder/compare/admin-v0.3.0...admin-v0.3.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **blog:** restore standard Cloudflare build path ([d9001b1](https://github.com/PinkBinder/pink-binder/commit/d9001b1488214d45887327cf4413d47ac2f947d8))
+
 ## [0.3.0](https://github.com/PinkBinder/pink-binder/compare/admin-v0.2.0...admin-v0.3.0) (2026-09-01)
 
 
