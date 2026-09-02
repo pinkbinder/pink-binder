@@ -33,7 +33,7 @@ const allFiles = walk(ROOT).filter(
     !f.includes('/coverage/')
 )
 
-const isTestFile = (f) => /\.(test|spec)\.(ts|tsx|mts|cts)$/.test(f) || f.includes('__probe')
+const isTestFile = (f) => /\.(test|spec)\.(ts|tsx|mts|cts)$/.test(f)
 
 // --- Collect all source file contents ---
 const contents = new Map()
