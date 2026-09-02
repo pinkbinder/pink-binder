@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.4.1](https://github.com/PinkBinder/pink-binder/compare/blog-v0.4.0...blog-v0.4.1) (2026-09-02)
+
+
+### Bug Fixes
+
+* **blog:** add Cloudflare Images binding ([d8898de](https://github.com/PinkBinder/pink-binder/commit/d8898de32154ae4e8dac4f6fb69a7f54e749bc3b))
+* **blog:** make instrumentation hook explicit ([0c3ec2b](https://github.com/PinkBinder/pink-binder/commit/0c3ec2b5cd20fc1348d90e614bfe5d76812f02b1))
+* **blog:** restore Cloudflare Worker runtime ([8940154](https://github.com/PinkBinder/pink-binder/commit/8940154f12d64621bfa515f54f97549326946aee))
+* **blog:** restore standard Cloudflare build path ([d9001b1](https://github.com/PinkBinder/pink-binder/commit/d9001b1488214d45887327cf4413d47ac2f947d8))
+* **blog:** restore webpack Cloudflare build ([8896eee](https://github.com/PinkBinder/pink-binder/commit/8896eee11aa2bb5f56d4a76abdcda24e1c1f80f6))
+
+
+### Performance
+
+* **blog:** trim Cloudflare proxy bundle ([6811087](https://github.com/PinkBinder/pink-binder/commit/6811087e9f7e19e16ff773efedce42d88641da0d))
+
 ## [0.4.0](https://github.com/PinkBinder/pink-binder/compare/blog-v0.3.2...blog-v0.4.0) (2026-09-01)
 
 
