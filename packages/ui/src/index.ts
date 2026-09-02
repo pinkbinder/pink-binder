@@ -26,4 +26,4 @@ export * from './components/pokemon-type-logo'
 // Utilities
 export * from './lib/format-post-date'
 export * from './lib/utils'
-export * from './lib/gtm-events'
+export * from './lib/zaraz-events'

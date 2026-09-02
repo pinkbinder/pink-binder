@@ -60,10 +60,11 @@ Each feed is RSS 2.0, generated from local published data, cached for one day, a
 1. Create a Google Search Console domain or URL-prefix property for `https://pinkbinder.blog`.
 2. Set `GOOGLE_SITE_VERIFICATION` in the Cloudflare `blog` Worker to the verification token only, then redeploy.
 3. Submit `https://pinkbinder.blog/sitemap.xml` and inspect indexing/canonical reports after Google recrawls.
-4. Configure `NEXT_PUBLIC_GTM_ID` for the blog project if analytics is desired.
+4. Configure and publish the Zaraz tools for `pinkbinder.blog` as described in
+   [`ZARAZ_CONFIGURATION.md`](./ZARAZ_CONFIGURATION.md).
 
-The UI emits GA4-compatible events for blog-card selection (`select_content`), catalog searches (`search`), sharing (`share`), and outbound marketplace clicks (`view_item`). In GA4, create reports for landing page plus source/medium to separate Google and Pinterest referrals.
+The UI emits Zaraz events for blog-card selection (`select_content`), catalog searches (`search`), sharing (`share`), and outbound marketplace clicks (`Product Viewed`). Configure the corresponding Zaraz actions to forward the events to the enabled tools. In GA4, create reports for landing page plus source/medium to separate Google and Pinterest referrals.
 
-Both variables are optional. The Search Console token is rendered as a verification meta tag and is public by design. GTM may set analytics cookies depending on the tags configured in the container; keep consent and privacy disclosures aligned with those tags. No visitor identifiers are stored by the local blog data pipeline.
+The Search Console token is optional. It is rendered as a verification meta tag and is public by design. Zaraz may set analytics cookies depending on the tools configured in the dashboard; keep consent and privacy disclosures aligned with those tools. No visitor identifiers are stored by the local blog data pipeline.
 
 When indexing drops, check the production monitor first, then Search Console's Page Indexing and URL Inspection reports. Confirm the route is present once in the sitemap, returns 200, emits its own canonical, is not future-dated, and is not blocked by robots.

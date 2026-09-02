@@ -2,7 +2,6 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from '@repo/config'
 import { LANDING_SEO } from '@repo/data'
-import { GoogleTagManager } from '@repo/ui/server'
 
 const SITE_NAME = BRAND.name
 const SITE_DESCRIPTION = LANDING_SEO.description
@@ -92,7 +91,6 @@ const jsonLd = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <GoogleTagManager />
       <body className="antialiased">
         <script
           type="application/ld+json"

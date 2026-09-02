@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "description": "Reviewable Zaraz contract for the Pink Binder landing and blog zones. This is not a Cloudflare dashboard export.",
+  "domains": ["pinkbinder.shop", "pinkbinder.blog"],
+  "loader": {
+    "mode": "dashboard-auto-inject",
+    "dashboardAutoInjectScript": true
+  },
+  "settings": {
+    "automaticPageviewTracking": true,
+    "dataLayerCompatibilityMode": false,
+    "ecommerceTracking": true
+  },
+  "events": {
+    "select_content": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["content_type", "item_id"]
+    },
+    "search": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["search_term"]
+    },
+    "share": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["method", "content_type", "item_id"]
+    },
+    "Product Viewed": {
+      "api": "ecommerce",
+      "delivery": "automatic-ecommerce-action",
+      "properties": ["product_id", "name", "category", "currency"]
+    }
+  }
+}
