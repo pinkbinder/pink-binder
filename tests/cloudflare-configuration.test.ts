@@ -39,6 +39,18 @@ describe('Cloudflare build configuration', () => {
     expect(nextConfig).not.toContain('unsafe-eval')
   })
 
+  test('hardens every Next app response and hides the framework signature', async () => {
+    for (const app of ['admin', 'landing', 'store']) {
+      const nextConfig = await readFile(resolve(repoRoot, 'apps', app, 'next.config.mjs'), 'utf8')
+
+      expect(nextConfig).toContain("key: 'Content-Security-Policy'")
+      expect(nextConfig).toContain("key: 'X-Content-Type-Options'")
+      expect(nextConfig).toContain("key: 'X-Frame-Options'")
+      expect(nextConfig).toContain('poweredByHeader: false')
+      expect(nextConfig).not.toContain('unsafe-eval')
+    }
+  })
+
   test('keeps the blog edge middleware on Web APIs to avoid bundling next/server', async () => {
     const middleware = await readFile(resolve(repoRoot, 'apps/blog/middleware.ts'), 'utf8')
 

@@ -72,6 +72,11 @@ dependency cache does not guarantee that Next's application cache is restored,
 so treat a `No build cache found` Next warning as a Workers Builds cache-setting
 issue, not a reason to change application runtime behavior.
 
+Each Next app also sets baseline security response headers in its
+`next.config.mjs`, including a static CSP and `poweredByHeader: false`. Keep
+those policies static and update them deliberately when adding a third-party
+script, frame, image host, or connection target.
+
 ## GitHub status and deployments
 
 Workers Builds reports GitHub checks and build/deploy results, but it does not
