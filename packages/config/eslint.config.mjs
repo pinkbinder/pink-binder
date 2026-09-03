@@ -21,6 +21,14 @@ export default [
     },
   }),
   {
+    files: ['**/*.mjs', '**/*.js'],
+    languageOptions: {
+      parserOptions: {
+        project: false,
+      },
+    },
+  },
+  {
     files: ['test/**/*.{ts,tsx}'],
     languageOptions: {
       parserOptions: {

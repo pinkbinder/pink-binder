@@ -33,19 +33,53 @@ describe('Cloudflare build configuration', () => {
 
   test('hardens normal blog responses without allowing dynamic policy values', async () => {
     const nextConfig = await readFile(resolve(repoRoot, 'apps/blog/next.config.mjs'), 'utf8')
+    const usesSharedHeaders = nextConfig.includes("from '@repo/config/security-headers'")
 
-    expect(nextConfig).toContain("{ key: 'Content-Security-Policy', value: contentSecurityPolicy }")
+    if (usesSharedHeaders) {
+      const headersModule = await readFile(
+        resolve(repoRoot, 'packages/config/security-headers.mjs'),
+        'utf8'
+      )
+      expect(nextConfig).toContain('SECURITY_HEADERS')
+      expect(headersModule).toContain("key: 'Content-Security-Policy'")
+      expect(headersModule).toContain("default-src 'self'")
+      expect(headersModule).not.toContain('unsafe-eval')
+    } else {
+      expect(nextConfig).toContain(
+        "{ key: 'Content-Security-Policy', value: contentSecurityPolicy }"
+      )
+    }
     expect(nextConfig).toContain('poweredByHeader: false')
     expect(nextConfig).not.toContain('unsafe-eval')
   })
 
   test('hardens every Next app response and hides the framework signature', async () => {
+    const usesSharedHeaders = (
+      await readFile(resolve(repoRoot, 'apps/admin/next.config.mjs'), 'utf8')
+    ).includes("from '@repo/config/security-headers'")
+
+    let headersModule = ''
+    if (usesSharedHeaders) {
+      headersModule = await readFile(
+        resolve(repoRoot, 'packages/config/security-headers.mjs'),
+        'utf8'
+      )
+      expect(headersModule).toContain("key: 'Content-Security-Policy'")
+      expect(headersModule).toContain("key: 'X-Content-Type-Options'")
+      expect(headersModule).toContain("key: 'X-Frame-Options'")
+      expect(headersModule).not.toContain('unsafe-eval')
+    }
+
     for (const app of ['admin', 'landing', 'store']) {
       const nextConfig = await readFile(resolve(repoRoot, 'apps', app, 'next.config.mjs'), 'utf8')
 
-      expect(nextConfig).toContain("key: 'Content-Security-Policy'")
-      expect(nextConfig).toContain("key: 'X-Content-Type-Options'")
-      expect(nextConfig).toContain("key: 'X-Frame-Options'")
+      if (usesSharedHeaders) {
+        expect(nextConfig).toContain('SECURITY_HEADERS')
+      } else {
+        expect(nextConfig).toContain("key: 'Content-Security-Policy'")
+        expect(nextConfig).toContain("key: 'X-Content-Type-Options'")
+        expect(nextConfig).toContain("key: 'X-Frame-Options'")
+      }
       expect(nextConfig).toContain('poweredByHeader: false')
       expect(nextConfig).not.toContain('unsafe-eval')
     }
