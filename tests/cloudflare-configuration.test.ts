@@ -91,7 +91,7 @@ describe('Cloudflare build configuration', () => {
     expect(middleware).not.toContain("from 'next/server'")
     expect(middleware).toContain("response.headers.set('x-middleware-next', '1')")
     expect(middleware).toContain("'Content-Type': 'text/markdown; charset=utf-8'")
-    expect(middleware).toContain("'Content-Security-Policy': CONTENT_SECURITY_POLICY")
+    expect(middleware).toContain('SECURITY_HEADERS')
     expect(middleware).not.toContain("runtime: 'experimental-edge'")
   })
 })
