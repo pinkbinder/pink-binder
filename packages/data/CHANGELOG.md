@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.1.2](https://github.com/pinkbinder/pink-binder/compare/data-v1.1.1...data-v1.1.2) (2026-09-07)
+
+
+### Maintenance
+
+* **data,blog:** deduplicate bundle equality and middleware security headers ([#200](https://github.com/pinkbinder/pink-binder/issues/200)) ([e44e52d](https://github.com/pinkbinder/pink-binder/commit/e44e52d9a76ff8bfe97cea983e07c928d12cbd03))
+* **data,blog:** deduplicate seo keywords and blog JSON-LD builders ([#203](https://github.com/pinkbinder/pink-binder/issues/203)) ([788063d](https://github.com/pinkbinder/pink-binder/commit/788063dbe475a97c1b8cde870eac85cc950fef7f))
+* **data:** deduplicate card pricing helper into single source of truth ([#201](https://github.com/pinkbinder/pink-binder/issues/201)) ([eaa79a0](https://github.com/pinkbinder/pink-binder/commit/eaa79a0d41449a66500c74277823b69dac1b4b23))
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+
 ## [1.1.1](https://github.com/PinkBinder/pink-binder/compare/data-v1.1.0...data-v1.1.1) (2026-09-01)
 
 

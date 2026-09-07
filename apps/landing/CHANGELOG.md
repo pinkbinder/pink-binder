@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.2](https://github.com/pinkbinder/pink-binder/compare/landing-v0.3.1...landing-v0.3.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* **analytics:** migrate tracking from GTM to Zaraz ([#198](https://github.com/pinkbinder/pink-binder/issues/198)) ([296bca9](https://github.com/pinkbinder/pink-binder/commit/296bca90d67019e31c5853173dcce9505c9018c4))
+* **cloudflare:** stabilize Workers Builds and harden blog headers ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([14a024b](https://github.com/pinkbinder/pink-binder/commit/14a024b732c557fe9c1bf6c3ba4bf92d1409ab20))
+* **security:** harden non-blog app responses ([#197](https://github.com/pinkbinder/pink-binder/issues/197)) ([9154352](https://github.com/pinkbinder/pink-binder/commit/9154352e32ade8b74ea0d9b1fd51b8a187eb0815))
+
+
+### Maintenance
+
+* **config:** deduplicate security headers into shared module ([#199](https://github.com/pinkbinder/pink-binder/issues/199)) ([eb28f54](https://github.com/pinkbinder/pink-binder/commit/eb28f54ae04659bbe2723c2dba47bd30b9cc8acc))
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+
 ## [0.3.1](https://github.com/PinkBinder/pink-binder/compare/landing-v0.3.0...landing-v0.3.1) (2026-09-02)
 
 
