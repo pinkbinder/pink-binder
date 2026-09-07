@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.0.3](https://github.com/pinkbinder/pink-binder/compare/ui-v1.0.2...ui-v1.0.3) (2026-09-07)
+
+
+### Bug Fixes
+
+* **analytics:** migrate tracking from GTM to Zaraz ([#198](https://github.com/pinkbinder/pink-binder/issues/198)) ([296bca9](https://github.com/pinkbinder/pink-binder/commit/296bca90d67019e31c5853173dcce9505c9018c4))
+
+
+### Maintenance
+
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+* **ui:** remove debug probe test and clean dead exclusion ([#195](https://github.com/pinkbinder/pink-binder/issues/195)) ([c686fda](https://github.com/pinkbinder/pink-binder/commit/c686fdada4a677e1b16f979b4fac2e6b2f9ee47a))
+
 ## [1.0.2](https://github.com/PinkBinder/pink-binder/compare/ui-v1.0.1...ui-v1.0.2) (2026-09-01)
 
 

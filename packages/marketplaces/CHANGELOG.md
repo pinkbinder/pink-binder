@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.1.0...marketplaces-v1.1.1) (2026-09-07)
+
+
+### Maintenance
+
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+
 ## [1.1.0](https://github.com/PinkBinder/pink-binder/compare/marketplaces-v1.0.2...marketplaces-v1.1.0) (2026-09-01)
 
 

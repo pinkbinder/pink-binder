@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.2.1...pink-binder-v1.2.2) (2026-09-07)
+
+
+### Bug Fixes
+
+* **analytics:** migrate tracking from GTM to Zaraz ([#198](https://github.com/pinkbinder/pink-binder/issues/198)) ([296bca9](https://github.com/pinkbinder/pink-binder/commit/296bca90d67019e31c5853173dcce9505c9018c4))
+* **cloudflare:** stabilize Workers Builds and harden blog headers ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([14a024b](https://github.com/pinkbinder/pink-binder/commit/14a024b732c557fe9c1bf6c3ba4bf92d1409ab20))
+* **security:** harden non-blog app responses ([#197](https://github.com/pinkbinder/pink-binder/issues/197)) ([9154352](https://github.com/pinkbinder/pink-binder/commit/9154352e32ade8b74ea0d9b1fd51b8a187eb0815))
+
+
+### Maintenance
+
+* **ci:** upgrade code-foundry runtime to v1.0.0 ([#202](https://github.com/pinkbinder/pink-binder/issues/202)) ([e681b11](https://github.com/pinkbinder/pink-binder/commit/e681b111a1715b819d8cdfde982b688eee32d842))
+* **config:** deduplicate security headers into shared module ([#199](https://github.com/pinkbinder/pink-binder/issues/199)) ([eb28f54](https://github.com/pinkbinder/pink-binder/commit/eb28f54ae04659bbe2723c2dba47bd30b9cc8acc))
+* **data,blog:** deduplicate bundle equality and middleware security headers ([#200](https://github.com/pinkbinder/pink-binder/issues/200)) ([e44e52d](https://github.com/pinkbinder/pink-binder/commit/e44e52d9a76ff8bfe97cea983e07c928d12cbd03))
+* **data,blog:** deduplicate seo keywords and blog JSON-LD builders ([#203](https://github.com/pinkbinder/pink-binder/issues/203)) ([788063d](https://github.com/pinkbinder/pink-binder/commit/788063dbe475a97c1b8cde870eac85cc950fef7f))
+* **data:** deduplicate card pricing helper into single source of truth ([#201](https://github.com/pinkbinder/pink-binder/issues/201)) ([eaa79a0](https://github.com/pinkbinder/pink-binder/commit/eaa79a0d41449a66500c74277823b69dac1b4b23))
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+* **ui:** remove debug probe test and clean dead exclusion ([#195](https://github.com/pinkbinder/pink-binder/issues/195)) ([c686fda](https://github.com/pinkbinder/pink-binder/commit/c686fdada4a677e1b16f979b4fac2e6b2f9ee47a))
+
 ## [1.2.1](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.2.0...pink-binder-v1.2.1) (2026-09-02)
 
 

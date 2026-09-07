@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/pinkbinder/pink-binder/compare/config-v1.0.1...config-v1.0.2) (2026-09-07)
+
+
+### Maintenance
+
+* **config:** deduplicate security headers into shared module ([#199](https://github.com/pinkbinder/pink-binder/issues/199)) ([eb28f54](https://github.com/pinkbinder/pink-binder/commit/eb28f54ae04659bbe2723c2dba47bd30b9cc8acc))
+* **tooling:** migrate to oxlint/oxfmt and code-foundry 1.3.1 ([#204](https://github.com/pinkbinder/pink-binder/issues/204)) ([170cd25](https://github.com/pinkbinder/pink-binder/commit/170cd250c8a1a3567a266922e499ffb2854fda35))
+
 ## [1.0.1](https://github.com/0xPlayerOne/pink-binder/compare/config-v1.0.0...config-v1.0.1) (2026-08-08)
 
 
