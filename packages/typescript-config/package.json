@@ -3,14 +3,14 @@
   "version": "1.0.1",
   "private": true,
   "license": "MIT",
-  "scripts": {
-    "format": "prettier --check . --ignore-path ../../.prettierignore",
-    "format:fix": "prettier --write . --ignore-path ../../.prettierignore"
-  },
-  "devDependencies": {
-    "prettier": "^3.9.6"
-  },
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "format": "oxfmt --check .",
+    "format:fix": "oxfmt --write ."
+  },
+  "devDependencies": {
+    "oxfmt": "^0.66.0"
   }
 }

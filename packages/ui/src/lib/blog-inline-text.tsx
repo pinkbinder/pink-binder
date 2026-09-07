@@ -5,7 +5,8 @@ const INLINE_LINK_RE =
   /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)|\[((?:https?:\/\/)[^\s\]]+)\s+([^\]]+)\]/gi
 
 type BlogInlineSegment =
-  { kind: 'text'; value: string } | { kind: 'link'; href: string; label: string }
+  | { kind: 'text'; value: string }
+  | { kind: 'link'; href: string; label: string }
 
 export function splitBlogInlineText(text: string): BlogInlineSegment[] {
   const segments: BlogInlineSegment[] = []

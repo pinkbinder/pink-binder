@@ -2,7 +2,16 @@
   "name": "@repo/data",
   "version": "1.1.1",
   "private": true,
+  "files": [
+    "src/**",
+    "cache/normalized/pokemon/**",
+    "cache/normalized/meta/**",
+    "cache/normalized/blogs/**",
+    "cache/ai/blog-polish/**"
+  ],
   "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
     "./client": "./src/client.ts",
@@ -11,23 +20,14 @@
     "./card-gallery-server": "./src/blog/card-gallery-server.ts",
     "./package.json": "./package.json"
   },
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
-  "files": [
-    "src/**",
-    "cache/normalized/pokemon/**",
-    "cache/normalized/meta/**",
-    "cache/normalized/blogs/**",
-    "cache/ai/blog-polish/**"
-  ],
   "scripts": {
-    "lint": "eslint src scripts --max-warnings 0",
+    "lint": "oxlint src scripts --max-warnings 0",
     "type-check": "tsc --noEmit",
     "test": "cd ../.. && bun test packages/data",
     "test:watch": "cd ../.. && bun test --watch packages/data",
     "test:coverage": "cd ../.. && bun test --coverage packages/data",
-    "format": "prettier --check src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
-    "format:fix": "prettier --write src scripts package.json tsconfig.json eslint.config.mjs --ignore-path .prettierignore",
+    "format": "oxfmt --check src scripts package.json tsconfig.json",
+    "format:fix": "oxfmt --write src scripts package.json tsconfig.json",
     "extract": "tsx scripts/1-extract/index.ts",
     "images": "tsx scripts/2-images/index.ts",
     "transform": "tsx scripts/3-transform/index.ts",
@@ -43,13 +43,10 @@
   },
   "devDependencies": {
     "@aws-sdk/client-s3": "3.984.0",
-    "@eslint/eslintrc": "^3.3.6",
-    "@eslint/js": "9.39.5",
-    "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^26.1.2",
-    "eslint": "9.39.5",
-    "prettier": "^3.9.6",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "sharp": "^0.35.3",
     "tsx": "^4.23.1",
     "typescript": "6.0.3"

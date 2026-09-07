@@ -17,7 +17,6 @@ A modern NextJS Turborepo monorepo for Pink Binder apps.
 | ---------------------------- | ----------------------------------- |
 | `packages/ui`                | Shared UI components (ShadCN-based) |
 | `packages/typescript-config` | Shared TypeScript configurations    |
-| `packages/eslint-config`     | Shared ESLint configurations        |
 
 ## Getting Started
 
@@ -62,5 +61,5 @@ Set this environment variable for `apps/landing`:
 - **Styling**: Tailwind CSS + ShadCN/ui
 - **Build**: Turborepo
 - **Package Manager**: bun (`bun install --frozen-lockfile`)
-- **Linting**: ESLint + Prettier
+- **Linting**: Oxlint + Oxfmt
 - **Git Hooks**: Husky + lint-staged

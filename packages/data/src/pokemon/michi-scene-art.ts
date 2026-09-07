@@ -8,7 +8,13 @@ export const MICHI_SCENE_DISPLAY_MAX = 2
 export const MICHI_SCENE_BINDER_POOL_MAX = 4
 
 export type MichiSceneArtSource =
-  'artofpkm' | 'tcg' | 'pokeos' | 'wallhaven' | 'openverse' | 'wikimedia' | 'pexels'
+  | 'artofpkm'
+  | 'tcg'
+  | 'pokeos'
+  | 'wallhaven'
+  | 'openverse'
+  | 'wikimedia'
+  | 'pexels'
 
 /** Cached or runtime-resolved full-scene illustration for Michi Method spreads. */
 export interface MichiSceneArtEntry {
