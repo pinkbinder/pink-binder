@@ -12,7 +12,6 @@ import fs from 'fs'
 import path from 'path'
 
 const ROOT = process.cwd()
-const SRC_DIRS = ['packages']
 const EXTENSIONS = new Set(['.ts', '.tsx', '.mts', '.cts'])
 
 function walk(dir, out = []) {

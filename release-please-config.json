@@ -72,10 +72,6 @@
       "release-type": "node",
       "package-name": "@repo/data"
     },
-    "packages/eslint-config": {
-      "release-type": "node",
-      "package-name": "@repo/eslint-config"
-    },
     "packages/marketplaces": {
       "release-type": "node",
       "package-name": "@repo/marketplaces"

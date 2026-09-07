@@ -56,7 +56,7 @@ function normalizeCardNumberKeyPart(value: string | null | undefined): string {
 
 function isFrenchMcDonaldsPromo(card: TcgCardRecord): boolean {
   const setId = tcgCardSetId(card.id).toLowerCase()
-  if (setId.includes('-fr') || /fr$/.test(setId)) {
+  if (setId.includes('-fr') || setId.endsWith('fr')) {
     return true
   }
   return /collection mcdonald/i.test(normalizeCardKeyPart(card.setName))

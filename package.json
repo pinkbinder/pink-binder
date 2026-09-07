@@ -1,10 +1,12 @@
 {
   "name": "pink-binder",
+  "version": "1.2.1",
   "private": true,
   "license": "Apache-2.0",
-  "engines": {
-    "node": "24.18.0"
-  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
     "build": "node scripts/with-env.mjs turbo run build",
     "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
@@ -24,40 +26,33 @@
     "lint-staged": "lint-staged",
     "validate": "node scripts/with-env.mjs turbo run format lint type-check",
     "validate:pre-commit": "node scripts/with-env.mjs turbo run lint type-check",
-    "format:check": "prettier --check ."
+    "format:check": "oxfmt --check ."
   },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,mdc,css,yml,yaml}": "prettier --write --ignore-unknown"
+  "dependencies": {
+    "nanoid": "3.3.18",
+    "next": "^16.3.3",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^20.12.0",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
     "@types/bun": "^1.4.0",
-    "@typescript-eslint/eslint-plugin": "^8.68.0",
-    "@typescript-eslint/parser": "^8.68.0",
-    "eslint": "10.8.0",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.1.1",
     "lint-staged": "^17.4.1",
-    "prettier": "^3.9.6",
-    "prettier-plugin-tailwindcss": "^0.8.1",
+    "oxfmt": "^0.66.0",
+    "oxlint": "^1.81.0",
     "turbo": "2.10.8"
   },
-  "packageManager": "bun@1.4.0",
   "overrides": {
-    "postcss": "8.5.25",
-    "sharp": "0.35.3",
-    "nanoid": "3.3.18"
-  },
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
-  "dependencies": {
     "nanoid": "3.3.18",
-    "next": "^16.3.3",
-    "sharp": "^0.35.3"
+    "postcss": "8.5.25",
+    "sharp": "0.35.3"
   },
-  "version": "1.2.1"
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,mdc,css,yml,yaml}": "oxfmt --write"
+  },
+  "engines": {
+    "node": "24.18.0"
+  },
+  "packageManager": "bun@1.4.0"
 }
