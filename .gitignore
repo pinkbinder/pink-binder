@@ -76,6 +76,7 @@ mise.local.lock
 .mise.local.lock
 *.code-workspace
 
+# Repository-specific rules
 # Cloudflare OpenNext / Wrangler build output
 .open-next/
 .wrangler/
