@@ -1,0 +1,34 @@
+name: Cloudflare Preview
+
+on:
+  pull_request:
+    branches: [main]
+    types: [ready_for_review, synchronize, converted_to_draft]
+
+concurrency:
+  group: cloudflare-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  preview:
+    name: Cloudflare Preview / ${{ matrix.app }}
+    if: github.event.pull_request.draft == false
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [admin, blog, landing, store]
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.9.11
+    with:
+      mode: preview
+      working-directory: apps/${{ matrix.app }}
+      install-working-directory: .
+      build-script: build:cloudflare
+      bun-version: 1.4.0
+      environment: Preview - pink-binder-${{ matrix.app }}
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

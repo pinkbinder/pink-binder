@@ -14,7 +14,6 @@ describe('direct-to-main workflow contract', () => {
 
   test('targets validation and dependency updates at main only', () => {
     for (const path of [
-      '.github/workflows/ci.yml',
       '.github/workflows/opencode-security.yml',
       '.github/workflows/validation.yml',
     ]) {

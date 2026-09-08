@@ -160,6 +160,6 @@ in a dated decision record.
 ## Consequences
 
 M0 is complete when this record, manifest, and an auditable generated report
-exist; the four issues close after the reviewed branch lands on `staging`.
+exist; the four issues close after the reviewed branch lands on `main`.
 Later work updates the report and this ADR before claiming improvement,
 migration readiness, or release completion.
