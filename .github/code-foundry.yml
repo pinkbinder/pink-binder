@@ -21,7 +21,7 @@ turbo_remote: auto
 release_type: node
 npm_publish: false
 license: apache-2.0
-git_workflow: staging-release
+git_workflow: direct
 merge_strategy: rebase
 codeql: auto
 dependency_review: auto
