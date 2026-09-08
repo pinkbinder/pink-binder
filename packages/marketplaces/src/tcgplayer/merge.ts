@@ -32,6 +32,10 @@ function normalizeMcDonaldsSetNameKey(setName: string): string {
   return normalized
 }
 
+function pickLexicographicallyFirst(values: string[]): string {
+  return values.reduce((first, value) => (value.localeCompare(first) < 0 ? value : first))
+}
+
 function pickMergedTcgCardId(...ids: string[]): string {
   const trimmed = ids.map((value) => value.trim()).filter(Boolean)
   const mcdCatalog = trimmed.find((id) => /^mcd\d+-/i.test(id))
@@ -40,11 +44,11 @@ function pickMergedTcgCardId(...ids: string[]): string {
   }
   const trainerKitIds = trimmed.filter((id) => isTrainerKitCardId(id))
   if (trainerKitIds.length > 0) {
-    return trainerKitIds.sort((a, b) => a.localeCompare(b))[0]!
+    return pickLexicographicallyFirst(trainerKitIds)
   }
   const legacyTk2 = trimmed.filter((id) => /^tk2[ab]-/i.test(id))
   if (legacyTk2.length > 0) {
-    return legacyTk2.sort((a, b) => a.localeCompare(b))[0]!
+    return pickLexicographicallyFirst(legacyTk2)
   }
   return pickPreferredTcgCardId(...trimmed)
 }
@@ -77,27 +81,30 @@ function mcdonaldsPromoNameYearKey(
   return name ? `mcd-species::${year}::${name}` : null
 }
 
+function scoreMcDonaldsPromoRecord(record: TcgCardRecord): number {
+  let value = 0
+  if (/^mcd\d+-/i.test(record.id)) {
+    value += 8
+  }
+  if (!isFrenchMcDonaldsPromo(record)) {
+    value += 4
+  }
+  if (getTcgcsvPromoImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
+    value += 16
+  }
+  if (isPokemontcgImageUrl(record.imageLarge)) {
+    value += 2
+  }
+  return value
+}
+
 function preferMcDonaldsPromoRecord(
   existing: TcgCardRecord,
   candidate: TcgCardRecord
 ): TcgCardRecord {
-  const score = (record: TcgCardRecord): number => {
-    let value = 0
-    if (/^mcd\d+-/i.test(record.id)) {
-      value += 8
-    }
-    if (!isFrenchMcDonaldsPromo(record)) {
-      value += 4
-    }
-    if (getTcgcsvPromoImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
-      value += 16
-    }
-    if (isPokemontcgImageUrl(record.imageLarge)) {
-      value += 2
-    }
-    return value
-  }
-  return score(candidate) > score(existing) ? candidate : existing
+  return scoreMcDonaldsPromoRecord(candidate) > scoreMcDonaldsPromoRecord(existing)
+    ? candidate
+    : existing
 }
 
 /** One English McDonald's row per species per year (drop 2018sm-fr when mcd18 exists). */
@@ -121,24 +128,25 @@ export function collapseMcDonaldsRegionalDuplicates(
   return [...rest, ...byKey.values()]
 }
 
-function preferTrainerKitRecord(existing: TcgCardRecord, candidate: TcgCardRecord): TcgCardRecord {
-  const score = (record: TcgCardRecord): number => {
-    let value = 0
-    if (isTrainerKitCardId(record.id)) {
-      value += 8
-    }
-    if (getTrainerKitTcgplayerImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
-      value += 16
-    }
-    if (getTcgcsvPromoImage(record.id)) {
-      value += 4
-    }
-    if (isPokemontcgImageUrl(record.imageLarge)) {
-      value += 2
-    }
-    return value
+function scoreTrainerKitRecord(record: TcgCardRecord): number {
+  let value = 0
+  if (isTrainerKitCardId(record.id)) {
+    value += 8
   }
-  return score(candidate) > score(existing) ? candidate : existing
+  if (getTrainerKitTcgplayerImage(record.id) || isTcgplayerCdnImageUrl(record.imageLarge)) {
+    value += 16
+  }
+  if (getTcgcsvPromoImage(record.id)) {
+    value += 4
+  }
+  if (isPokemontcgImageUrl(record.imageLarge)) {
+    value += 2
+  }
+  return value
+}
+
+function preferTrainerKitRecord(existing: TcgCardRecord, candidate: TcgCardRecord): TcgCardRecord {
+  return scoreTrainerKitRecord(candidate) > scoreTrainerKitRecord(existing) ? candidate : existing
 }
 
 /** One row per trainer-kit slot (e.g. `tk-ex-m-4` + `tk2b-4` on the same species page). */

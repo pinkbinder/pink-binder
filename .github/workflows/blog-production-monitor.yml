@@ -6,9 +6,9 @@ on:
   workflow_dispatch:
     inputs:
       base_url:
-        description: Public blog or preview URL to audit
+        description: Worker origin or preview URL to audit
         required: false
-        default: https://pinkbinder.blog
+        default: https://blog.pink-binder.workers.dev
 
 permissions:
   contents: read
@@ -20,7 +20,10 @@ concurrency:
 jobs:
   health-check:
     if: vars.CI_BILLING_PAUSED != 'true'
-    runs-on: ubuntu-latest
+    # Cloudflare's production zone rejects the default ubuntu-latest runner
+    # network, while the slimmer runner pool is accepted. Keep this monitor on
+    # the same runner class used by the repository's unit and release jobs.
+    runs-on: ubuntu-slim
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -31,5 +34,18 @@ jobs:
 
       - name: Check production routes, feeds, and static galleries
         env:
-          BLOG_AUDIT_BASE_URL: ${{ inputs.base_url || 'https://pinkbinder.blog' }}
-        run: node apps/blog/scripts/audit-blog-routes.mjs --base-url "$BLOG_AUDIT_BASE_URL" --max-posts 3
+          BLOG_AUDIT_BASE_URL: ${{ inputs.base_url || 'https://blog.pink-binder.workers.dev' }}
+          BLOG_PUBLIC_BASE_URL: https://pinkbinder.blog
+        run: |
+          set -euo pipefail
+          # The Worker origin validates the deployed application, including
+          # homepage content. Cloudflare can return runner-specific 403s for
+          # the custom-domain edge, so keep those as explicit warnings in the
+          # secondary public audit instead of hiding them in the origin run.
+          node apps/blog/scripts/audit-blog-routes.mjs \
+            --base-url "$BLOG_AUDIT_BASE_URL" \
+            --max-posts 3
+          node apps/blog/scripts/audit-blog-routes.mjs \
+            --base-url "$BLOG_PUBLIC_BASE_URL" \
+            --max-posts 3 \
+            --allow-status 403

@@ -1,5 +1,53 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "categories": { "correctness": "error" },
-  "ignorePatterns": ["node_modules/**"]
+  "categories": {
+    "correctness": "error",
+    "suspicious": "off"
+  },
+  "rules": {
+    // Carried over from @typescript-eslint/recommended.
+    "typescript/no-explicit-any": "error",
+    "typescript/no-require-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["apps/**", "packages/ui/**"],
+      "plugins": ["react"],
+      "rules": {
+        // Carried over from the ESLint setup: URL/carousel sync-in-effect patterns are intentional.
+        "react/set-state-in-effect": "off"
+      }
+    },
+    {
+      "files": ["apps/**"],
+      "plugins": ["nextjs"]
+    },
+    {
+      "files": ["**/*.test.{ts,tsx}"],
+      "rules": {
+        "typescript/no-explicit-any": "off"
+      }
+    },
+    {
+      "files": ["packages/ui/test/**", "packages/ui/**/*.test.{ts,tsx}"],
+      "rules": {
+        "typescript/no-explicit-any": "off",
+        "no-unused-vars": "off"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    "node_modules/**",
+    "**/.next/**",
+    "**/.open-next/**",
+    "**/.wrangler/**",
+    "**/dist/**",
+    "build/**",
+    "coverage/**",
+    ".turbo/**",
+    "packages/data/cache/**",
+    "next-env.d.ts",
+    ".github/.code-foundry/**",
+    ".github/actions/**"
+  ]
 }

@@ -10,6 +10,7 @@
   "scripts": {
     "build": "node scripts/with-env.mjs turbo run build",
     "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
+    "benchmark:routes": "node scripts/benchmark-routes.mjs",
     "dev": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
@@ -30,15 +31,17 @@
   },
   "dependencies": {
     "nanoid": "3.3.18",
-    "next": "^16.3.3",
-    "sharp": "^0.35.3"
+    "next": "^16.3.4",
+    "sharp": "0.35.3"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^20.12.0",
+    "@happy-dom/global-registrator": "^20.14.0",
     "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "14.6.1",
-    "@types/bun": "^1.4.0",
-    "lint-staged": "^17.4.1",
+    "@types/bun": "^1.4.1",
+    "chrome-launcher": "1.2.1",
+    "lighthouse": "13.4.1",
+    "lint-staged": "^17.5.0",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
     "turbo": "2.10.8"
