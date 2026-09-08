@@ -1,6 +1,7 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { TCG_CARD_DATA_ATTRIBUTION, TCG_CARD_IMAGE_ATTRIBUTION } from '@repo/data/client'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { Button } from '../button'
@@ -29,11 +30,41 @@ export function PokemonTcgCardGallery({
   totalCount?: number
   source?: PokemonTcgCardGallerySource
 }) {
-  const [visibleCards, setVisibleCards] = useState(() => cards.slice(0, INITIAL_VISIBLE))
-  const [availableCount, setAvailableCount] = useState(totalCount)
-  const [isLoading, setIsLoading] = useState(false)
-  const [loadError, setLoadError] = useState(false)
-  const manifestCards = useRef<PokemonTcgCard[] | null>(null)
+  const [visibleCount, setVisibleCount] = useState(() => Math.min(cards.length, INITIAL_VISIBLE))
+  const galleryQuery = useQuery({
+    queryKey: ['card-gallery', source?.kind ?? null, source?.slug ?? null],
+    enabled: false,
+    queryFn: async ({ signal }) => {
+      if (!source) return cards
+      const response = await fetch(
+        `/api/card-gallery?kind=${encodeURIComponent(source.kind)}&slug=${encodeURIComponent(source.slug)}`,
+        { signal }
+      )
+      if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
+      const manifest = (await response.json()) as {
+        version?: unknown
+        kind?: unknown
+        slug?: unknown
+        cards?: unknown
+      }
+      if (
+        manifest.version !== 1 ||
+        manifest.slug !== source.slug ||
+        (source.kind !== 'expansion' && manifest.kind !== source.kind) ||
+        !Array.isArray(manifest.cards)
+      ) {
+        throw new Error('Invalid card gallery manifest')
+      }
+      return manifest.cards as PokemonTcgCard[]
+    },
+    staleTime: 24 * 60 * 60 * 1_000,
+    gcTime: 30 * 60 * 1_000,
+  })
+  const allCards = galleryQuery.data ?? cards
+  const visibleCards = allCards.slice(0, visibleCount)
+  const availableCount = galleryQuery.data?.length ?? totalCount
+  const isLoading = galleryQuery.isFetching
+  const loadError = galleryQuery.error
   const hiddenCount = Math.max(0, availableCount - visibleCards.length)
   const primarySource = TCG_CARD_DATA_ATTRIBUTION[0]!
   const backupSource = TCG_CARD_DATA_ATTRIBUTION[1]!
@@ -42,47 +73,9 @@ export function PokemonTcgCardGallery({
 
   async function loadMore() {
     if (!source || isLoading || hiddenCount === 0) return
-    setIsLoading(true)
-    setLoadError(false)
-
-    try {
-      if (!manifestCards.current) {
-        const response = await fetch(
-          `/api/card-gallery?kind=${encodeURIComponent(source.kind)}&slug=${encodeURIComponent(source.slug)}`
-        )
-        if (!response.ok) throw new Error(`Card gallery request failed (${response.status})`)
-        const manifest = (await response.json()) as {
-          version?: unknown
-          kind?: unknown
-          slug?: unknown
-          cards?: unknown
-        }
-        if (
-          manifest.version !== 1 ||
-          manifest.slug !== source.slug ||
-          (source.kind !== 'expansion' && manifest.kind !== source.kind) ||
-          !Array.isArray(manifest.cards)
-        ) {
-          throw new Error('Invalid card gallery manifest')
-        }
-        manifestCards.current = manifest.cards as PokemonTcgCard[]
-      }
-      const allCards = manifestCards.current
-      const page = {
-        cards: allCards.slice(visibleCards.length, visibleCards.length + LOAD_MORE_COUNT),
-        total: allCards.length,
-      }
-      setAvailableCount(page.total)
-      setVisibleCards((current) => {
-        const byId = new Map(current.map((card) => [card.id, card]))
-        for (const card of page.cards) byId.set(card.id, card)
-        return [...byId.values()]
-      })
-    } catch {
-      setLoadError(true)
-    } finally {
-      setIsLoading(false)
-    }
+    const manifestCards = galleryQuery.data ?? (await galleryQuery.refetch()).data
+    if (!manifestCards) return
+    setVisibleCount((current) => Math.min(current + LOAD_MORE_COUNT, manifestCards.length))
   }
 
   return (

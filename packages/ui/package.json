@@ -9,6 +9,9 @@
     ".": "./src/index.ts",
     "./server": "./src/server.ts",
     "./format-post-date": "./src/lib/format-post-date.ts",
+    "./blog-grid-query": "./src/lib/blog-grid-query.ts",
+    "./blog-query-state": "./src/lib/blog-query-state.ts",
+    "./blog-query-state/server": "./src/lib/blog-query-state-server.ts",
     "./globals.css": "./src/globals.css"
   },
   "scripts": {
@@ -30,10 +33,12 @@
     "@repo/config": "workspace:*",
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
+    "@tanstack/react-query": "^5.102.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",
     "lucide-react": "^1.28.0",
+    "nuqs": "^2.10.1",
     "tailwind-merge": "^3.6.0",
     "tw-animate-css": "^1.4.0"
   },
