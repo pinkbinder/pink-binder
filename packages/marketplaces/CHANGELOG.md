@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.1.1...marketplaces-v1.1.2) (2026-09-08)
+
+
+### Documentation
+
+* **m0:** establish baseline decision gates ([c754e0d](https://github.com/pinkbinder/pink-binder/commit/c754e0dac5024632fa1e97d069cabb20c1ad2ee4))
+
 ## [1.1.1](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.1.0...marketplaces-v1.1.1) (2026-09-07)
 
 

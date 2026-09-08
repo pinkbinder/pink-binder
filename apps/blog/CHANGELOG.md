@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.3](https://github.com/pinkbinder/pink-binder/compare/blog-v0.4.2...blog-v0.4.3) (2026-09-08)
+
+
+### Documentation
+
+* **m0:** establish baseline decision gates ([c754e0d](https://github.com/pinkbinder/pink-binder/commit/c754e0dac5024632fa1e97d069cabb20c1ad2ee4))
+
 ## [0.4.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.4.1...blog-v0.4.2) (2026-09-07)
 
 
