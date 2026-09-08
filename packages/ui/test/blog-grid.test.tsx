@@ -1,31 +1,16 @@
-import type { ReactNode } from 'react'
+import type { ReactElement, ReactNode } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import type { BlogGridFacets, EnrichedPostForGrid } from '@repo/data/client'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { NuqsTestingAdapter, type UrlUpdateEvent } from 'nuqs/adapters/testing'
 import { BlogGrid, BlogGridSkeleton } from '../src/components/blog/blog-grid'
 
 const navigation = {
   query: '',
-  push: mock(),
+  update: mock<(event: UrlUpdateEvent) => void>(),
 }
-
-mock.module('next/navigation', () => {
-  let cachedQuery = ''
-  let cachedParams = new URLSearchParams()
-
-  return {
-    usePathname: () => '/',
-    useRouter: () => ({ push: navigation.push }),
-    useSearchParams: () => {
-      if (cachedQuery !== navigation.query) {
-        cachedQuery = navigation.query
-        cachedParams = new URLSearchParams(cachedQuery)
-      }
-      return cachedParams
-    },
-  }
-})
 
 mock.module('next/link', () => ({
   default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
@@ -122,8 +107,12 @@ let intersectionCallback: IntersectionObserverCallback | undefined
 
 beforeEach(() => {
   navigation.query = ''
-  navigation.push.mockReset()
+  navigation.update.mockReset()
   intersectionCallback = undefined
+  globalThis.fetch = mock().mockResolvedValue({
+    ok: true,
+    json: async () => ({ posts: [pikachuPost], total: 1, nextOffset: 1 }),
+  }) as unknown as typeof fetch
 
   class IntersectionObserverMock implements IntersectionObserver {
     readonly root = null
@@ -145,10 +134,23 @@ beforeEach(() => {
   globalThis.IntersectionObserver = IntersectionObserverMock
 })
 
+function renderBlogGrid(ui: ReactElement, searchParams = navigation.query) {
+  const queryClient = new QueryClient({
+    defaultOptions: { queries: { retry: false, gcTime: Number.POSITIVE_INFINITY } },
+  })
+  return render(ui, {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <NuqsTestingAdapter searchParams={searchParams} onUrlUpdate={navigation.update} hasMemory>
+        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      </NuqsTestingAdapter>
+    ),
+  })
+}
+
 describe('BlogGrid', () => {
   it('renders post metadata and synchronizes interactive facet controls to the URL', async () => {
     const user = userEvent.setup()
-    render(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     expect(screen.getByText('Pikachu binder guide')).not.toBeNull()
     expect(screen.getByRole('link', { name: 'Pikachu binder guide' })?.getAttribute('href')).toBe(
@@ -156,15 +158,17 @@ describe('BlogGrid', () => {
     )
 
     await user.click(screen.getByRole('button', { name: /Electric/ }))
-    expect(navigation.push).toHaveBeenLastCalledWith('/?type=Electric', { scroll: false })
+    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('?type=Electric')
+    expect(navigation.update.mock.calls.at(-1)?.[0].options.history).toBe('push')
+    expect(navigation.update.mock.calls.at(-1)?.[0].options.shallow).toBe(true)
 
     await user.selectOptions(screen.getByLabelText('Filter by pokémon species'), 'pikachu')
-    expect(navigation.push).toHaveBeenLastCalledWith('/?type=Electric&pokemon=pikachu', {
-      scroll: false,
-    })
+    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe(
+      '?type=Electric&pokemon=pikachu'
+    )
 
     await user.click(await screen.findByRole('button', { name: 'Clear all' }))
-    expect(navigation.push).toHaveBeenLastCalledWith('/', { scroll: false })
+    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('')
   })
 
   it('loads and deduplicates the next page when the sentinel intersects', async () => {
@@ -174,7 +178,7 @@ describe('BlogGrid', () => {
     })
     globalThis.fetch = fetchMock as unknown as typeof fetch
 
-    render(<BlogGrid posts={[pikachuPost]} facets={facets} total={2} />)
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={2} />)
     await waitFor(() => expect(intersectionCallback).toBeTypeOf('function'))
 
     await act(async () => {
@@ -199,10 +203,46 @@ describe('BlogGrid', () => {
       status: 503,
     }) as unknown as typeof fetch
 
-    render(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     expect(await screen.findByRole('heading', { name: 'Posts could not load' })).not.toBeNull()
     expect(screen.getByText('Please try the catalog again.')).not.toBeNull()
+  })
+
+  it('hydrates a server-filtered URL without repeating its initial request', () => {
+    const fetchMock = mock()
+    globalThis.fetch = fetchMock as unknown as typeof fetch
+
+    renderBlogGrid(
+      <BlogGrid
+        posts={[pikachuPost]}
+        facets={facets}
+        total={1}
+        initialQuery={{ type: 'Electric' }}
+      />,
+      'type=Electric'
+    )
+
+    expect(screen.getByText('Pikachu binder guide')).not.toBeNull()
+    expect(
+      screen
+        .getAllByRole('button', { name: /Electric/ })
+        .some((button) => button.getAttribute('aria-pressed') === 'true')
+    ).toBe(true)
+    expect(fetchMock).not.toHaveBeenCalled()
+  })
+
+  it('rejects invalid URL facets and keeps the canonical server result', () => {
+    const fetchMock = mock()
+    globalThis.fetch = fetchMock as unknown as typeof fetch
+
+    renderBlogGrid(
+      <BlogGrid posts={[pikachuPost]} facets={facets} total={1} initialQuery={{}} />,
+      'type=Unknown'
+    )
+
+    expect(screen.getByText('Pikachu binder guide')).not.toBeNull()
+    expect(fetchMock).not.toHaveBeenCalled()
   })
 
   it('renders a stable accessible loading skeleton', () => {

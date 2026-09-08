@@ -1,6 +1,6 @@
 {
   "name": "@repo/blog",
-  "version": "0.4.3",
+  "version": "0.4.2",
   "private": true,
   "scripts": {
     "publish:gallery-manifests": "bun scripts/publish-gallery-manifests.ts",
@@ -29,8 +29,10 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
+    "@tanstack/react-query": "^5.102.8",
     "next": "16.3.3",
     "next-mdx-remote": "^6.0.0",
+    "nuqs": "^2.10.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8"
   },

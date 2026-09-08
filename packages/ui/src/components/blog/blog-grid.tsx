@@ -2,11 +2,13 @@
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useQueryStates } from 'nuqs'
 import {
   CLICKABLE_BADGE_CLASS,
   MYTHICAL_PLATINUM_TONE_CLASS,
   type BlogGridFacets,
+  type BlogGridQuery,
   type EnrichedPostForGrid,
   type TagCatalogOption,
   getCollectionBadgeIcon,
@@ -39,12 +41,24 @@ import { BlogFilterGroupLabel, BlogFilterSectionLabel } from './blog-filter-labe
 import { Badge } from '../badge'
 import { Button } from '../button'
 import { SearchableSelect, type SearchableSelectOption } from '../searchable-select'
+import {
+  BLOG_GRID_GC_TIME_MS,
+  BLOG_GRID_STALE_TIME_MS,
+  blogGridInitialData,
+  blogGridQueryKey,
+  fetchBlogGridPage,
+} from '../../lib/blog-grid-query'
+import {
+  blogFilterParsers,
+  blogGridQueryString,
+  canonicalBlogFilterState,
+  resolveBlogGridQuery,
+} from '../../lib/blog-query-state'
 
 export type { EnrichedPostForGrid }
 
 /** Unfiltered index: first paint shows this many cards; more mount on scroll. */
 const INITIAL_VISIBLE_POSTS = 9
-const VISIBLE_POST_BATCH = 24
 const LOAD_MORE_ROOT_MARGIN = '480px'
 
 function isFilterValueActive(
@@ -120,54 +134,28 @@ interface BlogGridProps {
   posts: EnrichedPostForGrid[]
   facets: BlogGridFacets
   total: number
+  initialQuery?: BlogGridQuery
   defaultPostThumbnail?: string
 }
-
-interface BlogGridPageResponse {
-  posts: EnrichedPostForGrid[]
-  total: number
-  nextOffset: number
-}
-
-const FACET_QUERY_KEYS = [
-  'tag',
-  'filter',
-  'type',
-  'generation',
-  'list',
-  'illustrator',
-  'expansion',
-  'pokemon',
-  'themes',
-  'collection',
-] as const
 
 export function BlogGrid({
   posts,
   facets,
   total,
+  initialQuery = {},
   defaultPostThumbnail = '/images/logo.png',
 }: BlogGridProps) {
-  const router = useRouter()
-  const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const [groupedFilters, setGroupedFilters] = useState<GroupedFilters>(EMPTY_GROUPED_FILTERS)
-  const [directFilter, setDirectFilter] = useState<string | null>(null)
-  const [tagFilter, setTagFilter] = useState<string | null>(null)
+  const [urlFilters, setUrlFilters] = useQueryStates(blogFilterParsers, {
+    history: 'push',
+    shallow: true,
+    scroll: false,
+    clearOnDefault: true,
+  })
   const [filtersAccordionValue, setFiltersAccordionValue] = useState<string>('')
-  const [loadedPosts, setLoadedPosts] = useState(posts)
-  const [resultTotal, setResultTotal] = useState(total)
-  const [isLoadingPosts, setIsLoadingPosts] = useState(false)
-  const [loadError, setLoadError] = useState<string | null>(null)
   const [liveMessage, setLiveMessage] = useState('')
-  const [filtersReady, setFiltersReady] = useState(
-    () => !FACET_QUERY_KEYS.some((key) => searchParams.has(key))
-  )
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
   const pendingKeyboardFocusIndex = useRef<number | null>(null)
-  const firstGridQuery = useRef(true)
-  const activeGridRequest = useRef<AbortController | null>(null)
 
   const typeFilters = facets.types
   const generationFilters = facets.generations
@@ -178,27 +166,6 @@ export function BlogGrid({
   const roundupListFilters = facets.lists
   const tagCatalogOptions = facets.tags
 
-  const allGroupedFilterValues = useMemo(
-    () =>
-      new Set<string>([
-        ...typeFilters,
-        ...generationFilters,
-        ...illustratorFilters,
-        ...themeFilters,
-        ...expansionFilters.map((entry) => entry.slug),
-        ...pokemonFilters.map((entry) => entry.slug),
-        ...roundupListFilters,
-      ]),
-    [
-      typeFilters,
-      generationFilters,
-      illustratorFilters,
-      themeFilters,
-      expansionFilters,
-      pokemonFilters,
-      roundupListFilters,
-    ]
-  )
   const typeFilterSet = useMemo(() => new Set(typeFilters), [typeFilters])
   const generationFilterSet = useMemo(() => new Set(generationFilters), [generationFilters])
   const illustratorFilterSet = useMemo(() => new Set(illustratorFilters), [illustratorFilters])
@@ -250,230 +217,79 @@ export function BlogGrid({
     [typeFilters]
   )
 
-  useEffect(() => {
-    let nextType = searchParams.get('type')
-    let nextGeneration = searchParams.get('generation')
-    let nextList = searchParams.get('list')
-    let nextIllustrator = searchParams.get('illustrator')
-    let nextExpansion = searchParams.get('expansion')
-    let nextPokemon = searchParams.get('pokemon')
-    let nextThemes = searchParams.get('themes') ?? searchParams.get('collection')
-    let nextTag = searchParams.get('tag')
-    let nextDirect = searchParams.get('filter')
-
-    if (nextDirect && pokemonFilterSet.has(nextDirect)) {
-      nextPokemon = nextDirect
-      nextDirect = null
-    } else if (nextDirect && allGroupedFilterValues.has(nextDirect)) {
-      if (typeFilterSet.has(nextDirect)) {
-        nextType = nextDirect
-      } else if (generationFilterSet.has(nextDirect)) {
-        nextGeneration = nextDirect
-      } else if (roundupListFilterSet.has(nextDirect)) {
-        nextList = nextDirect
-      } else if (illustratorFilterSet.has(nextDirect)) {
-        nextIllustrator = nextDirect
-      } else if (themeFilterSet.has(nextDirect)) {
-        nextThemes = nextDirect
-      } else if (expansionFilterSet.has(nextDirect)) {
-        nextExpansion = nextDirect
-      }
-      nextDirect = null
+  const resolvedQuery = useMemo(
+    () => resolveBlogGridQuery(urlFilters, facets),
+    [facets, urlFilters]
+  )
+  const groupedFilters = useMemo<GroupedFilters>(
+    () => ({
+      type: resolvedQuery.type ?? null,
+      generation: resolvedQuery.generation ?? null,
+      list: resolvedQuery.list ?? null,
+      illustrator: resolvedQuery.illustrator ?? null,
+      expansion: resolvedQuery.expansion ?? null,
+      pokemon: resolvedQuery.pokemon ?? null,
+      themes: resolvedQuery.themes ?? null,
+    }),
+    [resolvedQuery]
+  )
+  const directFilter = resolvedQuery.filter ?? null
+  const tagFilter = resolvedQuery.tag ?? null
+  const initialQueryString = blogGridQueryString(initialQuery)
+  const gridQuery = blogGridQueryString(resolvedQuery)
+  const gridResult = useInfiniteQuery({
+    queryKey: blogGridQueryKey(resolvedQuery),
+    queryFn: ({ pageParam, signal }) => fetchBlogGridPage(resolvedQuery, pageParam, signal),
+    initialPageParam: 0,
+    initialData:
+      gridQuery === initialQueryString ? () => blogGridInitialData(posts, total) : undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.nextOffset < lastPage.total ? lastPage.nextOffset : undefined,
+    staleTime: BLOG_GRID_STALE_TIME_MS,
+    gcTime: BLOG_GRID_GC_TIME_MS,
+  })
+  const postsToRender = useMemo(() => {
+    const bySlug = new Map<string, EnrichedPostForGrid>()
+    for (const page of gridResult.data?.pages ?? []) {
+      for (const post of page.posts) bySlug.set(post.slug, post)
     }
-
-    if (
-      !nextTag &&
-      nextDirect &&
-      tagCatalogSet.has(nextDirect.toLowerCase()) &&
-      !allGroupedFilterValues.has(nextDirect)
-    ) {
-      nextTag = nextDirect.toLowerCase()
-      nextDirect = null
-    }
-
-    const nextGrouped: GroupedFilters = {
-      type: nextType && typeFilterSet.has(nextType) ? nextType : null,
-      generation: nextGeneration && generationFilterSet.has(nextGeneration) ? nextGeneration : null,
-      list: nextList && roundupListFilterSet.has(nextList) ? nextList : null,
-      illustrator:
-        nextIllustrator && illustratorFilterSet.has(nextIllustrator) ? nextIllustrator : null,
-      expansion: nextExpansion && expansionFilterSet.has(nextExpansion) ? nextExpansion : null,
-      pokemon: nextPokemon && pokemonFilterSet.has(nextPokemon) ? nextPokemon : null,
-      themes: nextThemes && themeFilterSet.has(nextThemes) ? nextThemes : null,
-    }
-
-    let nextTagNormalized =
-      nextTag && tagCatalogSet.has(nextTag.toLowerCase()) ? nextTag.toLowerCase() : null
-    if (nextTagNormalized) {
-      const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTagNormalized)
-      const promoted = resolveCatalogTagToFacet(
-        nextTagNormalized,
-        catalogEntry?.label ?? nextTagNormalized,
-        catalogFacetContext
-      )
-      if (promoted) {
-        const facetValid = (() => {
-          switch (promoted.group) {
-            case 'type':
-              return typeFilterSet.has(promoted.facetValue)
-            case 'generation':
-              return generationFilterSet.has(promoted.facetValue)
-            case 'list':
-              return roundupListFilterSet.has(promoted.facetValue)
-            case 'illustrator':
-              return illustratorFilterSet.has(promoted.facetValue)
-            case 'expansion':
-              return expansionFilterSet.has(promoted.facetValue)
-            case 'pokemon':
-              return pokemonFilterSet.has(promoted.facetValue)
-            case 'themes':
-              return themeFilterSet.has(promoted.facetValue)
-            default:
-              return false
-          }
-        })()
-        if (facetValid) {
-          nextGrouped[promoted.group] = promoted.facetValue
-          nextTagNormalized = null
-        }
-      }
-    }
-
-    setGroupedFilters(nextGrouped)
-    setDirectFilter(nextDirect)
-    setTagFilter(nextTagNormalized)
-    setFiltersReady(true)
-  }, [
-    searchParams,
-    allGroupedFilterValues,
-    typeFilterSet,
-    generationFilterSet,
-    roundupListFilterSet,
-    illustratorFilterSet,
-    themeFilterSet,
-    expansionFilterSet,
-    pokemonFilterSet,
-    tagCatalogSet,
-    tagCatalogOptions,
-    catalogFacetContext,
-  ])
-
-  const gridQuery = useMemo(() => {
-    const params = new URLSearchParams()
-    if (groupedFilters.type) params.set('type', groupedFilters.type)
-    if (groupedFilters.generation) params.set('generation', groupedFilters.generation)
-    if (groupedFilters.list) params.set('list', groupedFilters.list)
-    if (groupedFilters.illustrator) params.set('illustrator', groupedFilters.illustrator)
-    if (groupedFilters.expansion) params.set('expansion', groupedFilters.expansion)
-    if (groupedFilters.pokemon) params.set('pokemon', groupedFilters.pokemon)
-    if (groupedFilters.themes) params.set('themes', groupedFilters.themes)
-    if (tagFilter) params.set('tag', tagFilter)
-    if (directFilter) params.set('filter', directFilter)
-    return params.toString()
-  }, [groupedFilters, directFilter, tagFilter])
+    return [...bySlug.values()]
+  }, [gridResult.data])
+  const resultTotal = gridResult.data?.pages.at(-1)?.total ?? 0
+  const isLoadingPosts = gridResult.isPending || gridResult.isFetchingNextPage
+  const loadError = gridResult.error
+  const hasMoreToRender = gridResult.hasNextPage ?? postsToRender.length < resultTotal
 
   useEffect(() => {
-    if (!filtersReady) return
-
-    if (firstGridQuery.current) {
-      firstGridQuery.current = false
-      if (!gridQuery) return
+    if (gridResult.isPending) {
+      setLiveMessage('Loading collector guides.')
+    } else if (gridResult.error) {
+      setLiveMessage('Collector guides could not be loaded. Use Retry to try again.')
+    } else if (gridResult.data) {
+      setLiveMessage(`${resultTotal} collector guides found.`)
     }
-
-    activeGridRequest.current?.abort()
-    const controller = new AbortController()
-    activeGridRequest.current = controller
-    const params = new URLSearchParams(gridQuery)
-    params.set('offset', '0')
-    params.set('limit', String(INITIAL_VISIBLE_POSTS))
-
-    setLoadedPosts([])
-    setResultTotal(0)
-    setLoadError(null)
-    setIsLoadingPosts(true)
-    setLiveMessage('Loading collector guides.')
-
-    void fetch(`/api/posts-grid?${params.toString()}`, { signal: controller.signal })
-      .then(async (response) => {
-        if (!response.ok) throw new Error(`Blog grid request failed (${response.status})`)
-        return (await response.json()) as BlogGridPageResponse
-      })
-      .then((page) => {
-        if (controller.signal.aborted) return
-        setLoadedPosts(page.posts)
-        setResultTotal(page.total)
-        setLiveMessage(`${page.total} collector guides found.`)
-      })
-      .catch((error: unknown) => {
-        if (controller.signal.aborted) return
-        setLoadError(error instanceof Error ? error.message : 'Unable to load posts')
-        setLiveMessage('Collector guides could not be loaded. Use Retry to try again.')
-      })
-      .finally(() => {
-        if (!controller.signal.aborted) setIsLoadingPosts(false)
-      })
-
-    return () => controller.abort()
-  }, [filtersReady, gridQuery])
-
-  const postsToRender = loadedPosts
-  const hasMoreToRender = postsToRender.length < resultTotal
+  }, [gridResult.data, gridResult.error, gridResult.isPending, resultTotal])
 
   const showMore = useCallback(
     async (focusNewResults = false) => {
       if (isLoadingPosts || !hasMoreToRender) return
-
-      activeGridRequest.current?.abort()
-      const controller = new AbortController()
-      activeGridRequest.current = controller
-      const params = new URLSearchParams(gridQuery)
-      params.set('offset', String(postsToRender.length))
-      params.set('limit', String(VISIBLE_POST_BATCH))
-      setLoadError(null)
-      setIsLoadingPosts(true)
-      setLiveMessage('Loading more collector guides.')
       if (focusNewResults) pendingKeyboardFocusIndex.current = postsToRender.length
-
-      try {
-        const response = await fetch(`/api/posts-grid?${params.toString()}`, {
-          signal: controller.signal,
-        })
-        if (!response.ok) throw new Error(`Blog grid request failed (${response.status})`)
-        const page = (await response.json()) as BlogGridPageResponse
-        if (controller.signal.aborted) return
-        setLoadedPosts((current) => {
-          const bySlug = new Map(current.map((post) => [post.slug, post]))
-          for (const post of page.posts) bySlug.set(post.slug, post)
-          return [...bySlug.values()]
-        })
-        setResultTotal(page.total)
-        setLiveMessage(
-          `Loaded ${page.posts.length} more collector guides. ${page.total} guides available.`
-        )
-      } catch (error: unknown) {
-        if (!controller.signal.aborted) {
-          setLoadError(error instanceof Error ? error.message : 'Unable to load more posts')
-          pendingKeyboardFocusIndex.current = null
-          setLiveMessage(
-            'More collector guides could not be loaded. Use Try loading more to retry.'
-          )
-        }
-      } finally {
-        if (!controller.signal.aborted) setIsLoadingPosts(false)
-      }
+      setLiveMessage('Loading more collector guides.')
+      const result = await gridResult.fetchNextPage()
+      if (result.isError) pendingKeyboardFocusIndex.current = null
     },
-    [gridQuery, hasMoreToRender, isLoadingPosts, postsToRender.length]
+    [gridResult, hasMoreToRender, isLoadingPosts, postsToRender.length]
   )
 
   useEffect(() => {
     const index = pendingKeyboardFocusIndex.current
-    if (index === null || loadedPosts.length <= index) return
+    if (index === null || postsToRender.length <= index) return
     const link = gridRef.current?.querySelector<HTMLElement>(
       `[data-blog-card-index="${index}"] a[href]`
     )
     pendingKeyboardFocusIndex.current = null
     link?.focus()
-  }, [loadedPosts.length])
+  }, [postsToRender.length])
 
   useEffect(() => {
     if (!hasMoreToRender) {
@@ -503,56 +319,13 @@ export function BlogGrid({
     nextDirectFilter: string | null,
     nextTagFilter: string | null
   ) {
-    const params = new URLSearchParams(searchParams.toString())
-    if (nextGroupedFilters.type) {
-      params.set('type', nextGroupedFilters.type)
-    } else {
-      params.delete('type')
-    }
-    if (nextGroupedFilters.generation) {
-      params.set('generation', nextGroupedFilters.generation)
-    } else {
-      params.delete('generation')
-    }
-    if (nextGroupedFilters.list) {
-      params.set('list', nextGroupedFilters.list)
-    } else {
-      params.delete('list')
-    }
-    if (nextGroupedFilters.illustrator) {
-      params.set('illustrator', nextGroupedFilters.illustrator)
-    } else {
-      params.delete('illustrator')
-    }
-    if (nextGroupedFilters.expansion) {
-      params.set('expansion', nextGroupedFilters.expansion)
-    } else {
-      params.delete('expansion')
-    }
-    if (nextGroupedFilters.pokemon) {
-      params.set('pokemon', nextGroupedFilters.pokemon)
-    } else {
-      params.delete('pokemon')
-    }
-    if (nextGroupedFilters.themes) {
-      params.set('themes', nextGroupedFilters.themes)
-    } else {
-      params.delete('themes')
-    }
-    params.delete('collection')
-    if (nextTagFilter) {
-      params.set('tag', nextTagFilter)
-    } else {
-      params.delete('tag')
-    }
-    if (nextDirectFilter) {
-      params.set('filter', nextDirectFilter)
-    } else {
-      params.delete('filter')
-    }
-
-    const query = params.toString()
-    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false })
+    void setUrlFilters(
+      canonicalBlogFilterState({
+        ...nextGroupedFilters,
+        tag: nextTagFilter,
+        filter: nextDirectFilter,
+      })
+    )
   }
 
   function clearTagIfMappedToGroup(
@@ -580,16 +353,11 @@ export function BlogGrid({
       [group]: nextValue,
     }
     const nextTag = clearTagIfMappedToGroup(group, tagFilter)
-    setGroupedFilters(nextGroupedFilters)
-    setDirectFilter(null)
-    setTagFilter(nextTag)
     pushFilterParams(nextGroupedFilters, null, nextTag)
   }
 
   function applyTagFilter(nextTag: string | null) {
     if (!nextTag) {
-      setTagFilter(null)
-      setDirectFilter(null)
       pushFilterParams(groupedFilters, null, null)
       return
     }
@@ -607,8 +375,6 @@ export function BlogGrid({
       return
     }
 
-    setTagFilter(nextTag)
-    setDirectFilter(null)
     pushFilterParams(groupedFilters, null, nextTag)
   }
 
@@ -646,14 +412,10 @@ export function BlogGrid({
   }
 
   function applyDirectFilter(nextFilter: string | null) {
-    setDirectFilter(nextFilter)
     pushFilterParams(groupedFilters, nextFilter, tagFilter)
   }
 
   function clearAllFilters() {
-    setGroupedFilters(EMPTY_GROUPED_FILTERS)
-    setDirectFilter(null)
-    setTagFilter(null)
     pushFilterParams(EMPTY_GROUPED_FILTERS, null, null)
   }
 
@@ -1561,7 +1323,7 @@ export function BlogGrid({
             </div>
           ) : null}
         </>
-      ) : isLoadingPosts || !filtersReady ? (
+      ) : isLoadingPosts ? (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3" aria-busy="true">
           {Array.from({ length: INITIAL_VISIBLE_POSTS }, (_, index) => (
             <div key={index} className="bg-muted h-80 animate-pulse rounded-3xl" aria-hidden />
@@ -1571,7 +1333,7 @@ export function BlogGrid({
         <div className="bg-card text-card-foreground rounded-3xl border px-6 py-10 text-center shadow-xs">
           <h2 className="font-title text-2xl font-semibold">Posts could not load</h2>
           <p className="text-muted-foreground mt-3">Please try the catalog again.</p>
-          <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
+          <Button variant="outline" onClick={() => void gridResult.refetch()} className="mt-4">
             Retry
           </Button>
         </div>

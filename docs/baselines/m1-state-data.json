@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "date": "2026-09-08",
+  "milestone": "M1 — State & Data Layer",
+  "owners": {
+    "localPresentation": "react",
+    "sharedClient": "none",
+    "serverState": "tanstack-query",
+    "shareableFilters": "nuqs",
+    "pagination": "tanstack-query"
+  },
+  "apps": {
+    "admin": { "migration": "none", "reason": "static server fixture" },
+    "blog": { "migration": "tanstack-query-and-nuqs", "providerCount": 1 },
+    "landing": { "migration": "none", "reason": "server action and component-local UI" },
+    "store": { "migration": "none", "reason": "static server fixture" }
+  },
+  "queries": {
+    "blogGrid": { "staleTimeMs": 300000, "gcTimeMs": 1800000, "retry": 2 },
+    "cardGallery": { "staleTimeMs": 86400000, "gcTimeMs": 1800000, "retry": 2 }
+  },
+  "url": {
+    "route": "/",
+    "app": "blog",
+    "history": "push",
+    "shallow": true,
+    "scroll": false,
+    "maxValueLength": 120,
+    "fields": [
+      "tag",
+      "filter",
+      "type",
+      "generation",
+      "list",
+      "illustrator",
+      "expansion",
+      "pokemon",
+      "themes"
+    ],
+    "legacyReadFields": ["collection"]
+  },
+  "zustand": {
+    "adopted": false,
+    "reevaluateWhen": "multiple independent consumers share a write lifecycle"
+  },
+  "measurement": {
+    "controlRevision": "79c538849",
+    "runsPerProfile": 3,
+    "blogIndex": {
+      "javascriptBytes": { "control": 213688, "m1": 234295, "deltaPercent": 9.64 },
+      "mobile": {
+        "lcpMs": { "control": 2259.6885, "m1": 2109.07, "deltaPercent": -6.67 },
+        "transferBytes": { "control": 740626, "m1": 770590, "deltaPercent": 4.05 },
+        "requests": { "control": 26, "m1": 28 }
+      },
+      "desktop": {
+        "lcpMs": { "control": 586.7936, "m1": 527.1139, "deltaPercent": -10.17 },
+        "transferBytes": { "control": 1308701, "m1": 1336718, "deltaPercent": 2.14 },
+        "requests": { "control": 42, "m1": 44 }
+      }
+    }
+  }
+}
