@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.5.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.4.2...blog-v0.5.0) (2026-09-08)
+
+
+### Features
+
+* **blog:** establish M1 state and data ownership ([735cfea](https://github.com/pinkbinder/pink-binder/commit/735cfea36ccf91f43c11b2716fa5b849f9505a2e))
+
+
+### Documentation
+
+* **m0:** establish baseline decision gates ([c754e0d](https://github.com/pinkbinder/pink-binder/commit/c754e0dac5024632fa1e97d069cabb20c1ad2ee4))
+
+
+### Maintenance
+
+* release main ([2df30ea](https://github.com/pinkbinder/pink-binder/commit/2df30eab165b67318bcc534f8f324571ec0f0cda))
+
 ## [0.4.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.4.1...blog-v0.4.2) (2026-09-07)
 
 

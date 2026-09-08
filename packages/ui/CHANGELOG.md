@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.0.3...ui-v1.1.0) (2026-09-08)
+
+
+### Features
+
+* **blog:** establish M1 state and data ownership ([735cfea](https://github.com/pinkbinder/pink-binder/commit/735cfea36ccf91f43c11b2716fa5b849f9505a2e))
+
 ## [1.0.3](https://github.com/pinkbinder/pink-binder/compare/ui-v1.0.2...ui-v1.0.3) (2026-09-07)
 
 
