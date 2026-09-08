@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.3.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.2.2...pink-binder-v1.3.0) (2026-09-08)
+
+
+### Features
+
+* **blog:** establish M1 state and data ownership ([735cfea](https://github.com/pinkbinder/pink-binder/commit/735cfea36ccf91f43c11b2716fa5b849f9505a2e))
+
+
+### Bug Fixes
+
+* **ci:** pin generated callers to the adopted v1.4.1 runtime ([#236](https://github.com/pinkbinder/pink-binder/issues/236)) ([991306f](https://github.com/pinkbinder/pink-binder/commit/991306f6bda32d57fd3398ce3f446f7e88617731))
+
+
+### Documentation
+
+* **m0:** establish baseline decision gates ([c754e0d](https://github.com/pinkbinder/pink-binder/commit/c754e0dac5024632fa1e97d069cabb20c1ad2ee4))
+
+
+### Maintenance
+
+* **code-foundry:** upgrade runtime to v1.4.1 ([#206](https://github.com/pinkbinder/pink-binder/issues/206)) ([c448f67](https://github.com/pinkbinder/pink-binder/commit/c448f6777ad25e3f76f85147f0ec6b5a30703e44))
+* release main ([2df30ea](https://github.com/pinkbinder/pink-binder/commit/2df30eab165b67318bcc534f8f324571ec0f0cda))
+* **release:** drop stale packages/eslint-config manifest entry ([#207](https://github.com/pinkbinder/pink-binder/issues/207)) ([a11779c](https://github.com/pinkbinder/pink-binder/commit/a11779c3ae4e901bb1fe2d6dd1a406fea538fadc))
+
 ## [1.2.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.2.1...pink-binder-v1.2.2) (2026-09-07)
 
 
