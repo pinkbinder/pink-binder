@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.5.0...blog-v0.5.1) (2026-09-08)
+
+
+### Maintenance
+
+* **ci:** upgrade Code Foundry to v1.9.11 ([#252](https://github.com/pinkbinder/pink-binder/issues/252)) ([0f096e0](https://github.com/pinkbinder/pink-binder/commit/0f096e04bea89e6208822d49e2f1f92861d3d54c))
+
 ## [0.5.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.4.2...blog-v0.5.0) (2026-09-08)
 
 

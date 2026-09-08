@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.3.0...pink-binder-v1.3.1) (2026-09-08)
+
+
+### Bug Fixes
+
+* **ci:** restore direct-to-main workflow ([#248](https://github.com/pinkbinder/pink-binder/issues/248)) ([3695122](https://github.com/pinkbinder/pink-binder/commit/3695122f30dca7138c0cdf58e4ff31bd8487ce64))
+
+
+### Maintenance
+
+* **ci:** upgrade Code Foundry to v1.9.11 ([#252](https://github.com/pinkbinder/pink-binder/issues/252)) ([0f096e0](https://github.com/pinkbinder/pink-binder/commit/0f096e04bea89e6208822d49e2f1f92861d3d54c))
+
 ## [1.3.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.2.2...pink-binder-v1.3.0) (2026-09-08)
 
 
