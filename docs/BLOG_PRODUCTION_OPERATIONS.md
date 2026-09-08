@@ -27,13 +27,22 @@ Common remediation:
 
 ## Production monitoring
 
-The `Blog production monitor` GitHub Actions workflow runs every six hours and checks:
+The `Blog production monitor` GitHub Actions workflow runs every six hours and checks the deployed Worker origin plus the public custom-domain edge:
 
 - homepage, robots, sitemap, and grid API;
 - all five Pinterest/RSS feeds;
 - a first, middle, and long-tail sitemap article;
 - species, illustrator, and expansion R2 gallery APIs;
 - canonical metadata and structured data.
+
+The scheduled job uses `https://blog.pink-binder.workers.dev` as its authoritative
+Worker-origin target, so the homepage and all application routes are tested even
+when Cloudflare returns a runner-specific `403` for `https://pinkbinder.blog/`.
+It then audits the public custom domain's sitemap, feeds, sampled posts, APIs,
+and galleries separately. A runner-specific public-edge `403` is reported as a
+warning because the Worker-origin audit already validates that route's content;
+other HTTP failures remain fatal. A manual run can provide a preview Worker URL
+through the `base_url` input.
 
 GitHub emails repository notification subscribers when the scheduled workflow fails. The job summary contains the failing URL. To test a Cloudflare preview, open **Actions → Blog production monitor → Run workflow** and provide its base URL. Locally, run:
 

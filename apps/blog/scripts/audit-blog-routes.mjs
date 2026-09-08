@@ -12,8 +12,21 @@ const baseUrl = new URL(
 )
 const maxPosts = Math.max(0, Number.parseInt(argument('--max-posts', '0'), 10) || 0)
 const concurrency = Math.max(1, Number.parseInt(argument('--concurrency', '16'), 10) || 16)
+const skipHomepage = args.includes('--skip-homepage')
+const allowedStatusCodes = new Set(
+  argument('--allow-status', '')
+    .split(',')
+    .map((status) => Number.parseInt(status.trim(), 10))
+    .filter((status) => Number.isInteger(status))
+)
 const failures = []
 const checks = []
+const warnings = []
+const REQUEST_HEADERS = {
+  Accept: '*/*',
+  'User-Agent':
+    'Mozilla/5.0 (compatible; PinkBinderProductionMonitor/1.0; +https://github.com/PinkBinder/pink-binder)',
+}
 
 function localUrl(pathname) {
   return new URL(pathname, baseUrl).toString()
@@ -25,6 +38,7 @@ async function fetchChecked(pathname, options = {}) {
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
       response = await fetch(localUrl(pathname), {
+        headers: REQUEST_HEADERS,
         redirect: options.redirect ?? 'follow',
         signal: AbortSignal.timeout(options.timeout ?? 30_000),
       })
@@ -37,6 +51,11 @@ async function fetchChecked(pathname, options = {}) {
     await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)))
   }
   if (!response) throw lastError ?? new Error('Request failed without a response')
+  if (allowedStatusCodes.has(response.status)) {
+    await response.body?.cancel()
+    warnings.push(`${pathname}: HTTP ${response.status} accepted by --allow-status`)
+    return { response, body: '', skipped: true }
+  }
   if (options.status ? response.status !== options.status : !response.ok) {
     throw new Error(`HTTP ${response.status}`)
   }
@@ -80,10 +99,12 @@ function rssValue(item, tag) {
 }
 
 async function checkRss(pathname, expectedPath) {
-  const { body } = await fetchChecked(pathname, {
+  const result = await fetchChecked(pathname, {
     contentType: 'application/rss+xml',
     includes: '<media:content',
   })
+  if (result.skipped) return
+  const { body } = result
   if (!body.startsWith('<?xml') || !body.includes('<rss version="2.0"')) {
     throw new Error('invalid RSS 2.0 envelope')
   }
@@ -129,15 +150,23 @@ async function safe(label, task) {
 
 async function main() {
   let sitemapBody = ''
-  await safe('homepage', async () => {
-    const { body } = await fetchChecked('/', { contentType: 'text/html', includes: 'Pink Binder' })
-    if (!body.includes('property="og:title"') || !body.includes('name="twitter:card"')) {
-      throw new Error('missing social metadata')
-    }
-    if (!body.includes('aria-live="polite"') || !body.includes('blog-grid-result-count')) {
-      throw new Error('missing accessible async-results status or result count')
-    }
-  })
+  let sitemapSkipped = false
+  if (!skipHomepage) {
+    await safe('homepage', async () => {
+      const result = await fetchChecked('/', {
+        contentType: 'text/html',
+        includes: 'Pink Binder',
+      })
+      if (result.skipped) return
+      const { body } = result
+      if (!body.includes('property="og:title"') || !body.includes('name="twitter:card"')) {
+        throw new Error('missing social metadata')
+      }
+      if (!body.includes('aria-live="polite"') || !body.includes('blog-grid-result-count')) {
+        throw new Error('missing accessible async-results status or result count')
+      }
+    })
+  }
   await safe('robots', () =>
     fetchChecked('/robots.txt', { contentType: 'text/plain', includes: 'Sitemap:' })
   )
@@ -146,6 +175,10 @@ async function main() {
       contentType: 'application/xml',
       includes: '<urlset',
     })
+    if (result.skipped) {
+      sitemapSkipped = true
+      return
+    }
     sitemapBody = result.body
   })
   await safe('grid API', () =>
@@ -172,9 +205,10 @@ async function main() {
     await safe(pathname, () => checkRss(pathname, segment))
   }
 
-  const urls = sitemapUrls(sitemapBody)
-  if (urls.length === 0) failures.push('sitemap: no URLs found')
-  if (new Set(urls).size !== urls.length) failures.push('sitemap: duplicate URLs found')
+  const urls = sitemapSkipped ? [] : sitemapUrls(sitemapBody)
+  if (!sitemapSkipped && urls.length === 0) failures.push('sitemap: no URLs found')
+  if (!sitemapSkipped && new Set(urls).size !== urls.length)
+    failures.push('sitemap: duplicate URLs found')
   const postUrls = urls.filter((url) => new URL(url).pathname.startsWith('/posts/'))
   const selected = sampledUrls(postUrls)
 
@@ -218,9 +252,12 @@ async function main() {
     `- Base URL: ${baseUrl.origin}`,
     `- Sitemap posts: ${postUrls.length}`,
     `- Posts crawled: ${selected.length}`,
+    `- Homepage check: ${skipHomepage ? 'skipped' : 'enabled'}`,
     `- Checks passed: ${checks.length}`,
+    `- Warnings: ${warnings.length}`,
     `- Failures: ${failures.length}`,
   ]
+  if (warnings.length) summary.push('', ...warnings.map((warning) => `- ⚠️ ${warning}`))
   if (failures.length) {
     const displayedFailures = failures.slice(0, 100)
     summary.push('', ...displayedFailures.map((failure) => `- ❌ ${failure}`))

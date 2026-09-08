@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json.schemastore.org/lighthouse",
+  "schemaVersion": 1,
+  "description": "Canonical M0 route fixtures. Do not replace a fixture without a decision-record update.",
+  "profiles": {
+    "mobile": {
+      "formFactor": "mobile",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse simulated mobile: 150 ms RTT, 1,638.4 Kbps throughput, 4x CPU slowdown"
+    },
+    "desktop": {
+      "formFactor": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling"
+    }
+  },
+  "routes": [
+    {
+      "id": "landing-home",
+      "app": "landing",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Public landing page with the default enabled link set; below-fold marketplace remains in its loading placeholder for initial navigation.",
+      "profiles": ["mobile", "desktop"]
+    },
+    {
+      "id": "blog-index",
+      "app": "blog",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Published blog index from the committed/R2 index, unfiltered.",
+      "profiles": ["mobile", "desktop"]
+    },
+    {
+      "id": "blog-post-expansion-pitch-black",
+      "app": "blog",
+      "path": "/posts/expansion/pitch-black/overview",
+      "priority": "P0",
+      "fixture": "Published content-heavy post selected from the committed blog index; it exercises dynamic article rendering and card/media sections.",
+      "profiles": ["mobile", "desktop"]
+    },
+    {
+      "id": "blog-posts-grid",
+      "app": "blog",
+      "path": "/api/posts-grid?limit=9",
+      "priority": "P1",
+      "fixture": "First bounded API page with no filters; validates the server-side pagination/cache contract.",
+      "profiles": ["desktop"],
+      "kind": "api"
+    },
+    {
+      "id": "store-catalog",
+      "app": "store",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Built-in six-product catalog fixture; no checkout or external marketplace dependency exists yet.",
+      "profiles": ["mobile", "desktop"]
+    },
+    {
+      "id": "admin-dashboard",
+      "app": "admin",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Built-in dashboard statistics and recent-order fixture. Authentication is not implemented; this is not a production auth assertion.",
+      "profiles": ["desktop"]
+    }
+  ]
+}

@@ -10,6 +10,22 @@ import {
   parseTcgplayerSetIdFromProductUrl,
 } from './tcgcsv-price-index'
 
+const basePriceRow = (overrides: Partial<TcgcsvPriceRow> = {}): TcgcsvPriceRow => ({
+  productId: 1,
+  marketPrice: undefined,
+  midPrice: 5,
+  highPrice: 10,
+  lowPrice: 2,
+  ...overrides,
+})
+
+const makeTcgcsvGroup = (
+  groupId: number,
+  name = 'SV01: Scarlet & Violet Base Set',
+  abbreviation = 'SV01',
+  categoryId = 1
+): TcgcsvGroup => ({ groupId, name, abbreviation, categoryId })
+
 describe('tcgplayer/tcgcsv-price-index', () => {
   describe('parseTcgplayerSetIdFromProductUrl', () => {
     it('extracts a simple set id', () => {
@@ -50,31 +66,22 @@ describe('tcgplayer/tcgcsv-price-index', () => {
   })
 
   describe('maxTcgcsvMarketPrice', () => {
-    const baseRow = (overrides: Partial<TcgcsvPriceRow> = {}): TcgcsvPriceRow => ({
-      productId: 1,
-      marketPrice: undefined,
-      midPrice: 5,
-      highPrice: 10,
-      lowPrice: 2,
-      ...overrides,
-    })
-
     it('returns undefined when no rows match the product id', () => {
-      const rows = [baseRow({ productId: 1 })]
+      const rows = [basePriceRow({ productId: 1 })]
       expect(maxTcgcsvMarketPrice(rows, 99)).toBeUndefined()
     })
 
     it('returns undefined when matching rows have no valid price', () => {
       // 0 is a valid price value for ?? coalescing, but <=0 is rejected
       const rows = [
-        baseRow({ productId: 1, marketPrice: 0, midPrice: 0, highPrice: 0 }),
+        basePriceRow({ productId: 1, marketPrice: 0, midPrice: 0, highPrice: 0 }),
       ] as TcgcsvPriceRow[]
       expect(maxTcgcsvMarketPrice(rows, 1)).toBeUndefined()
     })
 
     it('prefers market over mid over high', () => {
       const rows = [
-        baseRow({ productId: 1, marketPrice: 4, midPrice: 5, highPrice: 10 }),
+        basePriceRow({ productId: 1, marketPrice: 4, midPrice: 5, highPrice: 10 }),
       ] as TcgcsvPriceRow[]
       expect(maxTcgcsvMarketPrice(rows, 1)).toEqual({
         market: 4,
@@ -88,7 +95,7 @@ describe('tcgplayer/tcgcsv-price-index', () => {
 
     it('falls back to mid when market is undefined', () => {
       const rows = [
-        baseRow({ productId: 1, marketPrice: undefined, midPrice: 7, highPrice: 12 }),
+        basePriceRow({ productId: 1, marketPrice: undefined, midPrice: 7, highPrice: 12 }),
       ] as TcgcsvPriceRow[]
       const result = maxTcgcsvMarketPrice(rows, 1)
       expect(result?.mid).toBe(7)
@@ -99,7 +106,7 @@ describe('tcgplayer/tcgcsv-price-index', () => {
 
     it('falls back to high when market and mid are undefined', () => {
       const rows = [
-        baseRow({ productId: 1, marketPrice: undefined, midPrice: undefined, highPrice: 9 }),
+        basePriceRow({ productId: 1, marketPrice: undefined, midPrice: undefined, highPrice: 9 }),
       ] as TcgcsvPriceRow[]
       const result = maxTcgcsvMarketPrice(rows, 1)
       expect(result?.high).toBe(9)
@@ -108,28 +115,21 @@ describe('tcgplayer/tcgcsv-price-index', () => {
 
     it('picks the row with the highest effective market value', () => {
       const rows = [
-        baseRow({ productId: 1, marketPrice: 3 }),
-        baseRow({ productId: 1, marketPrice: 8 }),
-        baseRow({ productId: 1, marketPrice: 5 }),
+        basePriceRow({ productId: 1, marketPrice: 3 }),
+        basePriceRow({ productId: 1, marketPrice: 8 }),
+        basePriceRow({ productId: 1, marketPrice: 5 }),
       ] as TcgcsvPriceRow[]
       expect(maxTcgcsvMarketPrice(rows, 1)?.market).toBe(8)
     })
   })
 
   describe('buildTcgcsvPriceIndex', () => {
-    const makeGroup = (
-      groupId: number,
-      name = 'SV01: Scarlet & Violet Base Set',
-      abbreviation = 'SV01',
-      categoryId = 1
-    ): TcgcsvGroup => ({ groupId, name, abbreviation, categoryId })
-
     const group = (
       groupId: number,
       name = 'SV01: Scarlet & Violet Base Set',
       abbreviation = 'SV01'
     ): { group: TcgcsvGroup; products: TcgcsvProduct[]; prices: TcgcsvPriceRow[] } => ({
-      group: makeGroup(groupId, name, abbreviation),
+      group: makeTcgcsvGroup(groupId, name, abbreviation),
       products: [],
       prices: [],
     })
