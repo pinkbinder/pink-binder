@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main, staging]
+    branches: [main]
   pull_request:
-    branches: [main, staging]
+    branches: [main]
 
 permissions:
   contents: read
@@ -16,7 +16,7 @@ concurrency:
 jobs:
   quality:
     name: Build, Format, Lint & Type Check
-    if: vars.CI_BILLING_PAUSED != 'true' && (github.event_name != 'pull_request' || github.head_ref != 'staging')
+    if: vars.CI_BILLING_PAUSED != 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
