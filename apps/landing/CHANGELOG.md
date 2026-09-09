@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/pinkbinder/pink-binder/compare/landing-v0.3.2...landing-v0.3.3) (2026-09-09)
+
+
+### Bug Fixes
+
+* correct TCGCSV User-Agent and add client coverage ([8835342](https://github.com/pinkbinder/pink-binder/commit/8835342754306b32c4ee5475fe666a2772e86b50))
+
 ## [0.3.2](https://github.com/pinkbinder/pink-binder/compare/landing-v0.3.1...landing-v0.3.2) (2026-09-07)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.2.0...marketplaces-v1.2.1) (2026-09-09)
+
+
+### Bug Fixes
+
+* correct TCGCSV User-Agent and add client coverage ([8835342](https://github.com/pinkbinder/pink-binder/commit/8835342754306b32c4ee5475fe666a2772e86b50))
+
 ## [1.2.0](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.1.1...marketplaces-v1.2.0) (2026-09-08)
 
 
