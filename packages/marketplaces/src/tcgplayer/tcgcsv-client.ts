@@ -2,11 +2,13 @@
  * [TCGCSV](https://tcgcsv.com/) HTTP client — server-side pipeline only (CORS blocks browsers).
  * Follow https://tcgcsv.com/docs: last-updated.txt, ≤1 full sync/24h, custom User-Agent, 100ms spacing.
  */
+import packageJson from '../../package.json'
+
 export const TCGCSV_BASE = 'https://tcgcsv.com/tcgplayer'
 export const TCGCSV_LAST_UPDATED_URL = 'https://tcgcsv.com/last-updated.txt'
 export const TCGCSV_POKEMON_CATEGORY_ID = 3
 /** Per TCGCSV docs: `YourApplication/X.Y.Z` — not a generic browser UA. */
-export const TCGCSV_USER_AGENT = 'PinkBinder-DataPipeline/0.0.0'
+export const TCGCSV_USER_AGENT = `PinkBinder-DataPipeline/${packageJson.version}`
 export const TCGCSV_REQUEST_DELAY_MS = 100
 
 export type TcgcsvGroup = {
