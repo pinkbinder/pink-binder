@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.5.1...blog-v0.5.2) (2026-09-09)
+
+
+### Bug Fixes
+
+* correct TCGCSV User-Agent and add client coverage ([8835342](https://github.com/pinkbinder/pink-binder/commit/8835342754306b32c4ee5475fe666a2772e86b50))
+
 ## [0.5.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.5.0...blog-v0.5.1) (2026-09-08)
 
 
