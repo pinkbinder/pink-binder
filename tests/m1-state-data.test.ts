@@ -37,18 +37,20 @@ describe('M1 state and data ownership contract', () => {
     })
   })
 
-  test('installs TanStack Query + nuqs in the migrated TanStack Start apps and the blog boundary', () => {
+  test('installs TanStack Query + nuqs in the TanStack Start apps and the blog boundary', () => {
     const blogPackage = parsePackage('apps/blog/package.json')
     const uiPackage = parsePackage('packages/ui/package.json')
     const adminPackage = parsePackage('apps/admin/package.json')
     const storePackage = parsePackage('apps/store/package.json')
     const landingPackage = parsePackage('apps/landing/package.json')
 
-    for (const packageJson of [blogPackage, uiPackage, adminPackage, storePackage]) {
+    for (const packageJson of [blogPackage, uiPackage, adminPackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeTruthy()
       expect(packageJson.dependencies?.nuqs).toBeTruthy()
     }
-    for (const packageJson of [landingPackage]) {
+    // The Astro + Medusa storefront (and landing) render without the
+    // TanStack data layer.
+    for (const packageJson of [storePackage, landingPackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeUndefined()
       expect(packageJson.dependencies?.nuqs).toBeUndefined()
     }

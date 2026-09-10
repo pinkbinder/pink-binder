@@ -1,0 +1,20 @@
+---
+import { CatalogSection } from '../components/CatalogSection'
+import { StoreHeader } from '../components/StoreHeader'
+import StoreLayout from '../layouts/StoreLayout.astro'
+import { getCatalog } from '../lib/catalog'
+
+const catalog = await getCatalog(Astro.locals.regionId ?? null)
+// Persist the resolved region so subsequent visits skip region listing.
+Astro.locals.regionId = catalog.regionId
+---
+
+<StoreLayout
+  title="Pink Binder Store"
+  description="Shop the Pink Binder — cute Pokémon TCG singles and marketplace finds."
+>
+  <main class="min-h-screen">
+    <StoreHeader client:load />
+    <CatalogSection products={catalog.products} categories={catalog.categories} client:load />
+  </main>
+</StoreLayout>

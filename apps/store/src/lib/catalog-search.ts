@@ -1,5 +1,3 @@
-import { parseAsString, parseAsStringLiteral } from 'nuqs'
-
 export const STORE_CATEGORIES = [
   'All',
   'Templates',
@@ -12,12 +10,34 @@ export const STORE_CATEGORIES = [
 
 export type StoreCategory = (typeof STORE_CATEGORIES)[number]
 
+export interface CatalogSearch {
+  q: string
+  category: StoreCategory
+}
+
+const isStoreCategory = (value: string): value is StoreCategory =>
+  (STORE_CATEGORIES as readonly string[]).includes(value)
+
 /**
- * nuqs URL parsers for the storefront catalog. `category` is a validated
+ * URL search parsing for the catalog island. `category` is a validated
  * literal union (unknown values clear to `All`); `q` is free text with an
- * empty-string default so the URL stays shareable and SSR-safe.
+ * empty-string default so the URL stays shareable.
  */
-export const catalogSearchParsers = {
-  q: parseAsString.withDefault(''),
-  category: parseAsStringLiteral(STORE_CATEGORIES).withDefault('All'),
+export function parseCatalogSearch(params: URLSearchParams): CatalogSearch {
+  const rawCategory = params.get('category') ?? 'All'
+  return {
+    q: params.get('q') ?? '',
+    category: isStoreCategory(rawCategory) ? rawCategory : 'All',
+  }
+}
+
+export function matchesSearch(
+  name: string,
+  category: string,
+  search: { q?: string; category?: string }
+): boolean {
+  const needle = (search.q ?? '').trim().toLowerCase()
+  if (needle && !`${name} ${category}`.toLowerCase().includes(needle)) return false
+  if (search.category && search.category !== 'All' && category !== search.category) return false
+  return true
 }

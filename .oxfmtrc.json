@@ -8,10 +8,6 @@
     ".github/.code-foundry",
     ".github/actions/",
     "plugin.json",
-    ".next",
-    ".open-next",
-    ".wrangler",
-    "next-env.d.ts",
     "dist",
     "build",
     "coverage",
@@ -19,7 +15,7 @@
     "packages/data/cache/",
     "apps/blog/public/data/card-galleries/",
     "apps/blog/public/data/expansion-galleries/",
-    "apps/blog/public/_headers"
+    "routeTree.gen.ts"
   ],
   "$schema": "./node_modules/oxfmt/configuration_schema.json"
 }
