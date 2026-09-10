@@ -374,17 +374,17 @@ function registerCodeFromGroupName(map: Record<string, number>, group: TcgcsvGro
   }
   const code = codeMatch[1].toLowerCase()
   registerSetId(map, code, group.groupId)
-  const svMatch = code.match(/^sv0*(\d+(?:\.\d+)?)$/)
+  const svMatch = code.match(/^sv(\d+(?:\.\d+)?)$/)
   if (svMatch?.[1]) {
-    registerSetId(map, `sv${svMatch[1]}`, group.groupId)
+    registerSetId(map, `sv${svMatch[1].replace(/^0+(?=\d)/, '')}`, group.groupId)
   }
-  const swshMatch = code.match(/^swsh0*(\d+(?:\.\d+)?)$/)
+  const swshMatch = code.match(/^swsh(\d+(?:\.\d+)?)$/)
   if (swshMatch?.[1]) {
-    registerSetId(map, `swsh${swshMatch[1]}`, group.groupId)
+    registerSetId(map, `swsh${swshMatch[1].replace(/^0+(?=\d)/, '')}`, group.groupId)
   }
-  const smMatch = code.match(/^sm0*(\d+(?:\.\d+)?)$/)
+  const smMatch = code.match(/^sm(\d+(?:\.\d+)?)$/)
   if (smMatch?.[1]) {
-    registerSetId(map, `sm${smMatch[1]}`, group.groupId)
+    registerSetId(map, `sm${smMatch[1].replace(/^0+(?=\d)/, '')}`, group.groupId)
   }
 }
 

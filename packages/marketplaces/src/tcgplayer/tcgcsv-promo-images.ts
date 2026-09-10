@@ -93,20 +93,23 @@ export function tcgplayerCdnImageUrlsFromSmallUrl(
   imageSmall: string
 ): TcgplayerCdnImageUrls | null {
   const trimmed = imageSmall.trim()
-  const match = trimmed.match(
-    new RegExp(
-      `^https://${TCGPLAYER_CDN.host.replace(/\./g, '\\.')}/product/(\\d+)_200w\\.jpg$`,
-      'i'
-    )
-  )
-  if (!match?.[1]) {
+  try {
+    const url = new URL(trimmed)
+    if (url.protocol !== 'https:' || url.hostname !== TCGPLAYER_CDN.host) {
+      return null
+    }
+    const match = /^\/product\/(\d+)_200w\.jpg$/i.exec(url.pathname)
+    if (url.search || url.hash || !match?.[1]) {
+      return null
+    }
+    const productId = Number.parseInt(match[1], 10)
+    if (!Number.isFinite(productId) || productId <= 0) {
+      return null
+    }
+    return buildTcgplayerCdnImageUrls(productId)
+  } catch {
     return null
   }
-  const productId = Number.parseInt(match[1], 10)
-  if (!Number.isFinite(productId) || productId <= 0) {
-    return null
-  }
-  return buildTcgplayerCdnImageUrls(productId)
 }
 
 /** TCGPlayer CDN small scan from a TCGCSV product row (imageUrl or synthesized from productId). */

@@ -136,7 +136,9 @@ function isTcgCardImageUrl(url: string | null | undefined): boolean {
   }
   try {
     const host = new URL(trimmed).hostname
-    return host === 'images.scrydex.com' || host.endsWith('pokemontcg.io')
+    return (
+      host === 'images.scrydex.com' || host === 'pokemontcg.io' || host.endsWith('.pokemontcg.io')
+    )
   } catch {
     return false
   }
