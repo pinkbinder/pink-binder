@@ -182,7 +182,11 @@ async function checkRoute(route, base) {
     check('redirect-location', location.endsWith(route.location), location || '(none)')
   }
 
-  if (allowedStatuses.includes(response.status) && response.status >= 200 && response.status < 300) {
+  if (
+    allowedStatuses.includes(response.status) &&
+    response.status >= 200 &&
+    response.status < 300
+  ) {
     const html = await response.text()
 
     if (route.markers) {
@@ -193,7 +197,11 @@ async function checkRoute(route, base) {
 
     if (route.edgeCache) {
       const cacheState = response.headers.get('x-cache')
-      check('edge-cache:x-cache', cacheState === 'HIT' || cacheState === 'MISS' || cacheState === 'STALE', cacheState ?? '(none)')
+      check(
+        'edge-cache:x-cache',
+        cacheState === 'HIT' || cacheState === 'MISS' || cacheState === 'STALE',
+        cacheState ?? '(none)'
+      )
     }
 
     if (route.heading) {

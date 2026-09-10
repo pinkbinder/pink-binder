@@ -12,15 +12,15 @@ security headers (document routes), cache headers, canonical content
 markers, single-h1, `lang`/viewport/title presence, and image `alt`
 coverage:
 
-| Route | App | Checks |
-| --- | --- | --- |
-| `/` home | landing, blog, store, admin | 200 + markers + doc sanity |
-| `/sitemap.xml` | landing, blog | 200 + urlset |
-| `/rss.xml` | blog | 200 + rss |
-| `/api/posts-grid` | blog | 200 + payload |
-| blog legacy `/posts/expansion--pitch-black` | blog | 301 → canonical route |
-| `/posts/expansion/pitch-black/overview` | blog | 200 + edge-cache HIT/MISS |
-| 404 handling | landing, admin | correct 404 status |
+| Route                                       | App                         | Checks                     |
+| ------------------------------------------- | --------------------------- | -------------------------- |
+| `/` home                                    | landing, blog, store, admin | 200 + markers + doc sanity |
+| `/sitemap.xml`                              | landing, blog               | 200 + urlset               |
+| `/rss.xml`                                  | blog                        | 200 + rss                  |
+| `/api/posts-grid`                           | blog                        | 200 + payload              |
+| blog legacy `/posts/expansion--pitch-black` | blog                        | 301 → canonical route      |
+| `/posts/expansion/pitch-black/overview`     | blog                        | 200 + edge-cache HIT/MISS  |
+| 404 handling                                | landing, admin              | correct 404 status         |
 
 Documented behaviors (not waivers): unknown flat blog slugs 301 into the
 species namespace before 404ing — preserved Next-era behavior, follow-up
@@ -35,13 +35,13 @@ Playwright (Chromium, headless) captured desktop (1440×900) and mobile
 under `m5-screenshots/` as the before-state for future visual comparisons.
 Machine-readable results: `m5-visual-a11y.json`.
 
-| Page | Console errors | h1 | lang | First Tab focus |
-| --- | --- | --- | --- | --- |
-| landing home | 0 (both viewports) | 1 | en | BUTTON |
-| blog index | 0 | 1 | en | A |
-| blog article | 0 | 1 | en | A |
-| admin dashboard | 0 | 1 | en | A |
-| store home | **not capturable** | — | — | — |
+| Page            | Console errors     | h1  | lang | First Tab focus |
+| --------------- | ------------------ | --- | ---- | --------------- |
+| landing home    | 0 (both viewports) | 1   | en   | BUTTON          |
+| blog index      | 0                  | 1   | en   | A               |
+| blog article    | 0                  | 1   | en   | A               |
+| admin dashboard | 0                  | 1   | en   | A               |
+| store home      | **not capturable** | —   | —    | —               |
 
 - Keyboard: first Tab lands on an interactive element on every capturable
   surface; focus-visible rings ship via the shared primitives
