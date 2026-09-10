@@ -13,7 +13,7 @@ set -eu
 
 ORG=PinkBinder
 NAME=main-protection
-REPOS="${*:-pink-binder pink-binder-data medusa}"
+REPOS="${*:-pink-binder blog-pipeline medusa}"
 PAYLOAD="$(dirname "$0")/../.github/rulesets/main-protection.json"
 
 for repo in $REPOS; do
