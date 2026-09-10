@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/PinkBinder/pink-binder/compare/ui-v1.2.0...ui-v1.2.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **ui:** uniform blog card heights with tags aligned and space below ([#270](https://github.com/PinkBinder/pink-binder/issues/270)) ([c61dc1b](https://github.com/PinkBinder/pink-binder/commit/c61dc1bb5d6cdc91b776d7e3fd90ebc70db16949))
+
 ## [1.2.0](https://github.com/PinkBinder/pink-binder/compare/ui-v1.1.1...ui-v1.2.0) (2026-09-10)
 
 
