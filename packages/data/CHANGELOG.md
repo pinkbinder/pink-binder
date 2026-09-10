@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/pinkbinder/pink-binder/compare/data-v1.2.1...data-v2.0.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* @repo/data no longer exposes the server data graph; runtime consumers must read published R2 artifacts.
+
+### Features
+
+* prune blog pipeline into private blog-pipeline repo ([#281](https://github.com/pinkbinder/pink-binder/issues/281)) ([cd29d6c](https://github.com/pinkbinder/pink-binder/commit/cd29d6c2fd1a64be318e4787df97df2d367c1d31))
+
 ## [1.2.1](https://github.com/PinkBinder/pink-binder/compare/data-v1.2.0...data-v1.2.1) (2026-09-10)
 
 

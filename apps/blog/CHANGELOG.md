@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.6.3...blog-v0.7.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* @repo/data no longer exposes the server data graph; runtime consumers must read published R2 artifacts.
+
+### Features
+
+* **m4:** shared UI primitives, blog HTML edge cache, dead component removal ([#284](https://github.com/pinkbinder/pink-binder/issues/284)) ([2bf70c7](https://github.com/pinkbinder/pink-binder/commit/2bf70c7935b9db5df42e2c54c6bb2f55d44eb759))
+* prune blog pipeline into private blog-pipeline repo ([#281](https://github.com/pinkbinder/pink-binder/issues/281)) ([cd29d6c](https://github.com/pinkbinder/pink-binder/commit/cd29d6c2fd1a64be318e4787df97df2d367c1d31))
+
+
+### Maintenance
+
+* prune residual Next.js tooling and record M2/M3 decisions ([#282](https://github.com/pinkbinder/pink-binder/issues/282)) ([1505e1b](https://github.com/pinkbinder/pink-binder/commit/1505e1b1e970f757bbd3d4b09df356272f8b4b34))
+
 ## [0.6.3](https://github.com/PinkBinder/pink-binder/compare/blog-v0.6.2...blog-v0.6.3) (2026-09-10)
 
 
