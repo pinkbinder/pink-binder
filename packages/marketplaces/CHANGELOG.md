@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.0...marketplaces-v1.3.1) (2026-09-10)
+
+
+### Maintenance
+
+* prune residual Next.js tooling and record M2/M3 decisions ([#282](https://github.com/pinkbinder/pink-binder/issues/282)) ([1505e1b](https://github.com/pinkbinder/pink-binder/commit/1505e1b1e970f757bbd3d4b09df356272f8b4b34))
+
 ## [1.3.0](https://github.com/PinkBinder/pink-binder/compare/marketplaces-v1.2.1...marketplaces-v1.3.0) (2026-09-10)
 
 

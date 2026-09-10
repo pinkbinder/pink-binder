@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.2.2...ui-v1.3.0) (2026-09-10)
+
+
+### Features
+
+* **m4:** shared UI primitives, blog HTML edge cache, dead component removal ([#284](https://github.com/pinkbinder/pink-binder/issues/284)) ([2bf70c7](https://github.com/pinkbinder/pink-binder/commit/2bf70c7935b9db5df42e2c54c6bb2f55d44eb759))
+
 ## [1.2.2](https://github.com/PinkBinder/pink-binder/compare/ui-v1.2.1...ui-v1.2.2) (2026-09-10)
 
 

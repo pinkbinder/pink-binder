@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.0.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.6.0...pink-binder-v2.0.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* @repo/data no longer exposes the server data graph; runtime consumers must read published R2 artifacts.
+
+### Features
+
+* **m4:** shared UI primitives, blog HTML edge cache, dead component removal ([#284](https://github.com/pinkbinder/pink-binder/issues/284)) ([2bf70c7](https://github.com/pinkbinder/pink-binder/commit/2bf70c7935b9db5df42e2c54c6bb2f55d44eb759))
+* prune blog pipeline into private blog-pipeline repo ([#281](https://github.com/pinkbinder/pink-binder/issues/281)) ([cd29d6c](https://github.com/pinkbinder/pink-binder/commit/cd29d6c2fd1a64be318e4787df97df2d367c1d31))
+
+
+### Maintenance
+
+* codify main-branch protection ruleset for the fleet ([#280](https://github.com/pinkbinder/pink-binder/issues/280)) ([dc057bb](https://github.com/pinkbinder/pink-binder/commit/dc057bb0dd761d68b3d815608bfc92e896683b0d))
+* prune residual Next.js tooling and record M2/M3 decisions ([#282](https://github.com/pinkbinder/pink-binder/issues/282)) ([1505e1b](https://github.com/pinkbinder/pink-binder/commit/1505e1b1e970f757bbd3d4b09df356272f8b4b34))
+* remove tracked agent session plan artifact and ignore .zcode ([#283](https://github.com/pinkbinder/pink-binder/issues/283)) ([f68e5a4](https://github.com/pinkbinder/pink-binder/commit/f68e5a4ead3b3636c49a3af6ef36f59fa5ef18e8))
+* sync code-foundry runtime to v1.28.6; gate store out of prod deploys ([78eb979](https://github.com/pinkbinder/pink-binder/commit/78eb9794a7bd5f73470132958cfdfed9e897325e))
+
 ## [1.6.0](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.5.4...pink-binder-v1.6.0) (2026-09-10)
 
 
