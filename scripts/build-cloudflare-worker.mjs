@@ -29,9 +29,9 @@ function runBun(args, cwd = repositoryRoot) {
 runBun(['install', '--frozen-lockfile'])
 
 const appPath = resolve(repositoryRoot, 'apps', app)
-if (app === 'blog' || app === 'landing') {
+if (app === 'admin' || app === 'blog' || app === 'landing' || app === 'store') {
   runBun(['run', 'build:cloudflare'], appPath)
   process.exit(0)
 }
 
-runBun(['x', 'opennextjs-cloudflare', 'build'], appPath)
+throw new Error(`Unsupported app: ${app}`)

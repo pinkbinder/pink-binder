@@ -1,5 +1,11 @@
-/** Next.js extends `fetch` with ISR options when called from App Router code. */
+/**
+ * Framework-agnostic cache hint for marketplace fetches. The `next` field
+ * carries the upstream revalidation hint (ignored outside ISR runtimes);
+ * prefer `revalidateSeconds`, which TanStack Start server functions and the
+ * Astro edge cache read explicitly.
+ */
 export type CachedFetchInit = RequestInit & {
+  revalidateSeconds?: number
   next?: {
     revalidate?: number | false
   }
@@ -10,10 +16,10 @@ const DEFAULT_REQUEST_TIMEOUT_MS = 10_000
 
 export async function marketplaceFetchJson<T>(
   url: string,
-  init?: CachedFetchInit & { revalidateSeconds?: number }
+  init?: CachedFetchInit
 ): Promise<T | null> {
   const revalidate = init?.revalidateSeconds ?? DEFAULT_REVALIDATE_SECONDS
-  const { next: nextInit, ...rest } = init ?? {}
+  const { next: nextInit, revalidateSeconds: _revalidateSeconds, ...rest } = init ?? {}
 
   const fetchInit: CachedFetchInit = {
     ...rest,

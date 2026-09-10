@@ -6,7 +6,7 @@ import {
   tcgCardThumbnailCandidates,
   type PokemonTcgCard,
 } from '@repo/data/client'
-import { shouldBypassNextImageOptimization } from '@repo/data/client'
+import { shouldBypassImageOptimization } from '@repo/data/client'
 import Image from '../compat-image'
 import { useMemo, useState } from 'react'
 
@@ -61,7 +61,7 @@ export function TcgCardImage({
       height={fill ? undefined : height}
       className={className}
       sizes={sizes}
-      unoptimized={shouldBypassNextImageOptimization(src)}
+      unoptimized={shouldBypassImageOptimization(src)}
       onError={() => {
         setCandidateIndex((current) => (current + 1 < candidates.length ? current + 1 : current))
       }}

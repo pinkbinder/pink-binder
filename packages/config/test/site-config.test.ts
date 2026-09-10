@@ -34,21 +34,28 @@ describe('site URLs', () => {
   })
 
   it('honors explicit app URLs and trims one trailing slash', () => {
-    stubEnv('NEXT_PUBLIC_BLOG_URL', ' https://preview.blog/ ')
-    stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://preview.shop/')
+    stubEnv('PUBLIC_BLOG_URL', ' https://preview.blog/ ')
+    stubEnv('PUBLIC_LANDING_URL', 'https://preview.shop/')
     expect(getPublicBlogUrl()).toBe('https://preview.blog')
     expect(getSitemapBlogUrl()).toBe('https://preview.blog')
     expect(getPublicLandingUrl()).toBe('https://preview.shop')
     expect(getSitemapLandingUrl()).toBe('https://preview.shop')
   })
 
+  it('keeps legacy NEXT_PUBLIC_* URLs working as a fallback', () => {
+    stubEnv('NEXT_PUBLIC_BLOG_URL', 'https://legacy.blog/')
+    stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://legacy.shop/')
+    expect(getPublicBlogUrl()).toBe('https://legacy.blog')
+    expect(getPublicLandingUrl()).toBe('https://legacy.shop')
+  })
+
   it('falls back through shared and server-only blog environment variables', () => {
-    stubEnv('NEXT_PUBLIC_SITE_URL', 'https://shared.preview/')
+    stubEnv('PUBLIC_SITE_URL', 'https://shared.preview/')
     stubEnv('BLOG_URL', 'https://server.blog/')
     expect(getPublicBlogUrl()).toBe('https://shared.preview')
     expect(getPublicLandingUrl()).toBe('https://shared.preview')
 
-    stubEnv('NEXT_PUBLIC_SITE_URL', '')
+    stubEnv('PUBLIC_SITE_URL', '')
     expect(getPublicBlogUrl()).toBe('https://server.blog')
   })
 })

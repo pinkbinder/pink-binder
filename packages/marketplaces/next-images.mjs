@@ -1,4 +1,4 @@
-/** Plain ESM for Next.js `next.config.mjs` (Node cannot load TS config barrels). */
+/** Plain ESM remote image patterns (Node cannot load TS config barrels). */
 
 const TCG_CARD_IMAGE_HOSTS = [
   'images.pokemontcg.io',
@@ -54,6 +54,8 @@ export function blogImageRemotePatterns() {
  * remote sprites/cards per view and blog-owned assets are pre-optimized on the
  * R2 CDN. Do not add an Images binding or a custom Cloudflare loader to the
  * blog: both would make runtime transformations an available cost path.
+ *
+ * @deprecated Use {@link blogImageRemotePatterns} instead.
  */
 export function blogNextImagesConfig() {
   return {

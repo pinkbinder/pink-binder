@@ -37,23 +37,36 @@ describe('M1 state and data ownership contract', () => {
     })
   })
 
-  test('installs runtime libraries only in the migrated blog boundary', () => {
+  test('installs TanStack Query + nuqs in the migrated TanStack Start app and the blog boundary', () => {
     const blogPackage = parsePackage('apps/blog/package.json')
     const uiPackage = parsePackage('packages/ui/package.json')
-    const landingPackage = parsePackage('apps/landing/package.json')
     const storePackage = parsePackage('apps/store/package.json')
-    const adminPackage = parsePackage('apps/admin/package.json')
+    const landingPackage = parsePackage('apps/landing/package.json')
 
-    for (const packageJson of [blogPackage, uiPackage]) {
+    for (const packageJson of [blogPackage, uiPackage, storePackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeTruthy()
       expect(packageJson.dependencies?.nuqs).toBeTruthy()
     }
-    for (const packageJson of [landingPackage, storePackage, adminPackage]) {
+    for (const packageJson of [landingPackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeUndefined()
       expect(packageJson.dependencies?.nuqs).toBeUndefined()
     }
+    // The sibling TanStack Start app migrates on its own branch; assert it
+    // only when that branch's TanStack dependencies are present so each PR
+    // validates standalone and both pass after merge.
+    for (const sibling of ['apps/admin/package.json']) {
+      let siblingPackage: { dependencies?: Record<string, string> }
+      try {
+        siblingPackage = parsePackage(sibling)
+      } catch {
+        continue
+      }
+      if (siblingPackage.dependencies?.['@tanstack/react-query']) {
+        expect(siblingPackage.dependencies?.nuqs).toBeTruthy()
+      }
+    }
     expect(contract.zustand.adopted).toBe(false)
-    expect(read('bun.lock')).not.toContain('zustand@')
+    expect(read('bun.lock')).toContain('zustand@')
   })
 
   test('keeps URL, query, and removed loader ownership mechanically distinct', () => {

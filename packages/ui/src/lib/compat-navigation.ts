@@ -22,7 +22,8 @@ function readSearchParams(): URLSearchParams {
 }
 
 /**
- * Minimal `next/navigation` replacements for Astro islands.
+ * Minimal pathname/query helpers for Astro islands (same shape as the
+ * router hooks the islands were ported from).
  * The blog's islands only need the current pathname and query string —
  * there is no app router, so there is no navigation API to wrap.
  */
