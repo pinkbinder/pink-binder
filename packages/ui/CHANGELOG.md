@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.0...ui-v1.3.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **security:** resolve code-scanning alerts in shared packages ([#27](https://github.com/pinkbinder/pink-binder/issues/27)) ([d319b69](https://github.com/pinkbinder/pink-binder/commit/d319b691593de39ce63a8908bbdbe274210f2c51))
+
 ## [1.3.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.2.2...ui-v1.3.0) (2026-09-10)
 
 

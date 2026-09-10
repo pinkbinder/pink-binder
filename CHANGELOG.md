@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.6...pink-binder-v2.1.7) (2026-09-10)
+
+
+### Bug Fixes
+
+* **security:** resolve code-scanning alerts in shared packages ([#27](https://github.com/pinkbinder/pink-binder/issues/27)) ([d319b69](https://github.com/pinkbinder/pink-binder/commit/d319b691593de39ce63a8908bbdbe274210f2c51))
+
 ## [2.1.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.5...pink-binder-v2.1.6) (2026-09-10)
 
 
