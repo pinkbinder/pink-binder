@@ -1,0 +1,31 @@
+@import '@repo/ui/globals.css';
+
+@source '../**/*.{astro,ts}';
+@source '../../../../packages/ui/src/**/*.{ts,tsx}';
+
+/*
+ * Landing legibility pass: Lighthouse color-contrast fails `text-primary`
+ * (335 77% 73%, 1.66:1 on the landing background) wherever it renders as
+ * body-size text on light surfaces. Scope a deeper pink (335 72% 38%,
+ * 4.91:1 on the landing background, 7.18:1 on white cards) to landing-only
+ * text utilities so admin/blog/store themes stay untouched.
+ */
+@theme inline {
+  --color-primary-deep: hsl(335 72% 38%);
+}
+
+@utility text-primary-deep {
+  color: var(--color-primary-deep);
+}
+
+@utility bg-primary-deep {
+  background-color: var(--color-primary-deep);
+}
+
+[data-carousel-viewport] {
+  scrollbar-width: none;
+}
+
+[data-carousel-viewport]::-webkit-scrollbar {
+  display: none;
+}

@@ -1,0 +1,18 @@
+---
+---
+<div
+  data-marketplace-section
+  class="w-full"
+  aria-busy="true"
+  aria-label="Loading shop listings"
+>
+  <section class="flex w-full flex-col gap-4" data-marketplace-skeleton>
+    <div class="flex flex-col gap-2">
+      <div class="bg-muted h-3 w-36 animate-pulse rounded-full"></div>
+      <div class="bg-muted h-7 w-56 animate-pulse rounded-md"></div>
+    </div>
+    <div class="flex gap-3 overflow-hidden pt-1">
+      {Array.from({ length: 3 }, () => <div class="bg-muted h-52 w-40 shrink-0 rounded-2xl"></div>)}
+    </div>
+  </section>
+</div>

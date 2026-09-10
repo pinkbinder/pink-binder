@@ -1,6 +1,7 @@
 # Pink Binder
 
-A modern NextJS Turborepo monorepo for Pink Binder apps.
+A modern Turborepo monorepo for Pink Binder apps. The Landing app runs on Astro
+with the Cloudflare Workers adapter; the remaining apps use Next.js.
 
 ## Apps
 
@@ -56,7 +57,7 @@ Set this environment variable for `apps/landing`:
 
 ## Stack
 
-- **Framework**: Next.js 16 (App Router)
+- **Frameworks**: Astro 7 (Landing) and Next.js 16 (remaining apps)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS + ShadCN/ui
 - **Build**: Turborepo

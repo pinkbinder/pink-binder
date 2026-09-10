@@ -8,11 +8,5 @@
     "nodejs_compat_populate_process_env",
     "global_fetch_strictly_public",
   ],
-  "main": "dist/server/entry.mjs",
-  "assets": {
-    "directory": "./dist/client",
-    "binding": "ASSETS",
-  },
-  "observability": { "enabled": true },
   "workers_dev": true,
 }

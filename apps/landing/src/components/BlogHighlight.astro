@@ -1,0 +1,106 @@
+---
+import type { LandingBlogFeaturedPost } from '@repo/data/client'
+import {
+  heroStripImageCandidates,
+  pokemonR2ImageVariantCandidates,
+} from '@repo/data/client'
+
+interface Props {
+  blogUrl: string
+  post: LandingBlogFeaturedPost
+}
+
+const { blogUrl, post } = Astro.props
+const fallback = post.thumbnailFallback ?? post.thumbnail
+const artworkLists = (post.heroArtworkUrls ?? [])
+  .filter(Boolean)
+  .slice(0, 3)
+  .map((url) =>
+    pokemonR2ImageVariantCandidates(heroStripImageCandidates(url, fallback), 'small')
+  )
+const thumbnailCandidates = post.thumbnail
+  ? pokemonR2ImageVariantCandidates([post.thumbnail, fallback], 'small')
+  : fallback
+    ? [fallback]
+    : []
+---
+<section class="mx-auto mt-12 flex w-full max-w-md flex-col gap-4">
+  <div class="flex items-end justify-between gap-4">
+    <div>
+      <p class="text-primary-deep text-sm font-bold tracking-[0.3em] uppercase">Latest from the blog</p>
+      <h2 class="font-title mt-2 text-2xl font-semibold">Fresh from Pink Binder</h2>
+    </div>
+    <a href={blogUrl} class="text-primary-deep shrink-0 text-sm font-bold transition-colors hover:opacity-80">Visit blog →</a>
+  </div>
+
+  <a
+    href={post.href}
+    data-blog-link
+    class="group focus-visible:ring-ring block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+  >
+    {artworkLists.length > 0 ? (
+      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-pink-200/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
+        <div
+          class:list={[
+            'bg-muted grid grid-rows-1 divide-x divide-pink-100/80 aspect-[16/10]',
+            artworkLists.length >= 3 ? 'grid-cols-3' : artworkLists.length === 2 ? 'grid-cols-2' : 'grid-cols-1',
+          ]}
+        >
+          {artworkLists.map((candidates) => (
+            <div class:list={['min-h-0 min-w-0', post.heroArtworkFill ? 'relative overflow-hidden' : 'flex items-center justify-center bg-muted/40 p-2']}>
+              <div class:list={[post.heroArtworkFill ? 'relative h-full w-full' : 'relative h-full min-h-[120px] w-full']}>
+                <img
+                  src={candidates[0]}
+                  alt=""
+                  width="640"
+                  height="400"
+                  data-image-candidates={JSON.stringify(candidates)}
+                  class:list={[
+                    'absolute inset-0 h-full w-full',
+                    post.heroArtworkFill ? 'object-cover' : 'object-contain drop-shadow-lg',
+                  ]}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+        <div class="flex flex-col space-y-1.5 p-6">
+          {post.meta ? <p class="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">{post.meta}</p> : null}
+          <h3 class="font-title line-clamp-3 text-2xl leading-tight font-semibold tracking-tight">{post.title}</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <p class="text-muted-foreground line-clamp-4 text-sm leading-6">{post.excerpt}</p>
+        </div>
+      </article>
+    ) : thumbnailCandidates.length > 0 ? (
+      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-pink-200/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
+        <div class="bg-muted aspect-[16/10] overflow-hidden">
+          <img
+            src={thumbnailCandidates[0]}
+            alt={post.title}
+            width="640"
+            height="400"
+            data-image-candidates={JSON.stringify(thumbnailCandidates)}
+            class:list={['h-full w-full', post.thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover']}
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="flex flex-col space-y-1.5 p-6">
+          {post.meta ? <p class="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">{post.meta}</p> : null}
+          <h3 class="font-title line-clamp-3 text-2xl leading-tight font-semibold tracking-tight">{post.title}</h3>
+        </div>
+        <div class="p-6 pt-0">
+          <p class="text-muted-foreground line-clamp-4 text-sm leading-6">{post.excerpt}</p>
+        </div>
+      </article>
+    ) : (
+      <article class="from-primary/20 to-secondary flex min-h-72 items-center justify-center rounded-3xl bg-gradient-to-br px-6 text-center">
+        <span class="font-title text-foreground text-lg font-semibold">{post.title}</span>
+      </article>
+    )}
+    <span class="text-primary-deep hover:text-primary-deep/80 mt-3 inline-flex text-sm font-bold transition-colors">Read article →</span>
+  </a>
+</section>

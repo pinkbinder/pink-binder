@@ -197,7 +197,14 @@ function patchBlogInstrumentationLoader() {
 }
 
 runBun(['install', '--frozen-lockfile'])
-runBun(['x', 'opennextjs-cloudflare', 'build'], resolve(repositoryRoot, 'apps', app))
+
+const appPath = resolve(repositoryRoot, 'apps', app)
+if (app === 'landing') {
+  runBun(['run', 'build:cloudflare'], appPath)
+  process.exit(0)
+}
+
+runBun(['x', 'opennextjs-cloudflare', 'build'], appPath)
 
 if (app === 'blog') {
   patchBlogInstrumentationLoader()

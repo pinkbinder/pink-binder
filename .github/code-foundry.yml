@@ -4,7 +4,7 @@ languages: typescript
 features: all
 package_manager: bun
 runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v1.9.11
+runtime_ref: v1.25.3
 runner: ubuntu-latest
 unit_runner: ubuntu-slim
 ci_runner: ubuntu-latest
@@ -23,7 +23,7 @@ npm_publish: false
 license: apache-2.0
 git_workflow: direct
 merge_strategy: squash
-codeql: false
+codeql: auto
 dependency_review: false
 toolchain: auto
 post_release: false
@@ -41,3 +41,8 @@ performance: auto
 performance_command:
 performance_profile:
 performance_budget_file: performance-package-budgets.json
+required_capabilities:
+coverage_enforcement: auto
+coverage_metrics: lines
+coverage_report:
+draft_protection: true

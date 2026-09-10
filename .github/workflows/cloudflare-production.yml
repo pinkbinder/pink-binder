@@ -16,9 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         app: [admin, blog, landing, store]
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.9.11
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.22.1
     with:
       mode: production
+      wrangler-version: local
       working-directory: apps/${{ matrix.app }}
       install-working-directory: .
       build-script: build:cloudflare
