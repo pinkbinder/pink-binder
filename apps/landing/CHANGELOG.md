@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/pinkbinder/pink-binder/compare/landing-v0.5.0...landing-v0.6.0) (2026-09-10)
+
+
+### Features
+
+* **m4:** shared UI primitives, blog HTML edge cache, dead component removal ([#284](https://github.com/pinkbinder/pink-binder/issues/284)) ([2bf70c7](https://github.com/pinkbinder/pink-binder/commit/2bf70c7935b9db5df42e2c54c6bb2f55d44eb759))
+
+
+### Maintenance
+
+* prune residual Next.js tooling and record M2/M3 decisions ([#282](https://github.com/pinkbinder/pink-binder/issues/282)) ([1505e1b](https://github.com/pinkbinder/pink-binder/commit/1505e1b1e970f757bbd3d4b09df356272f8b4b34))
+
 ## [0.5.0](https://github.com/PinkBinder/pink-binder/compare/landing-v0.4.0...landing-v0.5.0) (2026-09-10)
 
 
