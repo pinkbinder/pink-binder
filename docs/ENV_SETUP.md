@@ -23,11 +23,11 @@ Each app loads its own `.env.local` when it runs (Vite for store/admin, Astro fo
 
 ## Where variables live
 
-| Scope                         | Location                                          | Notes                                                        |
-| ----------------------------- | ------------------------------------------------- | ------------------------------------------------------------ |
-| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local`                         | Stored in Cloudflare Worker `landing` (R2 + secrets)         |
-| Blog (Zaraz, R2)              | `apps/blog/.env.local`                            | Stored in Cloudflare Worker `blog` (R2 + secrets)            |
-| Optional overrides            | Root `.env.local`                                 | Legacy; merged by `scripts/with-env.mjs` only                |
+| Scope                         | Location                  | Notes                                                |
+| ----------------------------- | ------------------------- | ---------------------------------------------------- |
+| Landing (eBay, Etsy, Whatnot) | `apps/landing/.env.local` | Stored in Cloudflare Worker `landing` (R2 + secrets) |
+| Blog (Zaraz, R2)              | `apps/blog/.env.local`    | Stored in Cloudflare Worker `blog` (R2 + secrets)    |
+| Optional overrides            | Root `.env.local`         | Legacy; merged by `scripts/with-env.mjs` only        |
 
 Duplicate shared keys (e.g. `PUBLIC_BLOG_URL`) on each Cloudflare Worker that needs them (via `wrangler secret put`). `NEXT_PUBLIC_*` names remain accepted as a legacy fallback (see `packages/config/src/site-urls.ts`).
 

@@ -18,15 +18,15 @@ new measured baseline, not a re-run of this one.
 
 ## Final decision summary
 
-| Concern            | Decision                                                                              | Evidence                             |
-| ------------------ | ------------------------------------------------------------------------------------- | ------------------------------------ |
-| Frameworks         | Astro (landing, blog, store) + TanStack Start (admin); Next.js fully retired          | ADR 0003; migration PRs #257/#258/#262/#278 |
-| Bundler            | Vite everywhere (embedded in Astro; direct for admin); Turborepo orchestration        | ADR 0003                             |
-| State              | URL (nuqs) + TanStack Query + server ownership; Zustand only on proven need           | ADR 0002                             |
-| Data               | Blog content is pre-generated R2 artifacts from the private `blog-pipeline` repo; store commerce via private `medusa` repo | blog-pipeline split (#281) |
-| Shared UI          | `packages/ui` shadcn-style primitives; icon artwork + accent tokens in `@repo/config` / `@repo/ui` | #284 (M4.1/M4.2) |
-| Performance        | Worker edge cache (`@repo/config/edge-cache`) on landing marketplace API and blog HTML; `client:idle` blog grid; prebuilt article HTML | #284 (M4.3), #275 |
-| Accessibility      | WCAG-safe `--primary-deep` accent token shared by all apps; shared Radix primitives own focus/keyboard semantics | #273, #284 |
+| Concern       | Decision                                                                                                                               | Evidence                                    |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| Frameworks    | Astro (landing, blog, store) + TanStack Start (admin); Next.js fully retired                                                           | ADR 0003; migration PRs #257/#258/#262/#278 |
+| Bundler       | Vite everywhere (embedded in Astro; direct for admin); Turborepo orchestration                                                         | ADR 0003                                    |
+| State         | URL (nuqs) + TanStack Query + server ownership; Zustand only on proven need                                                            | ADR 0002                                    |
+| Data          | Blog content is pre-generated R2 artifacts from the private `blog-pipeline` repo; store commerce via private `medusa` repo             | blog-pipeline split (#281)                  |
+| Shared UI     | `packages/ui` shadcn-style primitives; icon artwork + accent tokens in `@repo/config` / `@repo/ui`                                     | #284 (M4.1/M4.2)                            |
+| Performance   | Worker edge cache (`@repo/config/edge-cache`) on landing marketplace API and blog HTML; `client:idle` blog grid; prebuilt article HTML | #284 (M4.3), #275                           |
+| Accessibility | WCAG-safe `--primary-deep` accent token shared by all apps; shared Radix primitives own focus/keyboard semantics                       | #273, #284                                  |
 
 ## Verification results (M5.1, M5.3)
 
@@ -45,14 +45,14 @@ new measured baseline, not a re-run of this one.
 
 ## Residual risk register
 
-| Risk / gap                                                                     | Owner      | Priority | Next review condition                                      |
-| ------------------------------------------------------------------------------ | ---------- | -------- | ---------------------------------------------------------- |
-| Blog Lighthouse performance is capped ~58 by third-party Zaraz tags, not app code | Blog owner | Medium   | Zaraz tag review in the Cloudflare dashboard              |
-| Store renders a 500 locally without a reachable Medusa backend + publishable key; not exercised end-to-end in CI | Store owner | High    | First Medusa production deploy; add a smoke check then    |
-| One `validation-audit` check fails permanently (pre-existing, tracked)         | Repo owner | Low      | When the audit rule is fixed or retired                    |
-| Unknown flat blog slugs 301 into the species namespace before 404ing           | Blog owner | Low      | Next content-work pass; consider a direct 404              |
-| Local blog development needs R2 seed objects (index + post + render artifacts) | Blog owner | Low      | If local content work becomes frequent, add a seed script  |
-| Cloudflare zone cache rules (e.g. `landing-marketplace-edge-300s`) live outside the repo | Landing owner | Medium | On any zone change, re-verify marketplace API freshness    |
+| Risk / gap                                                                                                       | Owner         | Priority | Next review condition                                     |
+| ---------------------------------------------------------------------------------------------------------------- | ------------- | -------- | --------------------------------------------------------- |
+| Blog Lighthouse performance is capped ~58 by third-party Zaraz tags, not app code                                | Blog owner    | Medium   | Zaraz tag review in the Cloudflare dashboard              |
+| Store renders a 500 locally without a reachable Medusa backend + publishable key; not exercised end-to-end in CI | Store owner   | High     | First Medusa production deploy; add a smoke check then    |
+| One `validation-audit` check fails permanently (pre-existing, tracked)                                           | Repo owner    | Low      | When the audit rule is fixed or retired                   |
+| Unknown flat blog slugs 301 into the species namespace before 404ing                                             | Blog owner    | Low      | Next content-work pass; consider a direct 404             |
+| Local blog development needs R2 seed objects (index + post + render artifacts)                                   | Blog owner    | Low      | If local content work becomes frequent, add a seed script |
+| Cloudflare zone cache rules (e.g. `landing-marketplace-edge-300s`) live outside the repo                         | Landing owner | Medium   | On any zone change, re-verify marketplace API freshness   |
 
 ## Durable procedures
 
