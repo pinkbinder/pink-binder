@@ -1,4 +1,32 @@
-import { shuffleWithSeed } from '../blog/section-templates'
+// Deterministic shuffle mirrored from the private pipeline's
+// `blog/section-templates` so scene-art sampling stays stable.
+function stableHash(input: string): number {
+  let hash = 0
+  for (const char of input) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0
+  }
+  return hash
+}
+
+function createSeededRandom(seed: string): () => number {
+  let state = stableHash(seed) >>> 0
+  return () => {
+    state = (Math.imul(state, 1664525) + 1013904223) >>> 0
+    return state / 0x1_0000_0000
+  }
+}
+
+function shuffleWithSeed<T>(items: readonly T[], seed: string): T[] {
+  const arr = [...items]
+  const rand = createSeededRandom(seed)
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(rand() * (i + 1))
+    const tmp = arr[i]!
+    arr[i] = arr[j]!
+    arr[j] = tmp
+  }
+  return arr
+}
 import type { PokemonTcgCard } from './tcg-card'
 
 /** Default Michi scene count on species pages and roundup pick rows. */

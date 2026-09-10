@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro'
-import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data'
+import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
 import type { BlogGridQuery } from '@repo/data/client'
 import { filterBlogGridPosts, getPublishedBlogGridPostsForRequest } from '../../lib/blog-grid-data'
 

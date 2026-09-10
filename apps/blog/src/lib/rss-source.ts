@@ -1,8 +1,7 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { readBlogIndex } from '@repo/data'
-import { getPostHref } from '@repo/data/client'
+import { getPostHref, isBlogPostPublished } from '@repo/data/client'
 import type { RssSourcePost } from './rss'
 import { readBlogIndexFromR2 } from './blog-index-r2'
 
@@ -35,7 +34,7 @@ const EMPTY_FEED_FRONTMATTER: FeedFrontmatter = {
  * instead of re-parsing on every RSS route invocation.
  */
 function readNormalizedPostsFromIndex(
-  index: ReturnType<typeof readBlogIndex>,
+  index: NonNullable<Awaited<ReturnType<typeof readBlogIndexFromR2>>>,
   siteUrl: string
 ): RssSourcePost[] {
   if (!index) {
@@ -65,10 +64,6 @@ function readNormalizedPostsFromIndex(
       },
     ]
   })
-}
-
-function readNormalizedPosts(siteUrl: string): RssSourcePost[] {
-  return readNormalizedPostsFromIndex(readBlogIndex(), siteUrl)
 }
 
 function parseYamlScalar(value: string): string {
@@ -160,8 +155,11 @@ function readAuthoredPosts(siteUrl: string): RssSourcePost[] {
 }
 
 /** Authored MDX wins when its slug overlaps a normalized post. */
-export function getRssSourcePosts(siteUrl: string): RssSourcePost[] {
-  const bySlug = new Map(readNormalizedPosts(siteUrl).map((post) => [post.id, post]))
+export function getRssSourcePosts(
+  normalizedPosts: RssSourcePost[],
+  siteUrl: string
+): RssSourcePost[] {
+  const bySlug = new Map(normalizedPosts.map((post) => [post.id, post]))
   mergeAuthoredPosts(bySlug, siteUrl)
   return [...bySlug.values()]
 }
@@ -179,11 +177,10 @@ export async function getRssSourcePostsForRequest(
 ): Promise<RssSourcePost[]> {
   const { getGalleryBucket } = await import('./blog-index-r2')
   const index = await readBlogIndexFromR2(await getGalleryBucket(locals))
-  if (!index) return getRssSourcePosts(siteUrl)
-
-  const bySlug = new Map(
-    readNormalizedPostsFromIndex(index, siteUrl).map((post) => [post.id, post])
-  )
-  mergeAuthoredPosts(bySlug, siteUrl)
-  return [...bySlug.values()]
+  const normalizedPosts = index
+    ? readNormalizedPostsFromIndex(index, siteUrl).filter((post) =>
+        isBlogPostPublished(post.date)
+      )
+    : []
+  return getRssSourcePosts(normalizedPosts, siteUrl)
 }

@@ -31,20 +31,15 @@ discovery headers.
 
 ## R2 publishing
 
-Publish manifests and assets before deploying a build that references new
-content. Use the dry-run form first, and keep S3 credentials in the ignored
-`apps/blog/.env.local` file or use Wrangler OAuth. Never put credentials in
-source, fixtures, or `.env.example` files.
+Publishing article artifacts, render HTML, gallery manifests, and image
+variants is owned by the private `pinkbinder/blog-pipeline` repository
+(its Publish Data workflow renders article HTML, uploads artifacts, and
+purges the blog CDN cache). This app only reads from R2 at request time;
+do not add publish scripts here.
 
-```bash
-bun --cwd apps/blog publish:gallery-manifests --dry-run
-bun --cwd apps/blog publish:blog-posts --dry-run
-bun --cwd apps/blog publish:blog-assets --dry-run
-```
-
-Versioned R2 image and data keys may use long-lived immutable caching. Change
-the asset version when an object at an existing key changes; do not add a
-browser cache that can serve mutable manifests indefinitely.
+Local development without an R2 binding renders an empty grid and 404
+articles. Use the data service's `seed-local-r2` script (or Wrangler R2
+bindings) to populate a local bucket for offline work.
 
 ## Recovery checklist
 
