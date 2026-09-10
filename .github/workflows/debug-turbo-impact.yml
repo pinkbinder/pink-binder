@@ -16,16 +16,34 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.sha }}
+          persist-credentials: false
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: 1.4.0
-      - run: bun install --frozen-lockfile --ignore-scripts
-      - name: Reproduce impact check without output redirection
+      - name: Install dependencies for Turbo
+        working-directory: .
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Reproduce impact check exactly
+        working-directory: .
+        env:
+          TURBO_PACKAGE: '@repo/blog'
+          TURBO_BASE_SHA: ${{ github.event.before || github.sha }}
+          TURBO_HEAD_SHA: ${{ github.sha }}
         run: |
           set -x
-          BASE="${{ github.event.before || github.sha }}"
-          HEAD="${{ github.sha }}"
-          echo "base=$BASE head=$HEAD"
+          echo "base=$TURBO_BASE_SHA exists: $(git cat-file -t "$TURBO_BASE_SHA" 2>&1 || echo MISSING)"
+          echo "head=$TURBO_HEAD_SHA exists: $(git cat-file -t "$TURBO_HEAD_SHA" 2>&1 || echo MISSING)"
           bunx --bun --no-install turbo --version
-          bunx --bun --no-install turbo query affected --packages @repo/blog --base="$BASE" --head="$HEAD" --no-update-notifier | tee turbo-affected.json
-          cat turbo-affected.json
+          set +e
+          bunx --bun --no-install turbo query affected --packages "$TURBO_PACKAGE" --base="$TURBO_BASE_SHA" --head="$TURBO_HEAD_SHA" --no-update-notifier > "$RUNNER_TEMP/out.json" 2> "$RUNNER_TEMP/err.txt"
+          code=$?
+          set -e
+          echo "query exit: $code"
+          echo "--- stderr ---"
+          cat "$RUNNER_TEMP/err.txt" || true
+          echo "--- stdout file ---"
+          cat "$RUNNER_TEMP/out.json" || true
+          if [ "$code" -ne 0 ]; then
+            echo "::error::turbo query failed with $code (stderr shown above)"
+          fi
