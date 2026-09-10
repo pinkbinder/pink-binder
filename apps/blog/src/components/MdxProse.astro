@@ -21,7 +21,7 @@ const { content } = Astro.props as Props
     const inline = (s: string) =>
       escape(s)
         .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground font-bold">$1</strong>')
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary font-medium underline underline-offset-2">$1</a>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary-deep font-medium underline underline-offset-2">$1</a>')
     const blocks = raw.split(/\n{2,}/)
     let html = ''
     let list: string[] | null = null

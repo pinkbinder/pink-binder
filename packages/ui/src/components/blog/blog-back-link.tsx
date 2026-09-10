@@ -11,7 +11,7 @@ export function BlogBackLink() {
   return (
     <Link
       href={href}
-      className="text-primary hover:text-primary/80 mb-2 inline-flex items-center gap-1.5 text-sm font-bold tracking-[0.2em] uppercase transition-colors md:mb-4"
+      className="text-primary-deep hover:text-primary-deep/80 mb-2 inline-flex items-center gap-1.5 text-sm font-bold tracking-[0.2em] uppercase transition-colors md:mb-4"
     >
       <span aria-hidden>←</span>
       <span>BACK</span>

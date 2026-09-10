@@ -90,7 +90,11 @@ export function BlogShopCtaSection({
               Singles, packs, keychains, and more!
             </p>
           </div>
-          <Button variant="link" asChild className="h-auto w-fit p-0 font-semibold">
+          <Button
+            variant="link"
+            asChild
+            className="text-primary-deep h-auto w-fit p-0 font-semibold"
+          >
             <a href={shopUrl} rel="noopener noreferrer">
               Visit The Pink Binder Shop →
             </a>

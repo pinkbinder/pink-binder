@@ -50,11 +50,29 @@ function toSolidLightColor(hex: string) {
   return `#${toHex(mixWithWhite(r))}${toHex(mixWithWhite(g))}${toHex(mixWithWhite(b))}`
 }
 
+/** Deep shade of the type color: keeps the hue readable as text on the light bg (≥ 4.5:1). */
+function toSolidDarkColor(hex: string) {
+  const normalized = hex.replace('#', '')
+  if (normalized.length !== 6) return '#3D3D3D'
+
+  const r = Number.parseInt(normalized.slice(0, 2), 16)
+  const g = Number.parseInt(normalized.slice(2, 4), 16)
+  const b = Number.parseInt(normalized.slice(4, 6), 16)
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return '#3D3D3D'
+
+  const DARK_TEXT_FACTOR = 0.42
+  const toHex = (channel: number) =>
+    Math.round(channel * DARK_TEXT_FACTOR)
+      .toString(16)
+      .padStart(2, '0')
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+}
+
 export function getPokemonTypeLightColors(type: string) {
   const colors = getPokemonTypeColors(type)
   return {
     bg: toSolidLightColor(colors.bg),
-    text: colors.bg,
+    text: toSolidDarkColor(colors.bg),
     border: colors.bg,
   }
 }

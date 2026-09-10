@@ -73,7 +73,7 @@ function PostCard({ post, className, ...props }: PostCardProps) {
       </div>
       <CardHeader className="space-y-3">
         {post.meta ? (
-          <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">
+          <p className="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">
             {post.meta}
           </p>
         ) : null}

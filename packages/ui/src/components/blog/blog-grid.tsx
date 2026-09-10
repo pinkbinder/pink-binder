@@ -840,10 +840,10 @@ export function BlogGrid({
           {tagCatalogOptions.length > 0 ? (
             <div className="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
               <div className="flex items-center gap-2">
-                <Search className="text-primary h-4 w-4 shrink-0" aria-hidden />
+                <Search className="text-primary-deep h-4 w-4 shrink-0" aria-hidden />
                 <BlogFilterGroupLabel
                   group="tag"
-                  className="text-primary text-sm font-semibold tracking-[0.2em] uppercase"
+                  className="text-primary-deep text-sm font-semibold tracking-[0.2em] uppercase"
                 />
               </div>
               <SearchableSelect
@@ -867,6 +867,7 @@ export function BlogGrid({
             <span className="text-foreground font-medium">curated binder themes</span>!
           </p>
 
+          <h2 className="sr-only">Post filters</h2>
           <Accordion
             type="single"
             collapsible
@@ -875,7 +876,7 @@ export function BlogGrid({
             className="border-border/60 bg-muted/30 rounded-xl border px-3 sm:px-4"
           >
             <AccordionItem value="filters" className="border-b-0">
-              <AccordionTrigger className="text-primary text-sm font-semibold tracking-[0.18em] uppercase hover:no-underline">
+              <AccordionTrigger className="text-primary-deep text-sm font-semibold tracking-[0.18em] uppercase hover:no-underline">
                 <span className="inline-flex items-center gap-2">
                   <SlidersHorizontal className="h-4 w-4 shrink-0" aria-hidden />
                   {BLOG_FILTER_SECTION_LABELS.pokemon}
@@ -1009,7 +1010,7 @@ export function BlogGrid({
                 variant="filterChip"
                 aria-pressed
                 onClick={() => applyCatalogFilter(null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS} border-primary/30 bg-primary/10 text-primary`}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} border-primary/30 bg-primary/10 text-primary-deep`}
               >
                 <span className="inline-flex items-center gap-1.5">
                   {selectedTagOption ? (
@@ -1348,7 +1349,7 @@ export function BlogGrid({
             <Button
               variant="link"
               onClick={clearAllFilters}
-              className="text-primary h-auto p-0 underline-offset-2"
+              className="text-primary-deep h-auto p-0 underline-offset-2"
             >
               view all
             </Button>

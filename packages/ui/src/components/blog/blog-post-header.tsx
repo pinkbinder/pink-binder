@@ -39,7 +39,7 @@ export function BlogPostHeader({
               {item.href ? (
                 <Link
                   href={item.href}
-                  className="text-primary hover:text-primary/80 font-semibold transition-colors"
+                  className="text-primary-deep hover:text-primary-deep/80 font-semibold transition-colors"
                 >
                   {item.label}
                 </Link>

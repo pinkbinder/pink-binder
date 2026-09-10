@@ -30,7 +30,7 @@ export function TcgCardPriceLabel({
           href={card.tcgplayerUrl}
           target="_blank"
           rel="noreferrer sponsored"
-          className="text-primary inline-flex items-center gap-1.5 text-xs font-semibold underline underline-offset-2"
+          className="text-primary-deep inline-flex items-center gap-1.5 text-xs font-semibold underline underline-offset-2"
         >
           {showTcgplayerLogo ? (
             <img

@@ -31,7 +31,9 @@ export function RoundupPostCard({
       <RoundupHeroArtworkGrid artworkUrls={artworkUrls} fallback={fallback} fillFrame={fillFrame} />
       <CardHeader className="space-y-3">
         {meta ? (
-          <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">{meta}</p>
+          <p className="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">
+            {meta}
+          </p>
         ) : null}
         <CardTitle className="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
           {title}
