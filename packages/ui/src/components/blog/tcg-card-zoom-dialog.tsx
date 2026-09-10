@@ -6,7 +6,7 @@ import {
   shouldBypassNextImageOptimization,
   type PokemonTcgCard,
 } from '@repo/data/client'
-import Image from 'next/image'
+import Image from '../compat-image'
 import { useMemo, useState, type ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '../dialog'

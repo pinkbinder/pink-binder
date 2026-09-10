@@ -6,58 +6,57 @@ const repoRoot = resolve(import.meta.dirname, '..')
 
 describe('Cloudflare build configuration', () => {
   test('leaves build ownership with Cloudflare Workers Builds', async () => {
-    for (const app of ['admin', 'blog', 'store']) {
+    for (const app of ['admin', 'store']) {
       const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
 
       expect(config).not.toMatch(/"build"\s*:/)
       expect(config).toMatch(/"main"\s*:\s*"\.open-next\/worker\.js"/)
     }
 
-    const landingConfig = await readFile(
-      resolve(repoRoot, 'apps', 'landing', 'wrangler.jsonc'),
-      'utf8'
-    )
-    expect(landingConfig).not.toMatch(/"build"\s*:/)
-    expect(landingConfig).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
+    for (const app of ['blog', 'landing']) {
+      const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
+
+      expect(config).not.toMatch(/"build"\s*:/)
+      expect(config).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
+    }
   })
 
-  test('uses the OpenNext build with a frozen install and runtime compatibility patches', async () => {
+  test('uses the configured Cloudflare build with a frozen install', async () => {
     const script = await readFile(resolve(repoRoot, 'scripts/build-cloudflare-worker.mjs'), 'utf8')
 
-    expect(script).toContain("opennextjs-cloudflare', 'build")
     expect(script).toContain("install', '--frozen-lockfile")
-    expect(script).toContain('patchBlogInstrumentationLoader')
-    expect(script).toContain('directInstrumentationPattern')
-    expect(script).toContain('patchBlogComposableCacheHandlers')
-    expect(script).toContain('writeFileSync(serverHandlerPath')
+    expect(script).toContain("run', 'build:cloudflare")
+    expect(script).toContain("opennextjs-cloudflare', 'build")
+    expect(script).toContain("app === 'blog' || app === 'landing'")
   })
 
-  test('provides the image binding required by the OpenNext Worker wrapper', async () => {
+  test('assigns ephemeral inspector ports to parallel Astro builds', async () => {
+    for (const app of ['blog', 'landing']) {
+      const config = await readFile(resolve(repoRoot, 'apps', app, 'astro.wrangler.jsonc'), 'utf8')
+
+      expect(config).toMatch(/"inspector_port"\s*:\s*0/)
+    }
+  })
+
+  test('keeps the R2 gallery binding on the Astro blog worker', async () => {
     const config = await readFile(resolve(repoRoot, 'apps/blog/wrangler.jsonc'), 'utf8')
 
-    expect(config).toMatch(/"images"\s*:\s*\{[\s\S]*?"binding"\s*:\s*"IMAGES"/)
+    expect(config).toMatch(/"binding"\s*:\s*"BLOG_GALLERY_BUCKET"/)
+    expect(config).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
   })
 
-  test('hardens normal blog responses without allowing dynamic policy values', async () => {
-    const nextConfig = await readFile(resolve(repoRoot, 'apps/blog/next.config.mjs'), 'utf8')
-    const usesSharedHeaders = nextConfig.includes("from '@repo/config/security-headers'")
+  test('hardens blog responses through Astro middleware with shared headers', async () => {
+    const middleware = await readFile(resolve(repoRoot, 'apps/blog/src/middleware.ts'), 'utf8')
+    expect(middleware).toContain('SECURITY_HEADERS')
+    expect(middleware).not.toContain('unsafe-eval')
 
-    if (usesSharedHeaders) {
-      const headersModule = await readFile(
-        resolve(repoRoot, 'packages/config/security-headers.mjs'),
-        'utf8'
-      )
-      expect(nextConfig).toContain('SECURITY_HEADERS')
-      expect(headersModule).toContain("key: 'Content-Security-Policy'")
-      expect(headersModule).toContain("default-src 'self'")
-      expect(headersModule).not.toContain('unsafe-eval')
-    } else {
-      expect(nextConfig).toContain(
-        "{ key: 'Content-Security-Policy', value: contentSecurityPolicy }"
-      )
-    }
-    expect(nextConfig).toContain('poweredByHeader: false')
-    expect(nextConfig).not.toContain('unsafe-eval')
+    const headersModule = await readFile(
+      resolve(repoRoot, 'packages/config/security-headers.mjs'),
+      'utf8'
+    )
+    expect(headersModule).toContain("key: 'Content-Security-Policy'")
+    expect(headersModule).toContain("default-src 'self'")
+    expect(headersModule).not.toContain('unsafe-eval')
   })
 
   test('hardens every Next app response and hides the framework signature', async () => {
@@ -99,13 +98,12 @@ describe('Cloudflare build configuration', () => {
     expect(landingMiddleware).not.toContain('unsafe-eval')
   })
 
-  test('keeps the blog edge middleware on Web APIs to avoid bundling next/server', async () => {
-    const middleware = await readFile(resolve(repoRoot, 'apps/blog/middleware.ts'), 'utf8')
+  test('keeps the blog Astro middleware on Web APIs with agent discovery headers', async () => {
+    const middleware = await readFile(resolve(repoRoot, 'apps/blog/src/middleware.ts'), 'utf8')
 
     expect(middleware).not.toContain("from 'next/server'")
-    expect(middleware).toContain("response.headers.set('x-middleware-next', '1')")
     expect(middleware).toContain("'Content-Type': 'text/markdown; charset=utf-8'")
     expect(middleware).toContain('SECURITY_HEADERS')
-    expect(middleware).not.toContain("runtime: 'experimental-edge'")
+    expect(middleware).toContain('DISCOVERY_LINK_HEADER')
   })
 })

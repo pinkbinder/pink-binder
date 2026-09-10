@@ -1,0 +1,59 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { BlogMainLayout } from '@repo/ui'
+import { getSitemapBlogUrl, getSitemapLandingUrl } from '@repo/config'
+import { ensureAbsoluteHttpUrl } from '../lib/urls'
+import {
+  BLOG_INDEX_DESCRIPTION,
+  BLOG_INDEX_TITLE,
+} from '../lib/blog-metadata'
+import {
+  buildBlogGridFacets,
+  filterBlogGridPosts,
+  getPublishedBlogGridPostsForRequest,
+} from '../lib/blog-grid-data'
+import { resolveBlogGridQuery } from '@repo/ui/blog-query-state'
+import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
+import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data'
+import { BlogGridIsland } from '../components/BlogGridIsland'
+
+const LANDING_URL = ensureAbsoluteHttpUrl(getSitemapLandingUrl())
+const BLOG_INDEX_URL = getSitemapBlogUrl()
+
+const rawParams: Record<string, string | string[] | undefined> = {}
+Astro.url.searchParams.forEach((value, key) => {
+  rawParams[key] = value
+})
+
+const [posts, parsedSearchParams] = await Promise.all([
+  getPublishedBlogGridPostsForRequest(new Date(), Astro.locals),
+  loadBlogFilterSearchParams(rawParams),
+])
+
+const facets = buildBlogGridFacets(posts)
+const query = resolveBlogGridQuery(parsedSearchParams, facets)
+const filteredPosts = filterBlogGridPosts(posts, query)
+const initialPosts = filteredPosts.slice(0, BLOG_INDEX_INITIAL_COUNT)
+---
+
+<Layout title={BLOG_INDEX_TITLE} description={BLOG_INDEX_DESCRIPTION} canonical={BLOG_INDEX_URL}>
+  <BlogMainLayout landingUrl={LANDING_URL}>
+    <header class="mx-auto max-w-2xl text-center">
+      <h1 class="font-title text-4xl font-bold tracking-tight">
+        Cute Pokémon Collector Guide
+      </h1>
+      <p class="text-muted-foreground mt-4 text-base leading-relaxed sm:text-lg">
+        Your guide to the soft, pastel, and art-focused side of the Pokémon TCG—featuring regular
+        updates on the cutest cards, beautiful illustration styles, set previews, news or
+        announcements, and inspiration for your cozy card collection!
+      </p>
+    </header>
+    <BlogGridIsland
+      client:only="react"
+      posts={initialPosts}
+      facets={facets}
+      total={filteredPosts.length}
+      initialQuery={query}
+    />
+  </BlogMainLayout>
+</Layout>

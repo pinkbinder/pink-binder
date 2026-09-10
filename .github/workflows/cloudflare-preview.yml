@@ -21,7 +21,7 @@ jobs:
       fail-fast: false
       matrix:
         app: [admin, blog, landing, store]
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.22.1
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.2
     with:
       mode: preview
       draft-protection: true

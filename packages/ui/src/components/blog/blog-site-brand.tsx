@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '../compat-link'
 import { cn } from '../../lib/utils'
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 import { BLOG_LOCAL_ASSETS, BLOG_R2_ASSETS } from './blog-r2-assets'

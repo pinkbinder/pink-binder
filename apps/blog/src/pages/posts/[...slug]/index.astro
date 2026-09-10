@@ -1,0 +1,61 @@
+---
+import type { ReactNode } from 'react'
+import Layout from '../../../layouts/Layout.astro'
+import MdxProse from '../../../components/MdxProse.astro'
+import {
+  buildPostHead,
+  loadPostPage,
+} from '../../../components/PostArticle'
+
+import PostIsland from '../../../components/PostIsland'
+
+export const prerender = false
+
+const slugParam = Astro.params.slug ?? ''
+const slugSegments = Array.isArray(slugParam) ? slugParam : slugParam.split('/').filter(Boolean)
+
+const fallbackHead = {
+  title: 'Post Not Found',
+  description: 'Post Not Found',
+  canonical: Astro.url.toString(),
+  image: '',
+  publishedTime: '',
+}
+let head = fallbackHead
+try {
+  const loaded = await buildPostHead(slugSegments, Astro.locals)
+  head = {
+    title: loaded.title,
+    description: loaded.description ?? loaded.title,
+    canonical: loaded.canonical ?? Astro.url.toString(),
+    image: loaded.image ?? '',
+    publishedTime: loaded.publishedTime ?? '',
+  }
+} catch {
+  return new Response('Not Found', { status: 404 })
+}
+
+let article: unknown = null
+try {
+  article = await loadPostPage(slugSegments, Astro.locals)
+} catch (error) {
+  if (error instanceof Response && error.status === 404) {
+    return new Response('Not Found', { status: 404 })
+  }
+  throw error
+}
+
+const result = article as
+  | { kind: 'authored'; content: string }
+  | { kind: 'island'; node: ReactNode }
+---
+
+<Layout
+  title={head.title}
+  description={head.description}
+  canonical={head.canonical}
+>
+  {result.kind === 'authored'
+    ? <MdxProse content={result.content} />
+    : <PostIsland node={result.node} client:load />}
+</Layout>

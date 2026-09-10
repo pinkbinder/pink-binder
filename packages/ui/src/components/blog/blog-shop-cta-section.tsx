@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import Image from '../compat-image'
 import { Button } from '../button'
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 import { BlogSectionCard } from './blog-section-card'

@@ -3,42 +3,22 @@
   "name": "blog",
   "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-08-29",
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "main": ".open-next/worker.js",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env",
+    "global_fetch_strictly_public",
+  ],
+  "main": "dist/server/entry.mjs",
   "assets": {
-    "directory": ".open-next/assets",
+    "directory": "./dist/client",
     "binding": "ASSETS",
   },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "blog",
-    },
-  ],
   "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "blog-opennext-cache-v3",
-    },
     {
       "binding": "BLOG_GALLERY_BUCKET",
       "bucket_name": "pink-binder",
     },
   ],
-  "images": {
-    "binding": "IMAGES",
-  },
-  "observability": {
-    "enabled": true,
-    "logs": {
-      "enabled": true,
-      "invocation_logs": true,
-      "head_sampling_rate": 0.1,
-      "persist": true,
-    },
-    "traces": {
-      "enabled": false,
-    },
-  },
+  "observability": { "enabled": true },
   "workers_dev": true,
 }

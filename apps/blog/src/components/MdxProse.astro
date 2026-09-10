@@ -1,0 +1,58 @@
+---
+interface Props {
+  content: string
+}
+
+const { content } = Astro.props as Props
+---
+<div class="mdx-prose" data-mdx-content={content}>
+  <div data-mdx-rendered></div>
+</div>
+<script>
+  // Minimal MDX-subset renderer for the single authored post (first-post).
+  // Template posts render via UI components, never through here.
+  const containers = document.querySelectorAll('[data-mdx-content]')
+  for (const container of containers) {
+    const raw = container.getAttribute('data-mdx-content') ?? ''
+    const target = container.querySelector('[data-mdx-rendered]')
+    if (!target) continue
+    const escape = (s: string) =>
+      s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+    const inline = (s: string) =>
+      escape(s)
+        .replace(/\*\*([^*]+)\*\*/g, '<strong class="text-foreground font-bold">$1</strong>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-primary font-medium underline underline-offset-2">$1</a>')
+    const blocks = raw.split(/\n{2,}/)
+    let html = ''
+    let list: string[] | null = null
+    const flushList = () => {
+      if (list) {
+        html += `<ul class="mb-4 list-disc space-y-2 pl-6">${list.map((i) => `<li class="text-foreground/80 leading-relaxed">${inline(i)}</li>`).join('')}</ul>`
+        list = null
+      }
+    }
+    for (const block of blocks) {
+      const line = block.trim()
+      if (!line) continue
+      if (line.startsWith('## ')) {
+        flushList()
+        html += `<h2 class="font-title mt-8 mb-3 border-b border-pink-200 pb-2 text-2xl font-bold">${inline(line.slice(3))}</h2>`
+      } else if (line.startsWith('# ')) {
+        flushList()
+        html += `<h1 class="font-title mt-8 mb-4 text-3xl font-bold">${inline(line.slice(2))}</h1>`
+      } else if (line.startsWith('---')) {
+        flushList()
+        html += '<hr class="my-8 border-pink-200" />'
+      } else if (/^[-*] /.test(line)) {
+        const items = line.split('\n').map((l) => l.replace(/^[-*] /, '').trim()).filter(Boolean)
+        if (!list) list = []
+        list.push(...items)
+      } else {
+        flushList()
+        html += `<p class="text-foreground/80 mb-4 leading-relaxed">${inline(line.replace(/\n/g, ' '))}</p>`
+      }
+    }
+    flushList()
+    target.innerHTML = html
+  }
+</script>

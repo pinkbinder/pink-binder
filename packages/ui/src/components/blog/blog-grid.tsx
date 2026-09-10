@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
-import Link from 'next/link'
+import Link from '../compat-link'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useQueryStates } from 'nuqs'
 import {
