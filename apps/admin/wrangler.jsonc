@@ -6,5 +6,5 @@
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
   "main": "@tanstack/react-start/server-entry",
   "observability": { "enabled": true },
-  "workers_dev": true
+  "workers_dev": true,
 }

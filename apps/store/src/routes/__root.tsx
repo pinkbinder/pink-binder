@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 
 import appCss from '../styles.css?url'
 
-interface StoreRouterContext {
+export interface StoreRouterContext {
   queryClient: QueryClient
 }
 
