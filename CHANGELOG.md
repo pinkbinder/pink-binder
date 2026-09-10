@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.6.0](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.5.4...pink-binder-v1.6.0) (2026-09-10)
+
+
+### Features
+
+* **admin:** bootstrap console with inventory, content, and ad spend services ([#277](https://github.com/PinkBinder/pink-binder/issues/277)) ([a0224d1](https://github.com/PinkBinder/pink-binder/commit/a0224d1e6cd73cf9cfdd4018e50a106efc227f89))
+* **store:** Astro + Medusa storefront, admin console completion, config consolidation ([#278](https://github.com/PinkBinder/pink-binder/issues/278)) ([6c2439d](https://github.com/PinkBinder/pink-binder/commit/6c2439da003e201eab2e33bf0f171a95474b737c))
+
 ## [1.5.4](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.5.3...pink-binder-v1.5.4) (2026-09-10)
 
 

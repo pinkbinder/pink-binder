@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/PinkBinder/pink-binder/compare/store-v0.4.3...store-v0.5.0) (2026-09-10)
+
+
+### Features
+
+* **store:** Astro + Medusa storefront, admin console completion, config consolidation ([#278](https://github.com/PinkBinder/pink-binder/issues/278)) ([6c2439d](https://github.com/PinkBinder/pink-binder/commit/6c2439da003e201eab2e33bf0f171a95474b737c))
+
 ## [0.4.3](https://github.com/PinkBinder/pink-binder/compare/store-v0.4.2...store-v0.4.3) (2026-09-10)
 
 
