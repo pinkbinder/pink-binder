@@ -9,4 +9,7 @@
     "global_fetch_strictly_public",
   ],
   "workers_dev": true,
+  "dev": {
+    "inspector_port": 0,
+  },
 }

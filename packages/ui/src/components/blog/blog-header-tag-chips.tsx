@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '../compat-link'
 import type { CSSProperties, ReactNode } from 'react'
 
 export interface BlogHeaderTagChipItem {

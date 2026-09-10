@@ -59,8 +59,8 @@ describe('M1 state and data ownership contract', () => {
   test('keeps URL, query, and removed loader ownership mechanically distinct', () => {
     const grid = read('packages/ui/src/components/blog/blog-grid.tsx')
     const gallery = read('packages/ui/src/components/blog/pokemon-tcg-card-gallery.tsx')
-    const providers = read('apps/blog/app/providers.tsx')
-    const serverSection = read('apps/blog/app/blog-index-section.tsx')
+    const providers = read('apps/blog/src/components/BlogProviders.tsx')
+    const serverSection = read('apps/blog/src/pages/index.astro')
 
     expect((providers.match(/<QueryClientProvider/g) ?? []).length).toBe(1)
     expect(grid).toContain('useQueryStates(blogFilterParsers')

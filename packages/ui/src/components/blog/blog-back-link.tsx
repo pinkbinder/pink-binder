@@ -1,8 +1,8 @@
 'use client'
 
 import { buildBlogIndexReturnHref } from '@repo/data/client'
-import Link from 'next/link'
-import { useSearchParams } from 'next/navigation'
+import Link from '../compat-link'
+import { useSearchParams } from '../../lib/compat-navigation'
 
 export function BlogBackLink() {
   const searchParams = useSearchParams()

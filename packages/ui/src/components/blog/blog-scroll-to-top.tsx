@@ -1,6 +1,6 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from '../../lib/compat-navigation'
 import { useEffect, useRef } from 'react'
 
 /**

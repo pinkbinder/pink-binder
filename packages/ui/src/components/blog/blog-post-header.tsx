@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from '../compat-link'
 import { formatPostDate } from '../../lib/format-post-date'
 import { BlogHeaderTagChips, type BlogHeaderTagChipItem } from './blog-header-tag-chips'
 import { BLOG_POST_ARTICLE_ID } from './blog-reading-ids'
