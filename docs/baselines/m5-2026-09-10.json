@@ -1,0 +1,1436 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-10T22:40:47.845Z",
+  "sourceRevision": "4ce6b400684348737978432012f40156c3a300ef",
+  "manifest": "docs/baselines/m0-routes.json",
+  "runsPerRouteProfile": 3,
+  "tools": {
+    "node": "v24.18.0",
+    "lighthouse": "13.4.1",
+    "chrome": "Google Chrome 152.0.7977.83"
+  },
+  "entries": [
+    {
+      "routeId": "landing-home",
+      "app": "landing",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Public landing page with the default enabled link set; below-fold marketplace remains in its loading placeholder for initial navigation.",
+      "kind": "document",
+      "profile": "mobile",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse simulated mobile: 150 ms RTT, 1,638.4 Kbps throughput, 4x CPU slowdown",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 1815.3786999999998,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 1815.3786999999998,
+            "speed-index": 1365.3787,
+            "total-byte-weight": 154648
+          },
+          "network": {
+            "requestCount": 14,
+            "transferBytes": 154648,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 17268,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 1662.6689499999998,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 1662.6689499999998,
+            "speed-index": 1362.56245,
+            "total-byte-weight": 152988
+          },
+          "network": {
+            "requestCount": 14,
+            "transferBytes": 152988,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 16141,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 1662.1947,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 1662.1947,
+            "speed-index": 1362.0969,
+            "total-byte-weight": 152988
+          },
+          "network": {
+            "requestCount": 14,
+            "transferBytes": 152988,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 16140,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 0.99,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 1662.6689499999998,
+            "standardDeviation": 72.10010827093498
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 0
+          },
+          "total-blocking-time": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "interactive": {
+            "median": 1662.6689499999998,
+            "standardDeviation": 72.10010827093498
+          },
+          "speed-index": {
+            "median": 1362.56245,
+            "standardDeviation": 1.4498357035272116
+          },
+          "total-byte-weight": {
+            "median": 152988,
+            "standardDeviation": 782.5315045131125
+          }
+        },
+        "network": {
+          "requestCount": 14,
+          "transferBytes": 152988,
+          "javascriptBytes": 9281,
+          "cssBytes": 67850,
+          "imageBytes": 16141,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "landing-home",
+      "app": "landing",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Public landing page with the default enabled link set; below-fold marketplace remains in its loading placeholder for initial navigation.",
+      "kind": "document",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 450.29444999999987,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0.0002064827948515892,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 450.29444999999987,
+            "speed-index": 330.1325999999999,
+            "total-byte-weight": 192194
+          },
+          "network": {
+            "requestCount": 15,
+            "transferBytes": 192194,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 55346,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 400.29837499999996,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0.0002064827948515892,
+            "server-response-time": 5,
+            "total-blocking-time": 0,
+            "interactive": 402.30102750000003,
+            "speed-index": 340.2188,
+            "total-byte-weight": 192203
+          },
+          "network": {
+            "requestCount": 15,
+            "transferBytes": 192203,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 55347,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3000/",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 431.217125,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0.0002064827948515892,
+            "server-response-time": 7,
+            "total-blocking-time": 0,
+            "interactive": 433.2192475,
+            "speed-index": 331.111,
+            "total-byte-weight": 192194
+          },
+          "network": {
+            "requestCount": 15,
+            "transferBytes": 192194,
+            "javascriptBytes": 9281,
+            "cssBytes": 67850,
+            "imageBytes": 55347,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 1,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 431.217125,
+            "standardDeviation": 20.60075766169708
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0.0002064827948515892,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 0.816496580927726
+          },
+          "total-blocking-time": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "interactive": {
+            "median": 433.2192475,
+            "standardDeviation": 19.863051884921887
+          },
+          "speed-index": {
+            "median": 331.111,
+            "standardDeviation": 4.541667802324037
+          },
+          "total-byte-weight": {
+            "median": 192194,
+            "standardDeviation": 4.242640687119285
+          }
+        },
+        "network": {
+          "requestCount": 15,
+          "transferBytes": 192194,
+          "javascriptBytes": 9281,
+          "cssBytes": 67850,
+          "imageBytes": 55347,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "blog-index",
+      "app": "blog",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Published blog index from the committed/R2 index, unfiltered.",
+      "kind": "document",
+      "profile": "mobile",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse simulated mobile: 150 ms RTT, 1,638.4 Kbps throughput, 4x CPU slowdown",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.79,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 3461.6419,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 7,
+            "total-blocking-time": 234.5,
+            "interactive": 7845.241900000001,
+            "speed-index": 3461.6419,
+            "total-byte-weight": 1466716
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 1466716,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 449149,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.79,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 3799.6298,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 5,
+            "total-blocking-time": 181.5,
+            "interactive": 7689.1231800000005,
+            "speed-index": 3459.6994000000004,
+            "total-byte-weight": 1466602
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 1466602,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 449035,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.75,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 3931.9487500000005,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 265,
+            "interactive": 7902.3668750000015,
+            "speed-index": 3462.29975,
+            "total-byte-weight": 1467271
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 1467271,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 449704,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 0.79,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 3799.6298,
+            "standardDeviation": 198.02711885901877
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 0.816496580927726
+          },
+          "total-blocking-time": {
+            "median": 234.5,
+            "standardDeviation": 34.49879224939138
+          },
+          "interactive": {
+            "median": 7845.241900000001,
+            "standardDeviation": 90.1290377184245
+          },
+          "speed-index": {
+            "median": 3461.6419,
+            "standardDeviation": 1.1039269800226426
+          },
+          "total-byte-weight": {
+            "median": 1466716,
+            "standardDeviation": 292.22936197446006
+          }
+        },
+        "network": {
+          "requestCount": 19,
+          "transferBytes": 1466716,
+          "javascriptBytes": 446109,
+          "cssBytes": 64191,
+          "imageBytes": 449149,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "blog-index",
+      "app": "blog",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Published blog index from the committed/R2 index, unfiltered.",
+      "kind": "document",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 818.5013,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 10,
+            "total-blocking-time": 60,
+            "interactive": 1576.90848,
+            "speed-index": 662.8563999999999,
+            "total-byte-weight": 2027384
+          },
+          "network": {
+            "requestCount": 31,
+            "transferBytes": 2027384,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 1009817,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 811.6350499999999,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 5,
+            "total-blocking-time": 34,
+            "interactive": 1539.8992574999997,
+            "speed-index": 650.1697999999999,
+            "total-byte-weight": 2025265
+          },
+          "network": {
+            "requestCount": 31,
+            "transferBytes": 2025265,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 1007698,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 811.0464500000002,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 35.5,
+            "interactive": 1522.0684,
+            "speed-index": 651.2378000000001,
+            "total-byte-weight": 2025307
+          },
+          "network": {
+            "requestCount": 31,
+            "transferBytes": 2025307,
+            "javascriptBytes": 446109,
+            "cssBytes": 64191,
+            "imageBytes": 1007740,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 0.99,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 811.6350499999999,
+            "standardDeviation": 3.3840578459890343
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 2.160246899469287
+          },
+          "total-blocking-time": {
+            "median": 35.5,
+            "standardDeviation": 11.918706119187416
+          },
+          "interactive": {
+            "median": 1539.8992574999997,
+            "standardDeviation": 22.840160545374204
+          },
+          "speed-index": {
+            "median": 651.2378000000001,
+            "standardDeviation": 5.745358605189211
+          },
+          "total-byte-weight": {
+            "median": 2025307,
+            "standardDeviation": 989.1553074326712
+          }
+        },
+        "network": {
+          "requestCount": 31,
+          "transferBytes": 2025307,
+          "javascriptBytes": 446109,
+          "cssBytes": 64191,
+          "imageBytes": 1007740,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "blog-post-expansion-pitch-black",
+      "app": "blog",
+      "path": "/posts/expansion/pitch-black/overview",
+      "priority": "P0",
+      "fixture": "Published content-heavy post selected from the committed blog index; it exercises dynamic article rendering and card/media sections.",
+      "kind": "document",
+      "profile": "mobile",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse simulated mobile: 150 ms RTT, 1,638.4 Kbps throughput, 4x CPU slowdown",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 0.98,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 2367.6813,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 2382.68136,
+            "speed-index": 1208.2722,
+            "total-byte-weight": 385757
+          },
+          "network": {
+            "requestCount": 17,
+            "transferBytes": 385757,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 263137,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 0.98,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 2223.4662500000004,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 7,
+            "total-blocking-time": 0,
+            "interactive": 2245.9663550000005,
+            "speed-index": 1210.1404000000002,
+            "total-byte-weight": 385726
+          },
+          "network": {
+            "requestCount": 17,
+            "transferBytes": 385726,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 263106,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 0.99,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 1997.5279,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 5,
+            "total-blocking-time": 0,
+            "interactive": 1997.5279,
+            "speed-index": 1207.3112,
+            "total-byte-weight": 385759
+          },
+          "network": {
+            "requestCount": 17,
+            "transferBytes": 385759,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 263139,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 0.98,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 2223.4662500000004,
+            "standardDeviation": 152.33722029278232
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 0.816496580927726
+          },
+          "total-blocking-time": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "interactive": {
+            "median": 2245.9663550000005,
+            "standardDeviation": 159.42809116230592
+          },
+          "speed-index": {
+            "median": 1208.2722,
+            "standardDeviation": 1.1746424931300576
+          },
+          "total-byte-weight": {
+            "median": 385757,
+            "standardDeviation": 15.107025591499548
+          }
+        },
+        "network": {
+          "requestCount": 17,
+          "transferBytes": 385757,
+          "javascriptBytes": 0,
+          "cssBytes": 64191,
+          "imageBytes": 263137,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "blog-post-expansion-pitch-black",
+      "app": "blog",
+      "path": "/posts/expansion/pitch-black/overview",
+      "priority": "P0",
+      "fixture": "Published content-heavy post selected from the committed blog index; it exercises dynamic article rendering and card/media sections.",
+      "kind": "document",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 527.0746,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 5,
+            "total-blocking-time": 0,
+            "interactive": 527.0746000000001,
+            "speed-index": 286.79715000000004,
+            "total-byte-weight": 422273
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 422273,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 299653,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 529.8072,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 6,
+            "total-blocking-time": 0,
+            "interactive": 529.8072,
+            "speed-index": 292.1703,
+            "total-byte-weight": 422205
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 422205,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 299585,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/posts/expansion/pitch-black/overview",
+          "scores": {
+            "performance": 1,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 537.3092999999999,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 9,
+            "total-blocking-time": 0,
+            "interactive": 537.3093,
+            "speed-index": 289.44,
+            "total-byte-weight": 423392
+          },
+          "network": {
+            "requestCount": 19,
+            "transferBytes": 423392,
+            "javascriptBytes": 0,
+            "cssBytes": 64191,
+            "imageBytes": 300772,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 1,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 529.8072,
+            "standardDeviation": 4.326888685366782
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 6,
+            "standardDeviation": 1.699673171197595
+          },
+          "total-blocking-time": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "interactive": {
+            "median": 529.8072,
+            "standardDeviation": 4.326888685366796
+          },
+          "speed-index": {
+            "median": 289.44,
+            "standardDeviation": 2.1936761417766104
+          },
+          "total-byte-weight": {
+            "median": 422273,
+            "standardDeviation": 544.2378973288143
+          }
+        },
+        "network": {
+          "requestCount": 19,
+          "transferBytes": 422273,
+          "javascriptBytes": 0,
+          "cssBytes": 64191,
+          "imageBytes": 299653,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "blog-posts-grid",
+      "app": "blog",
+      "path": "/api/posts-grid?limit=9",
+      "priority": "P1",
+      "fixture": "First bounded API page with no filters; validates the server-side pagination/cache contract.",
+      "kind": "api",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3002/api/posts-grid?limit=9",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": 48.33150000000023,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 1,
+            "transferBytes": 10726,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0,
+            "responseDurationMs": 48.50204200000735
+          },
+          "response": {
+            "status": 200,
+            "cacheControl": "public, max-age=60, s-maxage=86400, stale-while-revalidate=604800",
+            "contentType": "application/json",
+            "etag": null
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/api/posts-grid?limit=9",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": 10.228875000000698,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 1,
+            "transferBytes": 10726,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0,
+            "responseDurationMs": 10.309042000008048
+          },
+          "response": {
+            "status": 200,
+            "cacheControl": "public, max-age=60, s-maxage=86400, stale-while-revalidate=604800",
+            "contentType": "application/json",
+            "etag": null
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3002/api/posts-grid?limit=9",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": 5.084417000005487,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 1,
+            "transferBytes": 10726,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0,
+            "responseDurationMs": 5.162334000022383
+          },
+          "response": {
+            "status": 200,
+            "cacheControl": "public, max-age=60, s-maxage=86400, stale-while-revalidate=604800",
+            "contentType": "application/json",
+            "etag": null
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": null,
+          "accessibility": null,
+          "seo": null
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "server-response-time": {
+            "median": 10.228875000000698,
+            "standardDeviation": 19.288988418878727
+          },
+          "total-blocking-time": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interactive": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "speed-index": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "total-byte-weight": {
+            "median": null,
+            "standardDeviation": null
+          }
+        },
+        "network": {
+          "requestCount": 1,
+          "transferBytes": 10726,
+          "javascriptBytes": 0,
+          "cssBytes": 0,
+          "imageBytes": 0,
+          "mediaBytes": 0,
+          "responseDurationMs": 10.309042000008048
+        }
+      }
+    },
+    {
+      "routeId": "store-catalog",
+      "app": "store",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Built-in six-product catalog fixture; no checkout or external marketplace dependency exists yet.",
+      "kind": "document",
+      "profile": "mobile",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse simulated mobile: 150 ms RTT, 1,638.4 Kbps throughput, 4x CPU slowdown",
+      "samples": [
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": null,
+          "accessibility": null,
+          "seo": null
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "server-response-time": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "total-blocking-time": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interactive": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "speed-index": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "total-byte-weight": {
+            "median": null,
+            "standardDeviation": null
+          }
+        },
+        "network": {
+          "requestCount": 0,
+          "transferBytes": 0,
+          "javascriptBytes": 0,
+          "cssBytes": 0,
+          "imageBytes": 0,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "store-catalog",
+      "app": "store",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Built-in six-product catalog fixture; no checkout or external marketplace dependency exists yet.",
+      "kind": "document",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "chrome-error://chromewebdata/",
+          "scores": {
+            "performance": null,
+            "accessibility": null,
+            "seo": null
+          },
+          "metrics": {
+            "largest-contentful-paint": null,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": null,
+            "server-response-time": null,
+            "total-blocking-time": null,
+            "interactive": null,
+            "speed-index": null,
+            "total-byte-weight": null
+          },
+          "network": {
+            "requestCount": 0,
+            "transferBytes": 0,
+            "javascriptBytes": 0,
+            "cssBytes": 0,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": null,
+          "accessibility": null,
+          "seo": null
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "server-response-time": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "total-blocking-time": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "interactive": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "speed-index": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "total-byte-weight": {
+            "median": null,
+            "standardDeviation": null
+          }
+        },
+        "network": {
+          "requestCount": 0,
+          "transferBytes": 0,
+          "javascriptBytes": 0,
+          "cssBytes": 0,
+          "imageBytes": 0,
+          "mediaBytes": 0
+        }
+      }
+    },
+    {
+      "routeId": "admin-dashboard",
+      "app": "admin",
+      "path": "/",
+      "priority": "P0",
+      "fixture": "Built-in dashboard statistics and recent-order fixture. Authentication is not implemented; this is not a production auth assertion.",
+      "kind": "document",
+      "profile": "desktop",
+      "cacheState": "cold: Lighthouse clears browser storage before every run",
+      "network": "Lighthouse desktop preset; no simulated mobile CPU or network throttling",
+      "samples": [
+        {
+          "finalUrl": "http://localhost:3003/",
+          "scores": {
+            "performance": 0.98,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 870.2151,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 11,
+            "total-blocking-time": 0,
+            "interactive": 870.2151,
+            "speed-index": 870.2151,
+            "total-byte-weight": 658969
+          },
+          "network": {
+            "requestCount": 11,
+            "transferBytes": 658969,
+            "javascriptBytes": 551695,
+            "cssBytes": 68601,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3003/",
+          "scores": {
+            "performance": 0.98,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 861.0318,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 7,
+            "total-blocking-time": 0,
+            "interactive": 861.0318,
+            "speed-index": 861.0318,
+            "total-byte-weight": 658964
+          },
+          "network": {
+            "requestCount": 11,
+            "transferBytes": 658964,
+            "javascriptBytes": 551695,
+            "cssBytes": 68601,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        },
+        {
+          "finalUrl": "http://localhost:3003/",
+          "scores": {
+            "performance": 0.98,
+            "accessibility": 1,
+            "seo": 1
+          },
+          "metrics": {
+            "largest-contentful-paint": 869.8576,
+            "interaction-to-next-paint": null,
+            "cumulative-layout-shift": 0,
+            "server-response-time": 10,
+            "total-blocking-time": 0,
+            "interactive": 869.8576,
+            "speed-index": 869.8576,
+            "total-byte-weight": 658964
+          },
+          "network": {
+            "requestCount": 11,
+            "transferBytes": 658964,
+            "javascriptBytes": 551695,
+            "cssBytes": 68601,
+            "imageBytes": 0,
+            "mediaBytes": 0
+          }
+        }
+      ],
+      "summary": {
+        "scores": {
+          "performance": 0.98,
+          "accessibility": 1,
+          "seo": 1
+        },
+        "metrics": {
+          "largest-contentful-paint": {
+            "median": 869.8576,
+            "standardDeviation": 4.247293919923887
+          },
+          "interaction-to-next-paint": {
+            "median": null,
+            "standardDeviation": null
+          },
+          "cumulative-layout-shift": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "server-response-time": {
+            "median": 10,
+            "standardDeviation": 1.699673171197595
+          },
+          "total-blocking-time": {
+            "median": 0,
+            "standardDeviation": 0
+          },
+          "interactive": {
+            "median": 869.8576,
+            "standardDeviation": 4.247293919923887
+          },
+          "speed-index": {
+            "median": 869.8576,
+            "standardDeviation": 4.247293919923887
+          },
+          "total-byte-weight": {
+            "median": 658964,
+            "standardDeviation": 2.3570226039551585
+          }
+        },
+        "network": {
+          "requestCount": 11,
+          "transferBytes": 658964,
+          "javascriptBytes": 551695,
+          "cssBytes": 68601,
+          "imageBytes": 0,
+          "mediaBytes": 0
+        }
+      }
+    }
+  ]
+}

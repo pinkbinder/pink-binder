@@ -11,6 +11,7 @@
     "build": "node scripts/with-env.mjs turbo run build",
     "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
     "benchmark:routes": "node scripts/benchmark-routes.mjs",
+    "regression:routes": "node scripts/route-regression.mjs",
     "dev": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
     "dev:admin": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/admin",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
