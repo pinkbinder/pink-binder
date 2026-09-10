@@ -55,7 +55,9 @@ const result = article as
   description={head.description}
   canonical={head.canonical}
 >
+  {/* Server-side render only: island hydration cannot revive the serialized
+      React tree (React error #31 unmounts the article, blanking the page). */}
   {result.kind === 'authored'
     ? <MdxProse content={result.content} />
-    : <PostIsland node={result.node} client:load />}
+    : <PostIsland node={result.node} />}
 </Layout>
