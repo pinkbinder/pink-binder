@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.2](https://github.com/PinkBinder/pink-binder/compare/admin-v0.4.1...admin-v0.4.2) (2026-09-10)
+
+
+### Performance
+
+* lighthouse pass — a11y contrast, SSR island, CSP analytics, caching ([#273](https://github.com/PinkBinder/pink-binder/issues/273)) ([9607cc3](https://github.com/PinkBinder/pink-binder/commit/9607cc36bfe159699598c889fe167865c1857440))
+
 ## [0.4.1](https://github.com/PinkBinder/pink-binder/compare/admin-v0.4.0...admin-v0.4.1) (2026-09-10)
 
 

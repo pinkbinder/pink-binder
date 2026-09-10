@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/PinkBinder/pink-binder/compare/data-v1.2.0...data-v1.2.1) (2026-09-10)
+
+
+### Performance
+
+* lighthouse pass — a11y contrast, SSR island, CSP analytics, caching ([#273](https://github.com/PinkBinder/pink-binder/issues/273)) ([9607cc3](https://github.com/PinkBinder/pink-binder/commit/9607cc36bfe159699598c889fe167865c1857440))
+
 ## [1.2.0](https://github.com/PinkBinder/pink-binder/compare/data-v1.1.4...data-v1.2.0) (2026-09-10)
 
 
