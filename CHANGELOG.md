@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.0.0...pink-binder-v2.0.1) (2026-09-10)
+
+
+### Maintenance
+
+* fix main-protection ruleset for current rulesets API ([#4](https://github.com/pinkbinder/pink-binder/issues/4)) ([4b9b7ad](https://github.com/pinkbinder/pink-binder/commit/4b9b7ad214688906c3790e597c90ebf71b0e6542))
+
 ## [2.0.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.6.0...pink-binder-v2.0.0) (2026-09-10)
 
 
