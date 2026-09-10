@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.3.2...pink-binder-v1.4.0) (2026-09-10)
+
+
+### Features
+
+* **landing:** migrate landing app from Next.js to Astro ([#257](https://github.com/pinkbinder/pink-binder/issues/257)) ([5251706](https://github.com/pinkbinder/pink-binder/commit/5251706bd4caa31a28c3ff4e5f48d82e4622fa8d))
+
 ## [1.3.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v1.3.1...pink-binder-v1.3.2) (2026-09-09)
 
 
