@@ -11,7 +11,7 @@ import type { ReactNode } from 'react'
 
 import appCss from '../styles.css?url'
 
-interface AdminRouterContext {
+export interface AdminRouterContext {
   queryClient: QueryClient
 }
 
