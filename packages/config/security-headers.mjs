@@ -14,7 +14,7 @@ export const CONTENT_SECURITY_POLICY = [
   // Zaraz injects the Cloudflare Web Insights beacon and the Clarity tag on
   // zone hostnames; without these origins the browser blocks both scripts and
   // every page logs CSP violations.
-  "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms",
+  "script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
