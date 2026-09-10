@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.6.1](https://github.com/PinkBinder/pink-binder/compare/blog-v0.6.0...blog-v0.6.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **blog:** declare BLOG_GALLERY_BUCKET in the adapter wrangler config ([#266](https://github.com/PinkBinder/pink-binder/issues/266)) ([f28aad2](https://github.com/PinkBinder/pink-binder/commit/f28aad22e32ceece08303c7e7f63656ce54299c4))
+* **blog:** render prebuilt article trees server-side ([#268](https://github.com/PinkBinder/pink-binder/issues/268)) ([9eb07c9](https://github.com/PinkBinder/pink-binder/commit/9eb07c96442c35da4daae6bb690a6c8751ad8dec))
+* declare Tailwind source globs for blog, admin, and store ([#267](https://github.com/PinkBinder/pink-binder/issues/267)) ([9898c4d](https://github.com/PinkBinder/pink-binder/commit/9898c4d1d8135ca048b9e9081558cd199e1b0d7b))
+
 ## [0.6.0](https://github.com/PinkBinder/pink-binder/compare/blog-v0.5.2...blog-v0.6.0) (2026-09-10)
 
 

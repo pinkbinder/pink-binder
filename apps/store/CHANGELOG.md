@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/PinkBinder/pink-binder/compare/store-v0.4.0...store-v0.4.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* declare Tailwind source globs for blog, admin, and store ([#267](https://github.com/PinkBinder/pink-binder/issues/267)) ([9898c4d](https://github.com/PinkBinder/pink-binder/commit/9898c4d1d8135ca048b9e9081558cd199e1b0d7b))
+
 ## [0.4.0](https://github.com/PinkBinder/pink-binder/compare/store-v0.3.3...store-v0.4.0) (2026-09-10)
 
 
