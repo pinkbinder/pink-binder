@@ -1,0 +1,31 @@
+name: Debug Turbo Impact
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  debug:
+    name: Debug turbo query
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+      - run: bun install --frozen-lockfile --ignore-scripts
+      - name: Reproduce impact check without output redirection
+        run: |
+          set -x
+          BASE="${{ github.event.before || github.sha }}"
+          HEAD="${{ github.sha }}"
+          echo "base=$BASE head=$HEAD"
+          bunx --bun --no-install turbo --version
+          bunx --bun --no-install turbo query affected --packages @repo/blog --base="$BASE" --head="$HEAD" --no-update-notifier | tee turbo-affected.json
+          cat turbo-affected.json
