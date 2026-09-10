@@ -9,6 +9,12 @@
     "global_fetch_strictly_public",
   ],
   "workers_dev": true,
+  "r2_buckets": [
+    {
+      "binding": "BLOG_GALLERY_BUCKET",
+      "bucket_name": "pink-binder",
+    },
+  ],
   "dev": {
     "inspector_port": 0,
   },
