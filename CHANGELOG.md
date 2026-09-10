@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.0.1...pink-binder-v2.1.0) (2026-09-10)
+
+
+### Features
+
+* **m5:** closeout evidence — regression matrix, benchmarks, release docs ([#7](https://github.com/pinkbinder/pink-binder/issues/7)) ([d660988](https://github.com/pinkbinder/pink-binder/commit/d6609887d6f6d7bda0e82bb438590f4c208b09d3))
+
 ## [2.0.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.0.0...pink-binder-v2.0.1) (2026-09-10)
 
 
