@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.2...pink-binder-v2.1.3) (2026-09-10)
+
+
+### CI
+
+* **debug:** mirror impact job exactly and capture turbo stderr ([#19](https://github.com/pinkbinder/pink-binder/issues/19)) ([9553eea](https://github.com/pinkbinder/pink-binder/commit/9553eea6f9501ae14ee53b18d0ecfd653789829f))
+
 ## [2.1.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.1...pink-binder-v2.1.2) (2026-09-10)
 
 
