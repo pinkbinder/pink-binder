@@ -144,10 +144,12 @@ export function inferTcgdexAssetSeriesFromSetId(setId: string): string {
  * (`https://assets.tcgdex.net/en/sv/sv04.5/150`, not `.../en/sv04.5/150`).
  */
 export function normalizeTcgdexImageBase(imageBase: string): string {
-  const trimmed = imageBase
-    .trim()
-    .replace(/\/(?:low|high)\.(?:webp|png|jpe?g)$/i, '')
-    .replace(/\/$/, '')
+  let trimmed = imageBase.trim()
+  const imageSuffix = /(?:low|high)\.(?:webp|png|jpe?g)$/i.exec(trimmed)?.[0]
+  if (imageSuffix) {
+    trimmed = trimmed.slice(0, trimmed.length - imageSuffix.length).replace(/\/+$/, '')
+  }
+  trimmed = trimmed.replace(/\/$/, '')
 
   if (!trimmed) {
     return trimmed
