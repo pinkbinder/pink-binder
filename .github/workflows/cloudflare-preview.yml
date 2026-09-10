@@ -27,6 +27,9 @@ jobs:
       draft-protection: true
       wrangler-version: local
       working-directory: apps/${{ matrix.app }}
+      # explicit package filter: the v1.28.6 auto-detect returns an empty
+      # turbo_package on hosted runners, failing the impact check
+      turbo-filter: '@repo/${{ matrix.app }}'
       install-working-directory: .
       build-script: build:cloudflare
       bun-version: 1.4.0
