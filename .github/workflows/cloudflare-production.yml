@@ -15,8 +15,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [admin, blog, landing, store]
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.2
+        # store is gated out of production until the Medusa backend is hosted
+        # and the MEDUSA_* Worker secrets are set (see docs/ENV_SETUP.md).
+        app: [admin, blog, landing]
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.6
     with:
       mode: production
       wrangler-version: local
