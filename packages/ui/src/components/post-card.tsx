@@ -77,12 +77,14 @@ function PostCard({ post, className, ...props }: PostCardProps) {
             {post.meta}
           </p>
         ) : null}
-        <CardTitle className="font-title line-clamp-3 text-2xl leading-tight">
+        <CardTitle className="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
           {post.title}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground line-clamp-4 text-sm leading-6">{post.excerpt}</p>
+        <p className="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">
+          {post.excerpt}
+        </p>
       </CardContent>
     </Card>
   )

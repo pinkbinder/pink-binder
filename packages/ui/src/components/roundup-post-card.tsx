@@ -33,10 +33,14 @@ export function RoundupPostCard({
         {meta ? (
           <p className="text-primary text-xs font-semibold tracking-[0.25em] uppercase">{meta}</p>
         ) : null}
-        <CardTitle className="font-title line-clamp-3 text-2xl leading-tight">{title}</CardTitle>
+        <CardTitle className="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
+          {title}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground line-clamp-4 text-sm leading-6">{excerpt}</p>
+        <p className="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">
+          {excerpt}
+        </p>
       </CardContent>
     </Card>
   )

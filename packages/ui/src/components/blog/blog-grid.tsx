@@ -1158,7 +1158,7 @@ export function BlogGrid({
                     onClick={() =>
                       trackSelectContent({ contentType: 'blog_post', itemId: post.slug })
                     }
-                    className="group focus-visible:ring-ring block flex-1 rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+                    className="group focus-visible:ring-ring block rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
                     style={
                       typeAura
                         ? {
@@ -1294,6 +1294,9 @@ export function BlogGrid({
                       </Button>
                     ))}
                   </div>
+                  {/* Absorb leftover row height below the tags so cards keep
+                      their natural height and tag rows stay aligned. */}
+                  <div aria-hidden className="flex-1" />
                 </article>
               )
             })}
