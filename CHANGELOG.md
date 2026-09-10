@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.7...pink-binder-v2.1.8) (2026-09-10)
+
+
+### Tests
+
+* cover the tcg image pipeline and meet the 80% coverage gate ([#29](https://github.com/pinkbinder/pink-binder/issues/29)) ([1ae39c7](https://github.com/pinkbinder/pink-binder/commit/1ae39c73e5ea9095d47618470b190721a067a6d0))
+
 ## [2.1.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.6...pink-binder-v2.1.7) (2026-09-10)
 
 
