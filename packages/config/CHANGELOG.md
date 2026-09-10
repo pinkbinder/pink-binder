@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/PinkBinder/pink-binder/compare/config-v1.1.1...config-v1.1.2) (2026-09-10)
+
+
+### Performance
+
+* **blog:** defer grid hydration to idle and allow clarity scripts in CSP ([#275](https://github.com/PinkBinder/pink-binder/issues/275)) ([d510751](https://github.com/PinkBinder/pink-binder/commit/d510751565924d4e5740dc19116f7fd5429560ee))
+
 ## [1.1.1](https://github.com/PinkBinder/pink-binder/compare/config-v1.1.0...config-v1.1.1) (2026-09-10)
 
 
