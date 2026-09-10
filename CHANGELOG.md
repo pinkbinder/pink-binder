@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.0...pink-binder-v2.1.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **ci:** pass explicit turbo-filter to cloudflare deploy impact check ([#15](https://github.com/pinkbinder/pink-binder/issues/15)) ([9ebb91d](https://github.com/pinkbinder/pink-binder/commit/9ebb91d7ddf86725a5c859d539ca2ad89241597e))
+
 ## [2.1.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.0.1...pink-binder-v2.1.0) (2026-09-10)
 
 
