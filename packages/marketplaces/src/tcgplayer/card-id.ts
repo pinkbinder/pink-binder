@@ -95,13 +95,15 @@ export function tcgSetIdToPokemontcgCatalog(setId: string): string {
   if (tcgdxPromoAlias) {
     return tcgdxPromoAlias
   }
-  const dotted = trimmed.match(/^([a-z]+?)0*(\d+)\.(\d+)$/)
+  const dotted = trimmed.match(/^([a-z]+)(\d+)\.(\d+)$/)
   if (dotted) {
-    return `${dotted[1]}${dotted[2]}pt${dotted[3]}`
+    const number = (dotted[2] ?? '').replace(/^0+(?=\d)/, '')
+    return `${dotted[1]}${number}pt${dotted[3]}`
   }
-  const leadingZeros = trimmed.match(/^([a-z]+?)0+(\d+)$/)
+  const leadingZeros = trimmed.match(/^([a-z]+)(\d{2,})$/)
   if (leadingZeros) {
-    return `${leadingZeros[1]}${leadingZeros[2]}`
+    const digits = (leadingZeros[2] ?? '').replace(/^0+(?=\d)/, '')
+    return `${leadingZeros[1]}${digits}`
   }
   return trimmed
 }

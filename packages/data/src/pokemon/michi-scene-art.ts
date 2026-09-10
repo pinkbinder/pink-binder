@@ -94,7 +94,12 @@ export function landscapeScoreMichiScene(entry: MichiSceneLandscapeInput): numbe
   if (LANDSCAPE_LABEL_HINTS.test(label)) score += 22
   if (PORTRAIT_LABEL_HINTS.test(label)) score -= 18
 
-  if (entry.url.includes('artofpkm.com')) score += 12
+  try {
+    const host = new URL(entry.url).hostname
+    if (host === 'artofpkm.com' || host.endsWith('.artofpkm.com')) score += 12
+  } catch {
+    // Malformed URL: no landscape bonus.
+  }
 
   return score
 }

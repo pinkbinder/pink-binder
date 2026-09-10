@@ -59,7 +59,11 @@ function productLocalNumber(product: TcgcsvProduct): string | null {
     const beforeSlash = fromExtended.split('/')[0]?.trim()
     return beforeSlash ? normalizeTcgCardNumber(beforeSlash) || beforeSlash : null
   }
-  const fromName = product.name?.match(/\(#([^)]+)\)/i)?.[1]
+  const name = product.name
+  const hashStart = name ? name.indexOf('(#') : -1
+  const hashEnd = hashStart >= 0 && name ? name.indexOf(')', hashStart + 2) : -1
+  const fromName =
+    name && hashStart >= 0 && hashEnd > hashStart + 2 ? name.slice(hashStart + 2, hashEnd) : null
   if (fromName) {
     return normalizeTcgCardNumber(fromName) || fromName.trim().toLowerCase()
   }

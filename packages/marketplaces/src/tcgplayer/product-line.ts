@@ -47,7 +47,7 @@ function normalizeCardKeyPart(value: string | null | undefined): string {
 export function normalizeTrainerKitSetNameKey(setName: string): string {
   let normalized = normalizeCardKeyPart(setName)
   normalized = normalized
-    .replace(/\s*\([^)]*\)\s*/g, ' ')
+    .replace(/\([^)]*\)/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
   return normalized

@@ -24,6 +24,7 @@ export const TCGDEX_CDN = {
 } as const
 
 const POKEMON_TCG_PRICES_CDN = {
+  host: 'prices.pokemontcg.io',
   tcgplayerPriceBase: 'https://prices.pokemontcg.io/tcgplayer',
 } as const
 
@@ -33,6 +34,16 @@ export const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com'] as cons
 const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
 
 const SHINYDEV_CDN_HOST = 'pokemon-cards-prod-public.shinydev.io' as const
+
+/** Exact-host (or subdomain) URL check; safer than substring matching against a hostname. */
+function hasUrlHostname(url: string, host: string): boolean {
+  try {
+    const hostname = new URL(url).hostname
+    return hostname === host || hostname.endsWith(`.${host}`)
+  } catch {
+    return false
+  }
+}
 
 export const TCG_CARD_IMAGE_HOSTS = [
   POKEMON_TCG_CDN.imageHost,
@@ -135,7 +146,7 @@ export function inferTcgdexAssetSeriesFromSetId(setId: string): string {
 export function normalizeTcgdexImageBase(imageBase: string): string {
   const trimmed = imageBase
     .trim()
-    .replace(/\/+(low|high)\.(webp|png|jpe?g)$/i, '')
+    .replace(/\/(?:low|high)\.(?:webp|png|jpe?g)$/i, '')
     .replace(/\/$/, '')
 
   if (!trimmed) {
@@ -498,7 +509,7 @@ export function isDisplayableTcgCardImageUrl(url: string): boolean {
     isPokemontcgImageUrl(trimmed) ||
     isScrydexCardImageUrl(trimmed) ||
     isShinydevCardImageUrl(trimmed) ||
-    trimmed.includes(TCGPLAYER_CDN_HOST)
+    hasUrlHostname(trimmed, TCGPLAYER_CDN_HOST)
   ) {
     return true
   }
@@ -597,7 +608,7 @@ export function tcgplayerProductUrl(
   const explicit = tcgplayerUrl?.trim()
 
   if (explicit) {
-    if (explicit.includes('prices.pokemontcg.io')) {
+    if (hasUrlHostname(explicit, POKEMON_TCG_PRICES_CDN.host)) {
       const redirectId = tcgplayerUrlCardId(explicit) ?? catalogId
       if (!redirectId || !isKnownTcgplayerPricesRedirectId(redirectId)) {
         return undefined
