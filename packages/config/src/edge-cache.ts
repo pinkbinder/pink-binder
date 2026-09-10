@@ -90,9 +90,13 @@ async function storeResponse(
       headers.set(STORED_AT_HEADER, String(now))
       headers.set(FRESH_FOR_HEADER, String(policy.freshFor))
       headers.set(STALE_FOR_HEADER, String(policy.staleFor))
-      // Keep the stored copy alive past the freshness windows so STALE can
-      // be served explicitly; public Cache-Control stays on the served copy.
-      headers.set('Cache-Control', `public, max-age=${policy.freshFor + policy.staleFor}`)
+      // Keep the origin's Cache-Control so HIT/STALE responses carry the
+      // same policy the live response would; only fill one in when the
+      // origin sent none. The X-Edge-* headers, not Cache-Control, drive
+      // the helper's own fresh/stale decisions.
+      if (!headers.has('Cache-Control')) {
+        headers.set('Cache-Control', `public, max-age=${policy.freshFor + policy.staleFor}`)
+      }
       return headers
     })(),
   })

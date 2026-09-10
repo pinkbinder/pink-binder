@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-10T22:36:57.924Z",
+  "manifest": "scripts/route-regression.mjs",
+  "totals": {
+    "routes": 13,
+    "failures": 0
+  },
+  "results": [
+    {
+      "id": "landing-home",
+      "app": "landing",
+      "path": "/",
+      "base": "http://localhost:3000",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:The Pink Binder",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "marker:<h1",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "header:content-security-policy",
+          "pass": true,
+          "detail": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self'"
+        },
+        {
+          "name": "header:x-content-type-options",
+          "pass": true,
+          "detail": "nosniff"
+        },
+        {
+          "name": "header:referrer-policy",
+          "pass": true,
+          "detail": "strict-origin-when-cross-origin"
+        },
+        {
+          "name": "html:lang",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:viewport",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:title",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:single-h1",
+          "pass": true,
+          "detail": "1 h1 elements"
+        },
+        {
+          "name": "img:alt-coverage",
+          "pass": true,
+          "detail": "7/7 images have alt"
+        }
+      ]
+    },
+    {
+      "id": "landing-sitemap",
+      "app": "landing",
+      "path": "/sitemap.xml",
+      "base": "http://localhost:3000",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:<urlset",
+          "pass": true,
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "landing-404",
+      "app": "landing",
+      "path": "/definitely-not-a-page",
+      "base": "http://localhost:3000",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 404, got 404"
+        }
+      ]
+    },
+    {
+      "id": "blog-index",
+      "app": "blog",
+      "path": "/",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:Cute Pokémon Collector Guide",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "edge-cache:x-cache",
+          "pass": true,
+          "detail": "HIT"
+        },
+        {
+          "name": "header:content-security-policy",
+          "pass": true,
+          "detail": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self'"
+        },
+        {
+          "name": "header:x-content-type-options",
+          "pass": true,
+          "detail": "nosniff"
+        },
+        {
+          "name": "header:referrer-policy",
+          "pass": true,
+          "detail": "strict-origin-when-cross-origin"
+        },
+        {
+          "name": "html:lang",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:viewport",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:title",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:single-h1",
+          "pass": true,
+          "detail": "1 h1 elements"
+        },
+        {
+          "name": "img:alt-coverage",
+          "pass": true,
+          "detail": "22/22 images have alt"
+        }
+      ]
+    },
+    {
+      "id": "blog-post",
+      "app": "blog",
+      "path": "/posts/expansion/pitch-black/overview",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:Pitch Black",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "edge-cache:x-cache",
+          "pass": true,
+          "detail": "HIT"
+        },
+        {
+          "name": "header:content-security-policy",
+          "pass": true,
+          "detail": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self'"
+        },
+        {
+          "name": "header:x-content-type-options",
+          "pass": true,
+          "detail": "nosniff"
+        },
+        {
+          "name": "header:referrer-policy",
+          "pass": true,
+          "detail": "strict-origin-when-cross-origin"
+        },
+        {
+          "name": "html:lang",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:viewport",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:title",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:single-h1",
+          "pass": true,
+          "detail": "1 h1 elements"
+        },
+        {
+          "name": "img:alt-coverage",
+          "pass": true,
+          "detail": "16/16 images have alt"
+        }
+      ]
+    },
+    {
+      "id": "blog-legacy-slug-redirect",
+      "app": "blog",
+      "path": "/posts/expansion--pitch-black",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 301, got 301"
+        },
+        {
+          "name": "redirect-location",
+          "pass": true,
+          "detail": "http://localhost:3002/posts/expansion/pitch-black/overview"
+        }
+      ]
+    },
+    {
+      "id": "blog-posts-grid-api",
+      "app": "blog",
+      "path": "/api/posts-grid?limit=9",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:posts",
+          "pass": true,
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "blog-rss",
+      "app": "blog",
+      "path": "/rss.xml",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:<rss",
+          "pass": true,
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "blog-sitemap",
+      "app": "blog",
+      "path": "/sitemap.xml",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:<urlset",
+          "pass": true,
+          "detail": ""
+        }
+      ]
+    },
+    {
+      "id": "blog-unknown-flat-slug-redirect",
+      "app": "blog",
+      "path": "/posts/definitely-not-a-post",
+      "base": "http://localhost:3002",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 301, got 301"
+        },
+        {
+          "name": "redirect-location",
+          "pass": true,
+          "detail": "http://localhost:3002/posts/species/definitely-not-a-post"
+        }
+      ]
+    },
+    {
+      "id": "store-home",
+      "app": "store",
+      "path": "/",
+      "base": "http://localhost:3001",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200,500, got 500"
+        }
+      ]
+    },
+    {
+      "id": "admin-dashboard",
+      "app": "admin",
+      "path": "/",
+      "base": "http://localhost:3003",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 200, got 200"
+        },
+        {
+          "name": "marker:Pink Binder",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "header:content-security-policy",
+          "pass": true,
+          "detail": "default-src 'self'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; object-src 'none'; script-src 'self' 'unsafe-inline' https://static.cloudflareinsights.com https://www.clarity.ms https://scripts.clarity.ms; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https:; frame-src 'self'"
+        },
+        {
+          "name": "header:x-content-type-options",
+          "pass": true,
+          "detail": "nosniff"
+        },
+        {
+          "name": "header:referrer-policy",
+          "pass": true,
+          "detail": "strict-origin-when-cross-origin"
+        },
+        {
+          "name": "html:lang",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:viewport",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:title",
+          "pass": true,
+          "detail": ""
+        },
+        {
+          "name": "html:single-h1",
+          "pass": true,
+          "detail": "1 h1 elements"
+        },
+        {
+          "name": "img:alt-coverage",
+          "pass": true,
+          "detail": "0/0 images have alt"
+        }
+      ]
+    },
+    {
+      "id": "admin-404",
+      "app": "admin",
+      "path": "/definitely-not-a-route",
+      "base": "http://localhost:3003",
+      "checks": [
+        {
+          "name": "status",
+          "pass": true,
+          "detail": "expected 404, got 404"
+        }
+      ]
+    }
+  ]
+}

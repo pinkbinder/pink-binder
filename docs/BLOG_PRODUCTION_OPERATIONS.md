@@ -9,7 +9,7 @@ Run the same checks used by CI before publishing:
 ```bash
 bun run validate
 bunx turbo run build --filter=@repo/blog
-bun --filter @repo/blog audit:routes
+node apps/blog/scripts/audit-blog-routes.mjs
 ```
 
 Content auditing (`audit:blog-publishing` — unique slugs/routes, required metadata, dates, feed-image coverage, related-post targets) runs in the private
