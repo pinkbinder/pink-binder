@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.5.3](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.5.2...pink-binder-v1.5.3) (2026-09-10)
+
+
+### Bug Fixes
+
+* **release:** remove stale package manifest entry ([#272](https://github.com/PinkBinder/pink-binder/issues/272)) ([e898039](https://github.com/PinkBinder/pink-binder/commit/e898039a9a27c7698dae60ea2d7792a3aa8d9a2c))
+
+
+### Performance
+
+* lighthouse pass — a11y contrast, SSR island, CSP analytics, caching ([#273](https://github.com/PinkBinder/pink-binder/issues/273)) ([9607cc3](https://github.com/PinkBinder/pink-binder/commit/9607cc36bfe159699598c889fe167865c1857440))
+
 ## [1.5.2](https://github.com/PinkBinder/pink-binder/compare/pink-binder-v1.5.1...pink-binder-v1.5.2) (2026-09-10)
 
 
