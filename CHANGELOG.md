@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.1...pink-binder-v2.1.2) (2026-09-10)
+
+
+### CI
+
+* **debug:** reproduce turbo impact query with visible output ([#17](https://github.com/pinkbinder/pink-binder/issues/17)) ([dc5b1db](https://github.com/pinkbinder/pink-binder/commit/dc5b1db4aceae5d8d280e275f366e35496e70f18))
+
 ## [2.1.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.0...pink-binder-v2.1.1) (2026-09-10)
 
 
