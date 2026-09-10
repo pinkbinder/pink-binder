@@ -12,7 +12,7 @@ const navigation = {
   update: mock<(event: UrlUpdateEvent) => void>(),
 }
 
-mock.module('next/link', () => ({
+mock.module('../src/components/compat-link', () => ({
   default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
     <a href={href} {...props}>
       {children}

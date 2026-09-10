@@ -1,6 +1,7 @@
 /**
- * Shared security headers for all Next.js apps.
- * Plain ESM so `next.config.mjs` can import it directly (Node cannot load TS barrels).
+ * Shared security headers for every app (Astro middleware, TanStack Start
+ * request middleware, and static `_headers` files).
+ * Plain ESM so Workers configs can import it directly (Node cannot load TS barrels).
  * Keep CSP in sync — drift across apps is a security risk.
  */
 

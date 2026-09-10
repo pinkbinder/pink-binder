@@ -1,4 +1,4 @@
-/** Local dev defaults when NEXT_PUBLIC_* URLs are unset (in-app links, metadata in dev). */
+/** Local dev defaults when PUBLIC_* URLs are unset (in-app links, metadata in dev). */
 export const DEV_LANDING_URL = 'http://localhost:3000'
 export const DEV_BLOG_URL = 'http://localhost:3002'
 
@@ -15,10 +15,22 @@ function readEnvUrl(value: string | undefined): string | undefined {
   return trimmed ? trimTrailingSlash(trimmed) : undefined
 }
 
+function readPublicUrl(...keys: string[]): string | undefined {
+  for (const key of keys) {
+    const value = readEnvUrl(process.env[key])
+    if (value) return value
+  }
+  return undefined
+}
+
 export function getPublicBlogUrl(): string {
   return (
-    readEnvUrl(process.env.NEXT_PUBLIC_BLOG_URL) ??
-    readEnvUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
+    readPublicUrl(
+      'PUBLIC_BLOG_URL',
+      'NEXT_PUBLIC_BLOG_URL',
+      'PUBLIC_SITE_URL',
+      'NEXT_PUBLIC_SITE_URL'
+    ) ??
     readEnvUrl(process.env.BLOG_URL) ??
     DEV_BLOG_URL
   )
@@ -26,9 +38,12 @@ export function getPublicBlogUrl(): string {
 
 export function getPublicLandingUrl(): string {
   return (
-    readEnvUrl(process.env.NEXT_PUBLIC_LANDING_URL) ??
-    readEnvUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
-    DEV_LANDING_URL
+    readPublicUrl(
+      'PUBLIC_LANDING_URL',
+      'NEXT_PUBLIC_LANDING_URL',
+      'PUBLIC_SITE_URL',
+      'NEXT_PUBLIC_SITE_URL'
+    ) ?? DEV_LANDING_URL
   )
 }
 
@@ -38,9 +53,12 @@ export function getPublicLandingUrl(): string {
  */
 export function getSitemapLandingUrl(): string {
   return (
-    readEnvUrl(process.env.NEXT_PUBLIC_LANDING_URL) ??
-    readEnvUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
-    PRODUCTION_LANDING_URL
+    readPublicUrl(
+      'PUBLIC_LANDING_URL',
+      'NEXT_PUBLIC_LANDING_URL',
+      'PUBLIC_SITE_URL',
+      'NEXT_PUBLIC_SITE_URL'
+    ) ?? PRODUCTION_LANDING_URL
   )
 }
 
@@ -50,8 +68,12 @@ export function getSitemapLandingUrl(): string {
  */
 export function getSitemapBlogUrl(): string {
   return (
-    readEnvUrl(process.env.NEXT_PUBLIC_BLOG_URL) ??
-    readEnvUrl(process.env.NEXT_PUBLIC_SITE_URL) ??
+    readPublicUrl(
+      'PUBLIC_BLOG_URL',
+      'NEXT_PUBLIC_BLOG_URL',
+      'PUBLIC_SITE_URL',
+      'NEXT_PUBLIC_SITE_URL'
+    ) ??
     readEnvUrl(process.env.BLOG_URL) ??
     PRODUCTION_BLOG_URL
   )

@@ -3,7 +3,7 @@
 import {
   largestTcgCardImageUrl,
   pokemonR2ImageVariantCandidates,
-  shouldBypassNextImageOptimization,
+  shouldBypassImageOptimization,
   type PokemonTcgCard,
 } from '@repo/data/client'
 import Image from '../compat-image'
@@ -43,7 +43,7 @@ function ZoomedCardImage({ card, alt }: { card: PokemonTcgCard; alt: string }) {
         className="object-contain"
         sizes="(max-width: 768px) 85vw, 320px"
         priority
-        unoptimized={shouldBypassNextImageOptimization(src)}
+        unoptimized={shouldBypassImageOptimization(src)}
         onError={() => {
           setCandidateIndex((current) => (current + 1 < candidates.length ? current + 1 : current))
         }}

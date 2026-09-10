@@ -19,7 +19,7 @@
       }
     },
     {
-      "files": ["apps/**"],
+      "files": ["apps/blog/**", "apps/landing/**"],
       "plugins": ["nextjs"]
     },
     {

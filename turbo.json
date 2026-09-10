@@ -1,14 +1,14 @@
 {
   "$schema": "https://v2-9-16.turborepo.dev/schema.json",
   "globalDependencies": [".env", ".env.local"],
-  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "NEXT_PUBLIC_*"],
+  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "PUBLIC_*"],
   "globalPassThroughEnv": [
     "EBAY_*",
     "ETSY_*",
     "WHATNOT_*",
     "LIVE_SHOWS_*",
     "BLOG_*",
-    "NEXT_PUBLIC_*",
+    "PUBLIC_*",
     "NODE_ENV"
   ],
   "tasks": {
@@ -25,14 +25,14 @@
         "../../packages/data/cache/normalized/blogs/**",
         "../../packages/data/cache/normalized/cards/**"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**", ".astro/**"],
+      "outputs": ["dist/**", ".astro/**"],
       "env": [
         "EBAY_*",
         "ETSY_*",
         "WHATNOT_*",
         "LIVE_SHOWS_*",
         "BLOG_*",
-        "NEXT_PUBLIC_*",
+        "PUBLIC_*",
         "POKEMON_CACHE_DIR"
       ]
     },

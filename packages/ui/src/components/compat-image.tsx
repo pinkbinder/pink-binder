@@ -7,11 +7,11 @@ interface CompatImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'sr
   alt: string
   width?: number
   height?: number
-  /** Accepted for Next.js API compatibility; maps to eager/high-priority fetch. */
+  /** Accepted for image API compatibility; maps to eager/high-priority fetch. */
   priority?: boolean
-  /** Accepted for Next.js API compatibility; ignored (no optimizer). */
+  /** Accepted for image API compatibility; ignored (no optimizer). */
   unoptimized?: boolean
-  /** Accepted for Next.js API compatibility; mapped to plain img attributes. */
+  /** Accepted for image API compatibility; mapped to plain img attributes. */
   fill?: boolean
   sizes?: string
   quality?: number
@@ -22,7 +22,7 @@ interface CompatImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'sr
 }
 
 /**
- * Drop-in replacement for `next/image` inside Astro React islands.
+ * Plain img for Astro React islands (same props shape as the framework image import it replaces).
  * The blog serves prebuilt R2 variants and local assets directly — there is
  * no optimizer to route through. `fill` maps to absolute inset positioning
  * (matching the existing RemoteImageWithFallback convention).

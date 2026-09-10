@@ -29,7 +29,7 @@ const POKEMON_TCG_PRICES_CDN = {
 
 export const EBAY_CDN_HOSTS = ['i.ebayimg.com', 'thumbs.ebaystatic.com'] as const
 
-/** Hostnames allowed in Next.js `images.remotePatterns` for Pokémon TCG card art. */
+/** Hostnames served directly (no optimizer) for Pokémon TCG card art. */
 const TCGPLAYER_CDN_HOST = 'tcgplayer-cdn.tcgplayer.com' as const
 
 const SHINYDEV_CDN_HOST = 'pokemon-cards-prod-public.shinydev.io' as const

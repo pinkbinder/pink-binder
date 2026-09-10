@@ -1,8 +1,9 @@
 import { EBAY_CDN_HOSTS, TCG_CARD_IMAGE_HOSTS } from './cdn'
 
 /**
- * Remote hosts served with `unoptimized` on `next/image` so the browser loads CDNs directly.
- * Pair with `blogNextImagesConfig().unoptimized` on Cloudflare so new Image usages bypass transforms.
+ * Remote hosts served directly (no optimizer) so the browser loads CDNs as-is.
+ * Blog-owned assets are pre-optimized on the R2 CDN; roundup pages load dozens
+ * of remote sprites/cards per view, so runtime transforms stay off.
  */
 /** R2 public host for Pink Binder images (Cloudflare). */
 export const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
@@ -19,12 +20,10 @@ const REMOTE_IMAGE_BYPASS_HOSTS = [
 const BYPASS_HOSTS = new Set<string>(REMOTE_IMAGE_BYPASS_HOSTS)
 
 /**
- * Use `unoptimized` on `next/image` for remote CDN assets. Local `/public` paths may
- * still use the optimizer when the hosting plan allows it. The Wrangler `IMAGES`
- * binding is not an automatic Next.js loader; a Cloudflare transformation path
- * must be explicitly configured with `loaderFile` or a per-image loader.
+ * Whether a remote image URL should bypass optimization and load directly.
+ * Local `/public` paths return false (served as-is by the Worker assets).
  */
-export function shouldBypassNextImageOptimization(src: string): boolean {
+export function shouldBypassImageOptimization(src: string): boolean {
   const trimmed = src.trim()
   if (!trimmed) {
     return false
@@ -45,3 +44,6 @@ export function shouldBypassNextImageOptimization(src: string): boolean {
     return false
   }
 }
+
+/** @deprecated Use {@link shouldBypassImageOptimization} instead. */
+export const shouldBypassNextImageOptimization = shouldBypassImageOptimization

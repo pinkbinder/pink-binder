@@ -2,27 +2,9 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "store",
   "account_id": "e9b73b1b6c312b889732f29b884a5166",
-  "compatibility_date": "2026-08-29",
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "main": ".open-next/worker.js",
-  "assets": {
-    "directory": ".open-next/assets",
-    "binding": "ASSETS",
-  },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "store",
-    },
-  ],
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "store-opennext-cache",
-    },
-  ],
-  "images": {
-    "binding": "IMAGES",
-  },
+  "compatibility_date": "2026-09-09",
+  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
+  "main": "@tanstack/react-start/server-entry",
+  "observability": { "enabled": true },
   "workers_dev": true,
 }

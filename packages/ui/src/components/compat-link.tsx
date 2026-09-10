@@ -7,17 +7,17 @@ type AnchorProps = DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HT
 export interface CompatLinkProps extends Omit<AnchorProps, 'href'> {
   href: string | { pathname?: string; query?: Record<string, string | string[] | undefined> }
   children?: ReactNode
-  /** Accepted for Next.js API compatibility; ignored (Astro handles scroll). */
+  /** Accepted for link API compatibility; ignored (Astro handles scroll). */
   scroll?: boolean
-  /** Accepted for Next.js API compatibility; ignored (no locale routing). */
+  /** Accepted for link API compatibility; ignored (no locale routing). */
   locale?: string | false
-  /** Accepted for Next.js API compatibility; ignored (always a plain anchor). */
+  /** Accepted for link API compatibility; ignored (always a plain anchor). */
   replace?: boolean
-  /** Accepted for Next.js API compatibility; ignored (no prefetch runtime). */
+  /** Accepted for link API compatibility; ignored (no prefetch runtime). */
   prefetch?: boolean | null
 }
 
-/** Serialize a Next-style href object into a plain URL string. */
+/** Serialize an href object ({ pathname, query }) into a plain URL string. */
 export function resolveCompatHref(href: CompatLinkProps['href']): string {
   if (typeof href === 'string') return href
   const pathname = href.pathname ?? '/'
@@ -36,8 +36,8 @@ export function resolveCompatHref(href: CompatLinkProps['href']): string {
 }
 
 /**
- * Drop-in replacement for `next/link` inside Astro React islands.
- * Renders a plain anchor — no router, no prefetch. Extra Next-only props
+ * Plain anchor for Astro React islands (same props shape as the framework link import it replaces).
+ * Renders a plain anchor — no router, no prefetch. Extra link-only props
  * (`scroll`, `locale`, `replace`, `prefetch`) are accepted and ignored.
  */
 export default function CompatLink({

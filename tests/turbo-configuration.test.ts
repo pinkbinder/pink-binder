@@ -25,7 +25,7 @@ async function findTurboConfigs(directory: string): Promise<string[]> {
 }
 
 describe('Turbo configuration', () => {
-  test('Next build outputs exclude development and framework caches', async () => {
+  test('legacy Next build outputs exclude development and framework caches', async () => {
     const configPaths = await findTurboConfigs(repoRoot)
     expect(configPaths.length).toBeGreaterThan(0)
 

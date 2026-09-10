@@ -1,6 +1,7 @@
 /**
- * Shared security headers for all Next.js apps.
- * TS source of truth — keep in sync with `../security-headers.mjs` (plain ESM for next.config.mjs).
+ * Shared security headers for every app (Astro middleware, TanStack Start
+ * request middleware, and static `_headers` files).
+ * TS source of truth — keep in sync with `../security-headers.mjs` (plain ESM for Workers configs).
  * Drift across apps is a security risk; update here and in the .mjs together.
  */
 
