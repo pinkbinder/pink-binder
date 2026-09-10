@@ -1,0 +1,130 @@
+---
+import { BRAND, getPublicLandingUrl, SOCIAL_LINKS, type ShopLink } from '@repo/config'
+import Layout from '../layouts/Layout.astro'
+import BlogHighlight from '../components/BlogHighlight.astro'
+import MarketplaceSection from '../components/MarketplaceSection.astro'
+import ShareDialog from '../components/ShareDialog.astro'
+import SocialBar from '../components/SocialBar.astro'
+import { LANDING_LINKS } from '../config/link-in-bio'
+import { getLandingBlogFeatured } from '../lib/landing-blog-featured'
+
+const landingSiteUrl = getPublicLandingUrl()
+const landingPageShareUrl = landingSiteUrl
+const links = LANDING_LINKS.filter((link) => link.enabled)
+const socials = SOCIAL_LINKS.filter((social) => social.enabled)
+const featuredBlog = await getLandingBlogFeatured()
+
+function resolveShareUrl(link: ShopLink) {
+  return link.external ? link.href : new URL(link.href, landingSiteUrl).toString()
+}
+---
+<Layout>
+  <main class="relative flex min-h-screen flex-col overflow-x-hidden px-4 py-8 md:py-16">
+    <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+      <div class="absolute top-3 left-1/2 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] shadow-[0_0_0_9999px_rgba(17,24,39,0.28)]"></div>
+      <div class="absolute top-3 left-1/2 h-[calc(100%-1.5rem)] w-[min(32rem,calc(100%-1rem))] -translate-x-1/2 rounded-[2.25rem] bg-white/30 blur-2xl"></div>
+    </div>
+
+    <div class="relative z-10 mx-auto flex w-full max-w-md flex-1 items-center justify-center">
+      <div class="flex w-full flex-1 flex-col items-center justify-center gap-6 md:gap-8">
+        <div class="flex w-full justify-end">
+          <button
+            type="button"
+            data-share-trigger
+            data-share-label={BRAND.name}
+            data-share-url={landingPageShareUrl}
+            data-share-thumbnail="/images/logo.webp"
+            data-share-thumbnail-alt={`${BRAND.name} logo`}
+            data-share-description={BRAND.description}
+            aria-label="Share The Pink Binder"
+            class="text-foreground hover:text-primary inline-flex h-10 items-center justify-center gap-2 whitespace-nowrap rounded-full border border-pink-200/80 bg-white/90 px-4 py-2 text-sm font-medium shadow-xs transition-colors hover:bg-white focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="h-4 w-4 fill-none stroke-current" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 5h6v6M20 4l-9 9M20 14v3a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3h3" />
+            </svg>
+            <span>Share</span>
+          </button>
+        </div>
+
+        <header class="flex flex-col items-center gap-3 text-center">
+          <img
+            src="/images/logo.webp"
+            alt={`${BRAND.name} logo`}
+            width="144"
+            height="144"
+            class="h-36 w-36 rounded-full border border-pink-100 bg-transparent object-cover shadow-lg"
+            fetchpriority="high"
+            decoding="async"
+          />
+          <h1 class="font-title text-primary-deep text-3xl font-bold tracking-tight">{BRAND.name}</h1>
+          <p class="text-lg leading-relaxed font-semibold"><span class="text-primary-deep">{BRAND.subtitle}</span></p>
+          <p class="text-muted-foreground max-w-sm text-sm leading-relaxed font-semibold">{BRAND.description}</p>
+        </header>
+
+        <nav aria-label={`${BRAND.name} links`} class="flex w-full flex-col gap-3">
+          {links.map((link) => (
+            <div class="group flex w-full items-center rounded-xl border border-pink-200/70 bg-white shadow-xs transition-colors hover:bg-pink-50/50">
+              <a
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+                class="text-foreground flex min-w-0 flex-1 items-center gap-3 px-3 py-3 text-left text-base font-semibold"
+              >
+                <img
+                  src={link.thumbnail}
+                  alt={link.thumbnailAlt}
+                  width="36"
+                  height="36"
+                  class="h-9 w-9 shrink-0 rounded-md bg-white object-contain p-1 shadow-xs"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <span class="text-primary-deep truncate">Shop on {link.marketplace}</span>
+              </a>
+              <button
+                type="button"
+                data-share-trigger
+                data-share-label={link.label}
+                data-share-url={resolveShareUrl(link)}
+                data-share-thumbnail={link.thumbnail}
+                data-share-thumbnail-alt={link.thumbnailAlt}
+                data-share-description={link.shareDescription}
+                aria-label={`Share ${link.label}`}
+                class="text-muted-foreground hover:text-foreground mr-2 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-2 transition-colors hover:bg-pink-100 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5 fill-current">
+                  <circle cx="6" cy="12" r="1.8" />
+                  <circle cx="12" cy="12" r="1.8" />
+                  <circle cx="18" cy="12" r="1.8" />
+                </svg>
+              </button>
+            </div>
+          ))}
+        </nav>
+
+        <SocialBar socials={socials} />
+
+        <p class="text-lg leading-relaxed font-semibold"><span class="text-muted-foreground">{BRAND.location}</span></p>
+
+        <MarketplaceSection />
+      </div>
+    </div>
+
+    {featuredBlog ? <BlogHighlight blogUrl={featuredBlog.blogUrl} post={featuredBlog.post} /> : null}
+
+    <ShareDialog />
+
+    <div class="pointer-events-none fixed right-6 bottom-6 hidden md:block">
+      <img
+        src="/images/QR-Code.svg"
+        alt="Scan to visit Pink Binder"
+        width="120"
+        height="120"
+        class="rounded-xl border border-pink-200/80 bg-white/90 p-2 shadow-md"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </main>
+  <script src="../scripts/landing.ts"></script>
+</Layout>

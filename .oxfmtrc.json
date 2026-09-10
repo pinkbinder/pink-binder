@@ -1,5 +1,4 @@
 {
-  "$schema": "./node_modules/oxfmt/configuration_schema.json",
   "semi": false,
   "singleQuote": true,
   "trailingComma": "es5",
@@ -8,6 +7,7 @@
     "CHANGELOG.md",
     ".github/.code-foundry",
     ".github/actions/",
+    "plugin.json",
     ".next",
     ".open-next",
     ".wrangler",
@@ -20,5 +20,6 @@
     "apps/blog/public/data/card-galleries/",
     "apps/blog/public/data/expansion-galleries/",
     "apps/blog/public/_headers"
-  ]
+  ],
+  "$schema": "./node_modules/oxfmt/configuration_schema.json"
 }

@@ -25,7 +25,7 @@
         "../../packages/data/cache/normalized/blogs/**",
         "../../packages/data/cache/normalized/cards/**"
       ],
-      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**", "dist/**", ".astro/**"],
       "env": [
         "EBAY_*",
         "ETSY_*",

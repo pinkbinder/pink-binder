@@ -3,26 +3,16 @@
   "name": "landing",
   "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-08-29",
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "main": ".open-next/worker.js",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env",
+    "global_fetch_strictly_public",
+  ],
+  "main": "dist/server/entry.mjs",
   "assets": {
-    "directory": ".open-next/assets",
+    "directory": "./dist/client",
     "binding": "ASSETS",
   },
-  "services": [
-    {
-      "binding": "WORKER_SELF_REFERENCE",
-      "service": "landing",
-    },
-  ],
-  "r2_buckets": [
-    {
-      "binding": "NEXT_INC_CACHE_R2_BUCKET",
-      "bucket_name": "landing-opennext-cache",
-    },
-  ],
-  "images": {
-    "binding": "IMAGES",
-  },
+  "observability": { "enabled": true },
   "workers_dev": true,
 }

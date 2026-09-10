@@ -1,0 +1,74 @@
+---
+import { BRAND, CONTACT_EMAIL, SITE_URL, SOCIAL_LINKS } from '@repo/config'
+import { LANDING_SEO } from '../lib/landing-seo'
+import '../styles/global.css'
+
+interface Props {
+  children: unknown
+}
+
+const siteName = BRAND.name
+const siteDescription = LANDING_SEO.description
+const socialProfileUrls = SOCIAL_LINKS.filter(
+  (social) => social.enabled && social.icon !== 'email'
+).map((social) => social.href)
+const ogImageUrl = new URL('/images/og-image.svg', SITE_URL).toString()
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteName,
+  alternateName: ['Pink Binder', 'The Pink Binder Pokemon Shop'],
+  url: SITE_URL,
+  description: siteDescription,
+  email: CONTACT_EMAIL,
+  keywords: LANDING_SEO.keywords.join(', '),
+  sameAs: socialProfileUrls,
+  address: {
+    '@type': 'PostalAddress',
+    addressCountry: 'US',
+    addressRegion: 'Puerto Rico',
+  },
+}
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="theme-color" content="#f0a4c8" />
+    <title>{siteName}</title>
+    <meta name="description" content={siteDescription} />
+    <meta name="keywords" content={LANDING_SEO.keywords.join(', ')} />
+    <meta name="author" content={siteName} />
+    <meta name="creator" content={siteName} />
+    <meta name="publisher" content={siteName} />
+    <meta name="category" content="shopping" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href={SITE_URL} />
+    <link rel="icon" href="/favicon/favicon.ico" />
+    <link rel="icon" href="/favicon/favicon-16x16.png" sizes="16x16" type="image/png" />
+    <link rel="icon" href="/favicon/favicon-32x32.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon/android-chrome-192x192.png" sizes="192x192" type="image/png" />
+    <link rel="icon" href="/favicon/android-chrome-512x512.png" sizes="512x512" type="image/png" />
+    <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
+    <link rel="shortcut icon" href="/favicon/favicon.ico" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={SITE_URL} />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={siteName} />
+    <meta property="og:description" content={siteDescription} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={siteName} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={siteName} />
+    <meta name="twitter:description" content={siteDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body class="antialiased">
+    <slot />
+  </body>
+</html>

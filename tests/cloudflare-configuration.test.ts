@@ -6,12 +6,19 @@ const repoRoot = resolve(import.meta.dirname, '..')
 
 describe('Cloudflare build configuration', () => {
   test('leaves build ownership with Cloudflare Workers Builds', async () => {
-    for (const app of ['admin', 'blog', 'landing', 'store']) {
+    for (const app of ['admin', 'blog', 'store']) {
       const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
 
       expect(config).not.toMatch(/"build"\s*:/)
       expect(config).toMatch(/"main"\s*:\s*"\.open-next\/worker\.js"/)
     }
+
+    const landingConfig = await readFile(
+      resolve(repoRoot, 'apps', 'landing', 'wrangler.jsonc'),
+      'utf8'
+    )
+    expect(landingConfig).not.toMatch(/"build"\s*:/)
+    expect(landingConfig).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
   })
 
   test('uses the OpenNext build with a frozen install and runtime compatibility patches', async () => {
@@ -70,7 +77,7 @@ describe('Cloudflare build configuration', () => {
       expect(headersModule).not.toContain('unsafe-eval')
     }
 
-    for (const app of ['admin', 'landing', 'store']) {
+    for (const app of ['admin', 'store']) {
       const nextConfig = await readFile(resolve(repoRoot, 'apps', app, 'next.config.mjs'), 'utf8')
 
       if (usesSharedHeaders) {
@@ -83,6 +90,13 @@ describe('Cloudflare build configuration', () => {
       expect(nextConfig).toContain('poweredByHeader: false')
       expect(nextConfig).not.toContain('unsafe-eval')
     }
+
+    const landingMiddleware = await readFile(
+      resolve(repoRoot, 'apps/landing/src/middleware.ts'),
+      'utf8'
+    )
+    expect(landingMiddleware).toContain('SECURITY_HEADERS')
+    expect(landingMiddleware).not.toContain('unsafe-eval')
   })
 
   test('keeps the blog edge middleware on Web APIs to avoid bundling next/server', async () => {
