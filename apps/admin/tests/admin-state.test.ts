@@ -1,7 +1,7 @@
 import { describe, expect, test } from 'bun:test'
 import { SECURITY_HEADERS } from '@repo/config'
 
-import { ordersSearchParsers, productSearchParsers } from '../src/lib/order-search'
+import { ordersSearchParsers } from '../src/lib/order-search'
 import { securityHeadersMiddleware } from '../src/middleware/security-headers'
 import {
   formatAmountCents,
@@ -17,7 +17,6 @@ describe('admin order search parsers', () => {
 
   test('search query defaults to empty string', () => {
     expect(ordersSearchParsers.q.parse('')).toBe('')
-    expect(productSearchParsers.q.parse('')).toBe('')
   })
 
   test('status serializes back to the URL value', () => {

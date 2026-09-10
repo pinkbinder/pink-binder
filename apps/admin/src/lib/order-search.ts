@@ -13,7 +13,3 @@ export const ordersSearchParsers = {
   status: parseAsStringLiteral(ORDER_STATUSES).withDefault('all'),
   q: parseAsString.withDefault(''),
 }
-
-export const productSearchParsers = {
-  q: parseAsString.withDefault(''),
-}

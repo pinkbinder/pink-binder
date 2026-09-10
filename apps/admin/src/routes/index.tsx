@@ -1,211 +1,146 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQueryState } from 'nuqs'
-import { Suspense, useEffect } from 'react'
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-} from '@repo/ui'
+import { createFileRoute, Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
 
-import { ordersQueryOptions } from '../queries/orders'
-import { ORDER_STATUSES, ordersSearchParsers } from '../lib/order-search'
-import { formatAmountCents, useAdminPreferences, useAdminSelection } from '../stores/preferences'
+import { ChannelDot, PageHeader } from '../components/console'
+import { AD_PLATFORM_META, CONTENT_PLATFORM_META, INVENTORY_CHANNEL_META } from '../lib/channels'
+import { formatCents } from '../lib/format'
+import { summarizeAdSpend, useAdsStore } from '../stores/ads'
+import { pendingContentCount, useContentStore } from '../stores/content'
+import { summarizeInventory, useInventoryStore } from '../stores/inventory'
 
 export const Route = createFileRoute('/')({
-  validateSearch: (search: Record<string, unknown>) => ({
-    status:
-      typeof search.status === 'string' && ordersSearchParsers.status.parse(search.status) !== null
-        ? search.status
-        : 'all',
-    q: typeof search.q === 'string' ? search.q : '',
-  }),
-  loaderDeps: ({ search }) => ({ status: search.status, q: search.q }),
-  loader: ({ context, deps }) =>
-    context.queryClient.ensureQueryData(ordersQueryOptions({ status: deps.status, q: deps.q })),
-  component: AdminDashboard,
-  pendingComponent: AdminPending,
+  component: ConsoleOverview,
 })
 
-function AdminDashboard() {
-  const { stats } = Route.useLoaderData()
-  const theme = useAdminPreferences((state) => state.theme)
-  const toggleTheme = useAdminPreferences((state) => state.toggleTheme)
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
-
-  return (
-    <div className="p-6">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-bold">Dashboard</h2>
-          <p className="text-muted-foreground">Welcome back, Admin</p>
-        </div>
-        <Button variant="outline" size="sm" onClick={toggleTheme}>
-          {theme === 'light' ? 'Dark mode' : 'Light mode'}
-        </Button>
-      </div>
-
-      <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <Card key={stat.label}>
-            <CardHeader className="pb-2">
-              <CardDescription>{stat.label}</CardDescription>
-              <CardTitle className="text-3xl">{stat.value}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Badge variant={stat.positive ? 'default' : 'destructive'}>{stat.change}</Badge>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <CardTitle>Recent Orders</CardTitle>
-            <OrderFilters />
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Suspense fallback={<OrdersSkeleton />}>
-            <OrdersTable />
-          </Suspense>
-        </CardContent>
-      </Card>
-    </div>
-  )
-}
-
 /**
- * nuqs-backed filters: `status`/`q` live in the URL (shareable, SSR-safe)
- * while the router loader refetches through the prefetched React Query cache.
+ * Console overview: one card per service with a live rollup and the channels
+ * it will connect to. This page is the outline of the admin product — each
+ * card links into its dashboard.
  */
-function OrderFilters() {
-  const [status, setStatus] = useQueryState('status', ordersSearchParsers.status)
-  const [q, setQ] = useQueryState('q', ordersSearchParsers.q)
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <Input
-        value={q}
-        onChange={(event) => void setQ(event.target.value || null, { throttleMs: 300 })}
-        placeholder="Search orders…"
-        aria-label="Search orders"
-        className="w-48"
-      />
-      <div className="flex gap-1">
-        {ORDER_STATUSES.map((entry) => (
-          <Button
-            key={entry}
-            size="sm"
-            variant={status === entry ? 'default' : 'outline'}
-            onClick={() => void setStatus(entry === 'all' ? null : entry)}
-          >
-            {entry}
-          </Button>
-        ))}
-      </div>
-    </div>
-  )
-}
+function ConsoleOverview() {
+  const inventoryItems = useInventoryStore((state) => state.items)
+  const drafts = useContentStore((state) => state.drafts)
+  const campaigns = useAdsStore((state) => state.campaigns)
 
-function OrdersTable() {
-  const { orders } = Route.useLoaderData()
-  const selected = useAdminSelection((state) => state.selectedOrderIds)
-  const toggleOrder = useAdminSelection((state) => state.toggleOrder)
-  const clearSelection = useAdminSelection((state) => state.clearSelection)
+  const inventory = summarizeInventory(inventoryItems)
+  const contentPending = pendingContentCount(drafts)
+  const ads = summarizeAdSpend(campaigns)
 
-  if (orders.length === 0) {
-    return <p className="text-muted-foreground py-8 text-center">No orders match those filters.</p>
-  }
-
-  return (
-    <div>
-      {selected.length > 0 && (
-        <div className="mb-3 flex items-center justify-between rounded-lg border px-3 py-2 text-sm">
-          <span>{selected.length} selected</span>
-          <Button variant="ghost" size="sm" onClick={clearSelection}>
-            Clear selection
-          </Button>
-        </div>
-      )}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="text-muted-foreground border-b">
-              <th className="pb-2 text-left font-medium" aria-label="Select" />
-              <th className="pb-2 text-left font-medium">Order</th>
-              <th className="pb-2 text-left font-medium">Customer</th>
-              <th className="pb-2 text-left font-medium">Product</th>
-              <th className="pb-2 text-left font-medium">Amount</th>
-              <th className="pb-2 text-left font-medium">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {orders.map((order) => (
-              <tr key={order.id} className="border-b last:border-0">
-                <td className="py-3 pr-2">
-                  <input
-                    type="checkbox"
-                    aria-label={`Select order ${order.id}`}
-                    checked={selected.includes(order.id)}
-                    onChange={() => toggleOrder(order.id)}
-                  />
-                </td>
-                <td className="py-3 font-medium">{order.id}</td>
-                <td className="py-3">{order.customer}</td>
-                <td className="py-3">{order.product}</td>
-                <td className="py-3">{formatAmountCents(order.amountCents)}</td>
-                <td className="py-3">
-                  <Badge
-                    variant={
-                      order.status === 'completed'
-                        ? 'default'
-                        : order.status === 'pending'
-                          ? 'secondary'
-                          : 'outline'
-                    }
-                  >
-                    {order.status}
-                  </Badge>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  )
-}
-
-function AdminPending() {
   return (
     <div className="p-6">
-      <div className="bg-muted h-8 w-48 animate-pulse rounded" />
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {Array.from({ length: 4 }, (_, i) => (
-          <div key={i} className="border-border rounded-xl border p-6">
-            <div className="bg-muted h-4 w-24 animate-pulse rounded" />
-            <div className="bg-muted mt-3 h-8 w-2/3 animate-pulse rounded" />
-          </div>
-        ))}
+      <PageHeader
+        eyebrow="Console"
+        title="Pink Binder admin"
+        description="Everything the shop sells, says, and spends — inventory, content, and ads in one place."
+      />
+
+      <div className="grid gap-4 lg:grid-cols-3">
+        <ServiceCard
+          eyebrow="Commerce"
+          title="Inventory"
+          description="Cards, sealed product, and keychains kept in sync across every marketplace."
+          stat={`${inventory.needsSync} of ${inventory.totalItems} items need sync`}
+          statTone={inventory.needsSync > 0 ? 'warn' : 'ok'}
+          channels={(
+            Object.keys(INVENTORY_CHANNEL_META) as (keyof typeof INVENTORY_CHANNEL_META)[]
+          ).map((channel) => INVENTORY_CHANNEL_META[channel])}
+          to="/inventory"
+          cta="Open inventory"
+        />
+        <ServiceCard
+          eyebrow="Content"
+          title="Content studio"
+          description="AI-drafted posts for every channel, reviewed and approved by you before they go out."
+          stat={`${contentPending} ${contentPending === 1 ? 'draft' : 'drafts'} waiting on a decision`}
+          statTone={contentPending > 0 ? 'warn' : 'ok'}
+          channels={(
+            Object.keys(CONTENT_PLATFORM_META) as (keyof typeof CONTENT_PLATFORM_META)[]
+          ).map((platform) => CONTENT_PLATFORM_META[platform])}
+          to="/content"
+          cta="Open content studio"
+        />
+        <ServiceCard
+          eyebrow="Growth"
+          title="Ad spend"
+          description="Budgets and results across every ad platform, in one weekly view."
+          stat={`${formatCents(ads.totalSpendCents)} spent this month`}
+          statTone="neutral"
+          channels={(Object.keys(AD_PLATFORM_META) as (keyof typeof AD_PLATFORM_META)[]).map(
+            (platform) => AD_PLATFORM_META[platform]
+          )}
+          to="/ads"
+          cta="Open ad spend"
+        />
       </div>
+
+      <p className="text-muted-foreground mt-6 max-w-3xl text-sm">
+        Marketplace, publishing, and ad-platform integrations aren't connected yet — figures come
+        from local demo state, and every action stays inside this console until those connections go
+        live.
+      </p>
     </div>
   )
 }
 
-function OrdersSkeleton() {
+function ServiceCard({
+  eyebrow,
+  title,
+  description,
+  stat,
+  statTone,
+  channels,
+  to,
+  cta,
+}: {
+  eyebrow: string
+  title: string
+  description: string
+  stat: string
+  statTone: 'warn' | 'ok' | 'neutral'
+  channels: { label: string; dotClass: string; dotStyle?: string }[]
+  to: string
+  cta: string
+}) {
   return (
-    <div className="space-y-2" aria-hidden>
-      {Array.from({ length: 4 }, (_, i) => (
-        <div key={i} className="bg-muted h-10 animate-pulse rounded" />
-      ))}
-    </div>
+    <Card className="flex flex-col">
+      <CardHeader>
+        <CardDescription>{eyebrow}</CardDescription>
+        <CardTitle className="text-xl">{title}</CardTitle>
+        <p className="text-muted-foreground text-sm">{description}</p>
+      </CardHeader>
+      <CardContent className="flex flex-1 flex-col justify-between gap-5">
+        <div>
+          <p
+            className={
+              statTone === 'warn'
+                ? 'text-sm font-semibold text-amber-700 tabular-nums dark:text-amber-400'
+                : statTone === 'ok'
+                  ? 'text-sm font-semibold text-emerald-700 tabular-nums dark:text-emerald-400'
+                  : 'text-sm font-semibold tabular-nums'
+            }
+          >
+            {stat}
+          </p>
+          <ul className="mt-3 flex flex-wrap gap-1.5">
+            {channels.map((channel) => (
+              <li
+                key={channel.label}
+                className="border-input bg-background flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs"
+              >
+                <ChannelDot meta={channel} />
+                {channel.label}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Button asChild variant="outline" size="sm" className="self-start">
+          <Link to={to}>
+            {cta}
+            <ArrowRight aria-hidden />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   )
 }

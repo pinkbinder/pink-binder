@@ -12,6 +12,7 @@
     "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
     "benchmark:routes": "node scripts/benchmark-routes.mjs",
     "dev": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
+    "dev:admin": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/admin",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
     "lint": "turbo run lint",
