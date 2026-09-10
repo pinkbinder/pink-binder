@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro'
 import { getLandingMarketplaceData } from '../../lib/landing-marketplace-data'
-import { serveWithEdgeCache } from '../../lib/edge-cache'
+import { serveWithEdgeCache } from '@repo/config/edge-cache'
 
 const MARKETPLACE_CACHE_CONTROL = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=60'
 

@@ -1,20 +1,16 @@
 /**
- * Edge cache for dynamic landing routes with explicit freshness windows.
+ * Shared Cloudflare Workers edge cache for non-personalized responses.
  *
- * Astro's `output: 'server'` routes run per request with no ISR equivalent,
- * so freshness must be enforced explicitly. This helper stores responses in
- * `caches.default` with internal freshness metadata and serves HIT / STALE /
- * MISS:
+ * Serves `produce()` through `caches.default` with explicit freshness
+ * windows: a stored response is served without revalidation while fresh,
+ * served stale (with a background revalidation) inside the stale window,
+ * and refreshed live beyond it. This exists because Astro `output: 'server'`
+ * routes run per request with no ISR equivalent, so freshness must be
+ * enforced in the Worker.
  *
- * - fresh window: serve from cache without touching upstream.
- * - stale window: serve the stored response immediately and revalidate in
- *   the background via `cfContext.waitUntil`, so slow eBay fetches never
- *   block a visitor.
- * - beyond stale, or on a miss: fetch live, store, and serve.
- *
- * Error responses are never stored. Non-GET requests bypass the cache.
- * When the Cache API is unavailable (local dev, `bun test`) every call
- * degrades to a direct live response instead of throwing.
+ * Error responses are never stored by default. Non-GET requests bypass the
+ * cache. When the Cache API is unavailable (local dev, `bun test`) every
+ * call degrades to a direct live response instead of throwing.
  */
 
 export interface FreshnessPolicy {
@@ -35,9 +31,9 @@ interface WaitUntilContext {
 
 type RefreshContext = Pick<WaitUntilContext, 'waitUntil'> | undefined
 
-const STORED_AT_HEADER = 'X-Landing-Stored-At'
-const FRESH_FOR_HEADER = 'X-Landing-Fresh-For'
-const STALE_FOR_HEADER = 'X-Landing-Stale-For'
+const STORED_AT_HEADER = 'X-Edge-Stored-At'
+const FRESH_FOR_HEADER = 'X-Edge-Fresh-For'
+const STALE_FOR_HEADER = 'X-Edge-Stale-For'
 
 /** `caches.default` on Workers; `undefined` locally where Cache API is absent. */
 export function getDefaultCache(): Cache | undefined {
@@ -111,7 +107,9 @@ async function storeResponse(
 /**
  * Serve `produce()` through `caches.default` keyed on a normalized GET URL.
  * Query strings are stripped so arbitrary `?cache-buster=` values cannot
- * create unbounded entries or fan out into upstream eBay calls.
+ * create unbounded entries or fan out into origin fetches. Callers whose
+ * responses vary by query string must bypass this helper for query-bearing
+ * requests (the blog middleware does exactly that for facet pages).
  */
 export async function serveWithEdgeCache(
   request: Request,
@@ -126,7 +124,7 @@ export async function serveWithEdgeCache(
     return produce()
   }
 
-  // Normalize the key: this public feed is never personalized, so cookies,
+  // Normalize the key: this surface is never personalized, so cookies,
   // authorization headers, and query strings must not fork cache entries.
   const key = new Request(new URL(request.url).origin + new URL(request.url).pathname, {
     method: 'GET',

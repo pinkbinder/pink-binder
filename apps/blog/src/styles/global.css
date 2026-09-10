@@ -3,16 +3,3 @@
 @source '../**/*.{astro,ts}';
 @source '../components/**/*.{ts,tsx}';
 @source '../../../../packages/ui/src/**/*.{ts,tsx}';
-
-/*
- * The brand primary (hsl 335 77% 73%) fails WCAG contrast as text on the
- * light pink surfaces (1.66:1). Text accents use this deeper pink instead;
- * landing made the same pass for the same reason.
- */
-@theme inline {
-  --color-primary-deep: hsl(335 72% 38%);
-}
-
-@utility text-primary-deep {
-  color: var(--color-primary-deep);
-}

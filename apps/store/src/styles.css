@@ -8,10 +8,11 @@
 
 /*
  * Darken the primary fill: white text on the brand light pink (#ef85b1)
- * fails WCAG contrast (2.42:1) on buttons and badges.
+ * fails WCAG contrast (2.42:1) on buttons and badges. --primary-deep is the
+ * shared WCAG-safe token from @repo/ui/globals.css.
  */
 @layer base {
   :root {
-    --primary: 335 72% 38%;
+    --primary: var(--primary-deep);
   }
 }
