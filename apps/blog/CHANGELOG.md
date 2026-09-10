@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.0...blog-v0.8.1) (2026-09-10)
+
+
+### Performance
+
+* **blog:** hydrate grid facets from the CDN-cached grid API ([#21](https://github.com/pinkbinder/pink-binder/issues/21)) ([4da119d](https://github.com/pinkbinder/pink-binder/commit/4da119de46f322ef0f1cda99b58e26dc91737488))
+
 ## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.7.0...blog-v0.8.0) (2026-09-10)
 
 
