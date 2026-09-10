@@ -47,9 +47,8 @@ bun --env-file=apps/blog/.env.local --cwd apps/blog publish:blog-posts
 
 ## Blog image delivery
 
-The blog does not use Next.js runtime image optimization. The Cloudflare Images
-binding remains in `wrangler.jsonc` because the OpenNext Worker wrapper expects
-it, while blog-owned assets live under the versioned `v1/` namespace:
+The blog serves prebuilt R2 image variants directly with no runtime image
+optimization. Blog-owned assets live under the versioned `v1/` namespace:
 
 - `v1/images/brand/<asset>/<width>.webp` contains the small set of brand
   and promotional assets.

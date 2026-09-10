@@ -37,33 +37,20 @@ describe('M1 state and data ownership contract', () => {
     })
   })
 
-  test('installs TanStack Query + nuqs in the migrated TanStack Start app and the blog boundary', () => {
+  test('installs TanStack Query + nuqs in the migrated TanStack Start apps and the blog boundary', () => {
     const blogPackage = parsePackage('apps/blog/package.json')
     const uiPackage = parsePackage('packages/ui/package.json')
+    const adminPackage = parsePackage('apps/admin/package.json')
     const storePackage = parsePackage('apps/store/package.json')
     const landingPackage = parsePackage('apps/landing/package.json')
 
-    for (const packageJson of [blogPackage, uiPackage, storePackage]) {
+    for (const packageJson of [blogPackage, uiPackage, adminPackage, storePackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeTruthy()
       expect(packageJson.dependencies?.nuqs).toBeTruthy()
     }
     for (const packageJson of [landingPackage]) {
       expect(packageJson.dependencies?.['@tanstack/react-query']).toBeUndefined()
       expect(packageJson.dependencies?.nuqs).toBeUndefined()
-    }
-    // The sibling TanStack Start app migrates on its own branch; assert it
-    // only when that branch's TanStack dependencies are present so each PR
-    // validates standalone and both pass after merge.
-    for (const sibling of ['apps/admin/package.json']) {
-      let siblingPackage: { dependencies?: Record<string, string> }
-      try {
-        siblingPackage = parsePackage(sibling)
-      } catch {
-        continue
-      }
-      if (siblingPackage.dependencies?.['@tanstack/react-query']) {
-        expect(siblingPackage.dependencies?.nuqs).toBeTruthy()
-      }
     }
     expect(contract.zustand.adopted).toBe(false)
     expect(read('bun.lock')).toContain('zustand@')

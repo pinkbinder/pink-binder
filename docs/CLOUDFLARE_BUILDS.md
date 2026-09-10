@@ -1,34 +1,35 @@
 # Cloudflare Workers Builds
 
-The four Pink Binder apps use Cloudflare Workers Builds with OpenNext. Workers
-Builds is the single build/deploy owner for these Workers; the repository's
-`wrangler.jsonc` files only describe the generated Worker, bindings, and
-assets. They intentionally do not contain a Wrangler `build` block.
+The four Pink Binder apps use Cloudflare Workers Builds. Workers Builds is the
+single build/deploy owner for these Workers; the repository's `wrangler.jsonc`
+files only describe the Worker entry, bindings, and assets. They intentionally
+do not contain a Wrangler `build` block.
 
 ## App settings
 
 Create one Workers Builds project per app with the repository root as the
 checkout and these app-specific settings:
 
-| App     | Root directory | Build command              | Deploy command                                |
-| ------- | -------------- | -------------------------- | --------------------------------------------- |
-| landing | `apps/landing` | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` |
-| store   | `apps/store`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` |
-| blog    | `apps/blog`    | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` |
-| admin   | `apps/admin`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` |
+| App     | Root directory | Build command              | Deploy command                                | Worker entry                         |
+| ------- | -------------- | -------------------------- | --------------------------------------------- | ------------------------------------ |
+| landing | `apps/landing` | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `dist/server/entry.mjs` (Astro)      |
+| store   | `apps/store`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `@tanstack/react-start/server-entry` |
+| blog    | `apps/blog`    | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `dist/server/entry.mjs` (Astro)      |
+| admin   | `apps/admin`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `@tanstack/react-start/server-entry` |
 
 The build command is run from the configured app root. The workspace script
 uses the app directory name supplied by the Workers Builds project, then runs
-the frozen Bun install and OpenNext build from the monorepo. The deploy command
-must not include `--no-bundle`: Wrangler needs to bundle the generated OpenNext
-Worker and resolve the Cloudflare bindings before upload.
+the frozen Bun install and the app's `build:cloudflare` script from the
+monorepo (plain `vite build` for TanStack Start, `astro build` for Astro). The
+deploy command must not include `--no-bundle`: Wrangler needs to bundle the
+generated Worker and resolve the Cloudflare bindings before upload.
 
 Workers Builds has separate production and preview triggers. Use the same
-OpenNext build command on both triggers. For the preview trigger, Cloudflare
-may use its default `npx wrangler versions upload` deploy command; that is
-valid only after the OpenNext build has generated `.open-next/worker.js`. Do
-not use the app's normal `bun run build` command for a Workers Builds trigger:
-it produces `.next` but not the OpenNext Worker entry point.
+`bun run build:cloudflare` command on both triggers. For the preview trigger,
+Cloudflare may use its default `npx wrangler versions upload` deploy command;
+that is valid only after the build has produced the Worker entry point. Do
+not use the app's normal `bun run build` command for a Workers Builds trigger
+unless it is identical to `build:cloudflare` for that app.
 
 After changing a trigger, validate it with a new commit. A manual retry can
 retain the build and deploy commands captured by the older run; the build
@@ -64,18 +65,21 @@ directories is unnecessary because they are not committed.
 
 ## Caching
 
-Keep Workers Builds dependency caching enabled and keyed by `bun.lock`. The
-OpenNext build also uses Next's `.next/cache`; it is generated output and must
-not be committed. Build-cache controls are managed by the Workers Builds
-project settings rather than by the Worker runtime configuration. A restored
-dependency cache does not guarantee that Next's application cache is restored,
-so treat a `No build cache found` Next warning as a Workers Builds cache-setting
-issue, not a reason to change application runtime behavior.
+Keep Workers Builds dependency caching enabled and keyed by `bun.lock`.
+Framework build caches (`dist/`, `.astro/`, Vite's `node_modules/.vite`) are
+generated output and must not be committed. Build-cache controls are managed by
+the Workers Builds project settings rather than by the Worker runtime
+configuration. A restored dependency cache does not guarantee that the
+framework application cache is restored, so treat cache-miss warnings as a
+Workers Builds cache-setting issue, not a reason to change application runtime
+behavior.
 
-Each Next app also sets baseline security response headers in its
-`next.config.mjs`, including a static CSP and `poweredByHeader: false`. Keep
-those policies static and update them deliberately when adding a third-party
-script, frame, image host, or connection target.
+Security response headers come from the shared `@repo/config`
+`SECURITY_HEADERS` source of truth: Astro apps apply them in middleware and
+`public/_headers`, and TanStack Start apps apply them in a request middleware
+(`src/middleware/security-headers.ts`). Keep those policies static and update
+them deliberately when adding a third-party script, frame, image host, or
+connection target.
 
 ## GitHub status and deployments
 
@@ -96,8 +100,7 @@ saving does not update the captured trigger configuration.
 
 ## Middleware compatibility
 
-The blog keeps `middleware.ts` because Next 16's `proxy.ts` convention uses the
-Node.js runtime, while the current OpenNext Cloudflare adapter does not yet
-support Node.js middleware. The external OpenNext middleware bundle remains on
-the adapter's edge runtime and uses Web APIs only. Revisit this migration when
-OpenNext adds Node middleware support.
+Astro apps keep `src/middleware.ts` on Web APIs only (Astro middleware runs on
+the edge runtime). TanStack Start apps apply the same headers through Start
+request middleware instead of a framework middleware file, so every SSR
+document and server function response is hardened.

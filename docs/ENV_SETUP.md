@@ -19,7 +19,7 @@ bun dev:landing    # landing only
 bun dev:blog       # blog only
 ```
 
-Next.js loads each app's `.env.local` when that app runs. You do **not** need a root `.env.local` unless you want local-only overrides.
+Each app loads its own `.env.local` when it runs (Vite for store/admin, Astro for landing/blog). You do **not** need a root `.env.local` unless you want local-only overrides.
 
 ## Where variables live
 
@@ -30,30 +30,30 @@ Next.js loads each app's `.env.local` when that app runs. You do **not** need a 
 | Data scripts (R2 upload)      | `apps/blog/.env.local` or `CLOUDFLARE_ACCOUNT_ID` | `@repo/data` publish scripts use R2 (images.pinkbinder.shop) |
 | Optional overrides            | Root `.env.local`                                 | Legacy; merged by `scripts/with-env.mjs` only                |
 
-Duplicate shared keys (e.g. `NEXT_PUBLIC_BLOG_URL`) on each Cloudflare Worker that needs them (via `wrangler secret put`).
+Duplicate shared keys (e.g. `PUBLIC_BLOG_URL`) on each Cloudflare Worker that needs them (via `wrangler secret put`). `NEXT_PUBLIC_*` names remain accepted as a legacy fallback (see `packages/config/src/site-urls.ts`).
 
 ## Server vs client
 
-**Server-only** (default) — API routes, server components, scripts:
+**Server-only** (default) — API routes, server functions, scripts:
 
 ```env
 EBAY_APP_ID=
 EBAY_CLIENT_SECRET=
 ```
 
-**Client-visible** — must use `NEXT_PUBLIC_`:
+**Client-visible** — must use `PUBLIC_` (Vite exposes these to the browser):
 
 ```env
-NEXT_PUBLIC_BLOG_URL=
+PUBLIC_BLOG_URL=
 ```
 
-Never put secrets in `NEXT_PUBLIC_*` variables.
+Never put secrets in `PUBLIC_*` variables.
 
 ## Root scripts and Turbo
 
-`bun run validate` / `bun run build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `NEXT_PUBLIC_*`, etc.).
+`bun run validate` / `bun run build` run via `scripts/with-env.mjs`, which merges an optional root `.env.local` then starts Turbo. Turbo passes through env listed in `turbo.json` (`EBAY_*`, `PUBLIC_*`, etc.).
 
-Each Next.js app still loads its own `.env.local` at runtime.
+Each app still loads its own `.env.local` at runtime.
 
 ## Image publish pipeline
 

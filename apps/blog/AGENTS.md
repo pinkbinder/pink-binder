@@ -1,9 +1,8 @@
 # Blog agent guide
 
-The blog is a Next.js app packaged for Cloudflare Workers with OpenNext. Keep
-the Worker runtime filesystem-independent: published post and gallery data is
-read from the `pink-binder` R2 bucket, while the OpenNext incremental cache is
-stored in `blog-opennext-cache-v3`.
+The blog is an Astro 7 app deployed to Cloudflare Workers with
+`@astrojs/cloudflare`. Keep the Worker runtime filesystem-independent:
+published post and gallery data is read from the `pink-binder` R2 bucket.
 
 ## Build and deploy checks
 
@@ -13,7 +12,7 @@ Run the build from the repository root:
 bun run build:cloudflare -- blog
 ```
 
-Run Wrangler from this directory after the OpenNext build. Cloudflare Workers
+Run Wrangler from this directory after the Astro build. Cloudflare Workers
 Builds owns the build command; Wrangler only bundles and deploys the generated
 Worker:
 
@@ -21,17 +20,14 @@ Worker:
 bunx wrangler deploy --dry-run --config wrangler.jsonc
 ```
 
-Do not edit `.next/`, `.open-next/`, or `.wrangler/`; they are generated and
-ignored. The Wrangler config intentionally has no `build` block: adding one
-causes a second OpenNext build during `wrangler deploy` and can make Cloudflare
-fail while copying generated dependencies. Configure Workers Builds watch
-paths in the Cloudflare dashboard; see [`docs/CLOUDFLARE_BUILDS.md`](../../docs/CLOUDFLARE_BUILDS.md).
+Do not edit `dist/` or `.wrangler/`; they are generated and ignored. The
+Wrangler config intentionally has no `build` block: adding one causes a second
+build during `wrangler deploy`. Configure Workers Builds watch paths in the
+Cloudflare dashboard; see [`docs/CLOUDFLARE_BUILDS.md`](../../docs/CLOUDFLARE_BUILDS.md).
 
-The app intentionally retains `middleware.ts` and the Web API-only middleware
-implementation. Next 16's `proxy.ts` uses the Node.js runtime, which OpenNext
-does not yet support for middleware. OpenNext packages this external middleware
-as its Cloudflare edge bundle; migrate to `proxy.ts` only when that adapter
-support is available.
+The app intentionally retains `src/middleware.ts` with a Web API-only
+middleware implementation applying the shared `SECURITY_HEADERS` plus agent
+discovery headers.
 
 ## R2 publishing
 
@@ -52,7 +48,7 @@ browser cache that can serve mutable manifests indefinitely.
 
 ## Recovery checklist
 
-For a Worker 500, remove generated output, run the root OpenNext build, and
-inspect the route-trace verification before considering a deployment. Keep
-runtime fixes in source configuration or application code; do not patch
-generated Worker files after OpenNext finishes.
+For a Worker 500, remove generated output, run the root Astro build, and
+inspect the route verification before considering a deployment. Keep runtime
+fixes in source configuration or application code; do not patch generated
+Worker files after the build finishes.
