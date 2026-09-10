@@ -95,18 +95,21 @@ export const onRequest = defineMiddleware(async (context, next) => {
     url.search === '' &&
     (pathname === '/' || pathname.startsWith('/posts/'))
 
-  const response = cacheableHtml
-    ? await serveWithEdgeCache(
-        context.request,
-        context.locals,
-        () => next(),
-        HTML_EDGE_CACHE_POLICY
-      )
-    : await next()
-
-  if (cacheableHtml && response.ok) {
-    response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+  // Home pages have no page-level policy; post pages set their own longer
+  // one (published articles are immutable, purged on data publish). The
+  // fill happens inside produce so the stored cache copy carries the same
+  // header the live response does.
+  const produce = async (): Promise<Response> => {
+    const pageResponse = await next()
+    if (pageResponse.ok && !pageResponse.headers.has('Cache-Control')) {
+      pageResponse.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+    }
+    return pageResponse
   }
+
+  const response = cacheableHtml
+    ? await serveWithEdgeCache(context.request, context.locals, produce, HTML_EDGE_CACHE_POLICY)
+    : await next()
 
   // Facet-query index pages stay crawlable but unindexed (unchanged behavior).
   if (pathname === '/') {

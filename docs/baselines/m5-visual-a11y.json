@@ -1,0 +1,126 @@
+[
+ {
+  "page": "landing-home",
+  "viewport": "desktop",
+  "url": "http://localhost:3000/",
+  "screenshot": "landing-home-desktop.png",
+  "title": "The Pink Binder",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "BUTTON",
+  "status": "ok"
+ },
+ {
+  "page": "landing-home",
+  "viewport": "mobile",
+  "url": "http://localhost:3000/",
+  "screenshot": "landing-home-mobile.png",
+  "title": "The Pink Binder",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "BUTTON",
+  "status": "ok"
+ },
+ {
+  "page": "blog-index",
+  "viewport": "desktop",
+  "url": "http://localhost:3002/",
+  "screenshot": "blog-index-desktop.png",
+  "title": "Pink Binder Blog: Cute Pok\u00e9mon Collector Guide | Pink Binder Blog",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ },
+ {
+  "page": "blog-index",
+  "viewport": "mobile",
+  "url": "http://localhost:3002/",
+  "screenshot": "blog-index-mobile.png",
+  "title": "Pink Binder Blog: Cute Pok\u00e9mon Collector Guide | Pink Binder Blog",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ },
+ {
+  "page": "blog-post",
+  "viewport": "desktop",
+  "url": "http://localhost:3002/posts/expansion/pitch-black/overview",
+  "screenshot": "blog-post-desktop.png",
+  "title": "Mega Evolution\u2014Pitch Black: TCG Set Guide | Pink Binder Blog",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ },
+ {
+  "page": "blog-post",
+  "viewport": "mobile",
+  "url": "http://localhost:3002/posts/expansion/pitch-black/overview",
+  "screenshot": "blog-post-mobile.png",
+  "title": "Mega Evolution\u2014Pitch Black: TCG Set Guide | Pink Binder Blog",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ },
+ {
+  "page": "store-home",
+  "viewport": "desktop",
+  "url": "http://localhost:3001/",
+  "screenshot": "store-home-desktop.png",
+  "title": "",
+  "lang": null,
+  "h1_count": 0,
+  "console_errors": [
+   "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "first_tab_focus": "BODY",
+  "status": "ok"
+ },
+ {
+  "page": "store-home",
+  "viewport": "mobile",
+  "url": "http://localhost:3001/",
+  "screenshot": "store-home-mobile.png",
+  "title": "",
+  "lang": null,
+  "h1_count": 0,
+  "console_errors": [
+   "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+  ],
+  "first_tab_focus": "BODY",
+  "status": "ok"
+ },
+ {
+  "page": "admin-dashboard",
+  "viewport": "desktop",
+  "url": "http://localhost:3003/",
+  "screenshot": "admin-dashboard-desktop.png",
+  "title": "Pink Binder Admin",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ },
+ {
+  "page": "admin-dashboard",
+  "viewport": "mobile",
+  "url": "http://localhost:3003/",
+  "screenshot": "admin-dashboard-mobile.png",
+  "title": "Pink Binder Admin",
+  "lang": "en",
+  "h1_count": 1,
+  "console_errors": [],
+  "first_tab_focus": "A",
+  "status": "ok"
+ }
+]
