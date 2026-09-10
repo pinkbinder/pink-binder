@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/pinkbinder/pink-binder/compare/config-v1.2.0...config-v1.3.0) (2026-09-10)
+
+
+### Features
+
+* **m5:** closeout evidence — regression matrix, benchmarks, release docs ([#7](https://github.com/pinkbinder/pink-binder/issues/7)) ([d660988](https://github.com/pinkbinder/pink-binder/commit/d6609887d6f6d7bda0e82bb438590f4c208b09d3))
+
 ## [1.2.0](https://github.com/pinkbinder/pink-binder/compare/config-v1.1.2...config-v1.2.0) (2026-09-10)
 
 
