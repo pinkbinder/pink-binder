@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.5...pink-binder-v2.1.6) (2026-09-10)
+
+
+### Maintenance
+
+* apply oxfmt formatting flagged by format:check ([#25](https://github.com/pinkbinder/pink-binder/issues/25)) ([e0d2664](https://github.com/pinkbinder/pink-binder/commit/e0d266437a84ff135f07e6fde57bd19aaf133e38))
+
 ## [2.1.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.4...pink-binder-v2.1.5) (2026-09-10)
 
 
