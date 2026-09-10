@@ -31,8 +31,8 @@ function getBlogQueryClient() {
 
 /**
  * Client providers for Astro blog islands. Uses the framework-agnostic
- * `nuqs/adapters/react` adapter (history API only, no Next router) so the
- * same BlogGrid filter state works outside Next.js.
+ * `nuqs/adapters/react` adapter (history API only) so the same BlogGrid
+ * filter state works across server-rendered pages and client islands.
  */
 export function BlogProviders({ children }: { children: ReactNode }) {
   return (
