@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.0](https://github.com/PinkBinder/pink-binder/compare/marketplaces-v1.2.1...marketplaces-v1.3.0) (2026-09-10)
+
+
+### Features
+
+* **store:** migrate store app from Next.js to TanStack Start ([#261](https://github.com/PinkBinder/pink-binder/issues/261)) ([c46d188](https://github.com/PinkBinder/pink-binder/commit/c46d1880a1fdae46197db2dd805e6d8286329e77))
+
 ## [1.2.1](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.2.0...marketplaces-v1.2.1) (2026-09-09)
 
 

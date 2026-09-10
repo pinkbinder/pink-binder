@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/PinkBinder/pink-binder/compare/landing-v0.4.0...landing-v0.5.0) (2026-09-10)
+
+
+### Features
+
+* **blog:** migrate blog app from Next.js to Astro ([#258](https://github.com/PinkBinder/pink-binder/issues/258)) ([9f77d99](https://github.com/PinkBinder/pink-binder/commit/9f77d99668d14de39b0ec074ee88b132a416b218))
+
 ## [0.4.0](https://github.com/pinkbinder/pink-binder/compare/landing-v0.3.3...landing-v0.4.0) (2026-09-10)
 
 
