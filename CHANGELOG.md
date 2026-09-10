@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.3...pink-binder-v2.1.4) (2026-09-10)
+
+
+### CI
+
+* remove temporary turbo impact debug workflow ([#22](https://github.com/pinkbinder/pink-binder/issues/22)) ([252a225](https://github.com/pinkbinder/pink-binder/commit/252a2257e47846502c18fdb68b74a3dd8107347d))
+
 ## [2.1.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.2...pink-binder-v2.1.3) (2026-09-10)
 
 
