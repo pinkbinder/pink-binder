@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.7.0...blog-v0.8.0) (2026-09-10)
+
+
+### Features
+
+* **m5:** closeout evidence — regression matrix, benchmarks, release docs ([#7](https://github.com/pinkbinder/pink-binder/issues/7)) ([d660988](https://github.com/pinkbinder/pink-binder/commit/d6609887d6f6d7bda0e82bb438590f4c208b09d3))
+
 ## [0.7.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.6.3...blog-v0.7.0) (2026-09-10)
 
 
