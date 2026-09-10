@@ -18,7 +18,7 @@ export function BlogSiteBrand({
   titleClassName,
 }: BlogSiteBrandProps) {
   const titleClasses = cn(
-    'text-lg font-semibold uppercase tracking-[0.3em] text-primary sm:text-xl',
+    'text-lg font-semibold uppercase tracking-[0.3em] text-primary-deep sm:text-xl',
     titleClassName
   )
 
@@ -40,7 +40,7 @@ export function BlogSiteBrand({
             sizes="40px"
             className="rounded-full border border-pink-200 bg-white object-cover shadow-xs"
           />
-          <span className="text-primary text-base font-bold sm:text-lg">The Pink Binder</span>
+          <span className="text-primary-deep text-base font-bold sm:text-lg">The Pink Binder</span>
         </a>
       </div>
 

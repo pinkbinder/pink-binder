@@ -14,7 +14,9 @@ export function BlogRankedListItem({
 }) {
   return (
     <li className={cn('border-border rounded-xl border p-4 sm:p-5', className)}>
-      <div className={cn('text-primary font-mono text-sm font-bold', rankClassName)}>#{rank}</div>
+      <div className={cn('text-primary-deep font-mono text-sm font-bold', rankClassName)}>
+        #{rank}
+      </div>
       {children}
     </li>
   )

@@ -140,25 +140,25 @@ describe('getPokemonTypeLightColors', () => {
     const result = getPokemonTypeLightColors('Fire')
     // bg should be lightened version of #EE8130 (more white in it)
     expect(result.bg).toMatch(/^#[0-9A-Fa-f]{6}$/)
-    expect(result.text).toBe('#EE8130')
     expect(result.border).toBe('#EE8130')
   })
 
-  it('returns text equal to the original type bg color', () => {
+  it('returns a darkened, hue-preserving text variant for contrast', () => {
     const result = getPokemonTypeLightColors('Grass')
-    expect(result.text).toBe('#7AC74C')
+    // text is the solid type color mixed toward black (0.42 factor)
+    expect(result.text).toBe('#335420')
     expect(result.border).toBe('#7AC74C')
   })
 
   it('handles unknown type with gray fallback', () => {
     const result = getPokemonTypeLightColors('Mystical')
     expect(result.bg).toMatch(/^#[0-9A-Fa-f]{6}$/)
-    expect(result.text).toBe('#6B7280')
+    expect(result.text).toBe('#2d3036')
   })
 
   it('handles empty string with gray fallback', () => {
     const result = getPokemonTypeLightColors('')
-    expect(result.text).toBe('#6B7280')
+    expect(result.text).toBe('#2d3036')
   })
 })
 
@@ -166,13 +166,13 @@ describe('getPokemonTypeLightColors', () => {
 /*  getPokemonTypeLogoColor — convenience wrapper                      */
 /* ------------------------------------------------------------------ */
 describe('getPokemonTypeLogoColor', () => {
-  it('returns the text color from light colors', () => {
-    expect(getPokemonTypeLogoColor('Fire')).toBe('#EE8130')
-    expect(getPokemonTypeLogoColor('Water')).toBe('#6390F0')
+  it('returns the darkened text color from light colors', () => {
+    expect(getPokemonTypeLogoColor('Fire')).toBe('#643614')
+    expect(getPokemonTypeLogoColor('Water')).toBe('#2a3c65')
   })
 
-  it('returns gray fallback for unknown types', () => {
-    expect(getPokemonTypeLogoColor('')).toBe('#6B7280')
+  it('returns darkened gray fallback for unknown types', () => {
+    expect(getPokemonTypeLogoColor('')).toBe('#2d3036')
   })
 })
 

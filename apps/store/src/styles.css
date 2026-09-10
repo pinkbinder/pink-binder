@@ -5,3 +5,13 @@
    omitted from the build. */
 @source '../**/*.{ts,tsx}';
 @source '../../../packages/ui/src/**/*.{ts,tsx}';
+
+/*
+ * Darken the primary fill: white text on the brand light pink (#ef85b1)
+ * fails WCAG contrast (2.42:1) on buttons and badges.
+ */
+@layer base {
+  :root {
+    --primary: 335 72% 38%;
+  }
+}

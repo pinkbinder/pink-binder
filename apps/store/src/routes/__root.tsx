@@ -26,7 +26,12 @@ export const Route = createRootRouteWithContext<StoreRouterContext>()({
         content: 'Shop the Pink Binder — cute Pokémon TCG singles and marketplace finds.',
       },
     ],
-    links: [{ rel: 'stylesheet', href: appCss }],
+    links: [
+      { rel: 'stylesheet', href: appCss },
+      { rel: 'icon', href: '/favicon/favicon.ico' },
+      { rel: 'icon', href: '/favicon/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+      { rel: 'apple-touch-icon', href: '/favicon/apple-touch-icon.png', sizes: '180x180' },
+    ],
   }),
   component: () => (
     <RootDocument>
