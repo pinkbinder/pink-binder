@@ -15,12 +15,12 @@ Workers deployment. No app keeps a Webpack, Turbopack, or OpenNext build path.
 
 ### Framework decision table
 
-| App     | Decision                  | Rationale                                                                                                          | Migration evidence                                        |
-| ------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------- |
-| landing | Astro (Cloudflare adapter) | Mostly static marketing/content routes; server output only where live marketplace data is injected                  | #257                                                      |
-| blog    | Astro (Cloudflare adapter) | Content site with islands for interactive filters; R2-backed local data; best Core Web Vitals of the tested candidates | #258                                                      |
-| store   | Astro + Medusa backend     | Catalog/storefront rendering with islands for cart interactions; commerce backend split to the private `medusa` repo | #261 (TanStack Start prototype) superseded by #278        |
-| admin   | TanStack Start (Vite)      | Authenticated, interaction-heavy console; server functions and typed routing fit better than island architecture    | #262                                                      |
+| App     | Decision                   | Rationale                                                                                                              | Migration evidence                                 |
+| ------- | -------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
+| landing | Astro (Cloudflare adapter) | Mostly static marketing/content routes; server output only where live marketplace data is injected                     | #257                                               |
+| blog    | Astro (Cloudflare adapter) | Content site with islands for interactive filters; R2-backed local data; best Core Web Vitals of the tested candidates | #258                                               |
+| store   | Astro + Medusa backend     | Catalog/storefront rendering with islands for cart interactions; commerce backend split to the private `medusa` repo   | #261 (TanStack Start prototype) superseded by #278 |
+| admin   | TanStack Start (Vite)      | Authenticated, interaction-heavy console; server functions and typed routing fit better than island architecture       | #262                                               |
 
 Remix/React Router was not adopted: its overlap with the chosen stacks offered
 no measured advantage for any route shape, and no app needed its full-document
@@ -28,12 +28,12 @@ React rendering model on top of what Astro or TanStack Start already provides.
 
 ### Build-tool decision table
 
-| Concern        | Decision                                                                     |
-| -------------- | ---------------------------------------------------------------------------- |
-| Bundler        | Vite (via Astro for landing/blog/store; direct `vite.config.ts` for admin)    |
-| Orchestration  | Turborepo task graph (`build`, `dev`, `lint`, `type-check`, `test`)          |
-| Deployment     | Per-app `wrangler.jsonc`; `@astrojs/cloudflare` and `@cloudflare/vite-plugin` |
-| Removed paths  | `next.config.*`, OpenNext builds, Webpack/Turbopack evaluation paths         |
+| Concern       | Decision                                                                      |
+| ------------- | ----------------------------------------------------------------------------- |
+| Bundler       | Vite (via Astro for landing/blog/store; direct `vite.config.ts` for admin)    |
+| Orchestration | Turborepo task graph (`build`, `dev`, `lint`, `type-check`, `test`)           |
+| Deployment    | Per-app `wrangler.jsonc`; `@astrojs/cloudflare` and `@cloudflare/vite-plugin` |
+| Removed paths | `next.config.*`, OpenNext builds, Webpack/Turbopack evaluation paths          |
 
 ## Consequences
 
