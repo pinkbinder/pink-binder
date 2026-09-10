@@ -82,3 +82,6 @@ eval-results/
 **/.astro/
 # Wrangler build output
 .wrangler/
+
+# Agent session tooling (plans, local state)
+.zcode/
