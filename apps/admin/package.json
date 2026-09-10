@@ -1,38 +1,52 @@
 {
   "name": "@repo/admin",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "next build",
-    "build:cloudflare": "bun run --cwd ../.. build:cloudflare -- admin",
-    "dev": "next dev --port 3003",
-    "lint": "oxlint . --max-warnings 0",
-    "type-check": "tsc --noEmit",
+    "build": "tsr generate && vite build",
+    "build:cloudflare": "vite build",
+    "dev": "vite dev --port 3003",
+    "lint": "cd ../.. && bunx oxlint apps/admin/src apps/admin/vite.config.ts apps/admin/tests --deny-warnings",
+    "type-check": "tsr generate && tsc --noEmit",
     "test": "cd ../.. && bun test apps/admin",
     "test:watch": "cd ../.. && bun test --watch apps/admin",
     "test:coverage": "cd ../.. && bun test --coverage apps/admin",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt --write .",
-    "start": "next start"
+    "start": "vite preview --port 3003",
+    "preview": "vite preview --port 3003",
+    "deploy": "bun run build:cloudflare && wrangler deploy",
+    "cf-typegen": "wrangler types"
   },
   "dependencies": {
+    "@repo/config": "workspace:*",
+    "@repo/data": "workspace:*",
+    "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "next": "16.3.4",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "@tanstack/react-query": "^5.102.8",
+    "@tanstack/react-router": "^1.170.34",
+    "@tanstack/react-router-ssr-query": "^1.167.2",
+    "@tanstack/react-start": "^1.168.51",
+    "nuqs": "^2.10.1",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "zustand": "^5.0.15"
   },
   "devDependencies": {
-    "@opennextjs/cloudflare": "^1.20.4",
+    "@cloudflare/vite-plugin": "^1.54.6",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/vite": "^4.3.3",
+    "@tanstack/router-cli": "^1.167.35",
     "@types/node": "^26.1.2",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
-    "postcss": "8.5.25",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
-    "wrangler": "^4.127.1"
+    "vite": "^8.2.2",
+    "wrangler": "^4.130.0"
   }
 }
