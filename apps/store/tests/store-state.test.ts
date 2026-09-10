@@ -1,51 +1,67 @@
 import { describe, expect, test } from 'bun:test'
-import { catalogSearchParsers } from '../src/lib/catalog-search'
-import { formatPriceCents, useCartStore } from '../src/stores/cart'
 
-describe('store catalog search parsers', () => {
+import { STORE_CATEGORIES, matchesSearch, parseCatalogSearch } from '../src/lib/catalog-search'
+import {
+  addLine,
+  cart,
+  cartCount,
+  cartTotalCents,
+  clearCart,
+  formatPriceCents,
+  removeLine,
+  setLineQty,
+} from '../src/stores/cart'
+
+describe('store catalog search parsing', () => {
   test('search query defaults to empty string', () => {
-    expect(catalogSearchParsers.q.parse('')).toBe('')
+    expect(parseCatalogSearch(new URLSearchParams()).q).toBe('')
   })
 
   test('category accepts known literals and clears unknown values', () => {
-    expect(catalogSearchParsers.category.parse('Design')).toBe('Design')
-    expect(catalogSearchParsers.category.parse('nope')).toBeNull()
+    expect(parseCatalogSearch(new URLSearchParams('category=Design')).category).toBe('Design')
+    expect(parseCatalogSearch(new URLSearchParams('category=nope')).category).toBe('All')
   })
 
-  test('category serializes back to the URL value', () => {
-    expect(catalogSearchParsers.category.serialize('Tools')).toBe('Tools')
+  test('matching applies query and category filters', () => {
+    expect(matchesSearch('Digital Template', 'Templates', { q: 'digital' })).toBe(true)
+    expect(matchesSearch('Digital Template', 'Templates', { q: 'pokemon' })).toBe(false)
+    expect(matchesSearch('Digital Template', 'Templates', { category: 'Templates' })).toBe(true)
+    expect(matchesSearch('Digital Template', 'Templates', { category: 'Tools' })).toBe(false)
+    expect(STORE_CATEGORIES).toContain('All')
   })
 })
 
-describe('store cart state', () => {
+describe('store cart state (nanostores)', () => {
   test('add, update, and remove lines with scoped totals', () => {
-    useCartStore.setState({ lines: [], isOpen: false, lastAddedAt: null })
+    clearCart()
 
-    useCartStore.getState().addLine({ id: 'pb-001', name: 'Digital Template', priceCents: 2900 })
-    useCartStore.getState().addLine({ id: 'pb-001', name: 'Digital Template', priceCents: 2900 }, 2)
-    useCartStore.getState().addLine({ id: 'pb-002', name: 'UI Kit', priceCents: 4900 })
+    addLine({ id: 'pb-001', name: 'Digital Template', priceCents: 2900 })
+    addLine({ id: 'pb-001', name: 'Digital Template', priceCents: 2900 }, 2)
+    addLine({ id: 'pb-002', name: 'UI Kit', priceCents: 4900 })
 
-    const state = useCartStore.getState()
-    expect(state.lines).toHaveLength(2)
-    expect(state.lines.find((line) => line.id === 'pb-001')?.qty).toBe(3)
-    expect(state.lastAddedAt).not.toBeNull()
+    const lines = cart.get().lines
+    expect(lines).toHaveLength(2)
+    expect(lines.find((line) => line.id === 'pb-001')?.qty).toBe(3)
+    expect(cartCount.get()).toBe(4)
+    expect(cartTotalCents.get()).toBe(3 * 2900 + 4900)
+    expect(cart.get().lastAddedAt).not.toBeNull()
 
-    useCartStore.getState().setQty('pb-001', 1)
-    expect(useCartStore.getState().lines.find((line) => line.id === 'pb-001')?.qty).toBe(1)
+    setLineQty('pb-001', 1)
+    expect(cartCount.get()).toBe(2)
 
-    useCartStore.getState().removeLine('pb-002')
-    expect(useCartStore.getState().lines.map((line) => line.id)).toEqual(['pb-001'])
+    removeLine('pb-002')
+    expect(cart.get().lines.map((line) => line.id)).toEqual(['pb-001'])
 
-    useCartStore.getState().clear()
-    expect(useCartStore.getState().lines).toEqual([])
+    clearCart()
+    expect(cart.get().lines).toEqual([])
   })
 
   test('quantity clamps to the 1..99 range', () => {
-    useCartStore.setState({ lines: [], isOpen: false, lastAddedAt: null })
-    useCartStore.getState().addLine({ id: 'pb-009', name: 'Pack', priceCents: 100 }, 500)
-    expect(useCartStore.getState().lines[0]?.qty).toBe(99)
-    useCartStore.getState().setQty('pb-009', 0)
-    expect(useCartStore.getState().lines).toEqual([])
+    clearCart()
+    addLine({ id: 'pb-009', name: 'Pack', priceCents: 100 }, 500)
+    expect(cartCount.get()).toBe(99)
+    setLineQty('pb-009', 0)
+    expect(cart.get().lines).toEqual([])
   })
 
   test('formats cent prices without trailing .00', () => {

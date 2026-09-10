@@ -3,8 +3,16 @@
   "name": "store",
   "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-09-09",
-  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
-  "main": "@tanstack/react-start/server-entry",
+  "compatibility_flags": [
+    "nodejs_compat",
+    "nodejs_compat_populate_process_env",
+    "global_fetch_strictly_public",
+  ],
+  "main": "dist/server/entry.mjs",
+  "assets": {
+    "directory": "./dist/client",
+    "binding": "ASSETS",
+  },
   "observability": { "enabled": true },
   "workers_dev": true,
 }

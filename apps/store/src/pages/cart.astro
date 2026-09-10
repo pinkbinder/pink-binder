@@ -1,0 +1,8 @@
+---
+import { CartPage } from '../components/CartPage'
+import StoreLayout from '../layouts/StoreLayout.astro'
+---
+
+<StoreLayout title="Cart — Pink Binder Store" description="Your Pink Binder shopping cart.">
+  <CartPage client:load />
+</StoreLayout>

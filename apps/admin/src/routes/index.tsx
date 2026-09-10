@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ArrowRight } from 'lucide-react'
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
+import { Button, Card, CardContent, CardDescription, CardHeader } from '@repo/ui'
 
 import { ChannelDot, PageHeader } from '../components/console'
 import { AD_PLATFORM_META, CONTENT_PLATFORM_META, INVENTORY_CHANNEL_META } from '../lib/channels'
@@ -106,7 +106,7 @@ function ServiceCard({
     <Card className="flex flex-col">
       <CardHeader>
         <CardDescription>{eyebrow}</CardDescription>
-        <CardTitle className="text-xl">{title}</CardTitle>
+        <h2 className="text-xl leading-none font-semibold tracking-tight">{title}</h2>
         <p className="text-muted-foreground text-sm">{description}</p>
       </CardHeader>
       <CardContent className="flex flex-1 flex-col justify-between gap-5">
