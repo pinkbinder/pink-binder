@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/PinkBinder/pink-binder/compare/ui-v1.1.1...ui-v1.2.0) (2026-09-10)
+
+
+### Features
+
+* **blog:** migrate blog app from Next.js to Astro ([#258](https://github.com/PinkBinder/pink-binder/issues/258)) ([9f77d99](https://github.com/PinkBinder/pink-binder/commit/9f77d99668d14de39b0ec074ee88b132a416b218))
+* **store:** migrate store app from Next.js to TanStack Start ([#261](https://github.com/PinkBinder/pink-binder/issues/261)) ([c46d188](https://github.com/PinkBinder/pink-binder/commit/c46d1880a1fdae46197db2dd805e6d8286329e77))
+
+
+### Bug Fixes
+
+* restore validation across migrated apps ([#264](https://github.com/PinkBinder/pink-binder/issues/264)) ([9f2de8d](https://github.com/PinkBinder/pink-binder/commit/9f2de8d0830fba6f5e6be86629c5867c5812edef))
+
 ## [1.1.1](https://github.com/pinkbinder/pink-binder/compare/ui-v1.1.0...ui-v1.1.1) (2026-09-09)
 
 

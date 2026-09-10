@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.0](https://github.com/PinkBinder/pink-binder/compare/data-v1.1.4...data-v1.2.0) (2026-09-10)
+
+
+### Features
+
+* **blog:** migrate blog app from Next.js to Astro ([#258](https://github.com/PinkBinder/pink-binder/issues/258)) ([9f77d99](https://github.com/PinkBinder/pink-binder/commit/9f77d99668d14de39b0ec074ee88b132a416b218))
+* **store:** migrate store app from Next.js to TanStack Start ([#261](https://github.com/PinkBinder/pink-binder/issues/261)) ([c46d188](https://github.com/PinkBinder/pink-binder/commit/c46d1880a1fdae46197db2dd805e6d8286329e77))
+
 ## [1.1.4](https://github.com/pinkbinder/pink-binder/compare/data-v1.1.3...data-v1.1.4) (2026-09-09)
 
 

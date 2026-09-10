@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/PinkBinder/pink-binder/compare/store-v0.3.3...store-v0.4.0) (2026-09-10)
+
+
+### Features
+
+* **store:** migrate store app from Next.js to TanStack Start ([#261](https://github.com/PinkBinder/pink-binder/issues/261)) ([c46d188](https://github.com/PinkBinder/pink-binder/commit/c46d1880a1fdae46197db2dd805e6d8286329e77))
+
+
+### Bug Fixes
+
+* restore validation across migrated apps ([#264](https://github.com/PinkBinder/pink-binder/issues/264)) ([9f2de8d](https://github.com/PinkBinder/pink-binder/commit/9f2de8d0830fba6f5e6be86629c5867c5812edef))
+
 ## [0.3.3](https://github.com/pinkbinder/pink-binder/compare/store-v0.3.2...store-v0.3.3) (2026-09-09)
 
 

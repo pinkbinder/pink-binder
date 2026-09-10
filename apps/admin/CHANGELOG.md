@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0](https://github.com/PinkBinder/pink-binder/compare/admin-v0.3.3...admin-v0.4.0) (2026-09-10)
+
+
+### Features
+
+* **admin:** migrate admin app from Next.js to TanStack Start ([#262](https://github.com/PinkBinder/pink-binder/issues/262)) ([4be3d6a](https://github.com/PinkBinder/pink-binder/commit/4be3d6a2bfce42defb3888f0ee776c6ca1825a82))
+
+
+### Bug Fixes
+
+* restore validation across migrated apps ([#264](https://github.com/PinkBinder/pink-binder/issues/264)) ([9f2de8d](https://github.com/PinkBinder/pink-binder/commit/9f2de8d0830fba6f5e6be86629c5867c5812edef))
+
 ## [0.3.3](https://github.com/pinkbinder/pink-binder/compare/admin-v0.3.2...admin-v0.3.3) (2026-09-09)
 
 
