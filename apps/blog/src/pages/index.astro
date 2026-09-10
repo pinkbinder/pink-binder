@@ -38,6 +38,9 @@ const [posts, parsedSearchParams] = await Promise.all([
   loadBlogFilterSearchParams(rawParams),
 ])
 
+// Facets stay server-side here: `resolveBlogGridQuery` sanitizes the URL
+// against them, and they are no longer passed to the island — the client
+// fetches them from /api/posts-grid?facets=1 (see BlogGridIsland).
 const facets = buildBlogGridFacets(posts)
 const query = resolveBlogGridQuery(parsedSearchParams, facets)
 const filteredPosts = filterBlogGridPosts(posts, query)
@@ -59,7 +62,6 @@ const initialPosts = filteredPosts.slice(0, BLOG_INDEX_INITIAL_COUNT)
     <BlogGridIsland
       client:idle
       posts={initialPosts}
-      facets={facets}
       total={filteredPosts.length}
       initialQuery={query}
     />
