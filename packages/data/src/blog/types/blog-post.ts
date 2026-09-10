@@ -9,8 +9,11 @@
  * the existing `collectCardArt` pattern.
  */
 
-import type { PostTemplateSection, PostTemplateSectionId } from '../posts'
-import type { RoundupPostPayload } from '../roundup-posts'
+import type {
+  PostTemplateSection,
+  PostTemplateSectionId,
+  RoundupPostPayload,
+} from './template-sections'
 
 /** Serializable subset of `createPostKeywordConfig` output (keywords only). */
 export interface BlogSeoKeywordConfig {
@@ -203,5 +206,5 @@ export interface BlogIndex {
   bySlug: Record<string, BlogIndexEntry>
 }
 
-/** Re-export so `posts.ts` adapters can rely on the same names without circulars. */
-export type { PostTemplateSection, PostTemplateSectionId }
+/** Re-export so artifact readers can rely on the same names. */
+export type { PostTemplateSection, PostTemplateSectionId, RoundupPostPayload }

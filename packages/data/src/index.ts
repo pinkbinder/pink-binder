@@ -1,13 +1,7 @@
-/** Server-only barrel (uses `fs`). Client Components must import `@repo/data/client`. */
-export * from './pokemon'
-export * from './tcg'
-export * from './illustrators'
-export * from './expansions'
-export * from './regions'
-export * from './popularity'
-export * from './collections'
-export * from './seo'
-export * from './blog'
-export * from './landing'
-export * from './ui'
-export * from './utils'
+/**
+ * Public-safe `@repo/data` surface. Blog generation, datasets, and the
+ * article renderer live in the private Pink Binder data service
+ * (`pinkbinder/pink-binder-data`); this package only carries types and pure
+ * helpers needed to read published artifacts and render the frontend.
+ */
+export * from './client'

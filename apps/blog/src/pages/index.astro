@@ -14,8 +14,13 @@ import {
 } from '../lib/blog-grid-data'
 import { resolveBlogGridQuery } from '@repo/ui/blog-query-state'
 import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
-import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data'
+import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
 import { BlogGridIsland } from '../components/BlogGridIsland'
+
+// Facet queries re-render per query string; keep the default view warm at the
+// edge but short-lived. Vary on Accept: the middleware content-negotiates
+// markdown for agents on this path.
+const INDEX_CACHE_CONTROL = 'public, max-age=60, s-maxage=300'
 
 const LANDING_URL = ensureAbsoluteHttpUrl(getSitemapLandingUrl())
 const BLOG_INDEX_URL = getSitemapBlogUrl()
@@ -24,6 +29,9 @@ const rawParams: Record<string, string | string[] | undefined> = {}
 Astro.url.searchParams.forEach((value, key) => {
   rawParams[key] = value
 })
+
+Astro.response.headers.set('Cache-Control', INDEX_CACHE_CONTROL)
+Astro.response.headers.set('Vary', 'Accept')
 
 const [posts, parsedSearchParams] = await Promise.all([
   getPublishedBlogGridPostsForRequest(new Date(), Astro.locals),

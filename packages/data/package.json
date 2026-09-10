@@ -1,13 +1,9 @@
 {
   "name": "@repo/data",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "private": true,
   "files": [
-    "src/**",
-    "cache/normalized/pokemon/**",
-    "cache/normalized/meta/**",
-    "cache/normalized/blogs/**",
-    "cache/ai/blog-polish/**"
+    "src/**"
   ],
   "type": "module",
   "main": "./src/index.ts",
@@ -17,38 +13,25 @@
     "./client": "./src/client.ts",
     "./blog/post-path": "./src/blog/post-path.ts",
     "./blog/types/blog-post": "./src/blog/types/blog-post.ts",
-    "./card-gallery-server": "./src/blog/card-gallery-server.ts",
     "./package.json": "./package.json"
   },
   "scripts": {
-    "lint": "oxlint src scripts --max-warnings 0",
+    "lint": "oxlint src test --max-warnings 0",
     "type-check": "tsc --noEmit",
-    "test": "cd ../.. && bun test packages/data",
+    "test": "cd ../.. && bun test --isolate packages/data",
     "test:watch": "cd ../.. && bun test --watch packages/data",
     "test:coverage": "cd ../.. && bun test --coverage packages/data",
-    "format": "oxfmt --check src scripts package.json tsconfig.json",
-    "format:fix": "oxfmt --write src scripts package.json tsconfig.json",
-    "extract": "tsx scripts/1-extract/index.ts",
-    "images": "tsx scripts/2-images/index.ts",
-    "transform": "tsx scripts/3-transform/index.ts",
-    "full-sync": "bun extract && bun images && bun transform",
-    "refresh": "tsx scripts/3-transform/index.ts --only prices",
-    "build:gallery-manifests": "tsx scripts/3-transform/5-blog/12-build-gallery-manifests.ts"
+    "format": "oxfmt --check src test package.json tsconfig.json",
+    "format:fix": "oxfmt --write src test package.json tsconfig.json"
   },
   "dependencies": {
-    "@repo/config": "workspace:*",
-    "@repo/marketplaces": "workspace:*",
-    "gray-matter": "^4.0.3",
-    "server-only": "^0.0.1"
+    "@repo/marketplaces": "workspace:*"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "3.984.0",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^26.1.2",
     "oxfmt": "^0.66.0",
     "oxlint": "^1.81.0",
-    "sharp": "^0.35.4",
-    "tsx": "^4.23.1",
     "typescript": "6.0.3"
   }
 }

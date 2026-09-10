@@ -1,4 +1,4 @@
-import { isBlogPostPublished, readBlogIndex } from '@repo/data'
+import { isBlogPostPublished } from '@repo/data/client'
 import {
   extractExpansionFilters,
   extractGenerationFilters,
@@ -27,18 +27,13 @@ import { getGalleryBucket, readBlogIndexFromR2 } from './blog-index-r2'
  * the 5MB blogs/index.json is parsed once per process instead of once per
  * consumer (index page, /api/posts-grid, sitemap, RSS).
  */
-export function getPublishedBlogGridPosts(now = new Date()): EnrichedPostForGrid[] {
-  const posts = readBlogIndex()?.posts ?? []
-  return posts.filter((post) => isBlogPostPublished(post.date, now))
-}
-
-/** R2-backed request path for the Cloudflare Worker; local builds use the disk cache. */
+/** R2-backed published grid posts; without a bucket the grid is empty. */
 export async function getPublishedBlogGridPostsForRequest(
   now = new Date(),
   locals?: unknown
 ): Promise<EnrichedPostForGrid[]> {
   const bucket = await getGalleryBucket(locals)
-  const posts = (await readBlogIndexFromR2(bucket))?.posts ?? getPublishedBlogGridPosts(now)
+  const posts = (await readBlogIndexFromR2(bucket))?.posts ?? []
   return posts.filter((post) => isBlogPostPublished(post.date, now))
 }
 

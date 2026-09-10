@@ -9,7 +9,13 @@ export {
   SPECIES_GUIDES_CATEGORY,
 } from './blog/categories'
 export * from './blog/post-filters'
-export { getPostHref, getLegacyPostRedirectPath, isRoundupCanonicalSlug } from './blog/post-path'
+export {
+  getPostHref,
+  getLegacyPostRedirectPath,
+  isRoundupCanonicalSlug,
+  pathSegmentsToCanonicalSlug,
+  canonicalSlugToPathSegments,
+} from './blog/post-path'
 export {
   ALL_ROUNDUP_LIST_CATEGORIES,
   TCG_EXPANSIONS_CATEGORY,
@@ -30,6 +36,8 @@ export type { LandingBlogFeaturedPayload, LandingBlogFeaturedPost } from './land
 // Keep this entrypoint browser-safe. Node-backed helpers, such as JSON cache
 // readers, remain available through the server entrypoint only.
 export * from './utils/slug'
+export { isBlogPostPublished, isValidBlogPostDate } from './blog/post-dates'
+export { BLOG_INDEX_INITIAL_COUNT, DEFAULT_POST_THUMBNAIL } from './blog/grid-constants'
 export type { PokemonTcgCard, TcgCardPrice } from './pokemon/tcg-card'
 export {
   preferredTcgCardImageUrl,

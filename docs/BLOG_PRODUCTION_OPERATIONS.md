@@ -1,6 +1,6 @@
 # Blog production operations
 
-The blog is a local-data Astro application hosted on Cloudflare Workers. Its route, feed, SEO, and monitoring checks use repository scripts and GitHub Actions; no paid database or monitoring service is required.
+The blog is an Astro application hosted on Cloudflare Workers that reads published data artifacts from R2. Its route, feed, SEO, and monitoring checks use repository scripts and GitHub Actions; no paid database or monitoring service is required.
 
 ## Release gates
 
@@ -8,22 +8,13 @@ Run the same checks used by CI before publishing:
 
 ```bash
 bun run validate
-bun --filter @repo/data audit:blog-publishing
 bunx turbo run build --filter=@repo/blog
 bun --filter @repo/blog audit:routes
 ```
 
-`audit:blog-publishing` validates unique slugs/routes, required metadata, dates, feed-image coverage, related-post targets, exact duplicate metadata, and repeated description openers. Errors fail the command; scheduled posts and repetitive-openers are reported separately. Add `-- --json` for machine-readable output.
-
-Common remediation:
-
-- `duplicate-slug` or `duplicate-route`: fix the generator input or canonical slug mapping, then rebuild the blog index.
-- `broken-related-link` or `future-related-link`: remove the relation or publish the target first.
-- `feed-image-coverage`: provide a non-logo raster `.png`, `.jpg`, or `.webp` hero image.
-- `duplicate-description`: diversify the source template before rebuilding; do not patch thousands of generated files by hand.
-- `repetitive-opener`: treat the warning as a content-quality queue and adjust the relevant template family.
-
-`audit:routes` starts the compiled blog, crawls every sitemap post, and validates canonical metadata, structured data, RSS feeds, APIs, and R2 gallery manifests. A failure prints the exact route. It intentionally runs after `next build`, because source-level tests cannot detect missing production output-file traces.
+Content auditing (`audit:blog-publishing` — unique slugs/routes, required metadata, dates, feed-image coverage, related-post targets) runs in the private
+`pinkbinder/blog-pipeline` repository, which owns the generation pipeline and
+R2 publishing. The public repo's `audit:routes` still validates the compiled blog end to end: it starts the compiled blog, crawls every sitemap post, and validates canonical metadata, structured data, RSS feeds, APIs, and R2 gallery manifests. A failure prints the exact route. It runs after the build, because source-level tests cannot detect missing production output traces.
 
 ## Production monitoring
 

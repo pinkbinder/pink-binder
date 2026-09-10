@@ -1,63 +1,30 @@
 ---
-import type { ReactNode } from 'react'
 import Layout from '../../../layouts/Layout.astro'
 import MdxProse from '../../../components/MdxProse.astro'
-import {
-  buildPostHead,
-  loadPostPage,
-} from '../../../components/PostArticle'
-
-import PostIsland from '../../../components/PostIsland'
+import { POST_PAGE_CACHE_CONTROL, loadPostPageForRequest } from '../../../lib/post-render-r2'
 
 export const prerender = false
 
 const slugParam = Astro.params.slug ?? ''
 const slugSegments = Array.isArray(slugParam) ? slugParam : slugParam.split('/').filter(Boolean)
 
-const fallbackHead = {
-  title: 'Post Not Found',
-  description: 'Post Not Found',
-  canonical: Astro.url.toString(),
-  image: '',
-  publishedTime: '',
-}
-let head = fallbackHead
-try {
-  const loaded = await buildPostHead(slugSegments, Astro.locals)
-  head = {
-    title: loaded.title,
-    description: loaded.description ?? loaded.title,
-    canonical: loaded.canonical ?? Astro.url.toString(),
-    image: loaded.image ?? '',
-    publishedTime: loaded.publishedTime ?? '',
-  }
-} catch {
+const loaded = await loadPostPageForRequest(slugSegments, Astro.locals)
+if (loaded.status === 'not-found') {
   return new Response('Not Found', { status: 404 })
 }
 
-let article: unknown = null
-try {
-  article = await loadPostPage(slugSegments, Astro.locals)
-} catch (error) {
-  if (error instanceof Response && error.status === 404) {
-    return new Response('Not Found', { status: 404 })
-  }
-  throw error
-}
-
-const result = article as
-  | { kind: 'authored'; content: string }
-  | { kind: 'island'; node: ReactNode }
+// Published articles are immutable; serve them from the CDN edge and purge
+// on data publish (see the private data service's publish workflow).
+Astro.response.headers.set('Cache-Control', POST_PAGE_CACHE_CONTROL)
+const { head } = loaded
 ---
 
-<Layout
-  title={head.title}
-  description={head.description}
-  canonical={head.canonical}
->
-  {/* Server-side render only: island hydration cannot revive the serialized
-      React tree (React error #31 unmounts the article, blanking the page). */}
-  {result.kind === 'authored'
-    ? <MdxProse content={result.content} />
-    : <PostIsland node={result.node} />}
+<Layout title={head.title} description={head.description} canonical={head.canonical}>
+  {
+    loaded.status === 'authored' ? (
+      <MdxProse content="" />
+    ) : (
+      <Fragment set:html={loaded.html} />
+    )
+  }
 </Layout>
