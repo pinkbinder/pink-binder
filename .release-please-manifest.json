@@ -1,9 +1,9 @@
 {
-  ".": "1.5.0",
-  "apps/admin": "0.4.0",
-  "apps/blog": "0.6.0",
+  ".": "1.5.1",
+  "apps/admin": "0.4.1",
+  "apps/blog": "0.6.1",
   "apps/landing": "0.5.0",
-  "apps/store": "0.4.0",
+  "apps/store": "0.4.1",
   "packages/config": "1.1.0",
   "packages/data": "1.2.0",
   "packages/eslint-config": "1.0.0",
