@@ -1,1 +1,7 @@
 @import '@repo/ui/globals.css';
+
+/* @repo/ui/globals.css imports Tailwind with `source(none)`, so every
+   class-bearing directory must be listed explicitly or its utilities are
+   omitted from the build. */
+@source '../**/*.{ts,tsx}';
+@source '../../../packages/ui/src/**/*.{ts,tsx}';
