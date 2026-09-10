@@ -1,5 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 import { SECURITY_HEADERS } from '@repo/config'
+import { serveWithEdgeCache } from '@repo/config/edge-cache'
 import { getLegacyPostRedirectPath } from '@repo/data/blog/post-path'
 import {
   API_CATALOG_PATH,
@@ -19,6 +20,9 @@ const BLOG_INDEX_FACET_QUERY_KEYS = [
   'pokemon',
   'themes',
 ] as const
+
+/** Fresh 5 min matches the blog API surfaces; 1 h SWR tail absorbs publish repushes. */
+const HTML_EDGE_CACHE_POLICY = { freshFor: 300, staleFor: 3600 }
 
 const MARKDOWN_HOME = `# Cute Pokémon Collector Guide
 
@@ -81,7 +85,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
     }
   }
 
-  const response = await next()
+  // Public HTML changes only when R2 content is republished, and no blog
+  // route is personalized, so query-less GETs of the home and post pages
+  // serve through the shared edge cache. Facet and arbitrary query strings
+  // bypass it: facet pages render filtered grids and would otherwise fork
+  // unbounded cache entries.
+  const cacheableHtml =
+    context.request.method === 'GET' &&
+    url.search === '' &&
+    (pathname === '/' || pathname.startsWith('/posts/'))
+
+  const response = cacheableHtml
+    ? await serveWithEdgeCache(
+        context.request,
+        context.locals,
+        () => next(),
+        HTML_EDGE_CACHE_POLICY
+      )
+    : await next()
+
+  if (cacheableHtml && response.ok) {
+    response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600')
+  }
 
   // Facet-query index pages stay crawlable but unindexed (unchanged behavior).
   if (pathname === '/') {

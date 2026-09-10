@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'bun:test'
-import { getDefaultCache, serveWithEdgeCache } from '../src/lib/edge-cache'
+import { getDefaultCache, serveWithEdgeCache } from '../src/edge-cache'
 
 const originalCaches = (globalThis as unknown as { caches?: unknown }).caches
 const POLICY = { freshFor: 300, staleFor: 3600 }
@@ -57,7 +57,7 @@ afterEach(() => {
   uninstallCache()
 })
 
-describe('landing edge cache', () => {
+describe('shared edge cache', () => {
   it('returns undefined for the default cache outside Workers', () => {
     expect(getDefaultCache()).toBeUndefined()
   })
@@ -108,7 +108,7 @@ describe('landing edge cache', () => {
     expect(produced).toBe(1)
     expect(second.headers.get('X-Cache')).toBe('HIT')
     expect(await second.json()).toEqual({ listings: [1] })
-    expect(second.headers.get('X-Landing-Stored-At')).toBeNull()
+    expect(second.headers.get('X-Edge-Stored-At')).toBeNull()
   })
 
   it('serves stale content while revalidating in the background', async () => {

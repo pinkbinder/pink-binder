@@ -34,18 +34,19 @@ const index: BlogIndex = {
   schemaVersion: 1,
   builtAt: '2026-01-01T00:00:00.000Z',
   posts: [],
-  bySlug: { [ARTICLE_SLUG]: { slug: ARTICLE_SLUG, kind: 'species', file: ARTIFACT_FILE, date: '2026-01-15' } },
+  bySlug: {
+    [ARTICLE_SLUG]: {
+      slug: ARTICLE_SLUG,
+      kind: 'species',
+      file: ARTIFACT_FILE,
+      date: '2026-01-15',
+    },
+  },
 }
 
 const storedObjects = new Map<string, unknown>([
-  [
-    'v1/data/blogs/index.json',
-    { body: new Response(JSON.stringify(index)).body },
-  ],
-  [
-    `v1/data/blogs/${ARTIFACT_FILE}`,
-    { body: new Response(JSON.stringify(artifact)).body },
-  ],
+  ['v1/data/blogs/index.json', { body: new Response(JSON.stringify(index)).body }],
+  [`v1/data/blogs/${ARTIFACT_FILE}`, { body: new Response(JSON.stringify(artifact)).body }],
   [RENDER_KEY, { body: new Response('<section>prebuilt article body</section>').body }],
 ])
 
@@ -84,7 +85,9 @@ describe('R2 post render loader', () => {
   test('returns not-found when the render artifact is missing', async () => {
     storedObjects.delete(RENDER_KEY)
     try {
-      expect((await loadPostPageForRequest(canonicalSlugToPathSegments(ARTICLE_SLUG))).status).toBe('not-found')
+      expect((await loadPostPageForRequest(canonicalSlugToPathSegments(ARTICLE_SLUG))).status).toBe(
+        'not-found'
+      )
     } finally {
       storedObjects.set(RENDER_KEY, {
         body: new Response('<section>prebuilt article body</section>').body,

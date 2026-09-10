@@ -28,6 +28,7 @@
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary-deep: hsl(var(--primary-deep));
 
   --font-body:
     'Avenir Next', 'Nunito', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Arial Rounded MT',
@@ -66,6 +67,9 @@
   :root {
     --background: 335 77% 88%;
     --foreground: 330 57% 15%;
+    /* WCAG-safe deep pink (4.91:1 on light surfaces): apps must use this
+       instead of --primary for text/accents on light pink backgrounds. */
+    --primary-deep: 335 72% 38%;
     --card: 0 0% 100%;
     --card-foreground: 330 57% 15%;
     --popover: 0 0% 100%;
@@ -115,4 +119,12 @@
   body {
     @apply bg-background font-body text-foreground;
   }
+}
+
+@utility text-primary-deep {
+  color: var(--color-primary-deep);
+}
+
+@utility bg-primary-deep {
+  background-color: var(--color-primary-deep);
 }

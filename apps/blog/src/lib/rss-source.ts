@@ -178,9 +178,7 @@ export async function getRssSourcePostsForRequest(
   const { getGalleryBucket } = await import('./blog-index-r2')
   const index = await readBlogIndexFromR2(await getGalleryBucket(locals))
   const normalizedPosts = index
-    ? readNormalizedPostsFromIndex(index, siteUrl).filter((post) =>
-        isBlogPostPublished(post.date)
-      )
+    ? readNormalizedPostsFromIndex(index, siteUrl).filter((post) => isBlogPostPublished(post.date))
     : []
   return getRssSourcePosts(normalizedPosts, siteUrl)
 }
