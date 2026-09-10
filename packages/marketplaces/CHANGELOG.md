@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.3](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.2...marketplaces-v1.3.3) (2026-09-10)
+
+
+### Tests
+
+* cover the tcg image pipeline and meet the 80% coverage gate ([#29](https://github.com/pinkbinder/pink-binder/issues/29)) ([1ae39c7](https://github.com/pinkbinder/pink-binder/commit/1ae39c73e5ea9095d47618470b190721a067a6d0))
+
 ## [1.3.2](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.1...marketplaces-v1.3.2) (2026-09-10)
 
 
