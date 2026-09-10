@@ -2,9 +2,9 @@
  * Edge cache for dynamic landing routes with explicit freshness windows.
  *
  * Astro's `output: 'server'` routes run per request with no ISR equivalent,
- * and the `next: { revalidate }` hints in `@repo/marketplaces` are ignored
- * outside Next.js. This helper stores responses in `caches.default` with
- * internal freshness metadata and serves HIT / STALE / MISS explicitly:
+ * so freshness must be enforced explicitly. This helper stores responses in
+ * `caches.default` with internal freshness metadata and serves HIT / STALE /
+ * MISS:
  *
  * - fresh window: serve from cache without touching upstream.
  * - stale window: serve the stored response immediately and revalidate in

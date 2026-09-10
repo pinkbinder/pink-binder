@@ -50,9 +50,9 @@ function discoveryHeaders(headers?: HeadersInit): Headers {
 }
 
 /**
- * Port of the Next.js middleware: legacy post redirects, facet-query
- * normalization on `/`, markdown content negotiation for agents, and
- * security + discovery headers on every response.
+ * Edge middleware: legacy post redirects, facet-query normalization on `/`,
+ * markdown content negotiation for agents, and security + discovery headers
+ * on every response.
  */
 export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url)

@@ -12,7 +12,6 @@ const DEFAULT_SELLER_USERNAME = 'thepinkbinder'
 const DEFAULT_SEARCH_QUERY = 'pokemon'
 const DEFAULT_MARKETPLACE_ID = 'EBAY_US'
 const LISTINGS_PER_PAGE = 10
-const CACHE_REVALIDATE_SECONDS = 3600
 
 interface BrowseItemSummary {
   itemId?: string
@@ -87,7 +86,6 @@ export async function getEbayListings(): Promise<EbayListing[]> {
         'X-EBAY-C-MARKETPLACE-ID': marketplaceId,
         Accept: 'application/json',
       },
-      next: { revalidate: CACHE_REVALIDATE_SECONDS },
     }
 
     const response = await fetch(url.toString(), fetchOptions)

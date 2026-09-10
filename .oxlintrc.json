@@ -19,10 +19,6 @@
       }
     },
     {
-      "files": ["apps/blog/**", "apps/landing/**"],
-      "plugins": ["nextjs"]
-    },
-    {
       "files": ["**/*.test.{ts,tsx}"],
       "rules": {
         "typescript/no-explicit-any": "off"
@@ -38,15 +34,12 @@
   ],
   "ignorePatterns": [
     "node_modules/**",
-    "**/.next/**",
-    "**/.open-next/**",
     "**/.wrangler/**",
     "**/dist/**",
     "build/**",
     "coverage/**",
     ".turbo/**",
     "packages/data/cache/**",
-    "next-env.d.ts",
     ".github/.code-foundry/**",
     ".github/actions/**"
   ]

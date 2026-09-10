@@ -1,6 +1,6 @@
 # Blog production operations
 
-The blog remains a local-data Next.js application hosted on Cloudflare Workers. Its route, feed, SEO, and monitoring checks use repository scripts and GitHub Actions; no paid database or monitoring service is required.
+The blog is a local-data Astro application hosted on Cloudflare Workers. Its route, feed, SEO, and monitoring checks use repository scripts and GitHub Actions; no paid database or monitoring service is required.
 
 ## Release gates
 

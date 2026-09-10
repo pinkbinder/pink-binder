@@ -36,15 +36,17 @@ describe('http (marketplaceFetchJson)', () => {
     expect(await marketplaceFetchJson('https://example.com/x')).toBeNull()
   })
 
-  it('passes a revalidate next option by default', async () => {
+  it('strips the revalidateSeconds hint instead of passing Next.js ISR options', async () => {
     let captured: RequestInit | undefined
     globalThis.fetch = mock(async (_url: string, init: RequestInit) => {
       captured = init
       return okJson({})
     }) as never
     const { marketplaceFetchJson } = await import('./http')
-    await marketplaceFetchJson('https://example.com/x')
-    expect((captured as { next?: { revalidate?: number } }).next?.revalidate).toBe(60 * 60 * 24)
+    await marketplaceFetchJson('https://example.com/x', { revalidateSeconds: 3600 })
+    const recorded = captured as Record<string, unknown>
+    expect(recorded.next).toBeUndefined()
+    expect(recorded.revalidateSeconds).toBeUndefined()
   })
 
   it('adds a request deadline signal when the caller does not provide one', async () => {
