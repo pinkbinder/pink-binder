@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.19](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.18...pink-binder-v2.1.19) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ci:** refresh bun.lock after the dependency-group bump ([#52](https://github.com/pinkbinder/pink-binder/issues/52)) ([879e7ba](https://github.com/pinkbinder/pink-binder/commit/879e7bae56542933b589ed901ae4841743083720))
+
 ## [2.1.18](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.17...pink-binder-v2.1.18) (2026-09-11)
 
 
