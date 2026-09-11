@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.4...pink-binder-v2.5.0) (2026-09-11)
+
+
+### Features
+
+* **data:** AA-contrast type badges and self-hosted type icons ([#89](https://github.com/pinkbinder/pink-binder/issues/89)) ([c27cee6](https://github.com/pinkbinder/pink-binder/commit/c27cee6146fdc9860baa193c754aacb1edb2b927))
+
 ## [2.4.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.3...pink-binder-v2.4.4) (2026-09-11)
 
 
