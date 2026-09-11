@@ -54,7 +54,6 @@ export {
   TCG_CARD_IMAGE_ATTRIBUTION,
 } from './tcg/images'
 export {
-  isVercelBlobPublicUrl,
   pokemonR2ImageVariantCandidates,
   pokemonR2ImageVariantUrl,
   sceneArtUrlCandidates,

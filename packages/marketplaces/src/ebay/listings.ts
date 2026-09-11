@@ -30,7 +30,7 @@ interface BrowseSearchResponse {
 }
 
 function isEbayDebugEnabled(): boolean {
-  return process.env[EBAY_ENV.debug] === '1' || process.env.VERCEL_ENV === 'preview'
+  return process.env[EBAY_ENV.debug] === '1'
 }
 
 function readEnv(name: string, fallback: string): string {

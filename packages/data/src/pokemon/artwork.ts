@@ -1,4 +1,4 @@
-import { isVercelBlobPublicUrl, spriteUrlCandidates } from './image-urls'
+import { spriteUrlCandidates } from './image-urls'
 
 /** Local SVG artwork for unreleased Gen 10 species (blog static assets). */
 export const GEN10_FALLBACK_ARTWORK: Record<string, string> = {
@@ -49,7 +49,7 @@ export interface BinderSpriteReference {
   label: string
   url: string
   usage: string
-  /** Tried in order when `url` fails to load (e.g. Vercel Blob 403). */
+  /** Tried in order when `url` fails to load (e.g. a stale or 403ing host). */
   fallbackUrls?: string[]
 }
 
@@ -129,9 +129,6 @@ export function resolveReliableArtworkUrl(
   pokedexNumber: number
 ): string | null {
   const candidates = officialArtworkUrlCandidates(storedUrl, pokedexNumber)
-  if (candidates[0] && isVercelBlobPublicUrl(candidates[0]) && candidates[1]) {
-    return candidates[1]
-  }
   return candidates[0] ?? null
 }
 

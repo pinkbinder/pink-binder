@@ -1,7 +1,7 @@
 /**
  * Immutable, build-time variants for blog-owned raster assets.
  *
- * These URLs deliberately bypass Next/Image and Cloudflare Image Transformations.
+ * These URLs deliberately bypass Cloudflare Image Transformations.
  * The versioned path makes a one-year immutable browser cache safe: bump the
  * version when a source asset changes.
  */

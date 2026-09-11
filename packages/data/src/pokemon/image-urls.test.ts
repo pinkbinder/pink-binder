@@ -1,6 +1,5 @@
 import { describe, expect, it, mock } from 'bun:test'
 import {
-  isVercelBlobPublicUrl,
   isTcgdexImageUrl,
   pokemonR2ImageVariantCandidates,
   pokemonR2ImageVariantUrl,
@@ -9,7 +8,6 @@ import {
 
 mock.module('@repo/marketplaces/config', () => ({
   TCGDEX_CDN: { assetsHost: 'assets.tcgdex.net' },
-  VERCEL_BLOB_PUBLIC_HOST_SUFFIX: '.public.blob.vercel-storage.com',
   isDisplayableTcgCardImageUrl: () => true,
   isLikelyBrokenTcgdexAssetUrl: () => false,
   isTcgdexUnsupportedSetId: () => false,
@@ -34,12 +32,6 @@ mock.module('./artwork', () => ({
 }))
 
 describe('pokemon/image-urls', () => {
-  it('isVercelBlobPublicUrl detects blob host', () => {
-    expect(isVercelBlobPublicUrl('https://x.public.blob.vercel-storage.com/a.png')).toBe(true)
-    expect(isVercelBlobPublicUrl('https://example.com/a.png')).toBe(false)
-    expect(isVercelBlobPublicUrl(null)).toBe(false)
-  })
-
   it('isTcgdexImageUrl detects tcgdex host', () => {
     expect(isTcgdexImageUrl('https://assets.tcgdex.net/x/y.png')).toBe(true)
     expect(isTcgdexImageUrl('https://example.com/x.png')).toBe(false)
