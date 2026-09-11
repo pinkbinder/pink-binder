@@ -16,6 +16,14 @@
     "PUBLIC_LANDING_URL": "https://pinkbinder.shop",
     "PUBLIC_BLOG_URL": "https://pinkbinder.blog",
   },
+  // Read-only access to the published blog artifacts backing the featured
+  // blog section. Without this binding the section silently disappears.
+  "r2_buckets": [
+    {
+      "binding": "BLOG_GALLERY_BUCKET",
+      "bucket_name": "pink-binder",
+    },
+  ],
   "workers_dev": true,
   "dev": {
     "inspector_port": 0,
