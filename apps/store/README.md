@@ -39,14 +39,31 @@ bun --filter @repo/store lint
 bun test apps/store
 ```
 
-## Deploy
+## Local only
+
+The storefront is **local-only for now**: the Medusa backend
+([`pinkbinder/medusa`](https://github.com/pinkbinder/medusa)) has no hosted
+environment, so `store` is excluded from both the production and preview
+Cloudflare deploy matrices. Anything it did deploy would be a storefront with
+no data source.
+
+Run it locally against a local Medusa backend:
 
 ```bash
-bun run build:cloudflare -- store
-bunx wrangler deploy --config apps/store/wrangler.jsonc
+# in pinkbinder/medusa — start Postgres + the backend, then seed
+docker compose up -d && bun run backend:seed
+
+# in this repo
+docker compose up -d --wait   # if you prefer the local Postgres here
+bun run dev:store
 ```
+
+`apps/store/.env.local` supplies `MEDUSA_BACKEND_URL` and
+`MEDUSA_PUBLISHABLE_KEY` (placeholders live in `.env.example`).
+
+To bring the store online later: host the backend, set the `MEDUSA_*` secrets
+on the `store` Worker, then re-add `store` to the deploy matrices in
+`.github/workflows/cloudflare-{production,preview}.yml`.
 
 The Worker entry is `dist/server/entry.mjs` (Cloudflare adapter output);
 `astro.wrangler.jsonc` drives adapter builds, `wrangler.jsonc` drives deploys.
-The backend has no production hosting yet — the deploy target expects
-Medusa env vars to point at a real backend before launch.

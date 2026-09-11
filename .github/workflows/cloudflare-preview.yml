@@ -20,7 +20,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        app: [admin, blog, landing, store]
+        # store is local-only until the Medusa backend is hosted; previews
+        # would otherwise deploy a storefront with no data source.
+        app: [admin, blog, landing]
     uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.7
     with:
       mode: preview
