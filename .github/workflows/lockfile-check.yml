@@ -13,6 +13,11 @@ on:
   pull_request:
     branches: [main]
     types:
+      # `opened` matters: a pull request created already-ready (rather than as
+      # a draft) never emits ready_for_review or synchronize, so without this
+      # the check would silently never run for it. The job-level draft guard
+      # keeps draft-opened pull requests from allocating a runner.
+      - opened
       - ready_for_review
       - synchronize
       - reopened
