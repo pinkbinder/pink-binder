@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.27...pink-binder-v2.2.0) (2026-09-11)
+
+
+### Features
+
+* mirror-card-assets ([#75](https://github.com/pinkbinder/pink-binder/issues/75)) ([25e4539](https://github.com/pinkbinder/pink-binder/commit/25e4539e152fef81868b60b15a6a3afb2796f8b5))
+
 ## [2.1.27](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.26...pink-binder-v2.1.27) (2026-09-11)
 
 
