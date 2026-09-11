@@ -67,3 +67,41 @@ Per the source workflow: research is automated, judgment is not.
 - **Keyword-vs-revenue calls** and which clusters get shopping vs. content
   pages.
 - **Unpausing blog-pipeline** to execute the calendar.
+
+## AI agent accessibility audit (September 2026)
+
+Goal: let AI assistants (ChatGPT, Claude, Perplexity, Gemini, …) discover,
+read, and cite the blog when answering user queries — generative-surface
+traffic compounds with search traffic.
+
+### What already existed
+
+| Surface | Where |
+| ------- | ----- |
+| Markdown content negotiation on the home page (`Accept: text/markdown`) | edge middleware |
+| RFC 9727 API catalog + OpenAPI spec + docs | `/.well-known/api-catalog`, `openapi.json`, `api-docs` |
+| Discovery `Link` header on every response | edge middleware |
+| Permissive robots (`User-agent: * Allow: /`) + sitemap | `robots.txt` |
+| Five RSS feeds, including per-collection feeds | `/rss*.xml` |
+| Pre-baked JSON-LD (BlogPosting, BreadcrumbList, FAQPage) inside prebuilt article HTML | blog-pipeline render artifacts |
+
+### Gaps closed in this pass
+
+1. **`/llms.txt`** — dynamic LLM content guide (llmstxt.org): summary, per-collection
+   RSS links, the 30 most recent posts with descriptions, and the data-access
+   surfaces. Linked from the markdown home page and `robots.txt`.
+2. **Per-post Markdown** — `Accept: text/markdown` on any `/posts/...` URL now
+   returns the full article text rendered from the structured artifact (sections,
+   highlights, roundup picks, backstory, related links), not HTML. Announced in
+   the markdown home page and llms.txt.
+3. **AI crawler robots groups** — explicit `Allow: /` groups for the major AI
+   agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, CCBot, …). Named
+   groups replace the `*` group for those crawlers, so search-engine rules no
+   longer withhold `/api/` (the machine-readable surfaces) from them.
+
+### Manual follow-ups (zone-level, outside the repo)
+
+- Confirm the Cloudflare zone does **not** enable "Block AI Scraping" /
+  bot-fight rules that would override robots.txt allows (dashboard check).
+- Watch the LLM-provider crawler hits in Cloudflare analytics after deploy to
+  confirm the explicit groups are being honored.
