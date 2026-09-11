@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.12](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.11...pink-binder-v2.1.12) (2026-09-11)
+
+
+### Bug Fixes
+
+* **security:** close the two re-flagged code-scanning alerts ([#37](https://github.com/pinkbinder/pink-binder/issues/37)) ([3f830d6](https://github.com/pinkbinder/pink-binder/commit/3f830d68c801434fb41b3f71b1767284d0cf63fe))
+
 ## [2.1.11](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.10...pink-binder-v2.1.11) (2026-09-11)
 
 
