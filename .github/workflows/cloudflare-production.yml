@@ -18,7 +18,7 @@ jobs:
         # store is gated out of production until the Medusa backend is hosted
         # and the MEDUSA_* Worker secrets are set (see docs/ENV_SETUP.md).
         app: [admin, blog, landing]
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.8
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.28.11
     with:
       mode: production
       wrangler-version: local
