@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.27](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.26...pink-binder-v2.1.27) (2026-09-11)
+
+
+### Performance
+
+* **blog:** extend index edge freshness to one hour with SWR tail ([#73](https://github.com/pinkbinder/pink-binder/issues/73)) ([5d9e038](https://github.com/pinkbinder/pink-binder/commit/5d9e038eb3cec4426a6a855d6c1a5943da48dec5))
+
 ## [2.1.26](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.25...pink-binder-v2.1.26) (2026-09-11)
 
 
