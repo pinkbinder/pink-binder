@@ -19,7 +19,13 @@ Astro.response.headers.set('Cache-Control', POST_PAGE_CACHE_CONTROL)
 const { head } = loaded
 ---
 
-<Layout title={head.title} description={head.description} canonical={head.canonical}>
+<Layout
+  title={head.title}
+  description={head.description}
+  canonical={head.canonical}
+  image={head.image}
+  publishedTime={head.publishedTime}
+>
   {
     loaded.status === 'authored' ? (
       <MdxProse content="" />

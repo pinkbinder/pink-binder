@@ -2,6 +2,7 @@ import { describe, expect, test } from 'bun:test'
 import {
   API_CATALOG_DOCUMENT,
   API_CATALOG_PROFILE,
+  buildRobotsTxt,
   DISCOVERY_LINK_HEADER,
   OPENAPI_DOCUMENT,
 } from './agent-discovery'
@@ -34,5 +35,25 @@ describe('agent discovery documents', () => {
     expect(Object.keys(OPENAPI_DOCUMENT.paths)).toEqual(['/api/posts-grid', '/api/card-gallery'])
     expect(OPENAPI_DOCUMENT.paths['/api/posts-grid']?.get?.operationId).toBe('listBlogPosts')
     expect(OPENAPI_DOCUMENT.paths['/api/card-gallery']?.get?.operationId).toBe('getCardGallery')
+  })
+})
+
+describe('buildRobotsTxt', () => {
+  const robots = buildRobotsTxt({ siteUrl: 'https://pinkbinder.blog' })
+
+  test('welcomes major AI crawlers in one shared allow-all group', () => {
+    expect(robots).toContain('User-agent: GPTBot')
+    expect(robots).toContain('User-agent: ClaudeBot')
+    expect(robots).toContain('User-agent: PerplexityBot')
+    const group = robots.split('User-agent: *')[0]
+    expect(group).toContain('Allow: /')
+    expect(group).not.toContain('Disallow')
+  })
+
+  test('keeps /api/ off-limits for the catch-all group while linking llms.txt', () => {
+    const starGroup = robots.split('User-agent: *')[1]
+    expect(starGroup).toContain('Disallow: /api/')
+    expect(starGroup).toContain('Sitemap: https://pinkbinder.blog/sitemap.xml')
+    expect(robots).toContain('# LLM-readable content guide: https://pinkbinder.blog/llms.txt')
   })
 })
