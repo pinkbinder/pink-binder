@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.7...marketplaces-v1.3.8) (2026-09-11)
+
+
+### Maintenance
+
+* prune Next.js-era leftovers after the framework migration ([#58](https://github.com/pinkbinder/pink-binder/issues/58)) ([3052ae4](https://github.com/pinkbinder/pink-binder/commit/3052ae4005001ffa60ab41b24fa3f066bcbd4437))
+
 ## [1.3.7](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.6...marketplaces-v1.3.7) (2026-09-11)
 
 

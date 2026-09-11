@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.21](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.20...pink-binder-v2.1.21) (2026-09-11)
+
+
+### Maintenance
+
+* prune Next.js-era leftovers after the framework migration ([#58](https://github.com/pinkbinder/pink-binder/issues/58)) ([3052ae4](https://github.com/pinkbinder/pink-binder/commit/3052ae4005001ffa60ab41b24fa3f066bcbd4437))
+
 ## [2.1.20](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.19...pink-binder-v2.1.20) (2026-09-11)
 
 
