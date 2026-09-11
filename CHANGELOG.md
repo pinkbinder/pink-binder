@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.25](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.24...pink-binder-v2.1.25) (2026-09-11)
+
+
+### Bug Fixes
+
+* **test,ci:** stop the trace guard matching itself and normalize formatting ([#69](https://github.com/pinkbinder/pink-binder/issues/69)) ([8aba021](https://github.com/pinkbinder/pink-binder/commit/8aba021fd62ee6f7ea586d354425e55d97dc42a3))
+
 ## [2.1.24](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.23...pink-binder-v2.1.24) (2026-09-11)
 
 
