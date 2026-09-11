@@ -30,8 +30,8 @@ describe('landing metadata routes', () => {
   })
 
   it('deduplicates metadata when both apps share a preview origin', () => {
-    stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://preview.example')
-    stubEnv('NEXT_PUBLIC_BLOG_URL', 'https://preview.example')
+    stubEnv('PUBLIC_LANDING_URL', 'https://preview.example')
+    stubEnv('PUBLIC_BLOG_URL', 'https://preview.example')
 
     expect(getSitemapEntries()).toHaveLength(1)
     expect(renderRobotsTxt()).toBe(

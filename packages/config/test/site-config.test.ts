@@ -42,11 +42,13 @@ describe('site URLs', () => {
     expect(getSitemapLandingUrl()).toBe('https://preview.shop')
   })
 
-  it('keeps legacy NEXT_PUBLIC_* URLs working as a fallback', () => {
+  it('ignores retired NEXT_PUBLIC_* names', () => {
+    // The Next.js-era env names were removed with the framework. A leftover
+    // value must not influence URL resolution.
     stubEnv('NEXT_PUBLIC_BLOG_URL', 'https://legacy.blog/')
     stubEnv('NEXT_PUBLIC_LANDING_URL', 'https://legacy.shop/')
-    expect(getPublicBlogUrl()).toBe('https://legacy.blog')
-    expect(getPublicLandingUrl()).toBe('https://legacy.shop')
+    expect(getPublicBlogUrl()).not.toBe('https://legacy.blog')
+    expect(getPublicLandingUrl()).not.toBe('https://legacy.shop')
   })
 
   it('falls back through shared and server-only blog environment variables', () => {
