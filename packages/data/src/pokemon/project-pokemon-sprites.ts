@@ -1,5 +1,6 @@
 /** 3D battle sprites from Project Pokémon (Showdown-style GIFs). */
-export const PROJECT_POKEMON_SPRITE_BASE = 'https://projectpokemon.org/images'
+export const PROJECT_POKEMON_SPRITE_BASE =
+  'https://images.pinkbinder.shop/v1/images/sprites/projectpokemon'
 
 /** Our slug → Project Pokémon filename (without .gif). */
 const SPRITE_SLUG_OVERRIDES: Record<string, string> = {
