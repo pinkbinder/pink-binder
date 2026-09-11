@@ -150,10 +150,7 @@ describe('Cloudflare build configuration', () => {
     // The glob silently resolved to zero files, so the section vanished with
     // no error anywhere. It must read from R2 instead, which requires both the
     // binding and the code path.
-    const config = await readFile(
-      resolve(repoRoot, 'apps/landing/astro.wrangler.jsonc'),
-      'utf8'
-    )
+    const config = await readFile(resolve(repoRoot, 'apps/landing/astro.wrangler.jsonc'), 'utf8')
     expect(config, 'landing needs the blog R2 binding').toContain('BLOG_GALLERY_BUCKET')
     expect(config).toContain('pink-binder')
 

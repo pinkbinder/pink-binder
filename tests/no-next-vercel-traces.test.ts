@@ -61,7 +61,11 @@ describe('no Next.js or Vercel deployment dependencies', () => {
         ...Object.keys(manifest.peerDependencies ?? {}),
       ]
       for (const name of declared) {
-        if (FORBIDDEN_DEPENDENCIES.has(name) || name.startsWith('@next/') || name.startsWith('@vercel/')) {
+        if (
+          FORBIDDEN_DEPENDENCIES.has(name) ||
+          name.startsWith('@next/') ||
+          name.startsWith('@vercel/')
+        ) {
           offenders.push(`${manifestPath.replace(repoRoot + '/', '')}: ${name}`)
         }
       }
@@ -77,9 +81,9 @@ describe('no Next.js or Vercel deployment dependencies', () => {
     //   - negative assertions that a file does *not* contain a Next import
     // Only real module specifiers count.
     const patterns = [
-      "^[[:space:]]*import[[:space:]].*from[[:space:]]*['\"]next(/|['\"])",
-      "^[[:space:]]*import[[:space:]]*['\"]next/",
-      "require\\(['\"]next/",
+      '^[[:space:]]*import[[:space:]].*from[[:space:]]*[\'"]next(/|[\'"])',
+      '^[[:space:]]*import[[:space:]]*[\'"]next/',
+      'require\\([\'"]next/',
     ]
     let matches: string[] = []
     for (const pattern of patterns) {
@@ -108,7 +112,17 @@ describe('no Next.js or Vercel deployment dependencies', () => {
     try {
       matches = execFileSync(
         'git',
-        ['grep', '-nE', 'VERCEL_ENV|VERCEL_GIT_COMMIT_SHA|VERCEL_URL', '--', 'apps', 'packages', 'scripts', 'tests'],
+        [
+          'grep',
+          '-nE',
+          'VERCEL_ENV|VERCEL_GIT_COMMIT_SHA|VERCEL_URL',
+          '--',
+          ':(exclude)tests/no-next-vercel-traces.test.ts',
+          'apps',
+          'packages',
+          'scripts',
+          'tests',
+        ],
         { cwd: repoRoot, encoding: 'utf8' }
       )
         .split('\n')
