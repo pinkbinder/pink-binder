@@ -20,7 +20,7 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.3.0",
+    "@astrojs/cloudflare": "14.3.1",
     "@astrojs/react": "6.0.5",
     "@medusajs/js-sdk": "^2.1.0",
     "@nanostores/react": "^2.0.1",
@@ -28,7 +28,7 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "astro": "^7.3.1",
+    "astro": "^7.3.2",
     "nanostores": "^1.5.3",
     "react": "19.2.8",
     "react-dom": "19.2.8"

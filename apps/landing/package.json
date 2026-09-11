@@ -24,10 +24,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/cloudflare": "14.3.0",
+    "@astrojs/cloudflare": "14.3.1",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.2",
-    "astro": "7.3.1",
+    "astro": "7.3.2",
     "oxfmt": "^0.67.0",
     "oxlint": "^1.81.0",
     "postcss": "8.5.28",
