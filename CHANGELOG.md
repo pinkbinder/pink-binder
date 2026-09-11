@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.16](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.15...pink-binder-v2.1.16) (2026-09-11)
+
+
+### Documentation
+
+* record completed public scrub and archive process ([#42](https://github.com/pinkbinder/pink-binder/issues/42)) ([0f2e796](https://github.com/pinkbinder/pink-binder/commit/0f2e796cd4e7ace57c3357fadac9e3b98f99614c))
+
 ## [2.1.15](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.14...pink-binder-v2.1.15) (2026-09-11)
 
 
