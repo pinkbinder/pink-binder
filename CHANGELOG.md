@@ -1,5 +1,14 @@
 # Changelog
 
+## [2.1.17](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.16...pink-binder-v2.1.17) (2026-09-11)
+
+
+### Maintenance
+
+* **deps:** bump the github-actions group with 2 updates ([#1](https://github.com/pinkbinder/pink-binder/issues/1)) ([7b628c3](https://github.com/pinkbinder/pink-binder/commit/7b628c3e9ea0f441aa0efff60d3771b50e3307d1))
+* **deps:** bump the npm-dependencies group across 1 directory with 9 updates ([#2](https://github.com/pinkbinder/pink-binder/issues/2)) ([4d6a683](https://github.com/pinkbinder/pink-binder/commit/4d6a683bdc7faa15a5a11517c18d3dd230462640))
+* **store:** make the storefront local-only until Medusa is hosted ([#48](https://github.com/pinkbinder/pink-binder/issues/48)) ([06f57c7](https://github.com/pinkbinder/pink-binder/commit/06f57c7b82e10e6617b2e878af9b916c7bae1489))
+
 ## [2.1.16](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.15...pink-binder-v2.1.16) (2026-09-11)
 
 
