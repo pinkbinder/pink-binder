@@ -42,7 +42,7 @@ function materializePage(
   slots: PositionedBinderSpreadSlot[],
   pageKey: BinderPageKey
 ): InteractiveBinderSlot[] {
-  const occupied = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => false))
+  const occupied = new Set<string>()
   const materialized = slots.map((placed, index) => {
     if (
       Number.isInteger(placed.row) &&
@@ -51,11 +51,10 @@ function materializePage(
       placed.row < 3 &&
       placed.col >= 0
     ) {
-      const rowSlots = occupied[placed.row]!
       for (let i = 0; i < placed.colSpan; i += 1) {
         const col = placed.col + i
-        if (col < 3 && rowSlots[col] != null) {
-          rowSlots[col] = true
+        if (col < 3) {
+          occupied.add(`${placed.row}:${col}`)
         }
       }
     }
@@ -67,7 +66,7 @@ function materializePage(
 
   for (let row = 0; row < 3; row += 1) {
     for (let col = 0; col < 3; col += 1) {
-      if (!occupied[row]?.[col]) {
+      if (!occupied.has(`${row}:${col}`)) {
         materialized.push({
           row,
           col,
