@@ -45,7 +45,7 @@ export function RoundupMichiSceneRow({
                     href={scene.pageUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-primary underline underline-offset-2"
+                    className="text-primary-deep underline underline-offset-2"
                   >
                     Source
                   </a>
