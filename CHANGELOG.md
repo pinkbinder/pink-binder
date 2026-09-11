@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.0...pink-binder-v2.4.1) (2026-09-11)
+
+
+### Performance
+
+* **marketplaces:** pre-index TCGCSV prices ([#64](https://github.com/pinkbinder/pink-binder/issues/64)) ([8589adb](https://github.com/pinkbinder/pink-binder/commit/8589adb0c0adb9e7f2d729d72fde007515779848))
+
 ## [2.4.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.3.0...pink-binder-v2.4.0) (2026-09-11)
 
 
