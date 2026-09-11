@@ -44,11 +44,18 @@ function materializePage(
 ): InteractiveBinderSlot[] {
   const occupied = Array.from({ length: 3 }, () => Array.from({ length: 3 }, () => false))
   const materialized = slots.map((placed, index) => {
-    if (Number.isInteger(placed.row) && placed.row >= 0 && placed.row < 3) {
+    if (
+      Number.isInteger(placed.row) &&
+      Number.isInteger(placed.col) &&
+      placed.row >= 0 &&
+      placed.row < 3 &&
+      placed.col >= 0
+    ) {
       const rowSlots = occupied[placed.row]!
       for (let i = 0; i < placed.colSpan; i += 1) {
-        if (rowSlots[placed.col + i] != null) {
-          rowSlots[placed.col + i] = true
+        const col = placed.col + i
+        if (col < 3 && rowSlots[col] != null) {
+          rowSlots[col] = true
         }
       }
     }
