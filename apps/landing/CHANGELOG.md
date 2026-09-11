@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/pinkbinder/pink-binder/compare/landing-v0.6.2...landing-v0.6.3) (2026-09-11)
+
+
+### Bug Fixes
+
+* **landing:** declare public origins so the share URL stops emitting localhost ([#62](https://github.com/pinkbinder/pink-binder/issues/62)) ([9758168](https://github.com/pinkbinder/pink-binder/commit/9758168e8d43ec175103a75559954687127dd70b))
+
 ## [0.6.2](https://github.com/pinkbinder/pink-binder/compare/landing-v0.6.1...landing-v0.6.2) (2026-09-11)
 
 
