@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.11](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.10...pink-binder-v2.1.11) (2026-09-11)
+
+
+### Maintenance
+
+* pin code-foundry workflow refs to v1.28.7 ([#35](https://github.com/pinkbinder/pink-binder/issues/35)) ([a753b03](https://github.com/pinkbinder/pink-binder/commit/a753b03304ad78cdcd9c13f43ec963b4a9084cb8))
+
 ## [2.1.10](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.9...pink-binder-v2.1.10) (2026-09-11)
 
 
