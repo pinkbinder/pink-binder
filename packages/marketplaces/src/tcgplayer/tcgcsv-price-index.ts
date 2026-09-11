@@ -80,33 +80,34 @@ export function parseTcgplayerSetIdFromProductUrl(url: string | null | undefined
   return match?.[1]?.toLowerCase() ?? null
 }
 
-export function maxTcgcsvMarketPrice(
-  rows: TcgcsvPriceRow[],
-  productId: number
-): TcgCardPrice | undefined {
-  const forProduct = rows.filter((row) => row.productId === productId)
-  if (forProduct.length === 0) {
-    return undefined
-  }
+function effectiveMarketPrice(row: TcgcsvPriceRow): number {
+  return row.marketPrice ?? row.midPrice ?? row.highPrice ?? 0
+}
 
+function bestPriceRowForProduct(
+  rows: readonly TcgcsvPriceRow[],
+  productId: number
+): TcgcsvPriceRow | undefined {
   let best: TcgcsvPriceRow | undefined
-  for (const row of forProduct) {
-    const market = row.marketPrice ?? row.midPrice ?? row.highPrice ?? 0
-    if (market <= 0) {
-      continue
-    }
-    const bestMarket = best?.marketPrice ?? best?.midPrice ?? best?.highPrice ?? 0
+  for (const row of rows) {
+    if (row.productId !== productId) continue
+    const market = effectiveMarketPrice(row)
+    if (market <= 0) continue
+    const bestMarket = best ? effectiveMarketPrice(best) : 0
     if (!best || market > bestMarket) {
       best = row
     }
   }
+  return best
+}
 
+function priceFromBestRow(best: TcgcsvPriceRow | undefined): TcgCardPrice | undefined {
   if (!best) {
     return undefined
   }
 
-  const market = best.marketPrice ?? best.midPrice ?? best.highPrice
-  if (market == null || market <= 0) {
+  const market = effectiveMarketPrice(best)
+  if (market <= 0) {
     return undefined
   }
 
@@ -118,6 +119,27 @@ export function maxTcgcsvMarketPrice(
     currency: 'USD',
     source: 'tcgcsv',
   }
+}
+
+function indexBestPrices(prices: readonly TcgcsvPriceRow[]): Map<number, TcgcsvPriceRow> {
+  const bestByProductId = new Map<number, TcgcsvPriceRow>()
+  for (const row of prices) {
+    if (!row.productId) continue
+    const market = effectiveMarketPrice(row)
+    if (market <= 0) continue
+    const current = bestByProductId.get(row.productId)
+    if (!current || market > effectiveMarketPrice(current)) {
+      bestByProductId.set(row.productId, row)
+    }
+  }
+  return bestByProductId
+}
+
+export function maxTcgcsvMarketPrice(
+  rows: TcgcsvPriceRow[],
+  productId: number
+): TcgCardPrice | undefined {
+  return priceFromBestRow(bestPriceRowForProduct(rows, productId))
 }
 
 function catalogAliasesForSetId(setId: string): string[] {
@@ -253,6 +275,7 @@ export function buildTcgcsvPriceIndex(options: {
 
   for (const { group, products: groupProducts, prices } of options.groups) {
     priceRows += prices.length
+    const bestPricesByProductId = indexBestPrices(prices)
     const setIdsForGroup = setIdsByGroupId.get(group.groupId) ?? []
 
     for (const product of groupProducts) {
@@ -266,7 +289,7 @@ export function buildTcgcsvPriceIndex(options: {
       }
       products += 1
 
-      const price = maxTcgcsvMarketPrice(prices, productId)
+      const price = priceFromBestRow(bestPricesByProductId.get(productId))
       const tcgplayerUrl = product.url?.trim()
       const imageSmall = tcgplayerImageSmallFromProduct(product)
       const entry: TcgcsvPriceIndexEntry = {
