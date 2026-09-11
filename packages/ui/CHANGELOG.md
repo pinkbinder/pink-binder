@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.5](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.4...ui-v1.3.5) (2026-09-11)
+
+
+### Bug Fixes
+
+* **security:** track binder occupancy in a Set instead of nested arrays ([#45](https://github.com/pinkbinder/pink-binder/issues/45)) ([0a49cee](https://github.com/pinkbinder/pink-binder/commit/0a49ceee7744340528918de8a77a6265c77cfa99))
+
 ## [1.3.4](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.3...ui-v1.3.4) (2026-09-11)
 
 
