@@ -25,6 +25,7 @@ const { head } = loaded
   canonical={head.canonical}
   image={head.image}
   publishedTime={head.publishedTime}
+  postView={{ slug: slugSegments.join('/'), title: head.title }}
 >
   {
     loaded.status === 'authored' ? (

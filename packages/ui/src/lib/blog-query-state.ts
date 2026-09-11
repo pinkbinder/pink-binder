@@ -15,6 +15,7 @@ const parseFilterValue = createParser({
 })
 
 export const blogFilterParsers = {
+  q: parseFilterValue,
   tag: parseFilterValue,
   filter: parseFilterValue,
   type: parseFilterValue,
@@ -65,6 +66,7 @@ export function resolveBlogGridQuery(
   let direct = searchParams.filter
   let tag = searchParams.tag?.toLowerCase() ?? null
   const query: BlogGridQuery = {
+    q: searchParams.q?.trim().slice(0, MAX_FILTER_LENGTH) || null,
     type: searchParams.type && typeSet.has(searchParams.type) ? searchParams.type : null,
     generation:
       searchParams.generation && generationSet.has(searchParams.generation)
@@ -125,6 +127,7 @@ export function resolveBlogGridQuery(
 
 export function canonicalBlogFilterState(query: BlogGridQuery): BlogFilterSearchParams {
   return {
+    q: query.q ?? null,
     tag: query.tag ?? null,
     filter: query.filter ?? null,
     type: query.type ?? null,
@@ -142,6 +145,7 @@ export function blogGridQueryString(query: BlogGridQuery): string {
   const state = canonicalBlogFilterState(query)
   const params = new URLSearchParams()
   for (const key of [
+    'q',
     'tag',
     'filter',
     'type',

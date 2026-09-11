@@ -12,6 +12,10 @@ const navigation = {
   update: mock<(event: UrlUpdateEvent) => void>(),
 }
 
+/** Real zaraz-events helpers run; their delivery target is stubbed here. */
+const zarazTrackMock =
+  mock<(eventName: string, eventProperties?: Record<string, unknown>) => void>()
+
 mock.module('../src/components/compat-link', () => ({
   default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
     <a href={href} {...props}>
@@ -108,6 +112,8 @@ let intersectionCallback: IntersectionObserverCallback | undefined
 beforeEach(() => {
   navigation.query = ''
   navigation.update.mockReset()
+  zarazTrackMock.mockReset()
+  window.zaraz = { track: zarazTrackMock, ecommerce: mock() }
   intersectionCallback = undefined
   globalThis.fetch = mock().mockResolvedValue({
     ok: true,
@@ -169,6 +175,55 @@ describe('BlogGrid', () => {
 
     await user.click(await screen.findByRole('button', { name: 'Clear all' }))
     expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('')
+  })
+
+  it('commits search terms to the URL and reports them as search events', async () => {
+    const user = userEvent.setup()
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+
+    await user.type(screen.getByLabelText('Search posts'), 'pika')
+    await waitFor(
+      () => expect(zarazTrackMock).toHaveBeenCalledWith('search', { search_term: 'pika' }),
+      { timeout: 3000 }
+    )
+    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('?q=pika')
+  })
+
+  it('reports filter changes as apply and clear filter events', async () => {
+    const user = userEvent.setup()
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+
+    await user.click(screen.getByRole('button', { name: /Electric/ }))
+    expect(zarazTrackMock).toHaveBeenCalledWith('filter', {
+      filter_group: 'type',
+      filter_value: 'Electric',
+      filter_action: 'apply',
+    })
+
+    await user.click(await screen.findByRole('button', { name: 'Clear all' }))
+    expect(zarazTrackMock).toHaveBeenCalledWith('filter', {
+      filter_group: 'type',
+      filter_action: 'clear',
+    })
+    expect(zarazTrackMock.mock.calls.filter(([eventName]) => eventName === 'filter')).toHaveLength(
+      2
+    )
+  })
+
+  it('does not report catalog tag selections as search events', async () => {
+    const user = userEvent.setup()
+    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+
+    // 'pikachu' promotes from the tag catalog to the Pokémon species facet.
+    await user.selectOptions(screen.getByLabelText('Catalog search'), 'pikachu')
+    expect(zarazTrackMock.mock.calls.filter(([eventName]) => eventName === 'search')).toHaveLength(
+      0
+    )
+    expect(zarazTrackMock).toHaveBeenCalledWith('filter', {
+      filter_group: 'pokemon',
+      filter_value: 'pikachu',
+      filter_action: 'apply',
+    })
   })
 
   it('loads and deduplicates the next page when the sentinel intersects', async () => {

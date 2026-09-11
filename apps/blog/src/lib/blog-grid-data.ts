@@ -54,8 +54,10 @@ export function filterBlogGridPosts(
   posts: EnrichedPostForGrid[],
   query: BlogGridQuery
 ): EnrichedPostForGrid[] {
+  const searchTerms = tokenizeSearchQuery(query.q)
   const illustratorFilters = query.filter ? new Set(extractIllustratorFilters(posts)) : null
   const filtered = posts.filter((post) => {
+    if (searchTerms && !postMatchesBlogSearch(post, searchTerms)) return false
     if (query.type && !post.categories.includes(`${query.type} Type`)) return false
     if (query.generation && !post.categories.includes(query.generation)) return false
     if (query.list && !postMatchesListFilter(post, query.list)) return false
@@ -81,4 +83,53 @@ export function filterBlogGridPosts(
   if (query.pokemon) return sortPostsForPokemonFilter(filtered, query.pokemon)
   if (query.expansion) return sortPostsForExpansionFilter(filtered, query.expansion)
   return filtered
+}
+
+/** Whitespace tokens from a free-text search; null when there is nothing to match. */
+export function tokenizeSearchQuery(rawQuery: string | null | undefined): string[] | null {
+  const tokens = (rawQuery ?? '')
+    .toLowerCase()
+    .split(/\s+/)
+    .map((token) => token.trim())
+    .filter((token) => token.length > 0)
+    .slice(0, 12)
+  return tokens.length > 0 ? tokens : null
+}
+
+/**
+ * Free-text blog search: every whitespace-separated term must appear
+ * somewhere in the card's visible text or its filter tags, so `cute pikachu`
+ * narrows rather than widens. Case-insensitive substring matching keeps
+ * partial words (`illustrat`) useful.
+ */
+export function postMatchesBlogSearch(
+  post: Pick<
+    EnrichedPostForGrid,
+    | 'slug'
+    | 'title'
+    | 'description'
+    | 'tags'
+    | 'categories'
+    | 'displayCategories'
+    | 'speciesFilterTags'
+    | 'featuredSpeciesFilterTags'
+    | 'expansionFilterTags'
+  >,
+  terms: readonly string[]
+): boolean {
+  const haystacks = [
+    post.slug,
+    post.title,
+    post.description,
+    ...post.tags,
+    ...post.categories,
+    ...post.displayCategories,
+    ...post.speciesFilterTags,
+    ...post.featuredSpeciesFilterTags,
+    ...post.expansionFilterTags,
+  ].map((field) => field.toLowerCase())
+  return terms.every((term) => {
+    const needle = term.toLowerCase()
+    return haystacks.some((haystack) => haystack.includes(needle))
+  })
 }

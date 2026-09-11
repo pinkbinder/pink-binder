@@ -14,7 +14,9 @@ Apply these settings to both `pinkbinder.shop` and `pinkbinder.blog`:
 2. Leave **Auto-inject script** enabled. Cloudflare injects the Zaraz
    initializer at the edge; the app must not add a second loader.
 3. Leave **Automatic Pageview Tracking** enabled unless page views are handled
-   by an explicitly configured equivalent action.
+   by an explicitly configured equivalent action. This is what attributes
+   inbound traffic: referrer and `utm_*` parameters ride along on
+   `page_location`, so GA4 acquisition reporting works without extra events.
 4. Leave **Data layer compatibility mode** disabled. The application no longer
    uses a legacy tag-manager data layer; application events use the Zaraz Web
    API directly.
@@ -28,20 +30,58 @@ Apply these settings to both `pinkbinder.shop` and `pinkbinder.blog`:
    not publish a marketing or advertising tool without its required consent
    purpose.
 
+## Tool checklist (GA4, Meta/Facebook, Pinterest, Microsoft Clarity)
+
+Each tool is configured in the Zaraz dashboard with its own credential; the
+application only emits events, so adding or re-pointing a tool never requires
+a code change:
+
+- **GA4** – web measurement ID; keep the automatic pageview action and the
+  automatic Events action enabled. `search` uses GA4's recommended name, so
+  search terms feed the built-in Search-term report; `click` mirrors the
+  enhanced-measurement outbound shape (`link_url`, `link_domain`,
+  `outbound`). Zaraz replaces gtag.js, which is why enhanced measurement
+  itself never runs client-side.
+- **Meta (Facebook Pixel)** – pixel ID; the automatic Events action forwards
+  `page_view` and the application events. Enable consent as required.
+- **Pinterest Tag** – tag ID; same automatic Events action, so `page_view`,
+  `search`, and `filter` reach Pinterest without custom triggers.
+- **Microsoft Clarity** – project ID. Clarity records sessions natively; the
+  application additionally mirrors `search`, `filter`, and `post_view` as
+  Clarity custom events (`clarity('event', …)`), which appear as smart-event
+  filters in the Clarity dashboard.
+
 ## Event mapping
 
-The automatic **Events** action forwards the three `zaraz.track()` events to
-the enabled tools using the **All Tracks** system trigger. An individual tool
-that does not support automatic Events must instead use a custom action with a
-firing trigger whose **Event Name** equals the event name. Such action fields
-can read the flat event properties as `{{ client.<property> }}`.
+The automatic **Events** action forwards the `zaraz.track()` events to the
+enabled tools using the **All Tracks** system trigger. An individual tool
+that does not support automatic Events must instead use a custom action with
+a firing trigger whose **Event Name** equals the event name. Such action
+fields can read the flat event properties as `{{ client.<property> }}`.
 
-| Event            | Zaraz API           | Properties                                   |
-| ---------------- | ------------------- | -------------------------------------------- |
-| `select_content` | `zaraz.track()`     | `content_type`, `item_id`                    |
-| `search`         | `zaraz.track()`     | `search_term`                                |
-| `share`          | `zaraz.track()`     | `method`, `content_type`, `item_id`          |
-| `Product Viewed` | `zaraz.ecommerce()` | `product_id`, `name`, `category`, `currency` |
+| Event            | Zaraz API           | Properties                                            | Source                                                    |
+| ---------------- | ------------------- | ----------------------------------------------------- | --------------------------------------------------------- |
+| `select_content` | `zaraz.track()`     | `content_type`, `item_id`                             | blog grid post-card clicks                                |
+| `search`         | `zaraz.track()`     | `search_term`                                         | blog search field commits                                 |
+| `filter`         | `zaraz.track()`     | `filter_group`, `filter_value`, `filter_action`       | blog grid filter changes (apply/clear)                    |
+| `button_click`   | `zaraz.track()`     | `button_text`, `button_id`, `button_section`          | delegated tracker, every button click                     |
+| `click`          | `zaraz.track()`     | `link_url`, `link_domain`, `link_text`, `outbound`    | delegated tracker, outbound link clicks                   |
+| `post_view`      | `zaraz.track()`     | `post_id`, `post_title`                               | article page render                                       |
+| `share`          | `zaraz.track()`     | `method`, `content_type`, `item_id`                   | share dialogs                                             |
+| `Product Viewed` | `zaraz.ecommerce()` | `product_id`, `name`, `category`, `currency`          | outbound marketplace listing views                        |
+
+Implementation notes:
+
+- `filter_action` distinguishes `apply` from `clear`/`clear_all`; report
+  "most popular filters" on `apply` actions grouped by `filter_value`.
+- The delegated click tracker (`apps/blog/src/lib/analytics-client.ts`)
+  captures clicks in the DOM capture phase. `data-analytics-id` and
+  `data-analytics-section` attributes give buttons stable identities when
+  their label text is not enough.
+- Events fired before the asynchronously injected Zaraz loader is ready are
+  queued for a few seconds and flushed on arrival, so early interactions are
+  not lost; the queue is bounded and events are dropped silently when Zaraz
+  is unavailable (e.g. ad blockers).
 
 `Product Viewed` does not need a custom trigger when the tool's E-commerce
 action is enabled; Zaraz maps the event to supported tool formats. The helper
@@ -61,8 +101,8 @@ In a browser, inspect the page source/network panel and confirm:
 - one Cloudflare-managed Zaraz initializer is present;
 - there are no legacy tag-manager scripts, IDs, or data-layer references from
   the application;
-- the Zaraz request appears when searching, sharing, or selecting an outbound
-  marketplace listing; and
+- the Zaraz request appears when searching, applying a filter, clicking a
+  button, or following an outbound link; and
 - the published tools receive the event after their consent conditions are met.
 
 Use Zaraz Preview/Debug mode for the final tool-level assertion. A public HTTP
