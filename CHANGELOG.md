@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.5.1...pink-binder-v2.5.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ui:** deepen type badge text until AA passes ([#94](https://github.com/pinkbinder/pink-binder/issues/94)) ([a3617f7](https://github.com/pinkbinder/pink-binder/commit/a3617f785603dc333ddab18f2501788240276a39))
+
 ## [2.5.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.5.0...pink-binder-v2.5.1) (2026-09-11)
 
 
