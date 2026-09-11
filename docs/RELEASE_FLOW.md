@@ -34,10 +34,10 @@ live during the M2–M5 migrations (PRs #257, #258, #261, #262, #278, #281,
 - Draft PRs allocate no validation runner, no lockfile check, and no preview
   deploy.
 - Preview deploys skip apps the PR does not affect (Turbo impact check).
-- The lockfile check and the deploy jobs both run `bun install
-  --frozen-lockfile`, so the dependency graph validated in review is the one
-  that ships. Never work around a lockfile failure by dropping the frozen
-  flag; regenerate the lockfile instead.
+- The lockfile check and the deploy jobs both run a frozen `bun install`, so
+  the dependency graph validated in review is the one that ships. Never work
+  around a lockfile failure by dropping the frozen flag; regenerate the
+  lockfile instead.
 - **GitHub Actions billing pause:** when Actions is paused, workflow checks
   report `skipping`, which branch protection treats as green. The repository's
   standing rule in that state is to run the full local validation suite
