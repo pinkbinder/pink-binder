@@ -59,16 +59,16 @@ that does not support automatic Events must instead use a custom action with
 a firing trigger whose **Event Name** equals the event name. Such action
 fields can read the flat event properties as `{{ client.<property> }}`.
 
-| Event            | Zaraz API           | Properties                                            | Source                                                    |
-| ---------------- | ------------------- | ----------------------------------------------------- | --------------------------------------------------------- |
-| `select_content` | `zaraz.track()`     | `content_type`, `item_id`                             | blog grid post-card clicks                                |
-| `search`         | `zaraz.track()`     | `search_term`                                         | blog search field commits                                 |
-| `filter`         | `zaraz.track()`     | `filter_group`, `filter_value`, `filter_action`       | blog grid filter changes (apply/clear)                    |
-| `button_click`   | `zaraz.track()`     | `button_text`, `button_id`, `button_section`          | delegated tracker, every button click                     |
-| `click`          | `zaraz.track()`     | `link_url`, `link_domain`, `link_text`, `outbound`    | delegated tracker, outbound link clicks                   |
-| `post_view`      | `zaraz.track()`     | `post_id`, `post_title`                               | article page render                                       |
-| `share`          | `zaraz.track()`     | `method`, `content_type`, `item_id`                   | share dialogs                                             |
-| `Product Viewed` | `zaraz.ecommerce()` | `product_id`, `name`, `category`, `currency`          | outbound marketplace listing views                        |
+| Event            | Zaraz API           | Properties                                         | Source                                  |
+| ---------------- | ------------------- | -------------------------------------------------- | --------------------------------------- |
+| `select_content` | `zaraz.track()`     | `content_type`, `item_id`                          | blog grid post-card clicks              |
+| `search`         | `zaraz.track()`     | `search_term`                                      | blog search field commits               |
+| `filter`         | `zaraz.track()`     | `filter_group`, `filter_value`, `filter_action`    | blog grid filter changes (apply/clear)  |
+| `button_click`   | `zaraz.track()`     | `button_text`, `button_id`, `button_section`       | delegated tracker, every button click   |
+| `click`          | `zaraz.track()`     | `link_url`, `link_domain`, `link_text`, `outbound` | delegated tracker, outbound link clicks |
+| `post_view`      | `zaraz.track()`     | `post_id`, `post_title`                            | article page render                     |
+| `share`          | `zaraz.track()`     | `method`, `content_type`, `item_id`                | share dialogs                           |
+| `Product Viewed` | `zaraz.ecommerce()` | `product_id`, `name`, `category`, `currency`       | outbound marketplace listing views      |
 
 Implementation notes:
 
