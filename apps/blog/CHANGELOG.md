@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.6](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.5...blog-v0.8.6) (2026-09-11)
+
+
+### Bug Fixes
+
+* **blog,landing:** restore roundup pages and the landing blog section ([#66](https://github.com/pinkbinder/pink-binder/issues/66)) ([c8935c0](https://github.com/pinkbinder/pink-binder/commit/c8935c04b2508a4fc28b30c5e87b57a14bcd8689))
+
 ## [0.8.5](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.4...blog-v0.8.5) (2026-09-11)
 
 
