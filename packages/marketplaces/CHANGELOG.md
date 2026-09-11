@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.9](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.8...marketplaces-v1.3.9) (2026-09-11)
+
+
+### Maintenance
+
+* remove remaining Next.js and Vercel traces ([#60](https://github.com/pinkbinder/pink-binder/issues/60)) ([c965900](https://github.com/pinkbinder/pink-binder/commit/c9659006fc17f98874768280f63a439201ffeacc))
+
 ## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.7...marketplaces-v1.3.8) (2026-09-11)
 
 
