@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/pinkbinder/pink-binder/compare/admin-v0.6.0...admin-v0.6.1) (2026-09-11)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group across 1 directory with 9 updates ([#2](https://github.com/pinkbinder/pink-binder/issues/2)) ([4d6a683](https://github.com/pinkbinder/pink-binder/commit/4d6a683bdc7faa15a5a11517c18d3dd230462640))
+
 ## [0.6.0](https://github.com/pinkbinder/pink-binder/compare/admin-v0.5.0...admin-v0.6.0) (2026-09-10)
 
 

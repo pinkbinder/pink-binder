@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.7](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.6...marketplaces-v1.3.7) (2026-09-11)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group across 1 directory with 9 updates ([#2](https://github.com/pinkbinder/pink-binder/issues/2)) ([4d6a683](https://github.com/pinkbinder/pink-binder/commit/4d6a683bdc7faa15a5a11517c18d3dd230462640))
+
 ## [1.3.6](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.5...marketplaces-v1.3.6) (2026-09-11)
 
 
