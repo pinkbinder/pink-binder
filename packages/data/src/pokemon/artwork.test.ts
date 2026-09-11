@@ -103,15 +103,7 @@ describe('officialArtworkUrlCandidates', () => {
 })
 
 describe('resolveReliableArtworkUrl', () => {
-  it('prefers non-blob candidate over a blob url', () => {
-    const blob = 'https://abc.public.blob.vercel-storage.com/x.png'
-    // stored blob is candidates[0]; official-artwork (candidates[1]) is preferred
-    expect(resolveReliableArtworkUrl(blob, 25)).toBe(
-      'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png'
-    )
-  })
-
-  it('returns the only candidate when not a blob', () => {
+  it('returns the stored candidate when the URL is usable', () => {
     const url = 'https://raw.githubusercontent.com/x/25.png'
     expect(resolveReliableArtworkUrl(url, 25)).toBe(url)
   })

@@ -16,7 +16,7 @@ const EXTENSIONS = new Set(['.ts', '.tsx', '.mts', '.cts'])
 
 function walk(dir, out = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === 'node_modules' || entry.name === '.next' || entry.name === 'coverage')
+    if (entry.name === 'node_modules' || entry.name === 'coverage')
       continue
     const full = path.join(dir, entry.name)
     if (entry.isDirectory()) walk(full, out)
@@ -29,8 +29,7 @@ const allFiles = walk(ROOT).filter(
   (f) =>
     EXTENSIONS.has(path.extname(f)) &&
     !f.includes('/node_modules/') &&
-    !f.includes('/.next/') &&
-    !f.includes('/coverage/')
+        !f.includes('/coverage/')
 )
 
 const isTestFile = (f) => /\.(test|spec)\.(ts|tsx|mts|cts)$/.test(f)

@@ -3,7 +3,7 @@ import { resolve } from 'node:path'
 import { describe, expect, test } from 'bun:test'
 
 const repoRoot = resolve(import.meta.dirname, '..')
-const ignoredDirectories = new Set(['.git', '.next', '.open-next', '.turbo', 'node_modules'])
+const ignoredDirectories = new Set(['.git', '.turbo', 'node_modules'])
 
 async function findTurboConfigs(directory: string): Promise<string[]> {
   const paths: string[] = []
@@ -25,7 +25,7 @@ async function findTurboConfigs(directory: string): Promise<string[]> {
 }
 
 describe('Turbo configuration', () => {
-  test('legacy Next build outputs exclude development and framework caches', async () => {
+  test('no task declares retired Next.js build outputs', async () => {
     const configPaths = await findTurboConfigs(repoRoot)
     expect(configPaths.length).toBeGreaterThan(0)
 
@@ -33,10 +33,13 @@ describe('Turbo configuration', () => {
       const config = JSON.parse(await readFile(configPath, 'utf8')) as {
         tasks?: Record<string, { outputs?: string[] }>
       }
-      for (const task of Object.values(config.tasks ?? {})) {
-        if (!task.outputs?.includes('.next/**')) continue
-        expect(task.outputs).toContain('!.next/cache/**')
-        expect(task.outputs).toContain('!.next/dev/**')
+      for (const [taskName, task] of Object.entries(config.tasks ?? {})) {
+        // Next.js is gone; `.next` outputs would mean a build that no longer
+        // exists. Vite emits dist/** and Astro emits .astro/**.
+        expect(
+          (task.outputs ?? []).filter((output) => output.includes('.next')),
+          `${configPath} task ${taskName} declares Next.js outputs`
+        ).toEqual([])
       }
     }
   }, 15_000)

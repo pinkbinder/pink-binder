@@ -9,6 +9,13 @@
     "global_fetch_strictly_public",
   ],
   "workers_dev": true,
+  // Public origins used for in-app links and canonical/SEO URLs. Declared here
+  // (not as dashboard secrets) so the values are reviewable and survive a
+  // Worker recreation. Read via PUBLIC_* in packages/config/src/site-urls.ts.
+  "vars": {
+    "PUBLIC_BLOG_URL": "https://pinkbinder.blog",
+    "PUBLIC_LANDING_URL": "https://pinkbinder.shop",
+  },
   "r2_buckets": [
     {
       "binding": "BLOG_GALLERY_BUCKET",

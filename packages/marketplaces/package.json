@@ -7,7 +7,6 @@
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./next-images": "./next-images.mjs",
     "./config": "./src/config/index.ts",
     "./ebay": "./src/ebay/index.ts",
     "./etsy": "./src/etsy/index.ts",

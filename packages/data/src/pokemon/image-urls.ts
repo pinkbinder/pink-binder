@@ -23,25 +23,11 @@ import type { PokemonTcgCard } from './tcg-card'
 import type { MichiSceneArtSource } from './michi-scene-art'
 import { pokemonImageVariantObjectKey, R2_IMAGE_EXTENSIONS } from './r2-image-key'
 
-/** Legacy Vercel Blob host suffix, retained only to provide a fallback for stale cached data. */
-const LEGACY_VERCEL_BLOB_HOST_SUFFIX = '.public.blob.vercel-storage.com'
+/** R2 public host for Pink Binder images (Cloudflare). */
 const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
 const R2_POKEMON_PATH_PREFIX = '/pokemon/'
 
 export type PokemonR2ImageVariant = 'small' | 'large'
-
-/** Detect a legacy Vercel Blob URL in stale cached data. */
-export function isVercelBlobPublicUrl(url: string | null | undefined): boolean {
-  const trimmed = url?.trim()
-  if (!trimmed) {
-    return false
-  }
-  try {
-    return new URL(trimmed).hostname.endsWith(LEGACY_VERCEL_BLOB_HOST_SUFFIX)
-  } catch {
-    return false
-  }
-}
 
 /**
  * Resolve a published, immutable WebP variant for an existing R2 pokemon URL.
@@ -119,9 +105,6 @@ function spriteFallback(
   const backup = fallback()
   if (!primary) {
     return { primary: backup, fallback: null }
-  }
-  if (isVercelBlobPublicUrl(primary) && backup && backup !== primary) {
-    return { primary, fallback: backup }
   }
   return { primary, fallback: null }
 }

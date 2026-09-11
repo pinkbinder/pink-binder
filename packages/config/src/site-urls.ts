@@ -25,26 +25,14 @@ function readPublicUrl(...keys: string[]): string | undefined {
 
 export function getPublicBlogUrl(): string {
   return (
-    readPublicUrl(
-      'PUBLIC_BLOG_URL',
-      'NEXT_PUBLIC_BLOG_URL',
-      'PUBLIC_SITE_URL',
-      'NEXT_PUBLIC_SITE_URL'
-    ) ??
+    readPublicUrl('PUBLIC_BLOG_URL', 'PUBLIC_SITE_URL') ??
     readEnvUrl(process.env.BLOG_URL) ??
     DEV_BLOG_URL
   )
 }
 
 export function getPublicLandingUrl(): string {
-  return (
-    readPublicUrl(
-      'PUBLIC_LANDING_URL',
-      'NEXT_PUBLIC_LANDING_URL',
-      'PUBLIC_SITE_URL',
-      'NEXT_PUBLIC_SITE_URL'
-    ) ?? DEV_LANDING_URL
-  )
+  return readPublicUrl('PUBLIC_LANDING_URL', 'PUBLIC_SITE_URL') ?? DEV_LANDING_URL
 }
 
 /**
@@ -52,14 +40,7 @@ export function getPublicLandingUrl(): string {
  * Never falls back to localhost — crawlers should only see production (or explicit env) URLs.
  */
 export function getSitemapLandingUrl(): string {
-  return (
-    readPublicUrl(
-      'PUBLIC_LANDING_URL',
-      'NEXT_PUBLIC_LANDING_URL',
-      'PUBLIC_SITE_URL',
-      'NEXT_PUBLIC_SITE_URL'
-    ) ?? PRODUCTION_LANDING_URL
-  )
+  return readPublicUrl('PUBLIC_LANDING_URL', 'PUBLIC_SITE_URL') ?? PRODUCTION_LANDING_URL
 }
 
 /**
@@ -68,12 +49,7 @@ export function getSitemapLandingUrl(): string {
  */
 export function getSitemapBlogUrl(): string {
   return (
-    readPublicUrl(
-      'PUBLIC_BLOG_URL',
-      'NEXT_PUBLIC_BLOG_URL',
-      'PUBLIC_SITE_URL',
-      'NEXT_PUBLIC_SITE_URL'
-    ) ??
+    readPublicUrl('PUBLIC_BLOG_URL', 'PUBLIC_SITE_URL') ??
     readEnvUrl(process.env.BLOG_URL) ??
     PRODUCTION_BLOG_URL
   )

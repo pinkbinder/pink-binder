@@ -19,7 +19,7 @@ export function RemoteImageWithFallback({
   candidates: string[]
   alt: string
   className?: string
-  /** Kept for API compatibility with former next/image usage. */
+  /** Passed to the `srcSet`/`sizes` responsive image pair. */
   sizes: string
   fill?: boolean
   width?: number

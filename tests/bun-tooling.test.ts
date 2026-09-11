@@ -7,8 +7,6 @@ const sourceRoots = ['apps', 'packages', 'scripts']
 const textExtensions = new Set(['.js', '.jsx', '.md', '.mdx', '.mjs', '.ts', '.tsx'])
 const ignoredDirectories = new Set([
   '.astro',
-  '.next',
-  '.open-next',
   '.wrangler',
   'cache',
   'dist',
