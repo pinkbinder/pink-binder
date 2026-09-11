@@ -84,13 +84,19 @@ export async function loadPostPageForRequest(
 
   const head = buildPostHeadFromArtifact(post)
 
-  // Authored artifacts carry no generated sections; the page falls back to
-  // the MDX prose path with the artifact description (matches legacy reads).
-  if (!post.sections.length) return { status: 'authored', head }
-
+  // The render namespace is authoritative for generated posts. Do NOT gate this
+  // on `post.sections.length`: roundups carry their body in `roundup`, not
+  // `sections`, so a section count of zero sent every roundup down the authored
+  // path and served an empty page (head metadata only). Presence of the
+  // prebuilt HTML is the correct signal.
   const entry: BlogIndex['bySlug'][string] | undefined = index?.bySlug[canonicalSlug]
   const html = entry ? await readRenderedHtml(bucket, entry.file) : null
-  if (!html) return { status: 'not-found' }
+  if (html) return { status: 'ok', head, html }
 
-  return { status: 'ok', head, html }
+  // No prebuilt render. An authored MDX post legitimately has no artifact body;
+  // an artifact with template sections but no render is a publish gap, and
+  // serving empty prose for it would hide the failure.
+  if (!post.sections.length) return { status: 'authored', head }
+
+  return { status: 'not-found' }
 }

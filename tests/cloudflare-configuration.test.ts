@@ -143,4 +143,27 @@ describe('Cloudflare build configuration', () => {
       expect(vars).not.toContain('NEXT_PUBLIC_')
     }
   })
+
+  test('landing can read blog artifacts at runtime', async () => {
+    // Regression guard: the landing blog section used `import.meta.glob` over
+    // packages/data/cache/**, which moved to the private blog-pipeline repo.
+    // The glob silently resolved to zero files, so the section vanished with
+    // no error anywhere. It must read from R2 instead, which requires both the
+    // binding and the code path.
+    const config = await readFile(
+      resolve(repoRoot, 'apps/landing/astro.wrangler.jsonc'),
+      'utf8'
+    )
+    expect(config, 'landing needs the blog R2 binding').toContain('BLOG_GALLERY_BUCKET')
+    expect(config).toContain('pink-binder')
+
+    const source = await readFile(
+      resolve(repoRoot, 'apps/landing/src/lib/landing-blog-featured.ts'),
+      'utf8'
+    )
+    // A build-time glob over a directory this repo does not contain is the
+    // exact failure mode; assert it never comes back.
+    expect(source).not.toMatch(/import\.meta\.glob\(/)
+    expect(source).toContain('cloudflare:workers')
+  })
 })
