@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.1...pink-binder-v2.4.2) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ui:** center article column on post pages at large viewports ([#83](https://github.com/pinkbinder/pink-binder/issues/83)) ([80a36e4](https://github.com/pinkbinder/pink-binder/commit/80a36e49f593ad344324df8dd7d7df0d06fcbf2f))
+
 ## [2.4.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.0...pink-binder-v2.4.1) (2026-09-11)
 
 
