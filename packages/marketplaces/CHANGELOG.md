@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.6](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.5...marketplaces-v1.3.6) (2026-09-11)
+
+
+### Bug Fixes
+
+* **security:** close the two re-flagged code-scanning alerts ([#39](https://github.com/pinkbinder/pink-binder/issues/39)) ([dd1487a](https://github.com/pinkbinder/pink-binder/commit/dd1487a08859270ae056a2b38667acc5cd9b2e24))
+
 ## [1.3.5](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.4...marketplaces-v1.3.5) (2026-09-11)
 
 
