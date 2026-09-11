@@ -18,6 +18,8 @@ interface Props {
   image?: string
   publishedTime?: string
   noindex?: boolean
+  /** Set on article pages so the tracker can emit a `post_view` event. */
+  postView?: { slug: string; title: string }
 }
 
 const SITE_URL = getSitemapBlogUrl()
@@ -29,6 +31,7 @@ const {
   image,
   publishedTime,
   noindex = false,
+  postView = undefined,
 } = Astro.props as Props
 
 const isArticle = Boolean(publishedTime)
@@ -117,7 +120,24 @@ const rssFeeds = [
   </head>
   <body class="antialiased">
     <slot />
-    <footer class="border-t border-pink-100 px-4 py-8">
+    {
+      postView ? (
+        <script
+          is:inline
+          type="application/json"
+          id="pb-post-view"
+          set:html={JSON.stringify(postView)
+            .replace(/&/g, '\\u0026')
+            .replace(/</g, '\\u003c')
+            .replace(/>/g, '\\u003e')}
+        />
+      ) : null
+    }
+    <script>
+      import { initBlogPageTracking } from '../lib/analytics-client'
+      initBlogPageTracking()
+    </script>
+    <footer class="border-t border-pink-100 px-4 py-8" data-analytics-section="site-footer">
       <div class="mx-auto flex max-w-4xl flex-col items-center gap-3">
         <p class="text-primary-deep text-xs font-semibold tracking-[0.3em] uppercase">
           Follow us

@@ -21,6 +21,8 @@ export interface BlogGridFacets {
 }
 
 export interface BlogGridQuery {
+  /** Free-text blog search over titles, summaries, tags, and categories. */
+  q?: string | null
   type?: string | null
   generation?: string | null
   list?: string | null

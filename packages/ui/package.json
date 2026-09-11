@@ -12,6 +12,7 @@
     "./blog-grid-query": "./src/lib/blog-grid-query.ts",
     "./blog-query-state": "./src/lib/blog-query-state.ts",
     "./blog-query-state/server": "./src/lib/blog-query-state-server.ts",
+    "./zaraz-events": "./src/lib/zaraz-events.ts",
     "./compat-link": "./src/components/compat-link.tsx",
     "./compat-image": "./src/components/compat-image.tsx",
     "./compat-navigation": "./src/lib/compat-navigation.ts",

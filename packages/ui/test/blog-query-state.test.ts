@@ -37,6 +37,7 @@ describe('blog URL query state', () => {
         facets
       )
     ).toEqual({
+      q: null,
       type: null,
       generation: null,
       list: null,
@@ -47,6 +48,29 @@ describe('blog URL query state', () => {
       tag: null,
       filter: null,
     })
+  })
+
+  it('passes the free-text search term through and bounds its length', () => {
+    expect(resolveBlogGridQuery({ q: '  cute pikachu  ' }, facets)).toMatchObject({
+      q: 'cute pikachu',
+    })
+    expect(resolveBlogGridQuery({ q: 'x'.repeat(200) }, facets)).toMatchObject({
+      q: 'x'.repeat(120),
+    })
+    expect(resolveBlogGridQuery({ q: '   ' }, facets)).toMatchObject({ q: null })
+  })
+
+  it('parses the q parameter from the URL', async () => {
+    const parsed = await loadBlogFilterSearchParams({ q: 'cute pikachu' })
+    expect(parsed.q).toBe('cute pikachu')
+  })
+
+  it('includes q first in the canonical query string', () => {
+    expect(blogGridQueryString({ q: 'pikachu', type: 'Electric' })).toBe('q=pikachu&type=Electric')
+    expect(blogGridQueryKey({ q: 'pikachu', type: 'Electric' })).toEqual([
+      'blog-grid',
+      'q=pikachu&type=Electric',
+    ])
   })
 
   it('uses stable canonical query keys regardless of object insertion order', () => {

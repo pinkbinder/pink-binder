@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "description": "Reviewable Zaraz contract for the Pink Binder landing and blog zones. This is not a Cloudflare dashboard export.",
   "domains": ["pinkbinder.shop", "pinkbinder.blog"],
   "loader": {
@@ -15,12 +15,38 @@
     "select_content": {
       "api": "track",
       "delivery": "automatic-events-action",
-      "properties": ["content_type", "item_id"]
+      "properties": ["content_type", "item_id"],
+      "emitted_by": "blog grid post card clicks"
     },
     "search": {
       "api": "track",
       "delivery": "automatic-events-action",
-      "properties": ["search_term"]
+      "properties": ["search_term"],
+      "emitted_by": "blog search field commits (GA4 site-search reporting)"
+    },
+    "filter": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["filter_group", "filter_value (apply only)", "filter_action"],
+      "emitted_by": "blog grid filter changes (dropdowns, card chips, catalog tag, clear)"
+    },
+    "button_click": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["button_text", "button_id", "button_section"],
+      "emitted_by": "delegated tracker on every <button>/<role=button> click; data-analytics-id and data-analytics-section attributes refine identity"
+    },
+    "click": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["link_url", "link_domain", "link_text", "outbound"],
+      "emitted_by": "delegated tracker on outbound link clicks (GA4 enhanced-measurement-compatible shape)"
+    },
+    "post_view": {
+      "api": "track",
+      "delivery": "automatic-events-action",
+      "properties": ["post_id", "post_title"],
+      "emitted_by": "article pages on render"
     },
     "share": {
       "api": "track",
@@ -32,5 +58,9 @@
       "delivery": "automatic-ecommerce-action",
       "properties": ["product_id", "name", "category", "currency"]
     }
+  },
+  "traffic_attribution": {
+    "inbound_sources": "Automatic pageview tracking carries referrer and utm_* parameters on page_location; GA4 session attribution reports acquisition per source without extra events.",
+    "enhanced_measurement": "Zaraz replaces gtag.js, so GA4 enhanced measurement does not run client-side; outbound clicks (click) and site search (search) are emitted by the app instead."
   }
 }
