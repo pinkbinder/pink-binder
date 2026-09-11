@@ -8,6 +8,14 @@
     "nodejs_compat_populate_process_env",
     "global_fetch_strictly_public",
   ],
+  // Public origins for canonical links and the share dialog. Declared here so
+  // they are reviewable and survive a Worker recreation — without them
+  // getPublicLandingUrl() falls back to the dev origin (localhost:3000), which
+  // leaked into the production share URL.
+  "vars": {
+    "PUBLIC_LANDING_URL": "https://pinkbinder.shop",
+    "PUBLIC_BLOG_URL": "https://pinkbinder.blog",
+  },
   "workers_dev": true,
   "dev": {
     "inspector_port": 0,
