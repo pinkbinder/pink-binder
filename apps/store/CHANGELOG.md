@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.1](https://github.com/pinkbinder/pink-binder/compare/store-v0.6.0...store-v0.6.1) (2026-09-11)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group across 1 directory with 9 updates ([#2](https://github.com/pinkbinder/pink-binder/issues/2)) ([4d6a683](https://github.com/pinkbinder/pink-binder/commit/4d6a683bdc7faa15a5a11517c18d3dd230462640))
+* **store:** make the storefront local-only until Medusa is hosted ([#48](https://github.com/pinkbinder/pink-binder/issues/48)) ([06f57c7](https://github.com/pinkbinder/pink-binder/commit/06f57c7b82e10e6617b2e878af9b916c7bae1489))
+
 ## [0.6.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.5.0...store-v0.6.0) (2026-09-10)
 
 
