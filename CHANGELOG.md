@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.23](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.22...pink-binder-v2.1.23) (2026-09-11)
+
+
+### Bug Fixes
+
+* **landing:** declare public origins so the share URL stops emitting localhost ([#62](https://github.com/pinkbinder/pink-binder/issues/62)) ([9758168](https://github.com/pinkbinder/pink-binder/commit/9758168e8d43ec175103a75559954687127dd70b))
+
 ## [2.1.22](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.21...pink-binder-v2.1.22) (2026-09-11)
 
 
