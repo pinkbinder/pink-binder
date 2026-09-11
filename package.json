@@ -48,7 +48,7 @@
     "turbo": "2.10.12"
   },
   "overrides": {
-    "nanoid": "6.0.1",
+    "nanoid": "5.1.5",
     "postcss": "8.5.25",
     "sharp": "0.35.4"
   },
