@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.2.0...pink-binder-v2.3.0) (2026-09-11)
+
+
+### Features
+
+* **seo:** structured data, article meta, and social card fixes ([#77](https://github.com/pinkbinder/pink-binder/issues/77)) ([cff4015](https://github.com/pinkbinder/pink-binder/commit/cff40156c0fd2bb4a16ca727386c8bffd2552ab5))
+
 ## [2.2.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.27...pink-binder-v2.2.0) (2026-09-11)
 
 
