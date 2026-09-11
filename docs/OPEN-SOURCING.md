@@ -1,91 +1,74 @@
-# Open-sourcing this monorepo
+# Open sourcing this monorepo
 
-The blog generation pipeline, datasets, and article renderer now live in the
+The blog generation pipeline, datasets, and article renderer live in the
 **private** [`pinkbinder/blog-pipeline`](https://github.com/pinkbinder/blog-pipeline)
-repository (extracted with full commit history). The working tree of this
-monorepo is public-safe: `packages/data` here is only the client surface
-(artifact types and pure helpers), and the blog app reads published artifacts
-from R2 without any generation logic.
+repository. This monorepo is the public frontend: `packages/data` here is only
+the client surface (artifact types and pure helpers), and the blog app reads
+published artifacts from R2 without any generation logic.
 
-**This repository's git history is not yet public-safe.** Every historical
-commit still contains the private data service: `packages/data` sources,
-`cache/normalized/` datasets, `blob-manifest.json`, the publish scripts, and
-the old `PostArticle.tsx` render brain. Flipping the repo to public before
-rewriting history would disclose all of it.
+## Status: public, history scrubbed (2026-09-10)
 
-## One-time history scrub before changing visibility
+This repository is **public** and its git history is public-safe. Every
+historical commit was scrubbed of the private data service — `packages/data`
+sources, `cache/normalized/` datasets, `blob-manifest.json`, the publish
+scripts, and the old `PostArticle.tsx` render brain.
 
-Run this from a **fresh clone** (never inside your working checkout), with no
-unpushed work. `git filter-repo` rewrites every commit and refuses to run in a
-dirty or non-fresh clone.
+### How the scrub was done
+
+The rewrite could not be a plain force-push. The final content migration landed
+as a squash-merged pull request whose diff contains the **full text of every
+deleted proprietary file**; merged pull requests cannot be deleted, and
+rewriting `main` does not reliably purge their cached diff views. So the
+repository was replaced rather than rewritten:
+
+1. The existing repository was renamed to a private archive, preserving the
+   pre-scrub history, releases, and pull requests as a backup.
+2. A fresh repository with the original name was created and received history
+   rewritten with `git filter-repo --invert-paths`, stripping every path that
+   was historically tracked under the private surface and absent from the
+   current public-safe tree.
+3. The rewritten tree was verified byte-identical to the pre-scrub tree
+   (`git rev-parse HEAD^{tree}`), validated locally (lint, type-check, tests,
+   Cloudflare build), then pushed and flipped public.
+
+### Re-running a scrub
+
+If private content ever needs to be removed from history again, work from a
+**fresh clone** (never a working checkout) with no unpushed work:
 
 ```bash
 git clone https://github.com/PinkBinder/pink-binder.git pink-binder-scrub
 cd pink-binder-scrub
 
-git filter-repo --force \
-  --invert-paths \
-  --path packages/data/cache \
-  --path packages/data/scripts \
-  --path packages/data/src/blog \
-  --path packages/data/src/collections \
-  --path packages/data/src/expansions \
-  --path packages/data/src/generations \
-  --path packages/data/src/illustrators \
-  --path packages/data/src/pokemon \
-  --path packages/data/src/popularity \
-  --path packages/data/src/regions \
-  --path packages/data/src/seo \
-  --path packages/data/src/tcg \
-  --path packages/data/src/landing/index.ts \
-  --path packages/data/src/pipeline-meta.ts \
-  --path packages/data/src/paths.ts \
-  --path packages/data/src/utils/json-file.ts \
-  --path packages/data/src/utils/index.ts \
-  --path apps/blog/src/components/PostArticle.tsx \
-  --path apps/blog/src/components/PostIsland.tsx \
-  --path apps/blog/src/lib/cached-posts.ts \
-  --path apps/blog/scripts/publish-blog-assets.ts \
-  --path apps/blog/scripts/publish-blog-index.ts \
-  --path apps/blog/scripts/publish-blog-posts.ts \
-  --path apps/blog/scripts/publish-gallery-manifests.ts \
-  --path apps/blog/scripts/publish-pokemon-image-variants.ts \
-  --path apps/blog/scripts/normalize-r2-image-keys.ts \
-  --path apps/blog/scripts/seed-local-r2.ts
+# Strip every historically tracked path under the private surface.
+git log --all --name-only --pretty=format: -- packages/data apps/blog \
+  | sort -u > /tmp/historical.txt
+git ls-tree -r --name-only origin/main | sort -u > /tmp/current.txt
+comm -23 /tmp/historical.txt /tmp/current.txt > /tmp/strip.txt
+
+git filter-repo --force --invert-paths --paths-from-file /tmp/strip.txt
+git rev-parse HEAD^{tree}   # must equal the pre-scrub tree of origin/main
 ```
 
-`--invert-paths` removes those paths from every commit, leaving the frontend
-history intact. Then verify nothing proprietary remains:
+Verify nothing proprietary remains before publishing:
 
 ```bash
-git grep -I -l -iE 'apiKey|secret' $(git rev-list --all) -- packages/data apps/blog | head
-git log --all --oneline -- packages/data/src/blog | head   # expect no output
+git grep -lE "buildRichBackstoryParagraphs|blob-manifest|getPostFromDisk" \
+  $(git rev-list --all) | head
 ```
 
-When satisfied, force-push the rewrite (this is the destructive step — every
-clone, open PR, and Cloudflare's GitHub integration are affected):
+If private content ever reached a **public** repository, force-pushing is not
+sufficient for the reasons above — replace the repository and its PR history.
 
-```bash
-git remote add origin https://github.com/PinkBinder/pink-binder.git
-git push --force --all origin
-git push --force --tags origin
-```
-
-Afterwards:
-
-1. Re-open or rebase any in-flight pull requests onto the rewritten history.
-2. Ask collaborators to re-clone; old checkouts still hold the private data.
-3. Release-please tags keep pointing at pre-scrub commits; consider whether
-   old release tags should be deleted or kept private-minded.
-4. Re-authorize the Cloudflare Workers Builds GitHub app if its check runs
-   reference stale commit SHAs.
-
-## Ongoing rules while the repo is private
+## Ongoing rules
 
 - Never reintroduce datasets (`packages/data/cache/**`), generation code, or
   R2 publish scripts here — they belong in `blog-pipeline`.
-- New public-safe shared code may live in `packages/data/src/ui`, the kept
-  blog client modules, and `packages/data/src/client.ts` only.
+- Public-safe shared code may live in `packages/data/src/ui`, the kept blog
+  client modules, and `packages/data/src/client.ts`.
 - The mirrored type modules (`src/blog/types/template-sections.ts`,
-  `src/pokemon/normalized-species.ts`) must stay type-only; their source of
+  `src/pokemon/normalized-species.ts`) must stay **type-only**; their source of
   truth is the private service.
+- Store backend code belongs in the private `pinkbinder/medusa` repository;
+  the storefront talks to it through server-only `MEDUSA_*` environment
+  variables.
