@@ -1,6 +1,6 @@
 {
   "name": "pink-binder",
-  "version": "2.1.25",
+  "version": "2.1.26",
   "private": true,
   "license": "Apache-2.0",
   "workspaces": [

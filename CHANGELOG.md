@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.26](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.25...pink-binder-v2.1.26) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ui:** use primary-deep for blog body text to pass AA contrast ([#71](https://github.com/pinkbinder/pink-binder/issues/71)) ([0113b87](https://github.com/pinkbinder/pink-binder/commit/0113b87ad7bd10cd7808a4c88d674eff52f9049a))
+
 ## [2.1.25](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.24...pink-binder-v2.1.25) (2026-09-11)
 
 
