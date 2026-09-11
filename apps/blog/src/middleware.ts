@@ -26,8 +26,8 @@ const BLOG_INDEX_FACET_QUERY_KEYS = [
   'themes',
 ] as const
 
-/** Fresh 1 h matches the other blog surfaces; 1 day SWR tail absorbs publish repushes. */
-const HTML_EDGE_CACHE_POLICY = { freshFor: 3600, staleFor: 86400 }
+/** Fresh 5 min matches the blog API surfaces; 1 h SWR tail absorbs publish repushes. */
+const HTML_EDGE_CACHE_POLICY = { freshFor: 300, staleFor: 3600 }
 
 const MARKDOWN_HOME = `# Cute Pokémon Collector Guide
 
