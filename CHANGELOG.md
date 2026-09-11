@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.14](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.13...pink-binder-v2.1.14) (2026-09-11)
+
+
+### Performance
+
+* **blog:** defer grid hydration to first interaction ([#41](https://github.com/pinkbinder/pink-binder/issues/41)) ([c76e807](https://github.com/pinkbinder/pink-binder/commit/c76e80787f2042b3de019a353dc5b6fc3ba427ce))
+
 ## [2.1.13](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.12...pink-binder-v2.1.13) (2026-09-11)
 
 
