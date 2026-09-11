@@ -119,4 +119,28 @@ describe('Cloudflare build configuration', () => {
     expect(middleware).toContain('SECURITY_HEADERS')
     expect(middleware).toContain('DISCOVERY_LINK_HEADER')
   })
+
+  test('apps that resolve public URLs declare them in the deploy config', async () => {
+    // getPublicLandingUrl()/getPublicBlogUrl() fall back to the *dev* origins
+    // (localhost:3000/3002) when no env value is present. That fallback is
+    // correct for local development and catastrophic in production: it leaked
+    // into the landing share URL once already. Any app whose Worker renders
+    // those URLs must therefore declare the production values in its own
+    // wrangler config, which is also what keeps them reviewable.
+    const requirements: Record<string, string[]> = {
+      blog: ['PUBLIC_BLOG_URL', 'PUBLIC_LANDING_URL'],
+      landing: ['PUBLIC_BLOG_URL', 'PUBLIC_LANDING_URL'],
+    }
+
+    for (const [app, required] of Object.entries(requirements)) {
+      const config = await readFile(resolve(repoRoot, 'apps', app, 'astro.wrangler.jsonc'), 'utf8')
+      const vars = config.match(/"vars"\s*:\s*\{([^}]*)\}/)?.[1] ?? ''
+      for (const key of required) {
+        expect(vars, `${app} must declare ${key} in astro.wrangler.jsonc vars`).toContain(key)
+      }
+      // The Next.js-era env names are retired; a leftover value must not be the
+      // only thing standing between production and a localhost URL.
+      expect(vars).not.toContain('NEXT_PUBLIC_')
+    }
+  })
 })
