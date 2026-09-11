@@ -14,6 +14,7 @@ import { renderPostMarkdown } from './lib/post-markdown'
 const BLOG_ORIGIN = 'https://pinkbinder.blog'
 
 const BLOG_INDEX_FACET_QUERY_KEYS = [
+  'q',
   'tag',
   'filter',
   'type',

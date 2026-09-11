@@ -32,7 +32,8 @@ import {
 import { Search, SlidersHorizontal } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
-import { trackSearch, trackSelectContent } from '../../lib/zaraz-events'
+import { trackFilter, trackSearch, trackSelectContent } from '../../lib/zaraz-events'
+import { BlogSearchInput } from './blog-search-input'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
@@ -128,6 +129,54 @@ const EMPTY_GROUPED_FILTERS: GroupedFilters = {
   expansion: null,
   pokemon: null,
   themes: null,
+}
+
+const FILTER_GROUP_KEYS = [
+  'type',
+  'generation',
+  'list',
+  'illustrator',
+  'expansion',
+  'pokemon',
+  'themes',
+] as const
+
+/**
+ * Emit one `filter` analytics event per changed group. Diffing at the single
+ * choke point every filter action funnels through (dropdowns, card chips,
+ * catalog selection, clear-all) keeps apply/clear counts accurate without
+ * instrumenting each entry point.
+ */
+function trackFilterChanges(
+  prevGrouped: GroupedFilters,
+  prevDirect: string | null,
+  prevTag: string | null,
+  nextGrouped: GroupedFilters,
+  nextDirect: string | null,
+  nextTag: string | null
+) {
+  for (const group of FILTER_GROUP_KEYS) {
+    if (prevGrouped[group] === nextGrouped[group]) continue
+    trackFilter({
+      filterGroup: group,
+      filterValue: nextGrouped[group],
+      filterAction: nextGrouped[group] ? 'apply' : 'clear',
+    })
+  }
+  if (prevTag !== nextTag) {
+    trackFilter({
+      filterGroup: 'tag',
+      filterValue: nextTag,
+      filterAction: nextTag ? 'apply' : 'clear',
+    })
+  }
+  if (prevDirect !== nextDirect) {
+    trackFilter({
+      filterGroup: 'filter',
+      filterValue: nextDirect,
+      filterAction: nextDirect ? 'apply' : 'clear',
+    })
+  }
 }
 
 interface BlogGridProps {
@@ -319,9 +368,18 @@ export function BlogGrid({
     nextDirectFilter: string | null,
     nextTagFilter: string | null
   ) {
+    trackFilterChanges(
+      groupedFilters,
+      directFilter,
+      tagFilter,
+      nextGroupedFilters,
+      nextDirectFilter,
+      nextTagFilter
+    )
     void setUrlFilters(
       canonicalBlogFilterState({
         ...nextGroupedFilters,
+        q: resolvedQuery.q,
         tag: nextTagFilter,
         filter: nextDirectFilter,
       })
@@ -401,7 +459,6 @@ export function BlogGrid({
       applyTagFilter(null)
       return
     }
-    trackSearch({ searchTerm: nextCatalogValue })
     const currentCatalog = catalogSelectValueFromFilters(
       tagFilter,
       groupedFilters,
@@ -417,6 +474,13 @@ export function BlogGrid({
 
   function clearAllFilters() {
     pushFilterParams(EMPTY_GROUPED_FILTERS, null, null)
+  }
+
+  function handleSearchCommit(term: string) {
+    if (term) {
+      trackSearch({ searchTerm: term })
+    }
+    void setUrlFilters({ q: term || null })
   }
 
   function applyCategoryFilter(filterValue: string) {
@@ -835,8 +899,12 @@ export function BlogGrid({
       <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">
         {liveMessage}
       </p>
-      <div className="bg-card/50 rounded-2xl border p-4 shadow-xs">
+      <div
+        className="bg-card/50 rounded-2xl border p-4 shadow-xs"
+        data-analytics-section="blog-filters"
+      >
         <div className="flex flex-col gap-4">
+          <BlogSearchInput value={resolvedQuery.q ?? ''} onCommit={handleSearchCommit} />
           {tagCatalogOptions.length > 0 ? (
             <div className="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
               <div className="flex items-center gap-2">
@@ -1140,6 +1208,7 @@ export function BlogGrid({
           <div
             ref={gridRef}
             className="grid grid-cols-1 gap-6 md:grid-cols-3"
+            data-analytics-section="blog-grid"
             aria-busy={isLoadingPosts}
           >
             {postsToRender.map((post, index) => {

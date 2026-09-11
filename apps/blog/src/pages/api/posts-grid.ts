@@ -28,6 +28,7 @@ function readQuery(searchParams: URLSearchParams): BlogGridQuery {
     themes: value('themes') ?? value('collection'),
     tag: value('tag'),
     filter: value('filter'),
+    q: value('q')?.slice(0, 120) ?? null,
   }
 }
 
