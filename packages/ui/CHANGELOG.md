@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.7...ui-v1.3.8) (2026-09-11)
+
+
+### Bug Fixes
+
+* **ui:** use primary-deep for blog body text to pass AA contrast ([#71](https://github.com/pinkbinder/pink-binder/issues/71)) ([0113b87](https://github.com/pinkbinder/pink-binder/commit/0113b87ad7bd10cd7808a4c88d674eff52f9049a))
+
 ## [1.3.7](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.6...ui-v1.3.7) (2026-09-11)
 
 
