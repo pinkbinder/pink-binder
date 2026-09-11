@@ -3,6 +3,25 @@ import react from '@astrojs/react'
 import { defineConfig } from 'astro/config'
 import { loadEnv } from 'vite'
 
+/**
+ * Registers `client:interaction` — hydrate the island on the user's first
+ * interaction intent with it (see client-directives/interaction.js).
+ * @returns {import('astro').AstroIntegration}
+ */
+function interactionDirective() {
+  return {
+    name: 'blog:interaction-directive',
+    hooks: {
+      'astro:config:setup': ({ addClientDirective }) => {
+        addClientDirective({
+          name: 'interaction',
+          entrypoint: './client-directives/interaction.js',
+        })
+      },
+    },
+  }
+}
+
 // Keep the existing data/config packages on process.env while allowing
 // direct Astro development to read apps/blog/.env.local as expected.
 const localEnv = loadEnv(process.env.NODE_ENV ?? 'development', process.cwd(), '')
@@ -20,7 +39,7 @@ export default defineConfig({
     configPath: './astro.wrangler.jsonc',
     imageService: 'passthrough',
   }),
-  integrations: [react()],
+  integrations: [react(), interactionDirective()],
   vite: {
     ssr: {
       noExternal: ['@repo/config', '@repo/data', '@repo/marketplaces', '@repo/ui'],
