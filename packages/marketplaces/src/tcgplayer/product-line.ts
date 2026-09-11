@@ -46,11 +46,32 @@ function normalizeCardKeyPart(value: string | null | undefined): string {
 /** Unify `EX trainer Kit 2 (Minun)` vs `EX Trainer Kit 2 Minun` for trainer-kit dedupe. */
 export function normalizeTrainerKitSetNameKey(setName: string): string {
   let normalized = normalizeCardKeyPart(setName)
-  normalized = normalized
-    .replace(/\([^)]*\)/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
+  normalized = stripParenGroups(normalized).replace(/\s+/g, ' ').trim()
   return normalized
+}
+
+/**
+ * Replace every `(…)` group with a space; an unterminated `(` is kept verbatim.
+ * Linear scan with the same non-nested, leftmost semantics as `\([^)]*\)`.
+ */
+function stripParenGroups(value: string): string {
+  let out = ''
+  let i = 0
+  while (i < value.length) {
+    if (value.charAt(i) === '(') {
+      const close = value.indexOf(')', i + 1)
+      if (close === -1) {
+        out += value.slice(i)
+        break
+      }
+      out += ' '
+      i = close + 1
+      continue
+    }
+    out += value.charAt(i)
+    i += 1
+  }
+  return out
 }
 
 export function tcgdxTrainerKitSetIdForCard(
