@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.24](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.23...pink-binder-v2.1.24) (2026-09-11)
+
+
+### Bug Fixes
+
+* **blog,landing:** restore roundup pages and the landing blog section ([#66](https://github.com/pinkbinder/pink-binder/issues/66)) ([c8935c0](https://github.com/pinkbinder/pink-binder/commit/c8935c04b2508a4fc28b30c5e87b57a14bcd8689))
+
 ## [2.1.23](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.22...pink-binder-v2.1.23) (2026-09-11)
 
 
