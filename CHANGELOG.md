@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.18](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.17...pink-binder-v2.1.18) (2026-09-11)
+
+
+### Maintenance
+
+* pin code-foundry runtime to v1.28.8 ([#50](https://github.com/pinkbinder/pink-binder/issues/50)) ([e75c933](https://github.com/pinkbinder/pink-binder/commit/e75c93343250eb139e910fe35d7bb99e48c705bd))
+
 ## [2.1.17](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.16...pink-binder-v2.1.17) (2026-09-11)
 
 
