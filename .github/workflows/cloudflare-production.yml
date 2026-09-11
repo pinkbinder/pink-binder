@@ -33,3 +33,25 @@ jobs:
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # App deploys rehash hashed assets (e.g. /_astro/Layout.*.css), so any HTML
+  # cached at the edge before a deploy can reference a stylesheet that no
+  # longer exists and render unstyled. Purge the blog zone after production
+  # deploys so cached pages always match the just-deployed asset set.
+  purge-blog-zone:
+    name: Cloudflare Production / purge blog zone
+    needs: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge pinkbinder.blog CDN cache
+        env:
+          CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: 6ef2d55c02326c7ecfe469140f4da392
+        run: |
+          response=$(curl -sf -X POST \
+            -H "Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+            -d '{"purge_everything":true}')
+          echo "$response"
+          echo "$response" | jq -e '.success == true' > /dev/null
