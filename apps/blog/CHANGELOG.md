@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.7...blog-v0.9.0) (2026-09-11)
+
+
+### Features
+
+* **seo:** structured data, article meta, and social card fixes ([#77](https://github.com/pinkbinder/pink-binder/issues/77)) ([cff4015](https://github.com/pinkbinder/pink-binder/commit/cff40156c0fd2bb4a16ca727386c8bffd2552ab5))
+
 ## [0.8.7](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.6...blog-v0.8.7) (2026-09-11)
 
 

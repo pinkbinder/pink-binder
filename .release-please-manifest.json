@@ -1,8 +1,8 @@
 {
-  ".": "2.2.0",
+  ".": "2.3.0",
   "apps/admin": "0.6.1",
-  "apps/blog": "0.8.7",
-  "apps/landing": "0.6.4",
+  "apps/blog": "0.9.0",
+  "apps/landing": "0.7.0",
   "apps/store": "0.6.1",
   "packages/config": "1.3.2",
   "packages/data": "2.1.0",
