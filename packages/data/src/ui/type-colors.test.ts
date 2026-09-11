@@ -78,9 +78,7 @@ describe('getPokemonTypeColors', () => {
 describe('getPokemonTypeLogoUrl', () => {
   it('returns a URL for a valid type', () => {
     const url = getPokemonTypeLogoUrl('Fire')
-    expect(url).toBe(
-      'https://raw.githubusercontent.com/duiker101/pokemon-type-svg-icons/master/icons/fire.svg'
-    )
+    expect(url).toBe('https://images.pinkbinder.shop/v1/images/icons/types/fire.svg')
   })
 
   it('returns null for an unknown type', () => {
@@ -118,9 +116,7 @@ describe('getPokemonTypeLogoUrl', () => {
     ]
     for (const type of types) {
       const url = getPokemonTypeLogoUrl(type)
-      expect(url).toMatch(
-        /^https:\/\/raw\.githubusercontent\.com\/duiker101\/pokemon-type-svg-icons/
-      )
+      expect(url).toMatch(/^https:\/\/images\.pinkbinder\.shop\/v1\/images\/icons\/types\//)
     }
   })
 })

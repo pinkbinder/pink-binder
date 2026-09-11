@@ -22,7 +22,7 @@ const POKEMON_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 const POKEMON_TYPE_LOGOS: Record<string, string> = Object.fromEntries(
   Object.keys(POKEMON_TYPE_COLORS).map((type) => [
     type,
-    `https://raw.githubusercontent.com/duiker101/pokemon-type-svg-icons/master/icons/${type.toLowerCase()}.svg`,
+    `https://images.pinkbinder.shop/v1/images/icons/types/${type.toLowerCase()}.svg`,
   ])
 )
 
@@ -48,6 +48,32 @@ function toSolidLightColor(hex: string) {
     Math.round(channel + (255 - channel) * LIGHT_MODE_WHITE_BLEND_FACTOR)
   const toHex = (channel: number) => channel.toString(16).padStart(2, '0')
   return `#${toHex(mixWithWhite(r))}${toHex(mixWithWhite(g))}${toHex(mixWithWhite(b))}`
+}
+
+function luminance(hex: string): number {
+  const channel = (value: number): number => {
+    const scaled = value / 255
+    return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4
+  }
+  const r = channel(Number.parseInt(hex.slice(0, 2), 16))
+  const g = channel(Number.parseInt(hex.slice(2, 4), 16))
+  const b = channel(Number.parseInt(hex.slice(4, 6), 16))
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+/** WCAG contrast ratio between two opaque hex colors. */
+export function contrastRatio(foreground: string, background: string): number {
+  const parse = (hex: string): string => hex.replace('#', '')
+  const fg = luminance(parse(foreground))
+  const bg = luminance(parse(background))
+  const [lighter, darker] = fg >= bg ? [fg, bg] : [bg, fg]
+  return (lighter + 0.05) / (darker + 0.05)
+}
+
+/** White when it passes AA (4.5:1) on the background, else the dark shade that does. */
+export function readableTextColorOn(background: string, preferred = '#FFFFFF'): string {
+  if (contrastRatio(preferred, background) >= 4.5) return preferred
+  return toSolidDarkColor(background)
 }
 
 /** Deep shade of the type color: keeps the hue readable as text on the light bg (≥ 4.5:1). */

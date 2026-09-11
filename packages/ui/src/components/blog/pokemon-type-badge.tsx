@@ -3,6 +3,7 @@ import {
   CLICKABLE_BADGE_CLASS,
   getPokemonTypeColors,
   getPokemonTypeLogoUrl,
+  readableTextColorOn,
 } from '@repo/data/client'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 
@@ -14,10 +15,16 @@ export function PokemonTypeBadge({ type, href }: { type: string; href: string })
     <Link
       href={href}
       className={`${CLICKABLE_BADGE_CLASS} tracking-wider uppercase`}
-      style={{ backgroundColor: colors.bg, color: colors.text, borderColor: colors.bg }}
+      style={{
+        backgroundColor: colors.bg,
+        color: readableTextColorOn(colors.bg),
+        borderColor: colors.bg,
+      }}
     >
       <span className="inline-flex items-center gap-1.5">
-        {logoUrl ? <PokemonTypeLogo logoUrl={logoUrl} color={colors.text} /> : null}
+        {logoUrl ? (
+          <PokemonTypeLogo logoUrl={logoUrl} color={readableTextColorOn(colors.bg)} />
+        ) : null}
         <span>{type}</span>
       </span>
     </Link>
