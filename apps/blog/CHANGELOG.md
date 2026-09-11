@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.5](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.4...blog-v0.8.5) (2026-09-11)
+
+
+### Maintenance
+
+* remove remaining Next.js and Vercel traces ([#60](https://github.com/pinkbinder/pink-binder/issues/60)) ([c965900](https://github.com/pinkbinder/pink-binder/commit/c9659006fc17f98874768280f63a439201ffeacc))
+
 ## [0.8.4](https://github.com/pinkbinder/pink-binder/compare/blog-v0.8.3...blog-v0.8.4) (2026-09-11)
 
 
