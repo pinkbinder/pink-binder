@@ -12,16 +12,16 @@ Executed on `chore/SEO`, September 2026.
 
 ## Audit findings and fixes shipped
 
-| # | Workflow step | Site equivalent | Finding | Fix |
-| - | ------------- | --------------- | --------| --- |
-| 1 | GBP category audit | Keyword → page mapping | Landing `<title>` was the bare brand name, wasting the strongest on-page signal | Title is now `The Pink Binder — Cute Pokémon Cards & Binders` (brand + primary cluster) |
-| 2 | GBP attributes audit | Structured-data completeness | Blog had **zero JSON-LD** across ~2,400 pages; landing had Organization only | Blog emits `WebSite` + `Blog` on the index and `BlogPosting` (headline, dates, image, canonical, author/publisher) on every post |
-| 3 | Competitor review teardown | Competitor content review | Manual — see below | — |
-| 4 | Review response strategy | n/a (no reviews) | — | — |
-| 5 | GBP posts strategy | Blog editorial calendar | Cadence existed, no thematic plan | 8-week calendar below |
-| 6 | Services section optimization | Key landing sections | Sections already map to keyword clusters | Covered by title fix; no copy changes |
-| 7 | GBP description optimization | Title/meta descriptions | Per-post title/description/canonical were already wired through `head` | Kept; now also mirrored into OG/Twitter/JSON-LD |
-| 8 | GBP photo audit | Social card imagery | Landing `og:image` was an **SVG** — X/Facebook/LinkedIn do not render SVG cards | Added `og-image.png` (1200×630, rendered from the SVG source, which stays in the repo) |
+| #   | Workflow step                 | Site equivalent              | Finding                                                                         | Fix                                                                                                                              |
+| --- | ----------------------------- | ---------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | GBP category audit            | Keyword → page mapping       | Landing `<title>` was the bare brand name, wasting the strongest on-page signal | Title is now `The Pink Binder — Cute Pokémon Cards & Binders` (brand + primary cluster)                                          |
+| 2   | GBP attributes audit          | Structured-data completeness | Blog had **zero JSON-LD** across ~2,400 pages; landing had Organization only    | Blog emits `WebSite` + `Blog` on the index and `BlogPosting` (headline, dates, image, canonical, author/publisher) on every post |
+| 3   | Competitor review teardown    | Competitor content review    | Manual — see below                                                              | —                                                                                                                                |
+| 4   | Review response strategy      | n/a (no reviews)             | —                                                                               | —                                                                                                                                |
+| 5   | GBP posts strategy            | Blog editorial calendar      | Cadence existed, no thematic plan                                               | 8-week calendar below                                                                                                            |
+| 6   | Services section optimization | Key landing sections         | Sections already map to keyword clusters                                        | Covered by title fix; no copy changes                                                                                            |
+| 7   | GBP description optimization  | Title/meta descriptions      | Per-post title/description/canonical were already wired through `head`          | Kept; now also mirrored into OG/Twitter/JSON-LD                                                                                  |
+| 8   | GBP photo audit               | Social card imagery          | Landing `og:image` was an **SVG** — X/Facebook/LinkedIn do not render SVG cards | Added `og-image.png` (1200×630, rendered from the SVG source, which stays in the repo)                                           |
 
 Additional fixes in the same pass:
 
@@ -46,16 +46,16 @@ Aligned with the seasonal clusters already in `LANDING_SEO.keywords`
 existing kinds (species guide, illustrator guide, expansion guide, roundup).
 Publishing runs through blog-pipeline when it is unpaused.
 
-| Week | Theme | Posts |
-| ---- | ----- | ----- |
-| 1 | Eeveelution cluster (Sylveon, Espeon) | Species guide + roundup of cutest eeveelution cards |
-| 2 | Baby Pokémon / baby shinies | Species guide + illustrator spotlight |
-| 3 | Halloween push (spooky-cute, Mimikyu, ghosts) | Roundup + species guide; cross-link landing cluster |
-| 4 | Regional variants (Alolan/Galarian cuties) | Species guide + expansion guide |
-| 5 | Japanese/Chinese exclusives (waifu cards, CHV) | Illustrator guide + roundup |
-| 6 | Food/dessert cards (baking themes) | Roundup + species guide |
-| 7 | Christmas push (holiday cards, festive binder ideas) | Roundup + binder-ideas guide |
-| 8 | Year-in-review: most popular cards of the season | Roundup + expansion recap |
+| Week | Theme                                                | Posts                                               |
+| ---- | ---------------------------------------------------- | --------------------------------------------------- |
+| 1    | Eeveelution cluster (Sylveon, Espeon)                | Species guide + roundup of cutest eeveelution cards |
+| 2    | Baby Pokémon / baby shinies                          | Species guide + illustrator spotlight               |
+| 3    | Halloween push (spooky-cute, Mimikyu, ghosts)        | Roundup + species guide; cross-link landing cluster |
+| 4    | Regional variants (Alolan/Galarian cuties)           | Species guide + expansion guide                     |
+| 5    | Japanese/Chinese exclusives (waifu cards, CHV)       | Illustrator guide + roundup                         |
+| 6    | Food/dessert cards (baking themes)                   | Roundup + species guide                             |
+| 7    | Christmas push (holiday cards, festive binder ideas) | Roundup + binder-ideas guide                        |
+| 8    | Year-in-review: most popular cards of the season     | Roundup + expansion recap                           |
 
 ## What stays human
 
@@ -76,14 +76,14 @@ traffic compounds with search traffic.
 
 ### What already existed
 
-| Surface | Where |
-| ------- | ----- |
-| Markdown content negotiation on the home page (`Accept: text/markdown`) | edge middleware |
-| RFC 9727 API catalog + OpenAPI spec + docs | `/.well-known/api-catalog`, `openapi.json`, `api-docs` |
-| Discovery `Link` header on every response | edge middleware |
-| Permissive robots (`User-agent: * Allow: /`) + sitemap | `robots.txt` |
-| Five RSS feeds, including per-collection feeds | `/rss*.xml` |
-| Pre-baked JSON-LD (BlogPosting, BreadcrumbList, FAQPage) inside prebuilt article HTML | blog-pipeline render artifacts |
+| Surface                                                                               | Where                                                  |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Markdown content negotiation on the home page (`Accept: text/markdown`)               | edge middleware                                        |
+| RFC 9727 API catalog + OpenAPI spec + docs                                            | `/.well-known/api-catalog`, `openapi.json`, `api-docs` |
+| Discovery `Link` header on every response                                             | edge middleware                                        |
+| Permissive robots (`User-agent: * Allow: /`) + sitemap                                | `robots.txt`                                           |
+| Five RSS feeds, including per-collection feeds                                        | `/rss*.xml`                                            |
+| Pre-baked JSON-LD (BlogPosting, BreadcrumbList, FAQPage) inside prebuilt article HTML | blog-pipeline render artifacts                         |
 
 ### Gaps closed in this pass
 
