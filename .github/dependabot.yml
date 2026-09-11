@@ -28,6 +28,10 @@ updates:
       npm-dependencies:
         applies-to: version-updates
         patterns: ['*']
+        # Dependabot's npm ecosystem rewrites package.json (including
+        # `overrides`) but does not regenerate bun.lock, so every npm group PR
+        # arrives with a stale lockfile. The `Lockfile consistency` check
+        # fails those PRs until `bun install` is run and bun.lock committed.
     ignore:
       # TypeScript 7 (the native compiler) is supported by the oxlint/oxfmt
       # toolchain; the tsconfig must use NodeNext or bundler resolution since
