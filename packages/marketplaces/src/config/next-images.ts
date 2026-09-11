@@ -44,6 +44,3 @@ export function shouldBypassImageOptimization(src: string): boolean {
     return false
   }
 }
-
-/** @deprecated Use {@link shouldBypassImageOptimization} instead. */
-export const shouldBypassNextImageOptimization = shouldBypassImageOptimization

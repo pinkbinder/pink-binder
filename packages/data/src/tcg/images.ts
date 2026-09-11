@@ -22,7 +22,6 @@ export {
 
 export {
   shouldBypassImageOptimization,
-  shouldBypassNextImageOptimization,
   TCG_CARD_DATA_ATTRIBUTION,
   TCG_CARD_IMAGE_ATTRIBUTION,
 } from '@repo/marketplaces/config'

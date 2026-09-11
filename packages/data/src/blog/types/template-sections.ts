@@ -1,6 +1,6 @@
 /**
  * Artifact section and roundup payload types mirrored from the private
- * Pink Binder data service (`pinkbinder/pink-binder-data`). The service is
+ * Pink Binder data service (`pinkbinder/blog-pipeline`). The service is
  * the source of truth; this copy exists so the public frontend can decode
  * published blog artifacts without importing the generation pipeline.
  */
