@@ -73,7 +73,13 @@ export function contrastRatio(foreground: string, background: string): number {
 /** White when it passes AA (4.5:1) on the background, else the dark shade that does. */
 export function readableTextColorOn(background: string, preferred = '#FFFFFF'): string {
   if (contrastRatio(preferred, background) >= 4.5) return preferred
-  return toSolidDarkColor(background)
+  // Deepen progressively: a single fixed factor can land just under 4.5:1
+  // (grass lands at 4.15 with the 0.42 text factor).
+  for (const factor of [0.42, 0.36, 0.3, 0.25, 0.2, 0.15]) {
+    const candidate = shade(background, factor)
+    if (contrastRatio(candidate, background) >= 4.5) return candidate
+  }
+  return '#1F2937'
 }
 
 /** Deep shade of the type color: keeps the hue readable as text on the light bg (≥ 4.5:1). */
@@ -86,9 +92,19 @@ function toSolidDarkColor(hex: string) {
   const b = Number.parseInt(normalized.slice(4, 6), 16)
   if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return '#3D3D3D'
 
-  const DARK_TEXT_FACTOR = 0.42
+  return shade(hex, 0.42)
+}
+
+/** Scale a hex color toward black by `factor` (0..1). */
+function shade(hex: string, factor: number): string {
+  const normalized = hex.replace('#', '')
+  if (normalized.length !== 6) return '#3D3D3D'
+  const r = Number.parseInt(normalized.slice(0, 2), 16)
+  const g = Number.parseInt(normalized.slice(2, 4), 16)
+  const b = Number.parseInt(normalized.slice(4, 6), 16)
+  if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return '#3D3D3D'
   const toHex = (channel: number) =>
-    Math.round(channel * DARK_TEXT_FACTOR)
+    Math.round(channel * factor)
       .toString(16)
       .padStart(2, '0')
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`
