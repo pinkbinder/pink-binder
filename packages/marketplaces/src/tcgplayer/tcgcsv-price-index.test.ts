@@ -164,6 +164,26 @@ describe('tcgplayer/tcgcsv-price-index', () => {
       expect(index.byProductId['42']?.productId).toBe(42)
     })
 
+    it('uses the highest effective market price per product while indexing', () => {
+      const products: TcgcsvProduct[] = [
+        { productId: 1, name: 'Pikachu (#1/202)' },
+        { productId: 2, name: 'Charizard (#2/202)' },
+      ]
+      const prices = [
+        basePriceRow({ productId: 1, marketPrice: 3 }),
+        basePriceRow({ productId: 1, marketPrice: 8 }),
+        basePriceRow({ productId: 2, marketPrice: 5 }),
+      ] as TcgcsvPriceRow[]
+
+      const index = buildTcgcsvPriceIndex({
+        groups: [{ ...group(1), products, prices }],
+        tcgcsvLastUpdated: '2026-01-01',
+      })
+
+      expect(index.byProductId['1']?.market).toBe(8)
+      expect(index.byProductId['2']?.market).toBe(5)
+    })
+
     it('skips products without a productId', () => {
       const product: TcgcsvProduct = { productId: undefined, name: 'Unknown Card' }
       const index = buildTcgcsvPriceIndex({
