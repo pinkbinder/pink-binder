@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.20](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.19...pink-binder-v2.1.20) (2026-09-11)
+
+
+### CI
+
+* add a pull-request lockfile consistency check ([#55](https://github.com/pinkbinder/pink-binder/issues/55)) ([a278274](https://github.com/pinkbinder/pink-binder/commit/a278274302aa1f5d4c04edd0c91a368bc7c0ec71))
+
 ## [2.1.19](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.18...pink-binder-v2.1.19) (2026-09-11)
 
 
