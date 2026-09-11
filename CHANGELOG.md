@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.9](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.8...pink-binder-v2.1.9) (2026-09-11)
+
+
+### Maintenance
+
+* bump code-foundry runtime to v1.28.7 ([#31](https://github.com/pinkbinder/pink-binder/issues/31)) ([6d085fe](https://github.com/pinkbinder/pink-binder/commit/6d085fe98710dfc9d44fede12c696d6c34bf32f5))
+
 ## [2.1.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.7...pink-binder-v2.1.8) (2026-09-10)
 
 
