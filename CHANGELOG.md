@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.15](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.14...pink-binder-v2.1.15) (2026-09-11)
+
+
+### Bug Fixes
+
+* **security:** track binder occupancy in a Set instead of nested arrays ([#45](https://github.com/pinkbinder/pink-binder/issues/45)) ([0a49cee](https://github.com/pinkbinder/pink-binder/commit/0a49ceee7744340528918de8a77a6265c77cfa99))
+
 ## [2.1.14](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.1.13...pink-binder-v2.1.14) (2026-09-11)
 
 
