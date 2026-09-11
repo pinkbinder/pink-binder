@@ -18,9 +18,9 @@ import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
 import { BlogGridIsland } from '../components/BlogGridIsland'
 
 // Facet queries re-render per query string; keep the default view warm at the
-// edge for an hour with a day-long SWR tail. Vary on Accept: the middleware
-// content-negotiates markdown for agents on this path.
-const INDEX_CACHE_CONTROL = 'public, max-age=60, s-maxage=3600, stale-while-revalidate=86400'
+// edge but short-lived. Vary on Accept: the middleware content-negotiates
+// markdown for agents on this path.
+const INDEX_CACHE_CONTROL = 'public, max-age=60, s-maxage=300'
 
 const LANDING_URL = ensureAbsoluteHttpUrl(getSitemapLandingUrl())
 const BLOG_INDEX_URL = getSitemapBlogUrl()
