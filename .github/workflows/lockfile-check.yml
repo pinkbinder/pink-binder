@@ -1,0 +1,63 @@
+name: Lockfile Check
+
+# `bun install --frozen-lockfile` is what the Cloudflare deploy jobs run, so a
+# stale bun.lock only ever surfaced there — on main, inside a deploy job, after
+# the merge. This check moves that failure to the pull request, where it can be
+# fixed before it blocks a release.
+#
+# It exists because dependabot's npm ecosystem bumps package.json (including
+# `overrides`) without regenerating bun.lock, so every npm dependency-group PR
+# arrives out of sync and needs a `bun install` commit of its own.
+
+on:
+  pull_request:
+    branches: [main]
+    types:
+      # `opened` matters: a pull request created already-ready (rather than as
+      # a draft) never emits ready_for_review or synchronize, so without this
+      # the check would silently never run for it. The job-level draft guard
+      # keeps draft-opened pull requests from allocating a runner.
+      - opened
+      - ready_for_review
+      - synchronize
+      - reopened
+
+# Default to no permissions; the check only reads the repository.
+permissions: {}
+
+concurrency:
+  group: lockfile-check-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  lockfile:
+    name: Lockfile consistency
+    # Matches the repository's validation policy: ordinary pull requests
+    # validate after the ready_for_review transition, so draft updates do not
+    # allocate a runner.
+    if: vars.CI_BILLING_PAUSED != 'true' && github.event.pull_request.draft == false
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Verify bun.lock matches the workspace manifests
+        run: |
+          set -euo pipefail
+          # --ignore-scripts: this step only checks that package.json and
+          # bun.lock agree. Postinstall hooks (workerd, sharp) are unrelated to
+          # that and would otherwise fail the check for the wrong reason.
+          if ! bun install --frozen-lockfile --ignore-scripts; then
+            echo "::error title=Lockfile out of sync::bun.lock does not match the workspace package.json files. Run 'bun install' locally and commit the updated bun.lock. Dependabot npm updates change package.json without regenerating the lockfile."
+            exit 1
+          fi

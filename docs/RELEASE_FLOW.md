@@ -14,19 +14,30 @@ live during the M2–M5 migrations (PRs #257, #258, #261, #262, #278, #281,
 2. **Mark ready when review prep is done.** `validation.yml` then runs format,
    lint, type-check, build, and tests on `ready_for_review` and every
    `synchronize`; runner-heavy validation never runs on drafts.
-3. **Cloudflare Preview** (`cloudflare-preview.yml`) deploys per-app preview
+3. **Lockfile check** (`lockfile-check.yml`) verifies `bun.lock` still matches
+   the workspace manifests with `bun install --frozen-lockfile`. Dependabot's
+   npm updates change `package.json` (including `overrides`) without
+   regenerating the lockfile, so those PRs fail here — at review, with a clear
+   message — instead of breaking every Cloudflare deploy on `main` after the
+   merge. Fix is always the same: run `bun install` and commit `bun.lock`.
+4. **Cloudflare Preview** (`cloudflare-preview.yml`) deploys per-app preview
    Workers for ready PRs only (`ready_for_review`, `synchronize`,
    `converted_to_draft`), gated on a Turbo deployment-impact check so
    untouched apps do not spend preview builds.
-4. **Merge with squash only.** `main` is the protected release branch; the
+5. **Merge with squash only.** `main` is the protected release branch; the
    repository's canonical merge method is squash. Never merge with `--admin`
    or an ad-hoc method. Conventional Commit subjects are required so Release
    Please can version.
 
 ### Cost-aware CI behavior
 
-- Draft PRs allocate no validation runner and no preview deploy.
+- Draft PRs allocate no validation runner, no lockfile check, and no preview
+  deploy.
 - Preview deploys skip apps the PR does not affect (Turbo impact check).
+- The lockfile check and the deploy jobs both run `bun install
+  --frozen-lockfile`, so the dependency graph validated in review is the one
+  that ships. Never work around a lockfile failure by dropping the frozen
+  flag; regenerate the lockfile instead.
 - **GitHub Actions billing pause:** when Actions is paused, workflow checks
   report `skipping`, which branch protection treats as green. The repository's
   standing rule in that state is to run the full local validation suite
