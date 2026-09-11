@@ -334,7 +334,7 @@ export function MiniBinderSpread({
           {description ? (
             <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{description}</p>
           ) : null}
-          <p className="text-primary mt-2 text-xs font-medium">
+          <p className="text-primary-deep mt-2 text-xs font-medium">
             Interactive Pocket Binder · changes stay on this device
           </p>
         </div>
