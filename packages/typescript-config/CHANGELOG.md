@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v1.0.3...typescript-config-v1.0.4) (2026-09-11)
+
+
+### Maintenance
+
+* prune Next.js-era leftovers after the framework migration ([#58](https://github.com/pinkbinder/pink-binder/issues/58)) ([3052ae4](https://github.com/pinkbinder/pink-binder/commit/3052ae4005001ffa60ab41b24fa3f066bcbd4437))
+
 ## [1.0.3](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v1.0.2...typescript-config-v1.0.3) (2026-09-11)
 
 
