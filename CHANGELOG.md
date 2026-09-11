@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.3...pink-binder-v2.4.4) (2026-09-11)
+
+
+### Maintenance
+
+* **config:** right-size runner lanes and drop default shard overrides ([#86](https://github.com/pinkbinder/pink-binder/issues/86)) ([578c172](https://github.com/pinkbinder/pink-binder/commit/578c172fb50656cb322a16d2a020527a6965f940))
+
 ## [2.4.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.4.2...pink-binder-v2.4.3) (2026-09-11)
 
 
