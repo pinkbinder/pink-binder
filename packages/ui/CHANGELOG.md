@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.8...ui-v1.4.0) (2026-09-11)
+
+
+### Features
+
+* **blog:** add site search and full-funnel Zaraz analytics events ([#78](https://github.com/pinkbinder/pink-binder/issues/78)) ([1234600](https://github.com/pinkbinder/pink-binder/commit/123460064c243f2189e6a943177ad7b9c6255fdd))
+
 ## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/ui-v1.3.7...ui-v1.3.8) (2026-09-11)
 
 

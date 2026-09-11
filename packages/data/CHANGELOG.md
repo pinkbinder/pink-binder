@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/pinkbinder/pink-binder/compare/data-v2.1.0...data-v2.2.0) (2026-09-11)
+
+
+### Features
+
+* **blog:** add site search and full-funnel Zaraz analytics events ([#78](https://github.com/pinkbinder/pink-binder/issues/78)) ([1234600](https://github.com/pinkbinder/pink-binder/commit/123460064c243f2189e6a943177ad7b9c6255fdd))
+
 ## [2.1.0](https://github.com/pinkbinder/pink-binder/compare/data-v2.0.4...data-v2.1.0) (2026-09-11)
 
 
