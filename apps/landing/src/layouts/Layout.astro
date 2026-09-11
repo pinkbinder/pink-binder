@@ -8,11 +8,15 @@ interface Props {
 }
 
 const siteName = BRAND.name
+// The title tag is the strongest on-page signal; pair the brand with the
+// primary keyword cluster instead of showing the bare name in SERPs.
+const siteTitle = `${siteName} — Cute Pokémon Cards & Binders`
 const siteDescription = LANDING_SEO.description
 const socialProfileUrls = SOCIAL_LINKS.filter(
   (social) => social.enabled && social.icon !== 'email'
 ).map((social) => social.href)
-const ogImageUrl = new URL('/images/og-image.svg', SITE_URL).toString()
+// PNG only: X/Facebook/LinkedIn cards do not render SVG OG images.
+const ogImageUrl = new URL('/images/og-image.png', SITE_URL).toString()
 const jsonLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -36,7 +40,7 @@ const jsonLd = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="theme-color" content="#f0a4c8" />
-    <title>{siteName}</title>
+    <title>{siteTitle}</title>
     <meta name="description" content={siteDescription} />
     <meta name="keywords" content={LANDING_SEO.keywords.join(', ')} />
     <meta name="author" content={siteName} />
@@ -56,16 +60,17 @@ const jsonLd = {
     <meta property="og:url" content={SITE_URL} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:site_name" content={siteName} />
-    <meta property="og:title" content={siteName} />
+    <meta property="og:title" content={siteTitle} />
     <meta property="og:description" content={siteDescription} />
     <meta property="og:image" content={ogImageUrl} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={siteName} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={siteName} />
+    <meta name="twitter:title" content={siteTitle} />
     <meta name="twitter:description" content={siteDescription} />
     <meta name="twitter:image" content={ogImageUrl} />
+    <meta name="twitter:image:alt" content={siteName} />
     <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body class="antialiased">

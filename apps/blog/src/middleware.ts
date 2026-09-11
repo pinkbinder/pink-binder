@@ -8,6 +8,10 @@ import {
   DISCOVERY_LINK_HEADER,
   OPENAPI_PATH,
 } from './lib/agent-discovery-headers'
+import { loadPostPageForRequest, POST_PAGE_CACHE_CONTROL } from './lib/post-render-r2'
+import { renderPostMarkdown } from './lib/post-markdown'
+
+const BLOG_ORIGIN = 'https://pinkbinder.blog'
 
 const BLOG_INDEX_FACET_QUERY_KEYS = [
   'tag',
@@ -28,13 +32,16 @@ const MARKDOWN_HOME = `# Cute Pokémon Collector Guide
 
 Pink Binder is a Pokémon card blog focused on cute cards, memorable artwork, binder ideas, set previews, and practical collector guides.
 
+Every post URL also serves full-text Markdown when requested with an \`Accept: text/markdown\` header.
+
 ## Explore Pink Binder
-- [Browse the blog](https://pinkbinder.blog/)
-- [Published posts](https://pinkbinder.blog/sitemap.xml)
-- [RSS feed](https://pinkbinder.blog/rss.xml)
-- [API catalog](https://pinkbinder.blog${API_CATALOG_PATH})
-- [API documentation](https://pinkbinder.blog${API_DOCS_PATH})
-- [OpenAPI specification](https://pinkbinder.blog${OPENAPI_PATH})
+- [Browse the blog](${BLOG_ORIGIN}/)
+- [LLM content guide (llms.txt)](${BLOG_ORIGIN}/llms.txt)
+- [Published posts](${BLOG_ORIGIN}/sitemap.xml)
+- [RSS feed](${BLOG_ORIGIN}/rss.xml)
+- [API catalog](${BLOG_ORIGIN}${API_CATALOG_PATH})
+- [API documentation](${BLOG_ORIGIN}${API_DOCS_PATH})
+- [OpenAPI specification](${BLOG_ORIGIN}${OPENAPI_PATH})
 `
 
 function acceptsMarkdown(request: Request): boolean {
@@ -82,6 +89,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
       })
       applySecurity(headers)
       return new Response(MARKDOWN_HOME, { headers })
+    }
+  }
+
+  // Agent-facing Markdown for articles: the artifact JSON the prebuilt HTML
+  // renders from maps cleanly to Markdown, so agents referencing a post get
+  // the full text without an HTML-to-text pass. Falls through to HTML when
+  // the slug is unknown or the post has no artifact body (authored MDX).
+  if (acceptsMarkdown(context.request) && pathname.startsWith('/posts/')) {
+    const segments = pathname.slice('/posts/'.length).split('/').filter(Boolean)
+    const loaded = await loadPostPageForRequest(segments, context.locals)
+    if (loaded.status === 'ok') {
+      const body = renderPostMarkdown({
+        post: loaded.post,
+        head: loaded.head,
+        blogUrl: BLOG_ORIGIN,
+      })
+      const headers = discoveryHeaders({
+        'Cache-Control': POST_PAGE_CACHE_CONTROL,
+        'Content-Type': 'text/markdown; charset=utf-8',
+        Vary: 'Accept',
+        'X-Markdown-Tokens': String(Math.ceil(body.length / 4)),
+      })
+      applySecurity(headers)
+      return new Response(body, { headers })
     }
   }
 

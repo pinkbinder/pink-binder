@@ -10,6 +10,49 @@ export { API_CATALOG_PATH, API_DOCS_PATH, DISCOVERY_LINK_HEADER, OPENAPI_PATH }
 
 export const API_CATALOG_PROFILE = 'https://www.rfc-editor.org/info/rfc9727'
 
+/**
+ * AI crawlers explicitly welcomed to the whole site, including /api/. Each
+ * named group replaces the `User-agent: *` group for that crawler, so listing
+ * them keeps search-engine rules (`Disallow: /api/`) from also withholding the
+ * machine-readable surfaces agents are meant to cite.
+ */
+export const AI_AGENT_USER_AGENTS = [
+  'GPTBot',
+  'OAI-SearchBot',
+  'ChatGPT-User',
+  'ClaudeBot',
+  'Claude-Web',
+  'anthropic-ai',
+  'PerplexityBot',
+  'Perplexity-User',
+  'Google-Extended',
+  'Applebot-Extended',
+  'Amazonbot',
+  'CCBot',
+  'Bytespider',
+  'meta-externalagent',
+  'YouBot',
+  'Diffbot',
+  'ImagesiftBot',
+] as const
+
+export function buildRobotsTxt({ siteUrl }: { siteUrl: string }): string {
+  const base = siteUrl.replace(/\/$/, '')
+  return [
+    // Comments are ignored by parsers; this line helps agent operators.
+    `# LLM-readable content guide: ${base}/llms.txt`,
+    // One shared group (RFC 9309): consecutive User-agent lines stack.
+    ...AI_AGENT_USER_AGENTS.map((agent) => `User-agent: ${agent}`),
+    'Allow: /',
+    '',
+    'User-agent: *',
+    'Allow: /',
+    'Disallow: /api/',
+    `Sitemap: ${base}/sitemap.xml`,
+    '',
+  ].join('\n')
+}
+
 const openApiUrl = new URL(OPENAPI_PATH, PRODUCTION_BLOG_URL).toString()
 const apiDocsUrl = new URL(API_DOCS_PATH, PRODUCTION_BLOG_URL).toString()
 

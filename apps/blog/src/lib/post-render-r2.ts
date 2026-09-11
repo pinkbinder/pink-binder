@@ -32,7 +32,7 @@ export type PostPageHead = {
 export type LoadedPostPage =
   | { status: 'not-found' }
   | { status: 'authored'; head: PostPageHead }
-  | { status: 'ok'; head: PostPageHead; html: string }
+  | { status: 'ok'; head: PostPageHead; html: string; post: BlogPost }
 
 type RenderBucket = Awaited<ReturnType<typeof getGalleryBucket>>
 
@@ -91,7 +91,7 @@ export async function loadPostPageForRequest(
   // prebuilt HTML is the correct signal.
   const entry: BlogIndex['bySlug'][string] | undefined = index?.bySlug[canonicalSlug]
   const html = entry ? await readRenderedHtml(bucket, entry.file) : null
-  if (html) return { status: 'ok', head, html }
+  if (html) return { status: 'ok', head, html, post }
 
   // No prebuilt render. An authored MDX post legitimately has no artifact body;
   // an artifact with template sections but no render is a publish gap, and

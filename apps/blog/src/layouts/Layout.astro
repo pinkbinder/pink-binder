@@ -1,6 +1,13 @@
 ---
 import { getSitemapBlogUrl, PRODUCTION_BLOG_URL, SOCIAL_LINKS } from '@repo/config'
 import { BLOG_SITE_DESCRIPTION, BLOG_SITE_KEYWORDS } from '../lib/blog-metadata'
+import {
+  buildBlogJsonLd,
+  buildBlogPostingJsonLd,
+  buildWebsiteJsonLd,
+  toSchemaDate,
+  type JsonLdNode,
+} from '../lib/structured-data'
 import { SocialBar } from '@repo/ui/server'
 import '../styles/global.css'
 
@@ -8,6 +15,8 @@ interface Props {
   title?: string
   description?: string
   canonical?: string
+  image?: string
+  publishedTime?: string
   noindex?: boolean
 }
 
@@ -17,10 +26,32 @@ const {
   title = SITE_NAME,
   description = BLOG_SITE_DESCRIPTION,
   canonical = SITE_URL,
+  image,
+  publishedTime,
   noindex = false,
 } = Astro.props as Props
 
-const fullTitle = title === SITE_NAME ? title : `${title} | ${SITE_NAME}`
+const isArticle = Boolean(publishedTime)
+const publishedTimeIso = publishedTime ? toSchemaDate(publishedTime) : undefined
+const ogImage = image ? new URL(image, SITE_URL).toString() : new URL('/images/logo.png', SITE_URL).toString()
+
+// Posts (which carry a publish date) get article metadata plus a BlogPosting
+// node; the index gets the WebSite/Blog collection nodes instead.
+const jsonLdNodes: JsonLdNode[] = publishedTime
+  ? [
+      buildBlogPostingJsonLd({
+        title,
+        description,
+        canonical,
+        image: ogImage,
+        publishedTime,
+      }),
+    ]
+  : [buildWebsiteJsonLd({ name: SITE_NAME, description }), buildBlogJsonLd({ name: SITE_NAME, description })]
+
+// Curated titles that already carry the brand (e.g. the index title) are used
+// verbatim; everything else gets the brand suffix.
+const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`
 const socials = SOCIAL_LINKS.filter((s) => s.enabled)
 const rssFeeds = [
   { url: new URL('/rss.xml', PRODUCTION_BLOG_URL).toString(), title: 'All posts' },
@@ -67,23 +98,22 @@ const rssFeeds = [
     <link rel="icon" href="/favicon/android-chrome-512x512.png" sizes="512x512" type="image/png" />
     <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
     <link rel="shortcut icon" href="/favicon/favicon.ico" />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={isArticle ? 'article' : 'website'} />
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content="en_US" />
     <meta property="og:site_name" content={SITE_NAME} />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={new URL('/images/logo.png', SITE_URL).toString()} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:image" content={ogImage} />
+    {isArticle && <meta property="article:published_time" content={publishedTimeIso} />}
     <meta property="og:image:alt" content={SITE_NAME} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
-    <meta
-      name="twitter:image"
-      content={new URL('/images/logo.png', SITE_URL).toString()}
-    />
+    <meta name="twitter:image" content={ogImage} />
+    {jsonLdNodes.map((node) => (
+      <script is:inline type="application/ld+json" set:html={JSON.stringify(node)} />
+    ))}
   </head>
   <body class="antialiased">
     <slot />
