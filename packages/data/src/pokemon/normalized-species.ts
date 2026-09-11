@@ -1,6 +1,6 @@
 /**
  * Species artwork types mirrored from the private Pink Binder data service
- * (`pinkbinder/pink-binder-data`), which owns the normalized species cache.
+ * (`pinkbinder/blog-pipeline`), which owns the normalized species cache.
  * Only the shapes needed to decode published artifacts and resolve image
  * URLs are kept here.
  */
