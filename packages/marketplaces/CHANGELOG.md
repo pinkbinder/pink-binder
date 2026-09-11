@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.10](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.9...marketplaces-v1.3.10) (2026-09-11)
+
+
+### Performance
+
+* **marketplaces:** pre-index TCGCSV prices ([#64](https://github.com/pinkbinder/pink-binder/issues/64)) ([8589adb](https://github.com/pinkbinder/pink-binder/commit/8589adb0c0adb9e7f2d729d72fde007515779848))
+
 ## [1.3.9](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.8...marketplaces-v1.3.9) (2026-09-11)
 
 
