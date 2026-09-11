@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.4](https://github.com/pinkbinder/pink-binder/compare/data-v2.0.3...data-v2.0.4) (2026-09-11)
+
+
+### Maintenance
+
+* remove remaining Next.js and Vercel traces ([#60](https://github.com/pinkbinder/pink-binder/issues/60)) ([c965900](https://github.com/pinkbinder/pink-binder/commit/c9659006fc17f98874768280f63a439201ffeacc))
+
 ## [2.0.3](https://github.com/pinkbinder/pink-binder/compare/data-v2.0.2...data-v2.0.3) (2026-09-11)
 
 
