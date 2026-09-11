@@ -5,13 +5,7 @@ import { describe, expect, test } from 'bun:test'
 const repoRoot = resolve(import.meta.dirname, '..')
 const sourceRoots = ['apps', 'packages', 'scripts']
 const textExtensions = new Set(['.js', '.jsx', '.md', '.mdx', '.mjs', '.ts', '.tsx'])
-const ignoredDirectories = new Set([
-  '.astro',
-  '.wrangler',
-  'cache',
-  'dist',
-  'node_modules',
-])
+const ignoredDirectories = new Set(['.astro', '.wrangler', 'cache', 'dist', 'node_modules'])
 const legacyPackageManager = ['pn', 'pm'].join('')
 
 async function findTextFiles(directory: string): Promise<string[]> {
