@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.6.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.6.1...pink-binder-v2.6.2) (2026-09-12)
+
+
+### Maintenance
+
+* **deps:** reconcile bun.lock after release 2.6.1 workspace bumps ([#103](https://github.com/pinkbinder/pink-binder/issues/103)) ([43b583b](https://github.com/pinkbinder/pink-binder/commit/43b583bcf311c26fc1d8f61bf562e91ab54df0c3))
+
 ## [2.6.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.6.0...pink-binder-v2.6.1) (2026-09-12)
 
 
