@@ -1,6 +1,5 @@
 import { cn } from '../../lib/utils'
 import { TcgCardImage } from './tcg-card-image'
-import { TcgCardZoomDialog } from './tcg-card-zoom-dialog'
 import type { PokemonTcgCard } from '@repo/data/client'
 
 const TILE_SIZE_CLASS = {
@@ -28,8 +27,6 @@ export function PokemonTcgCardTile({
   size?: keyof typeof TILE_SIZE_CLASS
   zoomable?: boolean
 }) {
-  const alt = `${card.name}${card.rarity ? ` ${card.rarity}` : ''} from ${card.setName}`
-
   const imageBlock = (
     <div
       className={cn(
@@ -46,12 +43,22 @@ export function PokemonTcgCardTile({
     </div>
   )
 
+  // Static-safe zoom: open the large rendering in a new tab (post pages ship
+  // zero JS, so the old dialog trigger never fired).
+  const zoomUrl = card.imageLarge ?? card.imageSmall
+
   return (
     <div className="group flex flex-col gap-2">
-      {zoomable ? (
-        <TcgCardZoomDialog card={card} alt={alt}>
+      {zoomable && zoomUrl ? (
+        <a
+          href={zoomUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title={`View larger image of ${card.name}`}
+          className="block cursor-zoom-in transition-transform duration-200 hover:scale-[1.03]"
+        >
           {imageBlock}
-        </TcgCardZoomDialog>
+        </a>
       ) : (
         imageBlock
       )}

@@ -69,7 +69,9 @@ describe('M1 state and data ownership contract', () => {
     expect(grid).toContain('useInfiniteQuery')
     expect(grid).not.toContain('useSearchParams')
     expect(grid).not.toContain('new AbortController')
-    expect(gallery).toContain('useQuery')
+    // The card gallery is a pure static component since the zero-JS render
+    // migration: no query ownership, no hydration state.
+    expect(gallery).not.toContain('useQuery')
     expect(gallery).not.toContain('manifestRef')
     expect(serverSection).toContain('initialQuery={query}')
     expect(grid).toContain('blogGridInitialData(posts, total)')
