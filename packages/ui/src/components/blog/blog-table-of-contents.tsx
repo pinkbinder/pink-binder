@@ -6,7 +6,7 @@ import { cn } from '../../lib/utils'
 
 type BlogTableOfContentsVariant = 'desktop' | 'mobile'
 
-type BlogTableOfContentsItem = {
+export type BlogTableOfContentsItem = {
   id: string
   label: string
   level: 2 | 3
@@ -93,6 +93,37 @@ function TableOfContentsLinks({
         )
       })}
     </ol>
+  )
+}
+
+/** Server-rendered desktop TOC for the static prebuilt pipeline: identical
+ * markup to the hydrated desktop variant, driven by entries extracted at
+ * render time instead of a client DOM scan (post pages ship zero JS). */
+export function BlogStaticTableOfContents({
+  articleId,
+  items,
+}: {
+  articleId: string
+  items: BlogTableOfContentsItem[]
+}) {
+  const labelId = `${articleId}-static-toc`
+
+  return (
+    <aside className="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
+      <nav
+        aria-labelledby={labelId}
+        className="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+      >
+        <p
+          id={labelId}
+          className="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+        >
+          <List className="text-primary h-4 w-4" aria-hidden />
+          On this page
+        </p>
+        <TableOfContentsLinks items={items} />
+      </nav>
+    </aside>
   )
 }
 
