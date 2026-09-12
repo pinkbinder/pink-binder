@@ -33,7 +33,6 @@ import { Search, SlidersHorizontal } from 'lucide-react'
 import { cn } from '../../lib/utils'
 import { formatPostDate } from '../../lib/format-post-date'
 import { trackFilter, trackSearch, trackSelectContent } from '../../lib/zaraz-events'
-import { BlogSearchInput } from './blog-search-input'
 import { PostCard } from '../post-card'
 import { PokemonTypeLogo } from '../pokemon-type-logo'
 import { RoundupPostCard } from '../roundup-post-card'
@@ -904,7 +903,6 @@ export function BlogGrid({
         data-analytics-section="blog-filters"
       >
         <div className="flex flex-col gap-4">
-          <BlogSearchInput value={resolvedQuery.q ?? ''} onCommit={handleSearchCommit} />
           {tagCatalogOptions.length > 0 ? (
             <div className="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
               <div className="flex items-center gap-2">
@@ -918,13 +916,32 @@ export function BlogGrid({
                 options={tagOptions}
                 value={catalogSelectValue}
                 onValueChange={(v) => applyCatalogFilter(v)}
-                placeholder="Find by tag…"
+                placeholder="Search pokemon, illustrators, expansions, and other tags..."
                 clearLabel="All tags"
                 filterOptions={filterTagOptions}
                 renderSelected={renderTagCatalogChip}
                 label={BLOG_FILTER_GROUP_LABELS.tag}
+                freeText={{
+                  labelFor: (search) => `Search collector guides for "${search}"`,
+                  onAction: handleSearchCommit,
+                }}
                 className="border-primary/20 bg-background mt-3 h-10 shadow-xs"
               />
+              {resolvedQuery.q && !selectedTagOption ? (
+                <div className="mt-2 flex items-center justify-between gap-2">
+                  <span className="text-muted-foreground truncate text-xs">
+                    Text search:{' '}
+                    <span className="text-foreground font-medium">{resolvedQuery.q}</span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleSearchCommit('')}
+                    className="text-muted-foreground hover:text-foreground shrink-0 text-xs underline underline-offset-2"
+                  >
+                    Clear
+                  </button>
+                </div>
+              ) : null}
             </div>
           ) : null}
 

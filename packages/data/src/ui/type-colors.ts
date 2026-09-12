@@ -20,10 +20,7 @@ const POKEMON_TYPE_COLORS: Record<string, { bg: string; text: string }> = {
 }
 
 const POKEMON_TYPE_LOGOS: Record<string, string> = Object.fromEntries(
-  Object.keys(POKEMON_TYPE_COLORS).map((type) => [
-    type,
-    `https://images.pinkbinder.shop/v1/images/icons/types/${type.toLowerCase()}.svg`,
-  ])
+  Object.keys(POKEMON_TYPE_COLORS).map((type) => [type, `/icons/types/${type.toLowerCase()}.svg`])
 )
 
 export function getPokemonTypeColors(type: string) {

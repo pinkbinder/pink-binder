@@ -1,3 +1,4 @@
+import React from 'react'
 import type { ReactElement, ReactNode } from 'react'
 import { act, render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
@@ -42,25 +43,49 @@ mock.module('../src/components/searchable-select', () => ({
     value,
     onValueChange,
     label,
+    freeText,
   }: {
     options: Array<{ value: string; label: string }>
     value: string | null
     onValueChange: (value: string | null) => void
     label: string
-  }) => (
-    <select
-      aria-label={label}
-      value={value ?? ''}
-      onChange={(event) => onValueChange(event.target.value || null)}
-    >
-      <option value="">All</option>
-      {options.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
-  ),
+    freeText?: {
+      labelFor: (search: string) => string
+      onAction: (search: string) => void
+    }
+  }) => {
+    const [search, setSearch] = React.useState('')
+    return (
+      <div>
+        <select
+          aria-label={label}
+          value={value ?? ''}
+          onChange={(event) => onValueChange(event.target.value || null)}
+        >
+          <option value="">All</option>
+          {options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </select>
+        {freeText ? (
+          <div>
+            <input
+              aria-label={`Search ${label} options`}
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+            />
+            {search.trim() ? (
+              <button type="button" onClick={() => freeText.onAction(search.trim())}>
+                {freeText.labelFor(search.trim())}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+    )
+  },
 }))
 
 const pikachuPost: EnrichedPostForGrid = {
@@ -181,7 +206,10 @@ describe('BlogGrid', () => {
     const user = userEvent.setup()
     renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
-    await user.type(screen.getByLabelText('Search posts'), 'pika')
+    // The merged catalog select doubles as the text search: type a phrase and
+    // commit the free-text action ("Search collector guides for …").
+    await user.type(screen.getByLabelText('Search Catalog search options'), 'pika')
+    await user.click(screen.getByText('Search collector guides for "pika"'))
     await waitFor(
       () => expect(zarazTrackMock).toHaveBeenCalledWith('search', { search_term: 'pika' }),
       { timeout: 3000 }

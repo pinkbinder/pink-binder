@@ -26,6 +26,12 @@ interface SearchableSelectProps {
   renderSelected?: (option: SearchableSelectOption) => React.ReactNode
   /** Custom option filtering (e.g. fuzzy match); defaults to case-insensitive substring on label. */
   filterOptions?: (options: SearchableSelectOption[], search: string) => SearchableSelectOption[]
+  /** When set, non-empty search text offers a free-text action row (and Enter
+   *  in the input triggers it) so the box doubles as a text search. */
+  freeText?: {
+    labelFor: (search: string) => string
+    onAction: (search: string) => void
+  }
 }
 
 export function SearchableSelect({
@@ -38,6 +44,7 @@ export function SearchableSelect({
   className,
   renderSelected,
   filterOptions,
+  freeText,
 }: SearchableSelectProps) {
   const [open, setOpen] = React.useState(false)
   const [search, setSearch] = React.useState('')
@@ -66,6 +73,13 @@ export function SearchableSelect({
 
   function handleClear() {
     onValueChange(null)
+    setOpen(false)
+    setSearch('')
+  }
+
+  function handleFreeText() {
+    if (!freeText || !search.trim()) return
+    freeText.onAction(search.trim())
     setOpen(false)
     setSearch('')
   }
@@ -129,10 +143,28 @@ export function SearchableSelect({
               placeholder="Search…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && freeText && search.trim()) {
+                  e.preventDefault()
+                  handleFreeText()
+                }
+              }}
               className="placeholder:text-muted-foreground flex-1 bg-transparent text-sm outline-hidden"
             />
           </div>
           <div className="max-h-[240px] overflow-y-auto p-1">
+            {freeText && search.trim() ? (
+              <button
+                type="button"
+                onClick={handleFreeText}
+                className="hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
+              >
+                <span className="flex h-4 w-4 shrink-0 items-center justify-center">
+                  <Search className="text-muted-foreground h-3.5 w-3.5" />
+                </span>
+                <span className="truncate font-medium">{freeText.labelFor(search.trim())}</span>
+              </button>
+            ) : null}
             <button
               type="button"
               onClick={handleClear}
