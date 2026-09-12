@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.10.2...blog-v0.11.0) (2026-09-12)
+
+
+### Features
+
+* **blog:** merge the two search boxes and self-host type icons ([#105](https://github.com/pinkbinder/pink-binder/issues/105)) ([6bd7c28](https://github.com/pinkbinder/pink-binder/commit/6bd7c283f630765525c1b7ce6167e172d7e8ea1e))
+
 ## [0.10.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.10.1...blog-v0.10.2) (2026-09-12)
 
 
