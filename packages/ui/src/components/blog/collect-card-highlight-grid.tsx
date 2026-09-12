@@ -4,7 +4,6 @@ import type { PokemonTcgCard } from '@repo/data/client'
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 import { TcgCardImage } from './tcg-card-image'
-import { TcgCardZoomDialog } from './tcg-card-zoom-dialog'
 
 export const COLLECT_CARD_HIGHLIGHT_MAX = 3
 
@@ -109,13 +108,15 @@ export function CollectCardHighlightGrid({
                   sizes={imageSizes}
                 />
               </div>
-              <TcgCardZoomDialog
-                card={item.card}
-                alt={alt}
-                className="absolute inset-0 z-[1] h-full w-full cursor-zoom-in rounded-none border-0 bg-transparent p-0 shadow-none hover:opacity-100 focus-visible:ring-inset"
+              <a
+                href={item.card.imageLarge ?? item.card.imageSmall}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={`View larger image of ${item.card.name}`}
+                className="absolute inset-0 z-[1] cursor-zoom-in transition-transform duration-200 hover:scale-[1.02]"
               >
                 <span className="sr-only">View larger image: {alt}</span>
-              </TcgCardZoomDialog>
+              </a>
             </div>
           )
         })}

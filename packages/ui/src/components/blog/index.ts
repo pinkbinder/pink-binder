@@ -31,7 +31,6 @@ export { Pokemon3dSpriteShowcase } from './pokemon-3d-sprite-showcase'
 export { PokemonTcgCardGallery } from './pokemon-tcg-card-gallery'
 export { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
 export { TcgCardImage } from './tcg-card-image'
-export { TcgCardZoomDialog } from './tcg-card-zoom-dialog'
 export {
   MiniBinderSpread,
   type BinderSpreadSlot,
