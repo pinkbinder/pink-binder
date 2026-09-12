@@ -17,10 +17,11 @@ import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
 import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
 import { BlogGridIsland } from '../components/BlogGridIsland'
 
-// Facet queries re-render per query string; keep the default view warm at the
-// edge but short-lived. Vary on Accept: the middleware content-negotiates
-// markdown for agents on this path.
-const INDEX_CACHE_CONTROL = 'public, max-age=60, s-maxage=300'
+// Facet queries re-render per query string; the default view only changes on
+// data republish (and deploys purge the zone), so 15 minutes at the edge is
+// safe. Vary on Accept: the middleware content-negotiates markdown for agents
+// on this path.
+const INDEX_CACHE_CONTROL = 'public, max-age=60, s-maxage=900'
 
 const LANDING_URL = ensureAbsoluteHttpUrl(getSitemapLandingUrl())
 const BLOG_INDEX_URL = getSitemapBlogUrl()
