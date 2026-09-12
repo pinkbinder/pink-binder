@@ -4,16 +4,18 @@ import { BlogBackLink } from './blog-back-link'
 import { BlogMainLayout } from './blog-main-layout'
 import { BLOG_POST_ARTICLE_ID } from './blog-reading-ids'
 import { BlogReadingProgress } from './blog-reading-progress'
-import { BlogTableOfContents } from './blog-table-of-contents'
+import { BlogStaticTableOfContents, type BlogTableOfContentsItem } from './blog-table-of-contents'
 
 export function BlogPostShell({
   children,
   jsonLd,
   landingUrl,
+  tocItems,
 }: {
   children: ReactNode
   jsonLd?: unknown
   landingUrl: string
+  tocItems?: BlogTableOfContentsItem[]
 }) {
   return (
     <BlogMainLayout landingUrl={landingUrl} linkBlogTitleToHome compactMobile>
@@ -25,17 +27,28 @@ export function BlogPostShell({
       >
         <BlogReadingProgress articleId={BLOG_POST_ARTICLE_ID} />
       </div>
-      {/* The desktop TOC hydrates client-side and renders nothing in the
-          static prebuilt output (posts ship zero JS), so the article is
-          centered in a single column instead of reserving an empty side
-          column. */}
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 lg:gap-8 xl:gap-10">
-        <article id={BLOG_POST_ARTICLE_ID} className="mx-auto w-full max-w-3xl min-w-0 text-pretty">
-          <BlogBackLink />
-          {children}
-        </article>
-        <BlogTableOfContents articleId={BLOG_POST_ARTICLE_ID} variant="desktop" />
-      </div>
+      {tocItems && tocItems.length >= 2 ? (
+        <div className="mx-auto grid w-full max-w-6xl gap-6 lg:grid-cols-[minmax(0,48rem)_minmax(13rem,1fr)] lg:items-start lg:gap-8 xl:gap-10">
+          <article
+            id={BLOG_POST_ARTICLE_ID}
+            className="min-w-0 text-pretty lg:col-start-1 lg:row-start-1"
+          >
+            <BlogBackLink />
+            {children}
+          </article>
+          <BlogStaticTableOfContents articleId={BLOG_POST_ARTICLE_ID} items={tocItems} />
+        </div>
+      ) : (
+        <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 lg:gap-8 xl:gap-10">
+          <article
+            id={BLOG_POST_ARTICLE_ID}
+            className="mx-auto w-full max-w-3xl min-w-0 text-pretty"
+          >
+            <BlogBackLink />
+            {children}
+          </article>
+        </div>
+      )}
     </BlogMainLayout>
   )
 }
