@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/pinkbinder/pink-binder/compare/data-v2.3.1...data-v2.4.0) (2026-09-12)
+
+
+### Features
+
+* **blog:** merge the two search boxes and self-host type icons ([#105](https://github.com/pinkbinder/pink-binder/issues/105)) ([6bd7c28](https://github.com/pinkbinder/pink-binder/commit/6bd7c283f630765525c1b7ce6167e172d7e8ea1e))
+
 ## [2.3.1](https://github.com/pinkbinder/pink-binder/compare/data-v2.3.0...data-v2.3.1) (2026-09-11)
 
 
