@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.5.0...ui-v1.6.0) (2026-09-12)
+
+
+### Features
+
+* **ui:** AA-contrast-safe static TOC component and TOC-aware post shell ([#100](https://github.com/pinkbinder/pink-binder/issues/100)) ([b58203a](https://github.com/pinkbinder/pink-binder/commit/b58203ad7584e6edea4e5374b2ba2ff1e4c13b24))
+
 ## [1.5.0](https://github.com/pinkbinder/pink-binder/compare/ui-v1.4.1...ui-v1.5.0) (2026-09-11)
 
 

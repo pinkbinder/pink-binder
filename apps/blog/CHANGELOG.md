@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.10.0...blog-v0.10.1) (2026-09-12)
+
+
+### Performance
+
+* **blog:** extend index edge freshness to 15 minutes ([#98](https://github.com/pinkbinder/pink-binder/issues/98)) ([4d74ce0](https://github.com/pinkbinder/pink-binder/commit/4d74ce0493562c9e3e3a7bebdc9995cefe841cee))
+
 ## [0.10.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.9.0...blog-v0.10.0) (2026-09-11)
 
 
