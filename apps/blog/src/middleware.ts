@@ -26,8 +26,9 @@ const BLOG_INDEX_FACET_QUERY_KEYS = [
   'themes',
 ] as const
 
-/** Fresh 5 min matches the blog API surfaces; 1 h SWR tail absorbs publish repushes. */
-const HTML_EDGE_CACHE_POLICY = { freshFor: 300, staleFor: 3600 }
+/** Fresh 15 min; the 1 h SWR tail absorbs publish repushes. Deploys purge the
+ *  zone (#85), so cached pages can no longer outlive a rehashed asset set. */
+const HTML_EDGE_CACHE_POLICY = { freshFor: 900, staleFor: 3600 }
 
 const MARKDOWN_HOME = `# Cute Pokémon Collector Guide
 
