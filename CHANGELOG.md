@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.6.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.5.3...pink-binder-v2.6.0) (2026-09-12)
+
+
+### Features
+
+* **ui:** AA-contrast-safe static TOC component and TOC-aware post shell ([#100](https://github.com/pinkbinder/pink-binder/issues/100)) ([b58203a](https://github.com/pinkbinder/pink-binder/commit/b58203ad7584e6edea4e5374b2ba2ff1e4c13b24))
+
+
+### Performance
+
+* **blog:** extend index edge freshness to 15 minutes ([#98](https://github.com/pinkbinder/pink-binder/issues/98)) ([4d74ce0](https://github.com/pinkbinder/pink-binder/commit/4d74ce0493562c9e3e3a7bebdc9995cefe841cee))
+
 ## [2.5.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.5.2...pink-binder-v2.5.3) (2026-09-11)
 
 
