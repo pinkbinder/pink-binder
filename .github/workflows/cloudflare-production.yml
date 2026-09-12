@@ -55,3 +55,21 @@ jobs:
             -d '{"purge_everything":true}')
           echo "$response"
           echo "$response" | jq -e '.success == true' > /dev/null
+
+  purge-landing-zone:
+    name: Cloudflare Production / purge landing zone
+    needs: production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Purge pinkbinder.shop CDN cache
+        env:
+          CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
+          CLOUDFLARE_ZONE_ID: be1ab67d01c231d4b2b681a055de2a12
+        run: |
+          response=$(curl -sf -X POST \
+            -H "Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
+            -d '{"purge_everything":true}')
+          echo "$response"
+          echo "$response" | jq -e '.success == true' > /dev/null
