@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.4.1](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.0...data-v2.4.1) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#109](https://github.com/pinkbinder/pink-binder/issues/109)) ([95f9b21](https://github.com/pinkbinder/pink-binder/commit/95f9b21936d71e113addb1aa47ef3e45fad86f96))
+* retry CodeQL upload ([#110](https://github.com/pinkbinder/pink-binder/issues/110)) ([42517ec](https://github.com/pinkbinder/pink-binder/commit/42517ec0940424ac96060e69ab3c772ff1645119))
+
+
+### Maintenance
+
+* **data:** consolidate image and card dedup helpers ([#107](https://github.com/pinkbinder/pink-binder/issues/107)) ([e5ccb82](https://github.com/pinkbinder/pink-binder/commit/e5ccb8296dfbeb3e1d9b7025a58a6317ddd38cf7))
+
 ## [2.4.0](https://github.com/pinkbinder/pink-binder/compare/data-v2.3.1...data-v2.4.0) (2026-09-12)
 
 
