@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.4](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.3...config-v1.3.4) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#111](https://github.com/pinkbinder/pink-binder/issues/111)) ([eb890b6](https://github.com/pinkbinder/pink-binder/commit/eb890b6913a86451fb242c624f2f7269376f74c1))
+
 ## [1.3.3](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.2...config-v1.3.3) (2026-09-13)
 
 
