@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.2...landing-v0.7.3) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#111](https://github.com/pinkbinder/pink-binder/issues/111)) ([eb890b6](https://github.com/pinkbinder/pink-binder/commit/eb890b6913a86451fb242c624f2f7269376f74c1))
+
 ## [0.7.2](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.1...landing-v0.7.2) (2026-09-13)
 
 

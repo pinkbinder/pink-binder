@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.2](https://github.com/pinkbinder/pink-binder/compare/ui-v1.7.1...ui-v1.7.2) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#111](https://github.com/pinkbinder/pink-binder/issues/111)) ([eb890b6](https://github.com/pinkbinder/pink-binder/commit/eb890b6913a86451fb242c624f2f7269376f74c1))
+
 ## [1.7.1](https://github.com/pinkbinder/pink-binder/compare/ui-v1.7.0...ui-v1.7.1) (2026-09-13)
 
 
