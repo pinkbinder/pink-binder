@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.6](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v1.0.5...typescript-config-v1.0.6) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#111](https://github.com/pinkbinder/pink-binder/issues/111)) ([eb890b6](https://github.com/pinkbinder/pink-binder/commit/eb890b6913a86451fb242c624f2f7269376f74c1))
+
 ## [1.0.5](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v1.0.4...typescript-config-v1.0.5) (2026-09-13)
 
 

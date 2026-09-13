@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.1...blog-v0.11.2) (2026-09-13)
+
+
+### CI
+
+* retry CodeQL upload ([#111](https://github.com/pinkbinder/pink-binder/issues/111)) ([eb890b6](https://github.com/pinkbinder/pink-binder/commit/eb890b6913a86451fb242c624f2f7269376f74c1))
+
 ## [0.11.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.0...blog-v0.11.1) (2026-09-13)
 
 
