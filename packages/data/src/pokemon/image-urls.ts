@@ -1,5 +1,6 @@
 import {
   TCGDEX_CDN,
+  R2_PUBLIC_HOST,
   isDisplayableTcgCardImageUrl,
   isLikelyBrokenTcgdexAssetUrl,
   isTcgdexUnsupportedSetId,
@@ -23,8 +24,6 @@ import type { PokemonTcgCard } from './tcg-card'
 import type { MichiSceneArtSource } from './michi-scene-art'
 import { pokemonImageVariantObjectKey, R2_IMAGE_EXTENSIONS } from './r2-image-key'
 
-/** R2 public host for Pink Binder images (Cloudflare). */
-const R2_PUBLIC_HOST = 'images.pinkbinder.shop'
 const R2_POKEMON_PATH_PREFIX = '/pokemon/'
 
 export type PokemonR2ImageVariant = 'small' | 'large'
