@@ -107,25 +107,38 @@ function preferMcDonaldsPromoRecord(
     : existing
 }
 
-/** One English McDonald's row per species per year (drop 2018sm-fr when mcd18 exists). */
-export function collapseMcDonaldsRegionalDuplicates(
-  cards: TcgCardRecord[],
-  options?: { speciesPokedexNumber?: number }
-): TcgCardRecord[] {
-  const byKey = new Map<string, TcgCardRecord>()
-  const rest: TcgCardRecord[] = []
+/** Generic Map-based dedup: cards without a key go to `rest`; cards with a key get merged via `prefer`. */
+function collapseByMap<T>(
+  cards: T[],
+  getKey: (card: T) => string | null | undefined,
+  prefer: (existing: T, candidate: T) => T
+): T[] {
+  const byKey = new Map<string, T>()
+  const rest: T[] = []
 
   for (const card of cards) {
-    const key = mcdonaldsPromoNameYearKey(card, options?.speciesPokedexNumber)
+    const key = getKey(card)
     if (!key) {
       rest.push(card)
       continue
     }
     const existing = byKey.get(key)
-    byKey.set(key, existing ? preferMcDonaldsPromoRecord(existing, card) : card)
+    byKey.set(key, existing ? prefer(existing, card) : card)
   }
 
   return [...rest, ...byKey.values()]
+}
+
+/** One English McDonald's row per species per year (drop 2018sm-fr when mcd18 exists). */
+export function collapseMcDonaldsRegionalDuplicates(
+  cards: TcgCardRecord[],
+  options?: { speciesPokedexNumber?: number }
+): TcgCardRecord[] {
+  return collapseByMap(
+    cards,
+    (card) => mcdonaldsPromoNameYearKey(card, options?.speciesPokedexNumber),
+    preferMcDonaldsPromoRecord
+  )
 }
 
 function scoreTrainerKitRecord(record: TcgCardRecord): number {
@@ -154,20 +167,11 @@ export function collapseTrainerKitDuplicates(
   cards: TcgCardRecord[],
   options?: { speciesPokedexNumber?: number }
 ): TcgCardRecord[] {
-  const byKey = new Map<string, TcgCardRecord>()
-  const rest: TcgCardRecord[] = []
-
-  for (const card of cards) {
-    const key = trainerKitSlotDedupeKey(card, options)
-    if (!key) {
-      rest.push(card)
-      continue
-    }
-    const existing = byKey.get(key)
-    byKey.set(key, existing ? preferTrainerKitRecord(existing, card) : card)
-  }
-
-  return [...rest, ...byKey.values()]
+  return collapseByMap(
+    cards,
+    (card) => trainerKitSlotDedupeKey(card, options),
+    preferTrainerKitRecord
+  )
 }
 
 function getEquivalentCardKeys(card: TcgCardRecord): string[] {

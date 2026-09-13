@@ -1,4 +1,3 @@
-const IMAGE_EXTENSION_PATTERN = /\.(?:png|jpe?g|webp|gif|avif|svg)$/i
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 /** Words commonly present in the human-readable ArtofPkm source filenames. */
@@ -35,7 +34,7 @@ export const R2_IMAGE_EXTENSIONS = /\.(?:png|jpe?g|webp|gif|avif|svg)$/i
 /** Remove one or more source/variant image extensions from a filename. */
 export function stripR2ImageExtensions(filename: string): string {
   let stripped = filename
-  while (IMAGE_EXTENSION_PATTERN.test(stripped)) {
+  while (R2_IMAGE_EXTENSIONS.test(stripped)) {
     stripped = stripped.slice(0, stripped.lastIndexOf('.'))
   }
   return stripped
