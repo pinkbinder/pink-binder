@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.3...pink-binder-v2.7.4) (2026-09-14)
+
+
+### Maintenance
+
+* **deps:** weekly update ([#115](https://github.com/pinkbinder/pink-binder/issues/115)) ([0416696](https://github.com/pinkbinder/pink-binder/commit/0416696359bf89a6785cc7c1e21b1e3dbe11863d))
+
 ## [2.7.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.2...pink-binder-v2.7.3) (2026-09-14)
 
 
