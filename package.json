@@ -36,15 +36,15 @@
     "sharp": "0.35.4"
   },
   "devDependencies": {
-    "@happy-dom/global-registrator": "^20.14.0",
+    "@happy-dom/global-registrator": "^20.14.5",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "14.6.7",
-    "@types/bun": "^1.4.1",
+    "@types/bun": "^1.4.2",
     "chrome-launcher": "1.2.1",
     "lighthouse": "13.4.1",
-    "lint-staged": "^17.5.0",
+    "lint-staged": "^17.5.1",
     "oxfmt": "^0.67.0",
-    "oxlint": "^1.81.0",
+    "oxlint": "^1.82.0",
     "turbo": "2.10.12"
   },
   "overrides": {
