@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.3](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.2...blog-v0.11.3) (2026-09-14)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group with 2 updates ([#113](https://github.com/pinkbinder/pink-binder/issues/113)) ([d3a5c52](https://github.com/pinkbinder/pink-binder/commit/d3a5c52f5455d8b2da7ca131ecca06b398101aa7))
+
 ## [0.11.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.1...blog-v0.11.2) (2026-09-13)
 
 
