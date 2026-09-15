@@ -5,68 +5,75 @@ import {
   contentSearchParsers,
   inventorySearchParsers,
 } from '../src/lib/console-search'
-import { createAdsSeed, summarizeAdSpend, useAdsStore } from '../src/stores/ads'
+import {
+  adsActions,
+  adsStore,
+  createAdsSeed,
+  setAdsStore,
+  summarizeAdSpend,
+} from '../src/stores/ads'
 import {
   canTransitionContent,
   countContentByStatus,
+  contentActions,
+  contentStore,
   createContentSeed,
   pendingContentCount,
   CONTENT_TRANSITIONS,
-  useContentStore,
+  setContentStore,
 } from '../src/stores/content'
 import {
   createInventorySeed,
+  inventoryActions,
+  inventoryStore,
   LOW_STOCK_THRESHOLD,
+  setInventoryStore,
   summarizeInventory,
-  useInventoryStore,
 } from '../src/stores/inventory'
 
 describe('inventory store', () => {
   beforeEach(() => {
-    useInventoryStore.setState({ items: createInventorySeed() })
+    setInventoryStore({ items: createInventorySeed() })
   })
 
   test('adjustQuantity clamps at zero', () => {
-    const first = useInventoryStore.getState().items[0]!
-    useInventoryStore.getState().adjustQuantity(first.id, -(first.quantity + 5))
-    expect(useInventoryStore.getState().items[0]!.quantity).toBe(0)
+    const first = inventoryStore.items[0]!
+    inventoryActions.adjustQuantity(first.id, -(first.quantity + 5))
+    expect(inventoryStore.items[0]!.quantity).toBe(0)
 
-    useInventoryStore.getState().adjustQuantity(first.id, 2)
-    expect(useInventoryStore.getState().items[0]!.quantity).toBe(2)
+    inventoryActions.adjustQuantity(first.id, 2)
+    expect(inventoryStore.items[0]!.quantity).toBe(2)
   })
 
   test('queueSync retries failed listings and markSynced confirms pending ones', () => {
-    const errorItem = useInventoryStore
-      .getState()
-      .items.find((item) => item.listings.some((entry) => entry.state === 'error'))
+    const errorItem = inventoryStore.items.find((item) =>
+      item.listings.some((entry) => entry.state === 'error')
+    )
     expect(errorItem).toBeDefined()
 
-    useInventoryStore.getState().queueSync(errorItem!.id)
-    let states = useInventoryStore
-      .getState()
-      .items.find((item) => item.id === errorItem!.id)!
+    inventoryActions.queueSync(errorItem!.id)
+    let states = inventoryStore.items
+      .find((item) => item.id === errorItem!.id)!
       .listings.map((entry) => entry.state)
     expect(states).not.toContain('error')
     expect(states).toContain('pending')
 
-    useInventoryStore.getState().markSynced(errorItem!.id)
-    states = useInventoryStore
-      .getState()
-      .items.find((item) => item.id === errorItem!.id)!
+    inventoryActions.markSynced(errorItem!.id)
+    states = inventoryStore.items
+      .find((item) => item.id === errorItem!.id)!
       .listings.map((entry) => entry.state)
     expect(states).not.toContain('pending')
   })
 
   test('addListing moves a channel from unlinked to pending only', () => {
-    const item = useInventoryStore
-      .getState()
-      .items.find((entry) => entry.listings.some((listing) => listing.state === 'unlinked'))!
+    const item = inventoryStore.items.find((entry) =>
+      entry.listings.some((listing) => listing.state === 'unlinked')
+    )!
     const channel = item.listings.find((listing) => listing.state === 'unlinked')!.channel
 
-    useInventoryStore.getState().addListing(item.id, channel)
-    const after = useInventoryStore
-      .getState()
-      .items.find((entry) => entry.id === item.id)!
+    inventoryActions.addListing(item.id, channel)
+    const after = inventoryStore.items
+      .find((entry) => entry.id === item.id)!
       .listings.find((listing) => listing.channel === channel)!
     expect(after.state).toBe('pending')
   })
@@ -93,7 +100,7 @@ describe('inventory store', () => {
 
 describe('content pipeline state machine', () => {
   beforeEach(() => {
-    useContentStore.setState({ drafts: createContentSeed() })
+    setContentStore({ drafts: createContentSeed() })
   })
 
   test('declares legal transitions per status', () => {
@@ -111,54 +118,43 @@ describe('content pipeline state machine', () => {
   })
 
   test('a draft cannot be approved without review', () => {
-    const draft = useContentStore.getState().drafts.find((entry) => entry.status === 'draft')!
-    expect(useContentStore.getState().approve(draft.id)).toBe(false)
-    expect(useContentStore.getState().drafts.find((entry) => entry.id === draft.id)!.status).toBe(
-      'draft'
-    )
+    const draft = contentStore.drafts.find((entry) => entry.status === 'draft')!
+    expect(contentActions.approve(draft.id)).toBe(false)
+    expect(contentStore.drafts.find((entry) => entry.id === draft.id)!.status).toBe('draft')
   })
 
   test('walks the full review path: submit, approve, publish', () => {
-    const draft = useContentStore.getState().drafts.find((entry) => entry.status === 'draft')!
-    const store = useContentStore.getState()
+    const draft = contentStore.drafts.find((entry) => entry.status === 'draft')!
 
-    expect(store.submitForReview(draft.id)).toBe(true)
-    expect(store.approve(draft.id)).toBe(true)
-    expect(store.publish(draft.id)).toBe(true)
-    expect(useContentStore.getState().drafts.find((entry) => entry.id === draft.id)!.status).toBe(
-      'published'
-    )
+    expect(contentActions.submitForReview(draft.id)).toBe(true)
+    expect(contentActions.approve(draft.id)).toBe(true)
+    expect(contentActions.publish(draft.id)).toBe(true)
+    expect(contentStore.drafts.find((entry) => entry.id === draft.id)!.status).toBe('published')
   })
 
   test('requestRevision records a note and resubmit clears the path back to review', () => {
-    const draft = useContentStore.getState().drafts.find((entry) => entry.status === 'in_review')!
-    const store = useContentStore.getState()
+    const draft = contentStore.drafts.find((entry) => entry.status === 'in_review')!
 
-    expect(store.requestRevision(draft.id, 'Tighten the hook.')).toBe(true)
-    const revised = useContentStore.getState().drafts.find((entry) => entry.id === draft.id)!
+    expect(contentActions.requestRevision(draft.id, 'Tighten the hook.')).toBe(true)
+    const revised = contentStore.drafts.find((entry) => entry.id === draft.id)!
     expect(revised.status).toBe('revision')
     expect(revised.revisionNote).toBe('Tighten the hook.')
 
-    expect(store.submitForReview(draft.id)).toBe(true)
-    expect(useContentStore.getState().drafts.find((entry) => entry.id === draft.id)!.status).toBe(
-      'in_review'
-    )
+    expect(contentActions.submitForReview(draft.id)).toBe(true)
+    expect(contentStore.drafts.find((entry) => entry.id === draft.id)!.status).toBe('in_review')
   })
 
   test('schedule requires approval and published is terminal', () => {
-    const draft = useContentStore.getState().drafts.find((entry) => entry.status === 'draft')!
-    const store = useContentStore.getState()
+    const draft = contentStore.drafts.find((entry) => entry.status === 'draft')!
 
-    expect(store.schedule(draft.id, '2026-09-12T12:00:00Z')).toBe(false)
+    expect(contentActions.schedule(draft.id, '2026-09-12T12:00:00Z')).toBe(false)
 
-    store.submitForReview(draft.id)
-    store.approve(draft.id)
-    expect(store.schedule(draft.id, '2026-09-12T12:00:00Z')).toBe(true)
-    expect(store.publish(draft.id)).toBe(true)
-    expect(store.publish(draft.id)).toBe(false)
-    expect(useContentStore.getState().drafts.find((entry) => entry.id === draft.id)!.status).toBe(
-      'published'
-    )
+    contentActions.submitForReview(draft.id)
+    contentActions.approve(draft.id)
+    expect(contentActions.schedule(draft.id, '2026-09-12T12:00:00Z')).toBe(true)
+    expect(contentActions.publish(draft.id)).toBe(true)
+    expect(contentActions.publish(draft.id)).toBe(false)
+    expect(contentStore.drafts.find((entry) => entry.id === draft.id)!.status).toBe('published')
   })
 
   test('counters roll up by status and pending decisions', () => {
@@ -171,7 +167,7 @@ describe('content pipeline state machine', () => {
 
 describe('ads store', () => {
   beforeEach(() => {
-    useAdsStore.setState({ campaigns: createAdsSeed() })
+    setAdsStore({ campaigns: createAdsSeed() })
   })
 
   test('summarizeAdSpend totals spend, budgets, and blended ROAS', () => {
@@ -194,19 +190,19 @@ describe('ads store', () => {
   })
 
   test('setCampaignStatus pauses and resumes', () => {
-    const campaign = useAdsStore.getState().campaigns[0]!
-    useAdsStore.getState().setCampaignStatus(campaign.id, 'paused')
-    expect(useAdsStore.getState().campaigns[0]!.status).toBe('paused')
-    useAdsStore.getState().setCampaignStatus(campaign.id, 'active')
-    expect(useAdsStore.getState().campaigns[0]!.status).toBe('active')
+    const campaign = adsStore.campaigns[0]!
+    adsActions.setCampaignStatus(campaign.id, 'paused')
+    expect(adsStore.campaigns[0]!.status).toBe('paused')
+    adsActions.setCampaignStatus(campaign.id, 'active')
+    expect(adsStore.campaigns[0]!.status).toBe('active')
   })
 
   test('setDailyBudget clamps negatives to zero', () => {
-    const campaign = useAdsStore.getState().campaigns[0]!
-    useAdsStore.getState().setDailyBudget(campaign.id, -500)
-    expect(useAdsStore.getState().campaigns[0]!.dailyBudgetCents).toBe(0)
-    useAdsStore.getState().setDailyBudget(campaign.id, 1234.6)
-    expect(useAdsStore.getState().campaigns[0]!.dailyBudgetCents).toBe(1235)
+    const campaign = adsStore.campaigns[0]!
+    adsActions.setDailyBudget(campaign.id, -500)
+    expect(adsStore.campaigns[0]!.dailyBudgetCents).toBe(0)
+    adsActions.setDailyBudget(campaign.id, 1234.6)
+    expect(adsStore.campaigns[0]!.dailyBudgetCents).toBe(1235)
   })
 })
 

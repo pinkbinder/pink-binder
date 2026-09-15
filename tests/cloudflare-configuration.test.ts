@@ -27,7 +27,7 @@ describe('Cloudflare build configuration', () => {
       const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
 
       expect(config).not.toMatch(/"build"\s*:/)
-      expect(config).toMatch(/"main"\s*:\s*"@tanstack\/react-start\/server-entry"/)
+      expect(config).toMatch(/"main"\s*:\s*"@tanstack\/solid-start\/server-entry"/)
       expect(config).not.toContain('.open-next')
     }
 

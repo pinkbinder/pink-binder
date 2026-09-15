@@ -1,90 +1,93 @@
-'use client'
-
-import * as React from 'react'
-import { Dialog as DialogPrimitive } from '@base-ui/react/dialog'
-import { X } from 'lucide-react'
+import * as DialogPrimitive from '@kobalte/core/dialog'
+import { X } from 'lucide-solid'
+import { splitProps, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
 const Dialog = DialogPrimitive.Root
 const DialogTrigger = DialogPrimitive.Trigger
 const DialogPortal = DialogPrimitive.Portal
-const DialogClose = DialogPrimitive.Close
+const DialogClose = DialogPrimitive.CloseButton
 
-const DialogOverlay = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Backdrop>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Backdrop>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Backdrop
-    ref={ref}
-    className={cn(
-      'data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 fixed inset-0 z-50 bg-black/40',
-      className
-    )}
-    {...props}
-  />
-))
-DialogOverlay.displayName = 'DialogOverlay'
+type DialogOverlayProps = DialogPrimitive.DialogOverlayProps & { class?: string }
 
-const DialogContent = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Popup>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Popup>
->(({ className, children, ...props }, ref) => (
-  <DialogPortal>
-    <DialogOverlay />
-    <DialogPrimitive.Popup
-      ref={ref}
-      className={cn(
-        'bg-card text-card-foreground data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[closed]:slide-out-to-left-1/2 data-[closed]:slide-out-to-top-[48%] data-[open]:slide-in-from-left-1/2 data-[open]:slide-in-from-top-[48%] fixed top-[50%] left-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-2xl p-5 shadow-xl duration-200',
-        className
+function DialogOverlay(props: DialogOverlayProps) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
+    <DialogPrimitive.Overlay
+      class={cn(
+        'data-[closed]:animate-out data-[closed]:fade-out-0 data-[expanded]:animate-in data-[expanded]:fade-in-0 fixed inset-0 z-50 bg-black/40',
+        local.class
       )}
-      {...props}
-    >
-      {children}
-      <DialogPrimitive.Close className="ring-offset-background focus:ring-ring absolute top-4 right-4 rounded-full p-1.5 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Popup>
-  </DialogPortal>
-))
-DialogContent.displayName = 'DialogContent'
+      {...rest}
+    />
+  )
+}
 
-const DialogHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div className={cn('flex flex-col space-y-1.5', className)} {...props} />
-)
-DialogHeader.displayName = 'DialogHeader'
+type DialogContentProps = DialogPrimitive.DialogContentProps & {
+  class?: string
+  children?: JSX.Element
+}
 
-const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', className)}
-    {...props}
-  />
-)
-DialogFooter.displayName = 'DialogFooter'
+function DialogContent(props: DialogContentProps) {
+  const [local, rest] = splitProps(props, ['class', 'children'])
+  return (
+    <DialogPortal>
+      <DialogOverlay />
+      <DialogPrimitive.Content
+        class={cn(
+          'bg-card text-card-foreground data-[closed]:animate-out data-[closed]:fade-out-0 data-[expanded]:animate-in data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 fixed top-[50%] left-[50%] z-50 w-full max-w-md translate-x-[-50%] translate-y-[-50%] rounded-2xl p-5 shadow-xl duration-200',
+          local.class
+        )}
+        {...rest}
+      >
+        {local.children}
+        <DialogPrimitive.CloseButton class="ring-offset-background focus:ring-ring absolute top-4 right-4 rounded-full p-1.5 opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none">
+          <X class="h-4 w-4" />
+          <span class="sr-only">Close</span>
+        </DialogPrimitive.CloseButton>
+      </DialogPrimitive.Content>
+    </DialogPortal>
+  )
+}
 
-const DialogTitle = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Title
-    ref={ref}
-    className={cn('font-title text-xl leading-none font-semibold tracking-tight', className)}
-    {...props}
-  />
-))
-DialogTitle.displayName = 'DialogTitle'
+function DialogHeader(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return <div class={cn('flex flex-col space-y-1.5', local.class)} {...rest} />
+}
 
-const DialogDescription = React.forwardRef<
-  React.ElementRef<typeof DialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <DialogPrimitive.Description
-    ref={ref}
-    className={cn('text-muted-foreground text-sm', className)}
-    {...props}
-  />
-))
-DialogDescription.displayName = 'DialogDescription'
+function DialogFooter(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
+    <div
+      class={cn('flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2', local.class)}
+      {...rest}
+    />
+  )
+}
+
+type DialogTitleProps = DialogPrimitive.DialogTitleProps & { class?: string }
+
+function DialogTitle(props: DialogTitleProps) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
+    <DialogPrimitive.Title
+      class={cn('font-title text-xl leading-none font-semibold tracking-tight', local.class)}
+      {...rest}
+    />
+  )
+}
+
+type DialogDescriptionProps = DialogPrimitive.DialogDescriptionProps & { class?: string }
+
+function DialogDescription(props: DialogDescriptionProps) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
+    <DialogPrimitive.Description
+      class={cn('text-muted-foreground text-sm', local.class)}
+      {...rest}
+    />
+  )
+}
 
 export {
   Dialog,

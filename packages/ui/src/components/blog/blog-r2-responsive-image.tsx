@@ -1,6 +1,4 @@
-'use client'
-
-import { useState } from 'react'
+import { createSignal } from 'solid-js'
 import { cn } from '../../lib/utils'
 
 export interface BlogR2ResponsiveImageSource {
@@ -12,7 +10,7 @@ interface BlogR2ResponsiveImageProps {
   sources: readonly BlogR2ResponsiveImageSource[]
   fallbackSrc: string
   alt: string
-  className?: string
+  class?: string
   width: number
   height: number
   sizes: string
@@ -28,27 +26,27 @@ export function BlogR2ResponsiveImage({
   sources,
   fallbackSrc,
   alt,
-  className,
+  class: className,
   width,
   height,
   sizes,
   priority = false,
 }: BlogR2ResponsiveImageProps) {
-  const [useFallback, setUseFallback] = useState(false)
+  const [useFallback, setUseFallback] = createSignal(false)
   const defaultSrc = sources[0]?.src ?? fallbackSrc
   const srcSet = sources.map(({ src, width: sourceWidth }) => `${src} ${sourceWidth}w`).join(', ')
 
   return (
     <picture>
-      {!useFallback && srcSet ? <source srcSet={srcSet} sizes={sizes} /> : null}
+      {!useFallback() && srcSet ? <source srcset={srcSet} sizes={sizes} /> : null}
       <img
-        src={useFallback ? fallbackSrc : defaultSrc}
+        src={useFallback() ? fallbackSrc : defaultSrc}
         alt={alt}
         width={width}
         height={height}
-        className={cn(className)}
+        class={cn(className)}
         loading={priority ? 'eager' : 'lazy'}
-        fetchPriority={priority ? 'high' : undefined}
+        fetchpriority={priority ? 'high' : undefined}
         decoding="async"
         onError={() => setUseFallback(true)}
       />

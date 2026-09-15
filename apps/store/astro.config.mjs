@@ -1,5 +1,5 @@
 import cloudflare from '@astrojs/cloudflare'
-import react from '@astrojs/react'
+import solid from '@astrojs/solid-js'
 import { defineConfig } from 'astro/config'
 import { loadEnv } from 'vite'
 
@@ -19,7 +19,7 @@ export default defineConfig({
     configPath: './astro.wrangler.jsonc',
     imageService: 'passthrough',
   }),
-  integrations: [react()],
+  integrations: [solid()],
   vite: {
     ssr: {
       noExternal: ['@repo/config', '@repo/data', '@repo/marketplaces', '@repo/ui'],

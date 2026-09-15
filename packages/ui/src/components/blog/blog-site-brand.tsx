@@ -7,14 +7,14 @@ export type BlogSiteBrandProps = {
   landingUrl: string
   /** When set, "Pink Binder Blog" links to the blog index. Omit on the blog home page. */
   blogHomeHref?: string
-  className?: string
+  class?: string
   titleClassName?: string
 }
 
 export function BlogSiteBrand({
   landingUrl,
   blogHomeHref,
-  className,
+  class: className,
   titleClassName,
 }: BlogSiteBrandProps) {
   const titleClasses = cn(
@@ -23,12 +23,12 @@ export function BlogSiteBrand({
   )
 
   return (
-    <div className={cn('flex flex-col gap-6', className)}>
-      <div className="flex items-center">
+    <div class={cn('flex flex-col gap-6', className)}>
+      <div class="flex items-center">
         <a
           href={landingUrl}
           rel="noopener noreferrer"
-          className="focus-visible:ring-ring inline-flex items-center gap-2.5 rounded-full transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:outline-hidden"
+          class="focus-visible:ring-ring inline-flex items-center gap-2.5 rounded-full transition-opacity hover:opacity-80 focus-visible:ring-2 focus-visible:outline-hidden"
           aria-label="Back to The Pink Binder homepage"
         >
           <RemoteImageWithFallback
@@ -38,21 +38,21 @@ export function BlogSiteBrand({
             height={40}
             fill={false}
             sizes="40px"
-            className="border-brand-light-pink rounded-full border bg-white object-cover shadow-xs"
+            class="border-brand-light-pink rounded-full border bg-white object-cover shadow-xs"
           />
-          <span className="text-primary-deep text-base font-bold sm:text-lg">The Pink Binder</span>
+          <span class="text-primary-deep text-base font-bold sm:text-lg">The Pink Binder</span>
         </a>
       </div>
 
       {blogHomeHref ? (
         <Link
           href={blogHomeHref}
-          className={cn(titleClasses, 'hover:text-primary/80 text-center transition-colors')}
+          class={cn(titleClasses, 'hover:text-primary/80 text-center transition-colors')}
         >
           Pink Binder Blog
         </Link>
       ) : (
-        <p className={cn(titleClasses, 'text-center')}>Pink Binder Blog</p>
+        <p class={cn(titleClasses, 'text-center')}>Pink Binder Blog</p>
       )}
     </div>
   )

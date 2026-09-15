@@ -1,7 +1,6 @@
-import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/react-router'
-import type { QueryClient } from '@tanstack/react-query'
-import { NuqsAdapter } from 'nuqs/adapters/tanstack-router'
-import type { ReactNode } from 'react'
+import { createRootRouteWithContext, HeadContent, Outlet, Scripts } from '@tanstack/solid-router'
+import type { QueryClient } from '@tanstack/solid-query'
+import type { JSX } from 'solid-js'
 
 import { ConsoleShell } from '../components/console-shell'
 import appCss from '../styles.css?url'
@@ -12,9 +11,9 @@ export interface AdminRouterContext {
 
 /**
  * Root layout: document shell + cross-cutting providers.
- * nuqs uses the first-party `tanstack-router` adapter so URL state
- * (`?status=`, `?q=`, …) syncs through the TanStack Router history
- * instead of touching `window.history` directly.
+ * URL state (`?status=`, `q=`, …) syncs through the TanStack Router search
+ * schema (`validateSearch` + `Route.useSearch()`/`useNavigate`) instead of
+ * touching `window.history` directly.
  * `ConsoleShell` owns the navigation chrome: a grouped sidebar on desktop,
  * pill nav on mobile, and the theme toggle every page inherits.
  */
@@ -38,34 +37,32 @@ export const Route = createRootRouteWithContext<AdminRouterContext>()({
   }),
   component: () => (
     <RootDocument>
-      <NuqsAdapter>
-        <ConsoleShell>
-          <Outlet />
-        </ConsoleShell>
-      </NuqsAdapter>
+      <ConsoleShell>
+        <Outlet />
+      </ConsoleShell>
     </RootDocument>
   ),
   notFoundComponent: () => (
     <RootDocument>
       <ConsoleShell>
-        <main className="mx-auto max-w-2xl px-4 py-16 text-center">
-          <p className="text-primary text-sm font-semibold tracking-widest uppercase">404</p>
-          <h1 className="mt-2 text-2xl font-bold">Page not found</h1>
-          <p className="text-muted-foreground mt-2">The admin page you asked for does not exist.</p>
+        <main class="mx-auto max-w-2xl px-4 py-16 text-center">
+          <p class="text-primary text-sm font-semibold tracking-widest uppercase">404</p>
+          <h1 class="mt-2 text-2xl font-bold">Page not found</h1>
+          <p class="text-muted-foreground mt-2">The admin page you asked for does not exist.</p>
         </main>
       </ConsoleShell>
     </RootDocument>
   ),
 })
 
-function RootDocument({ children }: { children: ReactNode }) {
+function RootDocument(props: { children?: JSX.Element }) {
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
       <body>
-        {children}
+        {props.children}
         <Scripts />
       </body>
     </html>

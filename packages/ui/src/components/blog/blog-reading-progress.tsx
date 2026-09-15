@@ -1,18 +1,17 @@
-'use client'
+import { createEffect, createSignal, onCleanup } from 'solid-js'
 
-import { useEffect, useRef } from 'react'
+export function BlogReadingProgress(props: { articleId: string }) {
+  const [indicator, setIndicator] = createSignal<HTMLDivElement>()
 
-export function BlogReadingProgress({ articleId }: { articleId: string }) {
-  const indicatorRef = useRef<HTMLDivElement>(null)
+  createEffect(() => {
+    const article = document.getElementById(props.articleId)
 
-  useEffect(() => {
-    const article = document.getElementById(articleId)
-    const indicator = indicatorRef.current
-
-    if (!article || !indicator) {
+    const el = indicator()
+    if (!article || !el) {
       return
     }
 
+    const bar = el
     let animationFrame = 0
 
     const updateProgress = () => {
@@ -22,7 +21,7 @@ export function BlogReadingProgress({ articleId }: { articleId: string }) {
       const readableDistance = Math.max(articleRect.height - window.innerHeight, 1)
       const progress = Math.min(Math.max(-articleRect.top / readableDistance, 0), 1)
 
-      indicator.style.transform = `scaleX(${progress})`
+      bar.style.transform = `scaleX(${progress})`
     }
 
     const scheduleProgressUpdate = () => {
@@ -43,20 +42,20 @@ export function BlogReadingProgress({ articleId }: { articleId: string }) {
     window.addEventListener('resize', scheduleProgressUpdate)
     scheduleProgressUpdate()
 
-    return () => {
+    onCleanup(() => {
       if (animationFrame) {
         window.cancelAnimationFrame(animationFrame)
       }
       resizeObserver?.disconnect()
       window.removeEventListener('scroll', scheduleProgressUpdate)
       window.removeEventListener('resize', scheduleProgressUpdate)
-    }
-  }, [articleId])
+    })
+  })
 
   return (
     <div
-      ref={indicatorRef}
-      className="bg-primary h-full origin-left scale-x-0 shadow-[0_1px_6px_hsl(var(--primary))] will-change-transform"
+      ref={setIndicator}
+      class="bg-primary h-full origin-left scale-x-0 shadow-[0_1px_6px_hsl(var(--primary))] will-change-transform"
     />
   )
 }

@@ -1,7 +1,5 @@
-'use client'
-
+import { createEffect } from 'solid-js'
 import { usePathname } from '../../lib/compat-navigation'
-import { useEffect, useRef } from 'react'
 
 /**
  * Smooth scroll to top when navigating between blog routes (e.g. index ↔ post).
@@ -9,13 +7,14 @@ import { useEffect, useRef } from 'react'
  */
 export function BlogScrollToTop() {
   const pathname = usePathname()
-  const previousPathname = useRef(pathname)
+  let previousPathname = pathname()
 
-  useEffect(() => {
-    if (previousPathname.current === pathname) {
+  createEffect(() => {
+    const current = pathname()
+    if (previousPathname === current) {
       return
     }
-    previousPathname.current = pathname
+    previousPathname = current
 
     const prefersReducedMotion =
       typeof window.matchMedia === 'function' &&
@@ -26,7 +25,7 @@ export function BlogScrollToTop() {
       left: 0,
       behavior: prefersReducedMotion ? 'auto' : 'smooth',
     })
-  }, [pathname])
+  })
 
   return null
 }

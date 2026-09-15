@@ -13,9 +13,9 @@ checkout and these app-specific settings:
 | App     | Root directory | Build command              | Deploy command                                | Worker entry                         |
 | ------- | -------------- | -------------------------- | --------------------------------------------- | ------------------------------------ |
 | landing | `apps/landing` | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `dist/server/entry.mjs` (Astro)      |
-| store   | `apps/store`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `@tanstack/react-start/server-entry` |
+| store   | `apps/store`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `dist/server/entry.mjs` (Astro)      |
 | blog    | `apps/blog`    | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `dist/server/entry.mjs` (Astro)      |
-| admin   | `apps/admin`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `@tanstack/react-start/server-entry` |
+| admin   | `apps/admin`   | `bun run build:cloudflare` | `npx wrangler deploy --config wrangler.jsonc` | `@tanstack/solid-start/server-entry` |
 
 The build command is run from the configured app root. The workspace script
 uses the app directory name supplied by the Workers Builds project, then runs

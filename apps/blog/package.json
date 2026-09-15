@@ -21,24 +21,20 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@tanstack/react-query": "^5.102.8",
-    "nuqs": "^2.10.1"
+    "@tanstack/solid-query": "^5.102.8",
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
     "@astrojs/cloudflare": "14.3.1",
-    "@astrojs/react": "6.0.5",
+    "@astrojs/solid-js": "^7.0.2",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.2",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
     "astro": "7.3.2",
     "oxfmt": "^0.67.0",
     "oxlint": "^1.81.0",
     "postcss": "8.5.28",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
     "wrangler": "^4.127.1"

@@ -1,22 +1,20 @@
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 import { cn } from '../../lib/utils'
 
 export function BlogRankedListItem({
   rank,
   children,
-  className,
+  class: className,
   rankClassName,
 }: {
   rank: number
-  children: ReactNode
-  className?: string
+  children: JSX.Element
+  class?: string
   rankClassName?: string
 }) {
   return (
-    <li className={cn('border-border rounded-xl border p-4 sm:p-5', className)}>
-      <div className={cn('text-primary-deep font-mono text-sm font-bold', rankClassName)}>
-        #{rank}
-      </div>
+    <li class={cn('border-border rounded-xl border p-4 sm:p-5', className)}>
+      <div class={cn('text-primary-deep font-mono text-sm font-bold', rankClassName)}>#{rank}</div>
       {children}
     </li>
   )

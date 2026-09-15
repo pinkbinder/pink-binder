@@ -10,16 +10,16 @@ import { cn } from '../../lib/utils'
 
 export function BlogFilterGroupLabel({
   group,
-  className,
+  class: className,
 }: {
   group: BlogFilterGroupKey
-  className?: string
+  class?: string
 }) {
   const icon = BLOG_FILTER_GROUP_ICONS[group]
   return (
-    <span className={cn('inline-flex items-center gap-1.5', className)}>
+    <span class={cn('inline-flex items-center gap-1.5', className)}>
       {icon ? (
-        <span className="text-base leading-none" aria-hidden>
+        <span class="text-base leading-none" aria-hidden>
           {icon}
         </span>
       ) : null}
@@ -30,16 +30,16 @@ export function BlogFilterGroupLabel({
 
 export function BlogFilterSectionLabel({
   section,
-  className,
+  class: className,
 }: {
   section: BlogFilterSectionKey
-  className?: string
+  class?: string
 }) {
   const icon = BLOG_FILTER_SECTION_ICONS[section]
   return (
-    <span className={cn('inline-flex items-center gap-1.5', className)}>
+    <span class={cn('inline-flex items-center gap-1.5', className)}>
       {icon ? (
-        <span className="text-base leading-none" aria-hidden>
+        <span class="text-base leading-none" aria-hidden>
           {icon}
         </span>
       ) : null}

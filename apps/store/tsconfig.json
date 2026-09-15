@@ -5,8 +5,8 @@
     "allowJs": true,
     "checkJs": true,
     "baseUrl": ".",
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js",
     "paths": {
       "@/*": ["./src/*"]
     }

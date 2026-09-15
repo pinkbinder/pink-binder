@@ -4,20 +4,20 @@ import { PokemonTypeBadge } from './pokemon-type-badge'
 export function PokemonTypeBadgeList({
   types,
   getHref,
-  className,
+  class: className,
 }: {
   types: string[]
   getHref: (type: string) => string
-  className?: string
+  class?: string
 }) {
   if (types.length === 0) {
     return null
   }
 
   return (
-    <div className={cn('mt-2 flex flex-wrap gap-2', className)}>
+    <div class={cn('mt-2 flex flex-wrap gap-2', className)}>
       {types.map((type) => (
-        <PokemonTypeBadge key={type} type={type} href={getHref(type)} />
+        <PokemonTypeBadge type={type} href={getHref(type)} />
       ))}
     </div>
   )

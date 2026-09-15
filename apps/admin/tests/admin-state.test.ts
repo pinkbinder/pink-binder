@@ -1,12 +1,25 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, mock, test } from 'bun:test'
 import { SECURITY_HEADERS } from '@repo/config'
+
+// Keep the middleware test away from the Solid client runtime — `createMiddleware`
+// is a pure builder, so a faithful stub lets us exercise our own handler
+// without loading @tanstack/solid-start's DOM-side imports under Bun.
+mock.module('@tanstack/solid-start', () => ({
+  createMiddleware: () => ({ server: (fn: unknown) => ({ options: { server: fn } }) }),
+}))
 
 import { ordersSearchParsers } from '../src/lib/order-search'
 import { securityHeadersMiddleware } from '../src/middleware/security-headers'
 import {
+  adminPreferences,
+  adminSelection,
+  clearSelection,
   formatAmountCents,
-  useAdminPreferences,
-  useAdminSelection,
+  setAdminPreferences,
+  setAdminSelection,
+  setSidebarOpen,
+  toggleOrder,
+  toggleTheme,
 } from '../src/stores/preferences'
 
 describe('admin order search parsers', () => {
@@ -26,16 +39,16 @@ describe('admin order search parsers', () => {
 
 describe('admin preferences store', () => {
   test('toggles theme and sidebar visibility', () => {
-    useAdminPreferences.setState({ theme: 'light', sidebarOpen: true })
+    setAdminPreferences({ theme: 'light', sidebarOpen: true })
 
-    useAdminPreferences.getState().toggleTheme()
-    expect(useAdminPreferences.getState().theme).toBe('dark')
+    toggleTheme()
+    expect(adminPreferences.theme).toBe('dark')
 
-    useAdminPreferences.getState().toggleTheme()
-    expect(useAdminPreferences.getState().theme).toBe('light')
+    toggleTheme()
+    expect(adminPreferences.theme).toBe('light')
 
-    useAdminPreferences.getState().setSidebarOpen(false)
-    expect(useAdminPreferences.getState().sidebarOpen).toBe(false)
+    setSidebarOpen(false)
+    expect(adminPreferences.sidebarOpen).toBe(false)
   })
 
   test('formats cent amounts without trailing .00', () => {
@@ -46,17 +59,17 @@ describe('admin preferences store', () => {
 
 describe('admin order selection store', () => {
   test('toggles and clears multi-select', () => {
-    useAdminSelection.setState({ selectedOrderIds: [] })
+    setAdminSelection({ selectedOrderIds: [] })
 
-    useAdminSelection.getState().toggleOrder('#001')
-    useAdminSelection.getState().toggleOrder('#002')
-    expect(useAdminSelection.getState().selectedOrderIds).toEqual(['#001', '#002'])
+    toggleOrder('#001')
+    toggleOrder('#002')
+    expect(adminSelection.selectedOrderIds).toEqual(['#001', '#002'])
 
-    useAdminSelection.getState().toggleOrder('#001')
-    expect(useAdminSelection.getState().selectedOrderIds).toEqual(['#002'])
+    toggleOrder('#001')
+    expect(adminSelection.selectedOrderIds).toEqual(['#002'])
 
-    useAdminSelection.getState().clearSelection()
-    expect(useAdminSelection.getState().selectedOrderIds).toEqual([])
+    clearSelection()
+    expect(adminSelection.selectedOrderIds).toEqual([])
   })
 })
 

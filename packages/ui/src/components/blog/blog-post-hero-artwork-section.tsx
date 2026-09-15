@@ -1,5 +1,3 @@
-'use client'
-
 import {
   RoundupHeroArtworkGrid,
   type RoundupHeroArtworkGridProps,
@@ -27,7 +25,7 @@ export function BlogPostHeroArtworkSection({
   }
 
   return (
-    <section className="bg-card overflow-hidden rounded-2xl border">
+    <section class="bg-card overflow-hidden rounded-2xl border">
       <RoundupHeroArtworkGrid
         artworkUrls={urls}
         artworkCandidateLists={artworkCandidateLists}

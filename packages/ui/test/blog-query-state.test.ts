@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/solid-query'
 import { describe, expect, it, mock } from 'bun:test'
 import type { BlogGridFacets } from '@repo/data/client'
 import { blogGridQueryKey } from '../src/lib/blog-grid-query'

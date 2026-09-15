@@ -1,23 +1,23 @@
 import Link from '../compat-link'
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 import { Button } from '../button'
 import { cn } from '../../lib/utils'
 
 export interface BlogLinkPillListItem {
   key: string
-  label: ReactNode
+  label: JSX.Element
   href: string
   external?: boolean
 }
 
 export function BlogLinkPillList({
   items,
-  className,
+  class: className,
   itemClassName,
   externalItemClassName,
 }: {
   items: BlogLinkPillListItem[]
-  className?: string
+  class?: string
   itemClassName?: string
   externalItemClassName?: string
 }) {
@@ -26,27 +26,26 @@ export function BlogLinkPillList({
   }
 
   return (
-    <div className={cn('flex flex-wrap gap-2', className)}>
+    <div class={cn('flex flex-wrap gap-2', className)}>
       {items.map((item) =>
         item.external ? (
           <Button
-            key={item.key}
             variant="ghost"
-            className={cn(
+            class={cn(
               'bg-muted hover:bg-muted/80 h-auto rounded-full px-3 py-1 text-sm font-medium transition-colors',
               externalItemClassName
             )}
-            render={
-              <a href={item.href} target="_blank" rel="noreferrer">
-                {item.label}
-              </a>
-            }
-          />
+            as="a"
+            href={item.href}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {item.label}
+          </Button>
         ) : (
           <Link
-            key={item.key}
             href={item.href}
-            className={cn(
+            class={cn(
               'bg-muted hover:bg-muted/80 rounded-full px-3 py-1 text-sm font-medium transition-colors',
               itemClassName
             )}

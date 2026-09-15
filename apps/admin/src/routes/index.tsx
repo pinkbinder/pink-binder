@@ -1,13 +1,14 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
-import { ArrowRight } from 'lucide-react'
+import { createFileRoute, Link } from '@tanstack/solid-router'
+import { ArrowRight } from 'lucide-solid'
+import { createMemo, For } from 'solid-js'
 import { Button, Card, CardContent, CardDescription, CardHeader } from '@repo/ui'
 
 import { ChannelDot, PageHeader } from '../components/console'
 import { AD_PLATFORM_META, CONTENT_PLATFORM_META, INVENTORY_CHANNEL_META } from '../lib/channels'
 import { formatCents } from '../lib/format'
-import { summarizeAdSpend, useAdsStore } from '../stores/ads'
-import { pendingContentCount, useContentStore } from '../stores/content'
-import { summarizeInventory, useInventoryStore } from '../stores/inventory'
+import { adsStore, summarizeAdSpend } from '../stores/ads'
+import { contentStore, pendingContentCount } from '../stores/content'
+import { inventoryStore, summarizeInventory } from '../stores/inventory'
 
 export const Route = createFileRoute('/')({
   component: ConsoleOverview,
@@ -19,29 +20,25 @@ export const Route = createFileRoute('/')({
  * card links into its dashboard.
  */
 function ConsoleOverview() {
-  const inventoryItems = useInventoryStore((state) => state.items)
-  const drafts = useContentStore((state) => state.drafts)
-  const campaigns = useAdsStore((state) => state.campaigns)
-
-  const inventory = summarizeInventory(inventoryItems)
-  const contentPending = pendingContentCount(drafts)
-  const ads = summarizeAdSpend(campaigns)
+  const inventory = createMemo(() => summarizeInventory(inventoryStore.items))
+  const contentPending = createMemo(() => pendingContentCount(contentStore.drafts))
+  const ads = createMemo(() => summarizeAdSpend(adsStore.campaigns))
 
   return (
-    <div className="p-6">
+    <div class="p-6">
       <PageHeader
         eyebrow="Console"
         title="Pink Binder admin"
         description="Everything the shop sells, says, and spends — inventory, content, and ads in one place."
       />
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div class="grid gap-4 lg:grid-cols-3">
         <ServiceCard
           eyebrow="Commerce"
           title="Inventory"
           description="Cards, sealed product, and keychains kept in sync across every marketplace."
-          stat={`${inventory.needsSync} of ${inventory.totalItems} items need sync`}
-          statTone={inventory.needsSync > 0 ? 'warn' : 'ok'}
+          stat={`${inventory().needsSync} of ${inventory().totalItems} items need sync`}
+          statTone={inventory().needsSync > 0 ? 'warn' : 'ok'}
           channels={(
             Object.keys(INVENTORY_CHANNEL_META) as (keyof typeof INVENTORY_CHANNEL_META)[]
           ).map((channel) => INVENTORY_CHANNEL_META[channel])}
@@ -52,8 +49,8 @@ function ConsoleOverview() {
           eyebrow="Content"
           title="Content studio"
           description="AI-drafted posts for every channel, reviewed and approved by you before they go out."
-          stat={`${contentPending} ${contentPending === 1 ? 'draft' : 'drafts'} waiting on a decision`}
-          statTone={contentPending > 0 ? 'warn' : 'ok'}
+          stat={`${contentPending()} ${contentPending() === 1 ? 'draft' : 'drafts'} waiting on a decision`}
+          statTone={contentPending() > 0 ? 'warn' : 'ok'}
           channels={(
             Object.keys(CONTENT_PLATFORM_META) as (keyof typeof CONTENT_PLATFORM_META)[]
           ).map((platform) => CONTENT_PLATFORM_META[platform])}
@@ -64,7 +61,7 @@ function ConsoleOverview() {
           eyebrow="Growth"
           title="Ad spend"
           description="Budgets and results across every ad platform, in one weekly view."
-          stat={`${formatCents(ads.totalSpendCents)} spent this month`}
+          stat={`${formatCents(ads().totalSpendCents)} spent this month`}
           statTone="neutral"
           channels={(Object.keys(AD_PLATFORM_META) as (keyof typeof AD_PLATFORM_META)[]).map(
             (platform) => AD_PLATFORM_META[platform]
@@ -74,7 +71,7 @@ function ConsoleOverview() {
         />
       </div>
 
-      <p className="text-muted-foreground mt-6 max-w-3xl text-sm">
+      <p class="text-muted-foreground mt-6 max-w-3xl text-sm">
         Marketplace, publishing, and ad-platform integrations aren't connected yet — figures come
         from local demo state, and every action stays inside this console until those connections go
         live.
@@ -83,16 +80,7 @@ function ConsoleOverview() {
   )
 }
 
-function ServiceCard({
-  eyebrow,
-  title,
-  description,
-  stat,
-  statTone,
-  channels,
-  to,
-  cta,
-}: {
+function ServiceCard(props: {
   eyebrow: string
   title: string
   description: string
@@ -103,48 +91,40 @@ function ServiceCard({
   cta: string
 }) {
   return (
-    <Card className="flex flex-col">
+    <Card class="flex flex-col">
       <CardHeader>
-        <CardDescription>{eyebrow}</CardDescription>
-        <h2 className="text-xl leading-none font-semibold tracking-tight">{title}</h2>
-        <p className="text-muted-foreground text-sm">{description}</p>
+        <CardDescription>{props.eyebrow}</CardDescription>
+        <h2 class="text-xl leading-none font-semibold tracking-tight">{props.title}</h2>
+        <p class="text-muted-foreground text-sm">{props.description}</p>
       </CardHeader>
-      <CardContent className="flex flex-1 flex-col justify-between gap-5">
+      <CardContent class="flex flex-1 flex-col justify-between gap-5">
         <div>
           <p
-            className={
-              statTone === 'warn'
+            class={
+              props.statTone === 'warn'
                 ? 'text-warning-foreground text-sm font-semibold tabular-nums'
-                : statTone === 'ok'
+                : props.statTone === 'ok'
                   ? 'text-success-foreground text-sm font-semibold tabular-nums'
                   : 'text-sm font-semibold tabular-nums'
             }
           >
-            {stat}
+            {props.stat}
           </p>
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {channels.map((channel) => (
-              <li
-                key={channel.label}
-                className="border-input bg-background flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs"
-              >
-                <ChannelDot meta={channel} />
-                {channel.label}
-              </li>
-            ))}
+          <ul class="mt-3 flex flex-wrap gap-1.5">
+            <For each={props.channels}>
+              {(channel) => (
+                <li class="border-input bg-background flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs">
+                  <ChannelDot meta={channel} />
+                  {channel.label}
+                </li>
+              )}
+            </For>
           </ul>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="self-start"
-          render={
-            <Link to={to}>
-              {cta}
-              <ArrowRight aria-hidden />
-            </Link>
-          }
-        />
+        <Button variant="outline" size="sm" class="self-start" as={Link} to={props.to}>
+          {props.cta}
+          <ArrowRight aria-hidden />
+        </Button>
       </CardContent>
     </Card>
   )

@@ -1,4 +1,4 @@
-import type { InfiniteData } from '@tanstack/react-query'
+import type { InfiniteData } from '@tanstack/solid-query'
 import type { BlogGridQuery, EnrichedPostForGrid } from '@repo/data/client'
 import { blogGridQueryString } from './blog-query-state'
 

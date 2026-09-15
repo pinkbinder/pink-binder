@@ -24,15 +24,12 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@tanstack/react-query": "^5.102.8",
-    "@tanstack/react-router": "^1.170.34",
-    "@tanstack/react-router-ssr-query": "^1.167.2",
-    "@tanstack/react-start": "^1.168.51",
-    "lucide-react": "^1.28.0",
-    "nuqs": "^2.10.1",
-    "react": "19.3.0",
-    "react-dom": "19.3.0",
-    "zustand": "^5.0.15"
+    "@tanstack/solid-query": "^5.102.8",
+    "@tanstack/solid-router": "^1.170.34",
+    "@tanstack/solid-router-ssr-query": "^1.167.2",
+    "@tanstack/solid-start": "^1.168.51",
+    "lucide-solid": "^1.46.0",
+    "solid-js": "^1.9.15"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.54.6",
@@ -40,14 +37,12 @@
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-cli": "^1.167.35",
     "@types/node": "^26.1.2",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "@vitejs/plugin-react": "^6.1.1",
     "oxfmt": "^0.67.0",
     "oxlint": "^1.81.0",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
     "vite": "^8.2.2",
+    "vite-plugin-solid": "^2.11.14",
     "wrangler": "^4.130.0"
   }
 }

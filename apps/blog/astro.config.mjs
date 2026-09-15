@@ -1,5 +1,5 @@
 import cloudflare from '@astrojs/cloudflare'
-import react from '@astrojs/react'
+import solid from '@astrojs/solid-js'
 import { defineConfig } from 'astro/config'
 import { loadEnv } from 'vite'
 
@@ -39,7 +39,7 @@ export default defineConfig({
     configPath: './astro.wrangler.jsonc',
     imageService: 'passthrough',
   }),
-  integrations: [react(), interactionDirective()],
+  integrations: [solid(), interactionDirective()],
   vite: {
     server: {
       // Tailscale MagicDNS hostname used for shared dev-server links.

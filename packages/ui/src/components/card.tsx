@@ -1,24 +1,21 @@
-import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { splitProps, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
+function Card(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
     <div
-      ref={ref}
-      className={cn('bg-card text-card-foreground rounded-lg border shadow-xs', className)}
-      {...props}
+      class={cn('bg-card text-card-foreground rounded-lg border shadow-xs', local.class)}
+      {...rest}
     />
   )
-)
-Card.displayName = 'Card'
+}
 
-const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('flex flex-col space-y-1.5 p-6', className)} {...props} />
-  )
-)
-CardHeader.displayName = 'CardHeader'
+function CardHeader(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return <div class={cn('flex flex-col space-y-1.5 p-6', local.class)} {...rest} />
+}
 
 const cardTitleVariants = cva('font-semibold tracking-tight', {
   variants: {
@@ -38,35 +35,26 @@ const cardTitleVariants = cva('font-semibold tracking-tight', {
 })
 
 interface CardTitleProps
-  extends React.HTMLAttributes<HTMLHeadingElement>, VariantProps<typeof cardTitleVariants> {}
+  extends JSX.HTMLAttributes<HTMLHeadingElement>, VariantProps<typeof cardTitleVariants> {}
 
-const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
-  ({ className, size, ...props }, ref) => (
-    <h3 ref={ref} className={cn(cardTitleVariants({ size, className }))} {...props} />
-  )
-)
-CardTitle.displayName = 'CardTitle'
+function CardTitle(props: CardTitleProps) {
+  const [local, rest] = splitProps(props, ['class', 'size'])
+  return <h3 class={cn(cardTitleVariants({ size: local.size }), local.class)} {...rest} />
+}
 
-const CardDescription = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLParagraphElement>
->(({ className, ...props }, ref) => (
-  <p ref={ref} className={cn('text-muted-foreground text-sm', className)} {...props} />
-))
-CardDescription.displayName = 'CardDescription'
+function CardDescription(props: JSX.HTMLAttributes<HTMLParagraphElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return <p class={cn('text-muted-foreground text-sm', local.class)} {...rest} />
+}
 
-const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
-  )
-)
-CardContent.displayName = 'CardContent'
+function CardContent(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return <div class={cn('p-6 pt-0', local.class)} {...rest} />
+}
 
-const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn('flex items-center p-6 pt-0', className)} {...props} />
-  )
-)
-CardFooter.displayName = 'CardFooter'
+function CardFooter(props: JSX.HTMLAttributes<HTMLDivElement>) {
+  const [local, rest] = splitProps(props, ['class'])
+  return <div class={cn('flex items-center p-6 pt-0', local.class)} {...rest} />
+}
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent }

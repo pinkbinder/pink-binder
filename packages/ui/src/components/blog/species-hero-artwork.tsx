@@ -1,5 +1,3 @@
-'use client'
-
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 
 export function SpeciesHeroArtwork({
@@ -20,7 +18,7 @@ export function SpeciesHeroArtwork({
       fill={false}
       width={160}
       height={160}
-      className="drop-shadow-lg"
+      class="drop-shadow-lg"
       sizes="160px"
       imageVariant="small"
     />

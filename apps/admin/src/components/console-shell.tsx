@@ -1,5 +1,5 @@
-import { useEffect, type ReactNode } from 'react'
-import { Link, useMatchRoute } from '@tanstack/react-router'
+import { createEffect, For, Show, type JSX } from 'solid-js'
+import { Link, useMatchRoute } from '@tanstack/solid-router'
 import {
   LayoutDashboard,
   Megaphone,
@@ -10,11 +10,11 @@ import {
   ShoppingCart,
   Sparkles,
   Sun,
-} from 'lucide-react'
+} from 'lucide-solid'
 import { cn } from '@repo/ui'
 import { Button } from '@repo/ui'
 
-import { useAdminPreferences } from '../stores/preferences'
+import { adminPreferences, setSidebarOpen, toggleTheme } from '../stores/preferences'
 
 /**
  * Console chrome: a grouped sidebar on desktop (collapsible to an icon rail),
@@ -94,119 +94,127 @@ const NAV_SECTIONS: ConsoleNavSection[] = [
 const ALL_NAV_ITEMS = NAV_SECTIONS.flatMap((section) => section.items)
 
 function useThemeEffect() {
-  const theme = useAdminPreferences((state) => state.theme)
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark')
-  }, [theme])
+  createEffect(() => {
+    document.documentElement.classList.toggle('dark', adminPreferences.theme === 'dark')
+  })
 }
 
-function BrandMark({ collapsed }: { collapsed?: boolean }) {
+function BrandMark(props: { collapsed?: boolean }) {
   return (
-    <Link to="/" className="flex min-w-0 items-center gap-2.5" title="Pink Binder console">
+    <Link to="/" class="flex min-w-0 items-center gap-2.5" title="Pink Binder console">
       <span
         aria-hidden
-        className="bg-primary text-primary-foreground font-title flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
+        class="bg-primary text-primary-foreground font-title flex size-9 shrink-0 items-center justify-center rounded-xl text-sm font-bold"
       >
         PB
       </span>
-      {!collapsed && (
-        <span className="min-w-0 leading-tight">
-          <span className="block truncate text-sm font-bold">Pink Binder</span>
-          <span className="text-muted-foreground block text-xs">Admin console</span>
+      <Show when={!props.collapsed}>
+        <span class="min-w-0 leading-tight">
+          <span class="block truncate text-sm font-bold">Pink Binder</span>
+          <span class="text-muted-foreground block text-xs">Admin console</span>
         </span>
-      )}
+      </Show>
     </Link>
   )
 }
 
-function ThemeToggle({ expanded }: { expanded?: boolean }) {
-  const theme = useAdminPreferences((state) => state.theme)
-  const toggleTheme = useAdminPreferences((state) => state.toggleTheme)
-  const label = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
+function ThemeToggle(props: { expanded?: boolean }) {
+  const label = () =>
+    adminPreferences.theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
   return (
-    <Button variant="navItem" size="sm" onClick={toggleTheme} aria-label={label}>
-      {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
-      {expanded && (
-        <span className="text-sm">{theme === 'light' ? 'Dark mode' : 'Light mode'}</span>
-      )}
+    <Button variant="navItem" size="sm" onClick={toggleTheme} aria-label={label()}>
+      {adminPreferences.theme === 'light' ? <Moon class="size-4" /> : <Sun class="size-4" />}
+      <Show when={props.expanded}>
+        <span class="text-sm">
+          {adminPreferences.theme === 'light' ? 'Dark mode' : 'Light mode'}
+        </span>
+      </Show>
     </Button>
   )
 }
 
 function DesktopSidebar() {
-  const sidebarOpen = useAdminPreferences((state) => state.sidebarOpen)
-  const setSidebarOpen = useAdminPreferences((state) => state.setSidebarOpen)
   const matchRoute = useMatchRoute()
+  const sidebarOpen = () => adminPreferences.sidebarOpen
 
   return (
     <aside
-      className={cn(
+      class={cn(
         'bg-card/40 transition-width sticky top-0 hidden h-screen shrink-0 flex-col border-r duration-200 md:flex',
-        sidebarOpen ? 'w-64' : 'w-17'
+        sidebarOpen() ? 'w-64' : 'w-17'
       )}
     >
-      <div className={cn('flex items-center gap-2 px-4 pt-5 pb-4', !sidebarOpen && 'px-3')}>
-        <BrandMark collapsed={!sidebarOpen} />
+      <div class={cn('flex items-center gap-2 px-4 pt-5 pb-4', !sidebarOpen() && 'px-3')}>
+        <BrandMark collapsed={!sidebarOpen()} />
       </div>
-      <nav aria-label="Console" className="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
-        {NAV_SECTIONS.map((section) => (
-          <div key={section.label}>
-            <p
-              className={cn(
-                'text-muted-foreground mb-1.5 px-2 text-xs font-semibold tracking-widest uppercase',
-                !sidebarOpen && 'sr-only'
-              )}
-            >
-              {section.label}
-            </p>
-            <div className="space-y-0.5">
-              {section.items.map((item) => {
-                const active = Boolean(matchRoute({ to: item.to, fuzzy: !item.exact }))
-                const Icon = item.icon
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    title={item.description}
-                    aria-current={active ? 'page' : undefined}
-                    className={cn(
-                      'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
-                      active
-                        ? 'bg-primary text-primary-foreground'
-                        : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
-                      !sidebarOpen && 'justify-center px-0'
-                    )}
-                  >
-                    <Icon className="size-4 shrink-0" aria-hidden />
-                    {sidebarOpen && <span className="truncate">{item.label}</span>}
-                    {!sidebarOpen && <span className="sr-only">{item.label}</span>}
-                  </Link>
-                )
-              })}
+      <nav aria-label="Console" class="flex-1 space-y-5 overflow-y-auto px-3 pb-4">
+        <For each={NAV_SECTIONS}>
+          {(section) => (
+            <div>
+              <p
+                class={cn(
+                  'text-muted-foreground mb-1.5 px-2 text-xs font-semibold tracking-widest uppercase',
+                  !sidebarOpen() && 'sr-only'
+                )}
+              >
+                {section.label}
+              </p>
+              <div class="space-y-0.5">
+                <For each={section.items}>
+                  {(item) => {
+                    const active = () => Boolean(matchRoute({ to: item.to, fuzzy: !item.exact }))
+                    const Icon = item.icon
+                    return (
+                      <Link
+                        to={item.to}
+                        title={item.description}
+                        aria-current={active() ? 'page' : undefined}
+                        class={cn(
+                          'flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm font-medium transition-colors',
+                          active()
+                            ? 'bg-primary text-primary-foreground'
+                            : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                          !sidebarOpen() && 'justify-center px-0'
+                        )}
+                      >
+                        <Icon class="size-4 shrink-0" aria-hidden />
+                        <Show
+                          when={sidebarOpen()}
+                          fallback={<span class="sr-only">{item.label}</span>}
+                        >
+                          <span class="truncate">{item.label}</span>
+                        </Show>
+                      </Link>
+                    )
+                  }}
+                </For>
+              </div>
             </div>
-          </div>
-        ))}
+          )}
+        </For>
       </nav>
       <div
-        className={cn(
+        class={cn(
           'border-t px-3 py-3',
-          sidebarOpen ? 'flex items-center justify-between' : 'flex flex-col items-center gap-1'
+          sidebarOpen() ? 'flex items-center justify-between' : 'flex flex-col items-center gap-1'
         )}
       >
-        <ThemeToggle expanded={sidebarOpen} />
+        <ThemeToggle expanded={sidebarOpen()} />
         <Button
           variant="navItem"
           size="sm"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-          aria-expanded={sidebarOpen}
+          onClick={() => setSidebarOpen(!sidebarOpen())}
+          aria-label={sidebarOpen() ? 'Collapse sidebar' : 'Expand sidebar'}
+          aria-expanded={sidebarOpen()}
         >
-          {sidebarOpen ? (
-            <PanelLeftClose className="size-4" aria-hidden />
+          {sidebarOpen() ? (
+            <PanelLeftClose class="size-4" aria-hidden />
           ) : (
-            <PanelLeftOpen className="size-4" aria-hidden />
+            <PanelLeftOpen class="size-4" aria-hidden />
           )}
-          {sidebarOpen && <span className="text-sm">Collapse</span>}
+          <Show when={sidebarOpen()}>
+            <span class="text-sm">Collapse</span>
+          </Show>
         </Button>
       </div>
     </aside>
@@ -216,43 +224,44 @@ function DesktopSidebar() {
 function MobileNav() {
   const matchRoute = useMatchRoute()
   return (
-    <div className="bg-background/90 sticky top-0 z-40 border-b backdrop-blur md:hidden">
-      <div className="flex items-center justify-between px-4 py-3">
+    <div class="bg-background/90 sticky top-0 z-40 border-b backdrop-blur md:hidden">
+      <div class="flex items-center justify-between px-4 py-3">
         <BrandMark />
         <ThemeToggle />
       </div>
-      <nav aria-label="Console" className="flex gap-1 overflow-x-auto px-3 pb-2">
-        {ALL_NAV_ITEMS.map((item) => {
-          const active = Boolean(matchRoute({ to: item.to, fuzzy: !item.exact }))
-          return (
-            <Link
-              key={item.to}
-              to={item.to}
-              aria-current={active ? 'page' : undefined}
-              className={cn(
-                'rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors',
-                active
-                  ? 'bg-primary text-primary-foreground'
-                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-              )}
-            >
-              {item.label}
-            </Link>
-          )
-        })}
+      <nav aria-label="Console" class="flex gap-1 overflow-x-auto px-3 pb-2">
+        <For each={ALL_NAV_ITEMS}>
+          {(item) => {
+            const active = () => Boolean(matchRoute({ to: item.to, fuzzy: !item.exact }))
+            return (
+              <Link
+                to={item.to}
+                aria-current={active() ? 'page' : undefined}
+                class={cn(
+                  'rounded-full px-3 py-1.5 text-sm font-medium whitespace-nowrap transition-colors',
+                  active()
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+                )}
+              >
+                {item.label}
+              </Link>
+            )
+          }}
+        </For>
       </nav>
     </div>
   )
 }
 
-export function ConsoleShell({ children }: { children: ReactNode }) {
+export function ConsoleShell(props: { children?: JSX.Element }) {
   useThemeEffect()
   return (
-    <div className="min-h-screen md:flex">
+    <div class="min-h-screen md:flex">
       <DesktopSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div class="flex min-w-0 flex-1 flex-col">
         <MobileNav />
-        <main className="min-w-0 flex-1">{children}</main>
+        <main class="min-w-0 flex-1">{props.children}</main>
       </div>
     </div>
   )

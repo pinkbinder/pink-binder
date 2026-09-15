@@ -1,50 +1,42 @@
-import React from 'react'
-import type { ReactElement, ReactNode } from 'react'
-import { act, render, screen, waitFor } from '@testing-library/react'
+import { createSignal, type JSX } from 'solid-js'
+import { render, screen, waitFor } from '@solidjs/testing-library'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
 import type { BlogGridFacets, EnrichedPostForGrid } from '@repo/data/client'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { NuqsTestingAdapter, type UrlUpdateEvent } from 'nuqs/adapters/testing'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { BlogGrid, BlogGridSkeleton } from '../src/components/blog/blog-grid'
-
-const navigation = {
-  query: '',
-  update: mock<(event: UrlUpdateEvent) => void>(),
-}
 
 /** Real zaraz-events helpers run; their delivery target is stubbed here. */
 const zarazTrackMock =
   mock<(eventName: string, eventProperties?: Record<string, unknown>) => void>()
 
 mock.module('../src/components/compat-link', () => ({
-  default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
-    <a href={href} {...props}>
-      {children}
+  default: (props: {
+    children?: JSX.Element
+    href: string
+    class?: string
+    onClick?: () => void
+  }) => (
+    <a href={props.href} class={props.class} onClick={props.onClick}>
+      {props.children}
     </a>
   ),
 }))
 
 mock.module('../src/components/post-card', () => ({
-  PostCard: ({ post }: { post: { title: string } }) => <div>{post.title}</div>,
+  PostCard: (props: { post: { title: string } }) => <div>{props.post.title}</div>,
 }))
 
 mock.module('../src/components/roundup-post-card', () => ({
-  RoundupPostCard: ({ title }: { title: string }) => <div>{title}</div>,
+  RoundupPostCard: (props: { title: string }) => <div>{props.title}</div>,
 }))
 
 mock.module('../src/components/pokemon-type-logo', () => ({
-  PokemonTypeLogo: ({ color }: { color: string }) => <span data-color={color}>type</span>,
+  PokemonTypeLogo: (props: { color: string }) => <span data-color={props.color}>type</span>,
 }))
 
 mock.module('../src/components/searchable-select', () => ({
-  SearchableSelect: ({
-    options,
-    value,
-    onValueChange,
-    label,
-    freeText,
-  }: {
+  SearchableSelect: (props: {
     options: Array<{ value: string; label: string }>
     value: string | null
     onValueChange: (value: string | null) => void
@@ -54,31 +46,29 @@ mock.module('../src/components/searchable-select', () => ({
       onAction: (search: string) => void
     }
   }) => {
-    const [search, setSearch] = React.useState('')
+    const [search, setSearch] = createSignal('')
     return (
       <div>
         <select
-          aria-label={label}
-          value={value ?? ''}
-          onChange={(event) => onValueChange(event.target.value || null)}
+          aria-label={props.label}
+          value={props.value ?? ''}
+          onChange={(event) => props.onValueChange(event.target.value || null)}
         >
           <option value="">All</option>
-          {options.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
+          {props.options.map((option) => (
+            <option value={option.value}>{option.label}</option>
           ))}
         </select>
-        {freeText ? (
+        {props.freeText ? (
           <div>
             <input
-              aria-label={`Search ${label} options`}
-              value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              aria-label={`Search ${props.label} options`}
+              value={search()}
+              onInput={(event) => setSearch(event.target.value)}
             />
-            {search.trim() ? (
-              <button type="button" onClick={() => freeText.onAction(search.trim())}>
-                {freeText.labelFor(search.trim())}
+            {search().trim() ? (
+              <button type="button" onClick={() => props.freeText!.onAction(search().trim())}>
+                {props.freeText!.labelFor(search().trim())}
               </button>
             ) : null}
           </div>
@@ -133,10 +123,9 @@ const facets: BlogGridFacets = {
 }
 
 let intersectionCallback: IntersectionObserverCallback | undefined
+let pushStateSpy: ReturnType<typeof mock>
 
 beforeEach(() => {
-  navigation.query = ''
-  navigation.update.mockReset()
   zarazTrackMock.mockReset()
   window.zaraz = { track: zarazTrackMock, ecommerce: mock() }
   intersectionCallback = undefined
@@ -145,13 +134,21 @@ beforeEach(() => {
     json: async () => ({ posts: [pikachuPost], total: 1, nextOffset: 1 }),
   }) as unknown as typeof fetch
 
+  window.history.replaceState(null, '', '/')
+  pushStateSpy = mock(window.history.pushState.bind(window.history))
+  window.history.pushState = pushStateSpy as unknown as typeof window.history.pushState
+
   class IntersectionObserverMock implements IntersectionObserver {
     readonly root = null
     readonly rootMargin = '0px'
     readonly thresholds = [0]
 
-    constructor(callback: IntersectionObserverCallback) {
-      intersectionCallback = callback
+    constructor(callback: IntersectionObserverCallback, options?: IntersectionObserverInit) {
+      // Only the load-more sentinel observer uses a rootMargin; other
+      // components (lazy images) construct their own observers.
+      if (options?.rootMargin === '480px') {
+        intersectionCallback = callback
+      }
     }
 
     disconnect() {}
@@ -165,15 +162,14 @@ beforeEach(() => {
   globalThis.IntersectionObserver = IntersectionObserverMock
 })
 
-function renderBlogGrid(ui: ReactElement, searchParams = navigation.query) {
+function renderBlogGrid(ui: () => JSX.Element, searchParams = '') {
+  window.history.replaceState(null, '', searchParams ? `/?${searchParams}` : '/')
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: Number.POSITIVE_INFINITY } },
   })
   return render(ui, {
-    wrapper: ({ children }: { children: ReactNode }) => (
-      <NuqsTestingAdapter searchParams={searchParams} onUrlUpdate={navigation.update} hasMemory>
-        <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-      </NuqsTestingAdapter>
+    wrapper: (props: { children?: JSX.Element }) => (
+      <QueryClientProvider client={queryClient}>{props.children}</QueryClientProvider>
     ),
   })
 }
@@ -181,7 +177,7 @@ function renderBlogGrid(ui: ReactElement, searchParams = navigation.query) {
 describe('BlogGrid', () => {
   it('renders post metadata and synchronizes interactive facet controls to the URL', async () => {
     const user = userEvent.setup()
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     expect(screen.getByText('Pikachu binder guide')).not.toBeNull()
     expect(screen.getByRole('link', { name: 'Pikachu binder guide' })?.getAttribute('href')).toBe(
@@ -189,22 +185,19 @@ describe('BlogGrid', () => {
     )
 
     await user.click(screen.getByRole('button', { name: /Electric/ }))
-    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('?type=Electric')
-    expect(navigation.update.mock.calls.at(-1)?.[0].options.history).toBe('push')
-    expect(navigation.update.mock.calls.at(-1)?.[0].options.shallow).toBe(true)
+    expect(window.location.search).toBe('?type=Electric')
+    expect(pushStateSpy).toHaveBeenCalled()
 
     await user.selectOptions(screen.getByLabelText('Filter by pokémon species'), 'pikachu')
-    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe(
-      '?type=Electric&pokemon=pikachu'
-    )
+    expect(window.location.search).toBe('?type=Electric&pokemon=pikachu')
 
     await user.click(await screen.findByRole('button', { name: 'Clear all' }))
-    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('')
+    expect(window.location.search).toBe('')
   })
 
   it('commits search terms to the URL and reports them as search events', async () => {
     const user = userEvent.setup()
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     // The merged catalog select doubles as the text search: type a phrase and
     // commit the free-text action ("Search collector guides for …").
@@ -214,12 +207,12 @@ describe('BlogGrid', () => {
       () => expect(zarazTrackMock).toHaveBeenCalledWith('search', { search_term: 'pika' }),
       { timeout: 3000 }
     )
-    expect(navigation.update.mock.calls.at(-1)?.[0].queryString).toBe('?q=pika')
+    expect(window.location.search).toBe('?q=pika')
   })
 
   it('reports filter changes as apply and clear filter events', async () => {
     const user = userEvent.setup()
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     await user.click(screen.getByRole('button', { name: /Electric/ }))
     expect(zarazTrackMock).toHaveBeenCalledWith('filter', {
@@ -240,7 +233,7 @@ describe('BlogGrid', () => {
 
   it('does not report catalog tag selections as search events', async () => {
     const user = userEvent.setup()
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     // 'pikachu' promotes from the tag catalog to the Pokémon species facet.
     await user.selectOptions(screen.getByLabelText('Catalog search'), 'pikachu')
@@ -261,15 +254,13 @@ describe('BlogGrid', () => {
     })
     globalThis.fetch = fetchMock as unknown as typeof fetch
 
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={2} />)
+    renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={2} />)
     await waitFor(() => expect(intersectionCallback).toBeTypeOf('function'))
 
-    await act(async () => {
-      intersectionCallback?.(
-        [{ isIntersecting: true } as IntersectionObserverEntry],
-        {} as IntersectionObserver
-      )
-    })
+    intersectionCallback?.(
+      [{ isIntersecting: true } as IntersectionObserverEntry],
+      {} as IntersectionObserver
+    )
 
     expect(await screen.findByText('Eevee binder guide')).not.toBeNull()
     expect(fetchMock).toHaveBeenCalledWith(
@@ -280,13 +271,15 @@ describe('BlogGrid', () => {
   })
 
   it('shows the recoverable error state when a filtered request fails', async () => {
-    navigation.query = 'type=Electric'
     globalThis.fetch = mock().mockResolvedValue({
       ok: false,
       status: 503,
     }) as unknown as typeof fetch
 
-    renderBlogGrid(<BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
+    renderBlogGrid(
+      () => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />,
+      'type=Electric'
+    )
 
     expect(await screen.findByRole('heading', { name: 'Posts could not load' })).not.toBeNull()
     expect(screen.getByText('Please try the catalog again.')).not.toBeNull()
@@ -297,12 +290,14 @@ describe('BlogGrid', () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch
 
     renderBlogGrid(
-      <BlogGrid
-        posts={[pikachuPost]}
-        facets={facets}
-        total={1}
-        initialQuery={{ type: 'Electric' }}
-      />,
+      () => (
+        <BlogGrid
+          posts={[pikachuPost]}
+          facets={facets}
+          total={1}
+          initialQuery={{ type: 'Electric' }}
+        />
+      ),
       'type=Electric'
     )
 
@@ -320,7 +315,7 @@ describe('BlogGrid', () => {
     globalThis.fetch = fetchMock as unknown as typeof fetch
 
     renderBlogGrid(
-      <BlogGrid posts={[pikachuPost]} facets={facets} total={1} initialQuery={{}} />,
+      () => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} initialQuery={{}} />,
       'type=Unknown'
     )
 
@@ -329,7 +324,7 @@ describe('BlogGrid', () => {
   })
 
   it('renders a stable accessible loading skeleton', () => {
-    render(<BlogGridSkeleton />)
+    render(() => <BlogGridSkeleton />)
     expect(screen.getByLabelText('Loading blog posts')?.getAttribute('aria-busy')).toBe('true')
   })
 })

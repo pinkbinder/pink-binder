@@ -1,5 +1,3 @@
-'use client'
-
 import { sceneArtUrlCandidates } from '@repo/data/client'
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 
@@ -27,7 +25,7 @@ export function MichiSceneArtImage({
       candidates={candidates}
       alt={`${displayName} Michi Method scene — ${scene.label}`}
       fill
-      className="object-cover object-center"
+      class="object-cover object-center"
       sizes={sizes}
       imageVariant="large"
     />

@@ -26,6 +26,7 @@
         "patterns": [
           {
             "group": [
+              "@kobalte/**",
               "@radix-ui/**",
               "@base-ui/**",
               "@base-ui-components/**",
@@ -69,14 +70,6 @@
     "shadcn/require-static-classes": "error"
   },
   "overrides": [
-    {
-      "files": ["apps/**", "packages/ui/**"],
-      "plugins": ["react"],
-      "rules": {
-        // Carried over from the ESLint setup: URL/carousel sync-in-effect patterns are intentional.
-        "react/set-state-in-effect": "off"
-      }
-    },
     {
       "files": ["**/*.test.{ts,tsx}"],
       "rules": {

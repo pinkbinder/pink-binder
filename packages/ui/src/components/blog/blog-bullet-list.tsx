@@ -2,11 +2,11 @@ import { cn } from '../../lib/utils'
 
 export function BlogBulletList({
   items,
-  className,
+  class: className,
   itemClassName,
 }: {
   items: string[]
-  className?: string
+  class?: string
   itemClassName?: string
 }) {
   if (items.length === 0) {
@@ -14,11 +14,9 @@ export function BlogBulletList({
   }
 
   return (
-    <ul className={cn('list-disc space-y-2 pl-5', className)}>
+    <ul class={cn('list-disc space-y-2 pl-5', className)}>
       {items.map((item) => (
-        <li key={item} className={cn('text-foreground/85 leading-relaxed', itemClassName)}>
-          {item}
-        </li>
+        <li class={cn('text-foreground/85 leading-relaxed', itemClassName)}>{item}</li>
       ))}
     </ul>
   )

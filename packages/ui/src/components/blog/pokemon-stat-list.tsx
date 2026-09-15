@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react'
 import { cn } from '../../lib/utils'
 
 type PokemonStatListEntry = {
@@ -47,31 +46,28 @@ function statCommentary(name: string, value: number): string {
 export function PokemonStatList({
   stats,
   total,
-  className,
+  class: className,
 }: {
   stats: PokemonStatListEntry[]
   total: number
-  className?: string
+  class?: string
 }) {
   return (
-    <div className={cn(className)}>
-      <div className="space-y-3">
+    <div class={cn(className)}>
+      <div class="space-y-3">
         {stats.map((stat) => {
           const pct = Math.min(Math.round((stat.value / 255) * 100), 100)
           const emoji = STAT_EMOJI_BY_NAME[stat.name] ?? '•'
 
           return (
-            <div
-              key={stat.name}
-              className="grid grid-cols-[5.5rem_2.5rem_1fr] items-center gap-x-3 gap-y-1 sm:grid-cols-[7rem_2.5rem_1fr_8rem]"
-            >
-              <p className="text-muted-foreground inline-flex items-center justify-end gap-1 text-right text-xs">
+            <div class="grid grid-cols-[5.5rem_2.5rem_1fr] items-center gap-x-3 gap-y-1 sm:grid-cols-[7rem_2.5rem_1fr_8rem]">
+              <p class="text-muted-foreground inline-flex items-center justify-end gap-1 text-right text-xs">
                 <span aria-hidden>{emoji}</span>
                 <span>{stat.label}</span>
               </p>
-              <p className="text-sm font-semibold tabular-nums">{stat.value}</p>
+              <p class="text-sm font-semibold tabular-nums">{stat.value}</p>
               <div
-                className="bg-muted h-2 overflow-hidden rounded-full"
+                class="bg-muted h-2 overflow-hidden rounded-full"
                 role="progressbar"
                 aria-label={`${stat.label}: ${stat.value}`}
                 aria-valuenow={stat.value}
@@ -79,24 +75,22 @@ export function PokemonStatList({
                 aria-valuemax={255}
               >
                 <div
-                  className="h-full w-(--stat-fill) rounded-full bg-(--stat-color)"
-                  style={
-                    {
-                      '--stat-fill': `${pct}%`,
-                      '--stat-color': statBarColor(stat.value),
-                    } as CSSProperties
-                  }
+                  class="h-full w-(--stat-fill) rounded-full bg-(--stat-color)"
+                  style={{
+                    '--stat-fill': `${pct}%`,
+                    '--stat-color': statBarColor(stat.value),
+                  }}
                 />
               </div>
-              <p className="text-muted-foreground col-start-3 text-xs font-medium sm:col-start-4 sm:text-right">
+              <p class="text-muted-foreground col-start-3 text-xs font-medium sm:col-start-4 sm:text-right">
                 {statCommentary(stat.name, stat.value)}
               </p>
             </div>
           )
         })}
       </div>
-      <p className="text-muted-foreground mt-4 text-sm">
-        Total: <span className="text-foreground font-semibold">{total}</span>
+      <p class="text-muted-foreground mt-4 text-sm">
+        Total: <span class="text-foreground font-semibold">{total}</span>
       </p>
     </div>
   )

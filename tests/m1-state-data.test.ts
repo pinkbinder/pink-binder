@@ -37,7 +37,7 @@ describe('M1 state and data ownership contract', () => {
     })
   })
 
-  test('installs TanStack Query + nuqs in the TanStack Start apps and the blog boundary', () => {
+  test('installs the Solid + TanStack data layer in the apps and the blog boundary', () => {
     const blogPackage = parsePackage('apps/blog/package.json')
     const uiPackage = parsePackage('packages/ui/package.json')
     const adminPackage = parsePackage('apps/admin/package.json')
@@ -45,17 +45,25 @@ describe('M1 state and data ownership contract', () => {
     const landingPackage = parsePackage('apps/landing/package.json')
 
     for (const packageJson of [blogPackage, uiPackage, adminPackage]) {
-      expect(packageJson.dependencies?.['@tanstack/react-query']).toBeTruthy()
-      expect(packageJson.dependencies?.nuqs).toBeTruthy()
+      expect(packageJson.dependencies?.['@tanstack/solid-query']).toBeTruthy()
+    }
+    for (const packageJson of [
+      blogPackage,
+      uiPackage,
+      adminPackage,
+      storePackage,
+      landingPackage,
+    ]) {
+      expect(packageJson.dependencies?.['@tanstack/react-query']).toBeUndefined()
+      expect(packageJson.dependencies?.nuqs).toBeUndefined()
     }
     // The Astro + Medusa storefront (and landing) render without the
     // TanStack data layer.
     for (const packageJson of [storePackage, landingPackage]) {
-      expect(packageJson.dependencies?.['@tanstack/react-query']).toBeUndefined()
-      expect(packageJson.dependencies?.nuqs).toBeUndefined()
+      expect(packageJson.dependencies?.['@tanstack/solid-query']).toBeUndefined()
     }
     expect(contract.zustand.adopted).toBe(false)
-    expect(read('bun.lock')).toContain('zustand@')
+    expect(read('bun.lock')).not.toContain('zustand@')
   })
 
   test('keeps URL, query, and removed loader ownership mechanically distinct', () => {
@@ -65,8 +73,8 @@ describe('M1 state and data ownership contract', () => {
     const serverSection = read('apps/blog/src/pages/index.astro')
 
     expect((providers.match(/<QueryClientProvider/g) ?? []).length).toBe(1)
-    expect(grid).toContain('useQueryStates(blogFilterParsers')
-    expect(grid).toContain('useInfiniteQuery')
+    expect(grid).toContain('createUrlQueryStates(blogFilterParsers')
+    expect(grid).toContain('createInfiniteQuery')
     expect(grid).not.toContain('useSearchParams')
     expect(grid).not.toContain('new AbortController')
     // The card gallery is a pure static component since the zero-JS render

@@ -1,7 +1,5 @@
-'use client'
-
-import { useQuery } from '@tanstack/react-query'
-import type { ComponentProps } from 'react'
+import { createQuery } from '@tanstack/solid-query'
+import type { ComponentProps } from 'solid-js'
 import { BlogGrid } from '@repo/ui'
 import type { BlogGridFacets } from '@repo/data/client'
 import { BlogProviders } from './BlogProviders'
@@ -27,7 +25,7 @@ const EMPTY_FACETS: BlogGridFacets = {
  * from the `posts` seed.
  */
 function FacetedGrid(props: BlogGridProps) {
-  const { data: facets } = useQuery({
+  const facets = createQuery(() => ({
     queryKey: ['blog-grid-facets'],
     queryFn: async ({ signal }) => {
       const response = await fetch('/api/posts-grid?facets=1', { signal })
@@ -35,8 +33,8 @@ function FacetedGrid(props: BlogGridProps) {
       const body = (await response.json()) as { facets: BlogGridFacets }
       return body.facets
     },
-  })
-  return <BlogGrid {...props} facets={facets ?? EMPTY_FACETS} />
+  }))
+  return <BlogGrid {...props} facets={facets.data ?? EMPTY_FACETS} />
 }
 
 export function BlogGridIsland(props: BlogGridProps) {

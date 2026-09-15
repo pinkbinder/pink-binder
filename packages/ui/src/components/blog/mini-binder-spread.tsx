@@ -1,6 +1,4 @@
-'use client'
-
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { createEffect, createMemo, createSignal, For, Show } from 'solid-js'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { MichiSceneArtImage } from './michi-scene-art-image'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
@@ -121,13 +119,7 @@ function restoreLayout(initial: BinderLayout, serialized: string | null): Binder
   }
 }
 
-function BinderPage({
-  slots,
-  pageKey,
-  pageLabel,
-  selectedIndex,
-  onSelect,
-}: {
+function BinderPage(props: {
   slots: InteractiveBinderSlot[]
   pageKey: BinderPageKey
   pageLabel: string
@@ -135,92 +127,82 @@ function BinderPage({
   onSelect: (page: BinderPageKey, index: number) => void
 }) {
   return (
-    <div className="bg-muted/15 rounded-xl border p-3">
-      <p className="text-muted-foreground mb-2 text-center text-xs font-medium tracking-wide uppercase">
-        {pageLabel}
+    <div class="bg-muted/15 rounded-xl border p-3">
+      <p class="text-muted-foreground mb-2 text-center text-xs font-medium tracking-wide uppercase">
+        {props.pageLabel}
       </p>
-      <div className="grid min-h-[min(420px,52vw)] grid-cols-3 grid-rows-3 gap-2">
-        {slots.map((placed, index) => {
-          const { slot, row, col, colSpan } = placed
-          const selected = selectedIndex === index
-          return (
-            <div
-              key={`${pageLabel}-${row}-${col}`}
-              className={`bg-card relative overflow-hidden rounded-md border shadow-xs transition [grid-column:var(--slot-col)] [grid-row:var(--slot-row)] ${
-                selected ? 'ring-primary ring-2 ring-offset-2' : 'hover:border-primary/60'
-              } ${colSpan === 2 ? 'aspect-[10/7] min-h-0' : 'aspect-[5/7] min-h-0'}`}
-              style={
-                {
-                  '--slot-col': `${col + 1} / span ${colSpan}`,
-                  '--slot-row': `${row + 1}`,
-                } as CSSProperties
-              }
-            >
-              {slot.kind === 'card' ? (
-                <div className="h-full scale-[0.92] p-0.5">
-                  <PokemonTcgCardTile card={slot.card} />
-                </div>
-              ) : slot.kind === 'michi' ? (
-                <div className="relative h-full w-full">
-                  <MichiSceneArtImage
-                    scene={slot.scene}
-                    displayName={slot.displayName}
-                    sizes={colSpan === 2 ? '240px' : '120px'}
-                  />
-                </div>
-              ) : slot.kind === 'back' ? (
-                <div className="tcg-card-back relative flex h-full w-full flex-col items-center justify-center p-2 text-white">
-                  <div className="absolute inset-1 rounded-xs border border-white/30" />
-                  <div className="absolute inset-2 rounded-xs border border-white/20" />
-                  <div className="relative text-center">
-                    <p className="text-[9px] tracking-[0.18em] text-white/80 uppercase">
-                      Pokémon TCG
-                    </p>
-                    <p className="mt-1 text-[10px] font-semibold tracking-wide">Empty Slot</p>
+      <div class="grid min-h-[min(420px,52vw)] grid-cols-3 grid-rows-3 gap-2">
+        <For each={props.slots}>
+          {(placed, index) => {
+            const selected = () => props.selectedIndex === index()
+            return (
+              <div
+                class={`bg-card relative overflow-hidden rounded-md border shadow-xs transition [grid-column:var(--slot-col)] [grid-row:var(--slot-row)] ${
+                  selected() ? 'ring-primary ring-2 ring-offset-2' : 'hover:border-primary/60'
+                } ${placed.colSpan === 2 ? 'aspect-[10/7] min-h-0' : 'aspect-[5/7] min-h-0'}`}
+                style={{
+                  '--slot-col': `${placed.col + 1} / span ${placed.colSpan}`,
+                  '--slot-row': `${placed.row + 1}`,
+                }}
+              >
+                {placed.slot.kind === 'card' ? (
+                  <div class="h-full scale-[0.92] p-0.5">
+                    <PokemonTcgCardTile card={placed.slot.card} />
                   </div>
-                </div>
-              ) : (
-                <div className="bg-muted/30 relative flex h-full w-full items-center justify-center p-1 opacity-40">
-                  <div className="relative h-12 w-12">
-                    <RemoteImageWithFallback
-                      candidates={[slot.url]}
-                      alt={slot.alt}
-                      fill={false}
-                      width={48}
-                      height={48}
-                      className="object-contain"
-                      sizes="48px"
-                      imageVariant="small"
+                ) : placed.slot.kind === 'michi' ? (
+                  <div class="relative h-full w-full">
+                    <MichiSceneArtImage
+                      scene={placed.slot.scene}
+                      displayName={placed.slot.displayName}
+                      sizes={placed.colSpan === 2 ? '240px' : '120px'}
                     />
                   </div>
-                </div>
-              )}
-              <button
-                type="button"
-                aria-pressed={selected}
-                aria-label={`${selected ? 'Cancel moving' : 'Move'} ${pageLabel} pocket ${row * 3 + col + 1}`}
-                onClick={() => onSelect(pageKey, index)}
-                className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring absolute top-1 right-1 z-20 rounded-full border border-white/70 px-2 py-1 text-[10px] font-semibold shadow-md backdrop-blur transition focus-visible:ring-2 focus-visible:outline-hidden"
-              >
-                {selected ? 'Selected' : 'Move'}
-              </button>
-            </div>
-          )
-        })}
+                ) : placed.slot.kind === 'back' ? (
+                  <div class="tcg-card-back relative flex h-full w-full flex-col items-center justify-center p-2 text-white">
+                    <div class="absolute inset-1 rounded-xs border border-white/30" />
+                    <div class="absolute inset-2 rounded-xs border border-white/20" />
+                    <div class="relative text-center">
+                      <p class="text-[9px] tracking-[0.18em] text-white/80 uppercase">
+                        Pokémon TCG
+                      </p>
+                      <p class="mt-1 text-[10px] font-semibold tracking-wide">Empty Slot</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div class="bg-muted/30 relative flex h-full w-full items-center justify-center p-1 opacity-40">
+                    <div class="relative h-12 w-12">
+                      <RemoteImageWithFallback
+                        candidates={[placed.slot.url]}
+                        alt={placed.slot.alt}
+                        fill={false}
+                        width={48}
+                        height={48}
+                        class="object-contain"
+                        sizes="48px"
+                        imageVariant="small"
+                      />
+                    </div>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  aria-pressed={selected()}
+                  aria-label={`${selected() ? 'Cancel moving' : 'Move'} ${props.pageLabel} pocket ${placed.row * 3 + placed.col + 1}`}
+                  onClick={() => props.onSelect(props.pageKey, index())}
+                  class="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring absolute top-1 right-1 z-20 rounded-full border border-white/70 px-2 py-1 text-[10px] font-semibold shadow-md backdrop-blur transition focus-visible:ring-2 focus-visible:outline-hidden"
+                >
+                  {selected() ? 'Selected' : 'Move'}
+                </button>
+              </div>
+            )
+          }}
+        </For>
       </div>
     </div>
   )
 }
 
-export function MiniBinderSpread({
-  pageOne,
-  pageTwo,
-  title = 'Mini binder spread',
-  description,
-  leftPageLabel = 'Left page',
-  rightPageLabel = 'Right page',
-  persistenceKey,
-}: {
+export function MiniBinderSpread(props: {
   pageOne: PositionedBinderSpreadSlot[]
   pageTwo: PositionedBinderSpreadSlot[]
   title?: string
@@ -230,81 +212,87 @@ export function MiniBinderSpread({
   /** Stable article identifier so layouts never leak between posts. */
   persistenceKey?: string
 }) {
-  const initialLayout = useMemo<BinderLayout>(
-    () => ({
-      pageOne: materializePage(pageOne, 'pageOne'),
-      pageTwo: materializePage(pageTwo, 'pageTwo'),
-    }),
-    [pageOne, pageTwo]
-  )
-  const storageKey = useMemo(
-    () => layoutStorageKey(initialLayout, title, persistenceKey),
-    [initialLayout, persistenceKey, title]
-  )
-  const [layout, setLayout] = useState(initialLayout)
-  const [selected, setSelected] = useState<{ page: BinderPageKey; index: number } | null>(null)
-  const [storageReady, setStorageReady] = useState(false)
-  const [status, setStatus] = useState('Choose Move on two pockets to swap them.')
-  const skipNextSave = useRef(true)
+  const title = () => props.title ?? 'Mini binder spread'
+  const leftPageLabel = () => props.leftPageLabel ?? 'Left page'
+  const rightPageLabel = () => props.rightPageLabel ?? 'Right page'
 
-  useEffect(() => {
-    skipNextSave.current = true
+  const initialLayout = createMemo<BinderLayout>(() => ({
+    pageOne: materializePage(props.pageOne, 'pageOne'),
+    pageTwo: materializePage(props.pageTwo, 'pageTwo'),
+  }))
+  const storageKey = createMemo(() =>
+    layoutStorageKey(initialLayout(), title(), props.persistenceKey)
+  )
+  const [layout, setLayout] = createSignal<BinderLayout>(initialLayout())
+  const [selected, setSelected] = createSignal<{
+    page: BinderPageKey
+    index: number
+  } | null>(null)
+  const [storageReady, setStorageReady] = createSignal(false)
+  const [status, setStatus] = createSignal('Choose Move on two pockets to swap them.')
+  let skipNextSave = true
+
+  createEffect(() => {
+    const key = storageKey()
+    const initial = initialLayout()
+    skipNextSave = true
     let serialized: string | null = null
     try {
-      serialized = window.localStorage.getItem(storageKey)
+      serialized = window.localStorage.getItem(key)
     } catch {
       setStatus('Pocket moves work here, but this browser has disabled local saving.')
     }
-    const saved = restoreLayout(initialLayout, serialized)
+    const saved = restoreLayout(initial, serialized)
     if (saved) {
       setLayout(saved)
       setStatus('Your saved pocket layout is ready.')
     } else {
-      setLayout(initialLayout)
+      setLayout(initial)
     }
     setSelected(null)
     setStorageReady(true)
-  }, [initialLayout, storageKey])
+  })
 
-  useEffect(() => {
-    if (!storageReady) return
-    if (skipNextSave.current) {
-      skipNextSave.current = false
+  createEffect(() => {
+    const current = layout()
+    const key = storageKey()
+    if (!storageReady()) return
+    if (skipNextSave) {
+      skipNextSave = false
       return
     }
     try {
       window.localStorage.setItem(
-        storageKey,
+        key,
         JSON.stringify({
-          pageOne: layout.pageOne.map((slot) => slot.contentId),
-          pageTwo: layout.pageTwo.map((slot) => slot.contentId),
+          pageOne: current.pageOne.map((slot) => slot.contentId),
+          pageTwo: current.pageTwo.map((slot) => slot.contentId),
         })
       )
     } catch {
       setStatus('Pocket move applied for this visit; local saving is unavailable.')
     }
-  }, [layout, storageKey, storageReady])
-
-  if (pageOne.length === 0 && pageTwo.length === 0) return null
+  })
 
   function selectPocket(page: BinderPageKey, index: number) {
-    if (!selected) {
+    const current = selected()
+    if (!current) {
       setSelected({ page, index })
       setStatus('First pocket selected. Choose a second pocket to swap.')
       return
     }
-    if (selected.page === page && selected.index === index) {
+    if (current.page === page && current.index === index) {
       setSelected(null)
       setStatus('Move cancelled.')
       return
     }
 
-    setLayout((current) => {
+    setLayout((existing) => {
       const next: BinderLayout = {
-        pageOne: current.pageOne.map((slot) => ({ ...slot })),
-        pageTwo: current.pageTwo.map((slot) => ({ ...slot })),
+        pageOne: existing.pageOne.map((slot) => ({ ...slot })),
+        pageTwo: existing.pageTwo.map((slot) => ({ ...slot })),
       }
-      const first = next[selected.page][selected.index]!
+      const first = next[current.page][current.index]!
       const second = next[page][index]!
       const firstContent = { contentId: first.contentId, slot: first.slot }
       first.contentId = second.contentId
@@ -318,10 +306,10 @@ export function MiniBinderSpread({
   }
 
   function resetLayout() {
-    setLayout(initialLayout)
+    setLayout(initialLayout())
     setSelected(null)
     try {
-      window.localStorage.removeItem(storageKey)
+      window.localStorage.removeItem(storageKey())
     } catch {
       // Reset still succeeds in memory when storage is unavailable.
     }
@@ -329,40 +317,42 @@ export function MiniBinderSpread({
   }
 
   return (
-    <section className="bg-card rounded-2xl border p-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
-          {description ? (
-            <p className="text-muted-foreground mt-2 text-sm leading-relaxed">{description}</p>
-          ) : null}
-          <p className="text-primary-deep mt-2 text-xs font-medium">
-            Interactive Pocket Binder · changes stay on this device
-          </p>
+    <Show when={props.pageOne.length > 0 || props.pageTwo.length > 0}>
+      <section class="bg-card rounded-2xl border p-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h2 class="text-xl font-semibold tracking-tight">{title()}</h2>
+            <Show when={props.description}>
+              <p class="text-muted-foreground mt-2 text-sm leading-relaxed">{props.description}</p>
+            </Show>
+            <p class="text-primary-deep mt-2 text-xs font-medium">
+              Interactive Pocket Binder · changes stay on this device
+            </p>
+          </div>
+          <Button variant="outline" size="sm" onClick={resetLayout} class="shrink-0">
+            Reset pockets
+          </Button>
         </div>
-        <Button variant="outline" size="sm" onClick={resetLayout} className="shrink-0">
-          Reset pockets
-        </Button>
-      </div>
-      <p className="sr-only" aria-live="polite">
-        {status}
-      </p>
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
-        <BinderPage
-          slots={layout.pageOne}
-          pageKey="pageOne"
-          pageLabel={leftPageLabel}
-          selectedIndex={selected?.page === 'pageOne' ? selected.index : null}
-          onSelect={selectPocket}
-        />
-        <BinderPage
-          slots={layout.pageTwo}
-          pageKey="pageTwo"
-          pageLabel={rightPageLabel}
-          selectedIndex={selected?.page === 'pageTwo' ? selected.index : null}
-          onSelect={selectPocket}
-        />
-      </div>
-    </section>
+        <p class="sr-only" aria-live="polite">
+          {status()}
+        </p>
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+          <BinderPage
+            slots={layout().pageOne}
+            pageKey="pageOne"
+            pageLabel={leftPageLabel()}
+            selectedIndex={selected()?.page === 'pageOne' ? selected()!.index : null}
+            onSelect={selectPocket}
+          />
+          <BinderPage
+            slots={layout().pageTwo}
+            pageKey="pageTwo"
+            pageLabel={rightPageLabel()}
+            selectedIndex={selected()?.page === 'pageTwo' ? selected()!.index : null}
+            onSelect={selectPocket}
+          />
+        </div>
+      </section>
+    </Show>
   )
 }

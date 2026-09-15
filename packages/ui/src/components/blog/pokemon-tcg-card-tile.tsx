@@ -29,7 +29,7 @@ export function PokemonTcgCardTile({
 }) {
   const imageBlock = (
     <div
-      className={cn(
+      class={cn(
         'relative aspect-[5/7] overflow-hidden rounded-xl border shadow-xs transition-shadow group-hover:shadow-md',
         TILE_SIZE_CLASS[size]
       )}
@@ -37,7 +37,7 @@ export function PokemonTcgCardTile({
       <TcgCardImage
         card={card}
         alt={`Cute ${card.name}${card.rarity ? ` ${card.rarity}` : ''} card from ${card.setName} - collectible Pokémon TCG`}
-        className="object-contain"
+        class="object-contain"
         sizes={TILE_IMAGE_SIZES[size]}
       />
     </div>
@@ -48,14 +48,14 @@ export function PokemonTcgCardTile({
   const zoomUrl = card.imageLarge ?? card.imageSmall
 
   return (
-    <div className="group flex flex-col gap-2">
+    <div class="group flex flex-col gap-2">
       {zoomable && zoomUrl ? (
         <a
           href={zoomUrl}
           target="_blank"
           rel="noopener noreferrer"
           title={`View larger image of ${card.name}`}
-          className="block cursor-zoom-in transition-transform duration-200 hover:scale-[1.03]"
+          class="block cursor-zoom-in transition-transform duration-200 hover:scale-[1.03]"
         >
           {imageBlock}
         </a>
@@ -64,15 +64,13 @@ export function PokemonTcgCardTile({
       )}
       {showMeta ? (
         <div
-          className={cn(
+          class={cn(
             'space-y-0.5 px-0.5',
             (size === 'compact' || size === 'priceList') && 'text-center'
           )}
         >
-          <p className="truncate text-xs font-medium">{card.setName}</p>
-          {card.rarity ? (
-            <p className="text-muted-foreground truncate text-xs">{card.rarity}</p>
-          ) : null}
+          <p class="truncate text-xs font-medium">{card.setName}</p>
+          {card.rarity ? <p class="text-muted-foreground truncate text-xs">{card.rarity}</p> : null}
         </div>
       ) : null}
     </div>

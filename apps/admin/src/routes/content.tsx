@@ -1,6 +1,5 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useQueryState } from 'nuqs'
-import { useState } from 'react'
+import { createFileRoute, stripSearchParams, useNavigate } from '@tanstack/solid-router'
+import { createMemo, createSignal, For, Show } from 'solid-js'
 import {
   Button,
   Card,
@@ -20,9 +19,10 @@ import { formatDate } from '../lib/format'
 import {
   CONTENT_STATUSES,
   CONTENT_STATUS_META,
+  contentActions,
+  contentStore,
   type ContentDraft,
   type ContentStatus,
-  useContentStore,
 } from '../stores/content'
 
 export const Route = createFileRoute('/content')({
@@ -34,25 +34,36 @@ export const Route = createFileRoute('/content')({
         : 'all',
     q: typeof search.q === 'string' ? search.q : '',
   }),
+  search: { middlewares: [stripSearchParams({ platform: 'all', q: '' })] },
   component: ContentStudioPage,
 })
 
 function ContentStudioPage() {
-  const drafts = useContentStore((state) => state.drafts)
-  const [platform, setPlatform] = useQueryState('platform', contentSearchParsers.platform)
-  const [q, setQ] = useQueryState('q', contentSearchParsers.q)
-  const [revisionTarget, setRevisionTarget] = useState<ContentDraft | null>(null)
-  const [scheduleTarget, setScheduleTarget] = useState<ContentDraft | null>(null)
+  const search = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
 
-  const needle = q.trim().toLowerCase()
-  const visible = drafts.filter((draft) => {
-    if (platform !== 'all' && draft.platform !== platform) return false
-    if (needle && !`${draft.title} ${draft.body}`.toLowerCase().includes(needle)) return false
-    return true
+  const platform = () => search().platform
+  const q = () => search().q
+  const setParam = (key: 'platform' | 'q', value: string | null) =>
+    void navigate({
+      search: (prev) => ({ ...prev, [key]: value ?? (key === 'platform' ? 'all' : '') }),
+      replace: true,
+    })
+
+  const [revisionTarget, setRevisionTarget] = createSignal<ContentDraft | null>(null)
+  const [scheduleTarget, setScheduleTarget] = createSignal<ContentDraft | null>(null)
+
+  const visible = createMemo(() => {
+    const needle = q().trim().toLowerCase()
+    return contentStore.drafts.filter((draft) => {
+      if (platform() !== 'all' && draft.platform !== platform()) return false
+      if (needle && !`${draft.title} ${draft.body}`.toLowerCase().includes(needle)) return false
+      return true
+    })
   })
 
   return (
-    <div className="p-6">
+    <div class="p-6">
       <PageHeader
         eyebrow="Content"
         title="Content studio"
@@ -64,108 +75,97 @@ function ContentStudioPage() {
         platform accounts receive nothing until that integration goes live.
       </IntegrationNotice>
 
-      <div className="mb-4 flex flex-wrap items-center gap-2">
+      <div class="mb-4 flex flex-wrap items-center gap-2">
         <Input
-          value={q}
-          onChange={(event) => void setQ(event.target.value || null, { throttleMs: 300 })}
+          value={q()}
+          onInput={(event) => setParam('q', event.target.value || null)}
           placeholder="Search drafts…"
           aria-label="Search content drafts"
-          className="w-56"
+          class="w-56"
         />
-        <div className="flex flex-wrap gap-1.5">
-          {CONTENT_PLATFORM_FILTERS.map((entry) => (
-            <Button
-              key={entry}
-              size="sm"
-              variant="filterChip"
-              aria-pressed={platform === entry}
-              onClick={() => void setPlatform(entry === 'all' ? null : entry)}
-            >
-              {entry === 'all' ? 'all' : CONTENT_PLATFORM_META[entry as ContentPlatform].label}
-            </Button>
-          ))}
+        <div class="flex flex-wrap gap-1.5">
+          <For each={CONTENT_PLATFORM_FILTERS}>
+            {(entry) => (
+              <Button
+                size="sm"
+                variant="filterChip"
+                aria-pressed={platform() === entry}
+                onClick={() => setParam('platform', entry === 'all' ? null : entry)}
+              >
+                {entry === 'all' ? 'all' : CONTENT_PLATFORM_META[entry as ContentPlatform].label}
+              </Button>
+            )}
+          </For>
         </div>
       </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4">
-        {CONTENT_STATUSES.map((status) => (
-          <PipelineColumn
-            key={status}
-            status={status}
-            drafts={visible.filter((draft) => draft.status === status)}
-            onRequestRevision={setRevisionTarget}
-            onSchedule={setScheduleTarget}
-          />
-        ))}
+      <div class="flex gap-4 overflow-x-auto pb-4">
+        <For each={CONTENT_STATUSES}>
+          {(status) => (
+            <PipelineColumn
+              status={status}
+              drafts={visible().filter((draft) => draft.status === status)}
+              onRequestRevision={setRevisionTarget}
+              onSchedule={setScheduleTarget}
+            />
+          )}
+        </For>
       </div>
 
-      <RevisionDialog target={revisionTarget} onClose={() => setRevisionTarget(null)} />
-      <ScheduleDialog target={scheduleTarget} onClose={() => setScheduleTarget(null)} />
+      <RevisionDialog target={revisionTarget()} onClose={() => setRevisionTarget(null)} />
+      <ScheduleDialog target={scheduleTarget()} onClose={() => setScheduleTarget(null)} />
     </div>
   )
 }
 
-function PipelineColumn({
-  status,
-  drafts,
-  onRequestRevision,
-  onSchedule,
-}: {
+function PipelineColumn(props: {
   status: ContentStatus
   drafts: ContentDraft[]
   onRequestRevision: (draft: ContentDraft) => void
   onSchedule: (draft: ContentDraft) => void
 }) {
-  const submitForReview = useContentStore((state) => state.submitForReview)
-  const approve = useContentStore((state) => state.approve)
-  const publish = useContentStore((state) => state.publish)
-  const discardToDraft = useContentStore((state) => state.discardToDraft)
-  const meta = CONTENT_STATUS_META[status]
+  const meta = CONTENT_STATUS_META[props.status]
 
   return (
-    <section className="flex w-68 shrink-0 flex-col gap-2.5" aria-label={meta.label}>
+    <section class="flex w-68 shrink-0 flex-col gap-2.5" aria-label={meta.label}>
       <div>
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
+        <h2 class="flex items-center gap-2 text-sm font-semibold">
           {meta.label}
-          <span className="text-muted-foreground rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums">
-            {drafts.length}
+          <span class="text-muted-foreground rounded-full bg-muted px-2 py-0.5 text-xs font-medium tabular-nums">
+            {props.drafts.length}
           </span>
         </h2>
-        <p className="text-muted-foreground mt-0.5 text-xs">{meta.description}</p>
+        <p class="text-muted-foreground mt-0.5 text-xs">{meta.description}</p>
       </div>
-      <div className="flex flex-1 flex-col gap-2.5">
-        {drafts.length === 0 ? (
-          <p className="text-muted-foreground rounded-lg border border-dashed py-6 text-center text-xs">
-            Nothing here
-          </p>
-        ) : (
-          drafts.map((draft) => (
-            <DraftCard
-              key={draft.id}
-              draft={draft}
-              onRequestRevision={onRequestRevision}
-              onSchedule={onSchedule}
-              onSubmitForReview={submitForReview}
-              onApprove={approve}
-              onPublish={publish}
-              onDiscard={discardToDraft}
-            />
-          ))
-        )}
+      <div class="flex flex-1 flex-col gap-2.5">
+        <Show
+          when={props.drafts.length > 0}
+          fallback={
+            <p class="text-muted-foreground rounded-lg border border-dashed py-6 text-center text-xs">
+              Nothing here
+            </p>
+          }
+        >
+          <For each={props.drafts}>
+            {(draft) => (
+              <DraftCard
+                draft={draft}
+                onRequestRevision={props.onRequestRevision}
+                onSchedule={props.onSchedule}
+                onSubmitForReview={contentActions.submitForReview}
+                onApprove={contentActions.approve}
+                onPublish={contentActions.publish}
+                onDiscard={contentActions.discardToDraft}
+              />
+            )}
+          </For>
+        </Show>
       </div>
     </section>
   )
 }
 
-function DraftCard({
-  draft,
-  onRequestRevision,
-  onSchedule,
-  onSubmitForReview,
-  onApprove,
-  onPublish,
-  onDiscard,
-}: {
+function DraftCard(props: {
   draft: ContentDraft
   onRequestRevision: (draft: ContentDraft) => void
   onSchedule: (draft: ContentDraft) => void
@@ -174,167 +174,168 @@ function DraftCard({
   onPublish: (id: string) => boolean
   onDiscard: (id: string) => boolean
 }) {
-  const platformMeta = CONTENT_PLATFORM_META[draft.platform]
+  const platformMeta = CONTENT_PLATFORM_META[props.draft.platform]
+  const draft = () => props.draft
   return (
-    <Card className="p-3.5">
-      <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+    <Card class="p-3.5">
+      <div class="text-muted-foreground flex items-center gap-1.5 text-xs">
         <ChannelDot meta={platformMeta} />
         <span>{platformMeta.label}</span>
-        <span className="ml-auto tabular-nums">{formatDate(draft.updatedAt)}</span>
+        <span class="ml-auto tabular-nums">{formatDate(draft().updatedAt)}</span>
       </div>
-      <p className="mt-2 text-sm leading-snug font-semibold">{draft.title}</p>
-      <p className="text-muted-foreground mt-1 line-clamp-3 text-xs">{draft.body}</p>
-      {draft.status === 'revision' && draft.revisionNote && (
-        <p className="border-warning/30 bg-warning/10 text-warning-foreground mt-2 rounded-md border px-2.5 py-2 text-xs">
-          {draft.revisionNote}
+      <p class="mt-2 text-sm leading-snug font-semibold">{draft().title}</p>
+      <p class="text-muted-foreground mt-1 line-clamp-3 text-xs">{draft().body}</p>
+      <Show when={draft().status === 'revision' && draft().revisionNote}>
+        <p class="border-warning/30 bg-warning/10 text-warning-foreground mt-2 rounded-md border px-2.5 py-2 text-xs">
+          {draft().revisionNote}
         </p>
-      )}
-      {draft.status === 'scheduled' && draft.scheduledFor && (
-        <p className="text-muted-foreground mt-2 text-xs">
-          Publishes {formatDate(draft.scheduledFor)}
+      </Show>
+      <Show when={draft().status === 'scheduled' && draft().scheduledFor}>
+        <p class="text-muted-foreground mt-2 text-xs">
+          Publishes {formatDate(draft().scheduledFor!)}
         </p>
-      )}
-      <div className="mt-2.5 flex flex-wrap gap-1.5">
-        {draft.status === 'draft' && (
-          <Button variant="outline" size="sm" onClick={() => void onSubmitForReview(draft.id)}>
+      </Show>
+      <div class="mt-2.5 flex flex-wrap gap-1.5">
+        <Show when={draft().status === 'draft'}>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void props.onSubmitForReview(draft().id)}
+          >
             Submit for review
           </Button>
-        )}
-        {draft.status === 'in_review' && (
-          <>
-            <Button size="sm" onClick={() => void onApprove(draft.id)}>
-              Approve
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => onRequestRevision(draft)}>
-              Request revision…
-            </Button>
-          </>
-        )}
-        {draft.status === 'revision' && (
-          <>
-            <Button size="sm" onClick={() => void onSubmitForReview(draft.id)}>
-              Resubmit
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => void onDiscard(draft.id)}>
-              Back to draft
-            </Button>
-          </>
-        )}
-        {draft.status === 'approved' && (
-          <>
-            <Button size="sm" onClick={() => void onPublish(draft.id)}>
-              Publish now
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => onSchedule(draft)}>
-              Schedule…
-            </Button>
-          </>
-        )}
-        {draft.status === 'scheduled' && (
-          <Button size="sm" onClick={() => void onPublish(draft.id)}>
+        </Show>
+        <Show when={draft().status === 'in_review'}>
+          <Button size="sm" onClick={() => void props.onApprove(draft().id)}>
+            Approve
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => props.onRequestRevision(draft())}>
+            Request revision…
+          </Button>
+        </Show>
+        <Show when={draft().status === 'revision'}>
+          <Button size="sm" onClick={() => void props.onSubmitForReview(draft().id)}>
+            Resubmit
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => void props.onDiscard(draft().id)}>
+            Back to draft
+          </Button>
+        </Show>
+        <Show when={draft().status === 'approved'}>
+          <Button size="sm" onClick={() => void props.onPublish(draft().id)}>
             Publish now
           </Button>
-        )}
+          <Button variant="outline" size="sm" onClick={() => props.onSchedule(draft())}>
+            Schedule…
+          </Button>
+        </Show>
+        <Show when={draft().status === 'scheduled'}>
+          <Button size="sm" onClick={() => void props.onPublish(draft().id)}>
+            Publish now
+          </Button>
+        </Show>
       </div>
     </Card>
   )
 }
 
-function RevisionDialog({ target, onClose }: { target: ContentDraft | null; onClose: () => void }) {
-  const requestRevision = useContentStore((state) => state.requestRevision)
-  const [note, setNote] = useState('')
+function RevisionDialog(props: { target: ContentDraft | null; onClose: () => void }) {
+  const [note, setNote] = createSignal('')
 
-  const open = target !== null
-  const canSubmit = note.trim().length > 0
+  const open = () => props.target !== null
+  const canSubmit = () => note().trim().length > 0
 
   return (
     <Dialog
-      open={open}
-      onOpenChange={(next) => {
+      open={open()}
+      onOpenChange={(next: boolean) => {
         if (!next) {
           setNote('')
-          onClose()
+          props.onClose()
         }
       }}
     >
-      {open && target && (
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Request revision</DialogTitle>
-            <DialogDescription>
-              Your note goes back to the content system with "{target.title}".
-            </DialogDescription>
-          </DialogHeader>
-          <textarea
-            value={note}
-            onChange={(event) => setNote(event.target.value)}
-            placeholder="What should change? Be specific — e.g. “lead with the pull, keep it under 30 seconds.”"
-            aria-label="Revision notes"
-            rows={4}
-            className="border-input bg-background focus-visible:ring-ring placeholder:text-muted-foreground focus-visible:ring-ring mt-3 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
-          />
-          <DialogFooter className="mt-4">
-            <Button
-              size="sm"
-              disabled={!canSubmit}
-              onClick={() => {
-                if (requestRevision(target.id, note.trim())) onClose()
-                setNote('')
-              }}
-            >
-              Send back
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      )}
+      <Show when={props.target}>
+        {(target) => (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Request revision</DialogTitle>
+              <DialogDescription>
+                Your note goes back to the content system with "{target().title}".
+              </DialogDescription>
+            </DialogHeader>
+            <textarea
+              value={note()}
+              onInput={(event) => setNote(event.target.value)}
+              placeholder="What should change? Be specific — e.g. “lead with the pull, keep it under 30 seconds.”"
+              aria-label="Revision notes"
+              rows={4}
+              class="border-input bg-background focus-visible:ring-ring placeholder:text-muted-foreground focus-visible:ring-ring mt-3 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+            />
+            <DialogFooter class="mt-4">
+              <Button
+                size="sm"
+                disabled={!canSubmit()}
+                onClick={() => {
+                  if (contentActions.requestRevision(target().id, note().trim())) props.onClose()
+                  setNote('')
+                }}
+              >
+                Send back
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Show>
     </Dialog>
   )
 }
 
-function ScheduleDialog({ target, onClose }: { target: ContentDraft | null; onClose: () => void }) {
-  const schedule = useContentStore((state) => state.schedule)
-  const [date, setDate] = useState('')
+function ScheduleDialog(props: { target: ContentDraft | null; onClose: () => void }) {
+  const [date, setDate] = createSignal('')
 
-  const open = target !== null
-  const canSubmit = date.length > 0
+  const open = () => props.target !== null
+  const canSubmit = () => date().length > 0
 
   return (
     <Dialog
-      open={open}
-      onOpenChange={(next) => {
+      open={open()}
+      onOpenChange={(next: boolean) => {
         if (!next) {
           setDate('')
-          onClose()
+          props.onClose()
         }
       }}
     >
-      {open && target && (
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Schedule for later</DialogTitle>
-            <DialogDescription>Pick the day "{target.title}" should publish.</DialogDescription>
-          </DialogHeader>
-          <Input
-            type="date"
-            value={date}
-            onChange={(event) => setDate(event.target.value)}
-            aria-label="Publish date"
-            className="mt-3 w-44"
-          />
-          <DialogFooter className="mt-4">
-            <Button
-              size="sm"
-              disabled={!canSubmit}
-              onClick={() => {
-                if (schedule(target.id, `${date}T12:00:00Z`)) onClose()
-                setDate('')
-              }}
-            >
-              Schedule
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      )}
+      <Show when={props.target}>
+        {(target) => (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Schedule for later</DialogTitle>
+              <DialogDescription>Pick the day "{target().title}" should publish.</DialogDescription>
+            </DialogHeader>
+            <Input
+              type="date"
+              value={date()}
+              onInput={(event) => setDate(event.target.value)}
+              aria-label="Publish date"
+              class="mt-3 w-44"
+            />
+            <DialogFooter class="mt-4">
+              <Button
+                size="sm"
+                disabled={!canSubmit()}
+                onClick={() => {
+                  if (contentActions.schedule(target().id, `${date()}T12:00:00Z`)) props.onClose()
+                  setDate('')
+                }}
+              >
+                Schedule
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Show>
     </Dialog>
   )
 }

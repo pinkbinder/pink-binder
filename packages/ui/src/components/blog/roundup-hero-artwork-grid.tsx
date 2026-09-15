@@ -1,5 +1,3 @@
-'use client'
-
 import { heroStripImageCandidates } from '@repo/data/client'
 import { cn } from '../../lib/utils'
 import { RemoteImageWithFallback } from '../remote-image-with-fallback'
@@ -9,7 +7,7 @@ export interface RoundupHeroArtworkGridProps {
   /** Per-cell URL chains (blob-first). When set, overrides `artworkUrls` for that index. */
   artworkCandidateLists?: string[][]
   fallback?: string
-  className?: string
+  class?: string
   /** Michi Method single scene — fill the cell. Official art / multi-up use contain + padding. */
   fillFrame?: boolean
   /** Extra padding on post pages vs index cards. */
@@ -42,7 +40,7 @@ export function RoundupHeroArtworkGrid({
   artworkUrls,
   artworkCandidateLists,
   fallback,
-  className,
+  class: className,
   fillFrame = false,
   variant = 'index',
 }: RoundupHeroArtworkGridProps) {
@@ -53,7 +51,7 @@ export function RoundupHeroArtworkGrid({
 
   return (
     <div
-      className={cn(
+      class={cn(
         'bg-muted divide-secondary/80 grid grid-rows-1 divide-x',
         variant === 'article' ? 'aspect-[12/5]' : 'aspect-[16/10]',
         gridColumnClass(lists.length),
@@ -62,7 +60,7 @@ export function RoundupHeroArtworkGrid({
     >
       {lists.map((candidates, index) => (
         <div
-          className={cn(
+          class={cn(
             'min-h-0 min-w-0',
             fillFrame
               ? 'relative overflow-hidden'
@@ -71,21 +69,20 @@ export function RoundupHeroArtworkGrid({
                   variant === 'article' ? 'bg-muted/30 p-2 sm:p-2.5' : 'bg-muted/40 p-2'
                 )
           )}
-          key={`${candidates[0]}-${index}`}
         >
           {fillFrame ? (
             <RemoteImageWithFallback
               candidates={candidates}
               alt=""
               fill
-              className="object-cover"
+              class="object-cover"
               sizes="(max-width: 768px) 33vw, 240px"
               priority={variant === 'article' && index === 0}
               imageVariant={variant === 'article' ? 'large' : 'small'}
             />
           ) : (
             <div
-              className={cn(
+              class={cn(
                 'relative h-full w-full',
                 variant === 'article' ? 'min-h-[56px]' : 'min-h-[120px]'
               )}
@@ -94,7 +91,7 @@ export function RoundupHeroArtworkGrid({
                 candidates={candidates}
                 alt=""
                 fill
-                className="object-contain drop-shadow-lg"
+                class="object-contain drop-shadow-lg"
                 sizes="(max-width: 768px) 33vw, 240px"
                 priority={variant === 'article' && index === 0}
                 imageVariant={variant === 'article' ? 'large' : 'small'}

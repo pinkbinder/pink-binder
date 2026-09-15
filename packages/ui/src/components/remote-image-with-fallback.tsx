@@ -1,24 +1,11 @@
-'use client'
-
 import { pokemonR2ImageVariantCandidates, type PokemonR2ImageVariant } from '@repo/data/client'
+import { createMemo, createSignal, Show } from 'solid-js'
 import { cn } from '../lib/utils'
-import { useMemo, useState } from 'react'
 
-export function RemoteImageWithFallback({
-  candidates,
-  alt,
-  className,
-  sizes,
-  fill = true,
-  width,
-  height,
-  priority = false,
-  imageVariant,
-  onExhausted,
-}: {
+export function RemoteImageWithFallback(props: {
   candidates: string[]
   alt: string
-  className?: string
+  class?: string
   /** Passed to the `srcSet`/`sizes` responsive image pair. */
   sizes: string
   fill?: boolean
@@ -31,42 +18,36 @@ export function RemoteImageWithFallback({
   /** Called when every candidate URL failed to load. */
   onExhausted?: () => void
 }) {
-  void sizes
-  const urls = useMemo(
-    () =>
-      imageVariant
-        ? pokemonR2ImageVariantCandidates(candidates, imageVariant)
-        : [...new Set(candidates.map((url) => url.trim()).filter(Boolean))],
-    [candidates, imageVariant]
+  const urls = createMemo(() =>
+    props.imageVariant
+      ? pokemonR2ImageVariantCandidates(props.candidates, props.imageVariant)
+      : [...new Set(props.candidates.map((url) => url.trim()).filter(Boolean))]
   )
-  const [index, setIndex] = useState(0)
-  const src = urls[index]
-
-  if (!src) {
-    return null
-  }
+  const [index, setIndex] = createSignal(0)
+  const src = () => urls()[index()]
 
   return (
-    <img
-      key={src}
-      src={src}
-      alt={alt}
-      width={fill ? undefined : width}
-      height={fill ? undefined : height}
-      className={cn(fill && 'absolute inset-0 h-full w-full', className)}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
-      decoding="async"
-      onError={() => {
-        setIndex((current) => {
-          const next = current + 1
-          if (next < urls.length) {
-            return next
-          }
-          onExhausted?.()
-          return current
-        })
-      }}
-    />
+    <Show when={src()}>
+      {(current) => (
+        <img
+          src={current()}
+          alt={props.alt}
+          width={props.fill === false ? props.width : undefined}
+          height={props.fill === false ? props.height : undefined}
+          class={cn(props.fill !== false && 'absolute inset-0 h-full w-full', props.class)}
+          loading={props.priority ? 'eager' : 'lazy'}
+          fetchpriority={props.priority ? 'high' : undefined}
+          decoding="async"
+          onError={() => {
+            const next = index() + 1
+            if (next < urls().length) {
+              setIndex(next)
+            } else {
+              props.onExhausted?.()
+            }
+          }}
+        />
+      )}
+    </Show>
   )
 }

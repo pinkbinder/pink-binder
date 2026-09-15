@@ -31,31 +31,29 @@ export function PopularityRankBadge({
   }
 
   return (
-    <div className="group relative inline-block">
+    <div class="group relative inline-block">
       <span
         tabIndex={0}
         role="note"
         aria-describedby={tooltipId}
         aria-label={`Popularity rank #${globalRank} out of ${totalCount} in blended r/pokemon surveys`}
-        className="border-border bg-muted text-muted-foreground focus:ring-ring group-hover:bg-muted/80 inline-flex cursor-default items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-hidden"
+        class="border-border bg-muted text-muted-foreground focus:ring-ring group-hover:bg-muted/80 inline-flex cursor-default items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium transition-colors focus:ring-2 focus:ring-offset-1 focus:outline-hidden"
       >
         <span>Popularity Rank: #{globalRank}</span>
-        <span aria-hidden className="text-[10px] opacity-60">
+        <span aria-hidden class="text-[10px] opacity-60">
           ℹ
         </span>
       </span>
       <div
         id={tooltipId}
         role="tooltip"
-        className="bg-popover text-popover-foreground invisible absolute top-full right-0 z-30 mt-1.5 w-96 max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border p-3 text-xs leading-snug opacity-0 shadow-md transition-all group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
+        class="bg-popover text-popover-foreground invisible absolute top-full right-0 z-30 mt-1.5 w-96 max-w-[min(24rem,calc(100vw-2rem))] rounded-xl border p-3 text-xs leading-snug opacity-0 shadow-md transition-all group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100"
       >
-        <p className="text-foreground font-medium">Fan survey data</p>
+        <p class="text-foreground font-medium">Fan survey data</p>
         {tooltipLines.map((line) => (
-          <p key={line} className="text-muted-foreground mt-1">
-            {line}
-          </p>
+          <p class="text-muted-foreground mt-1">{line}</p>
         ))}
-        <p className="text-foreground mt-2 font-medium">
+        <p class="text-foreground mt-2 font-medium">
           #{globalRank} / {totalCount}
         </p>
       </div>

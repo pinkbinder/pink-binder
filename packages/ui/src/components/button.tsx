@@ -1,6 +1,7 @@
-import * as React from 'react'
-import { Button as ButtonPrimitive } from '@base-ui/react/button'
+import * as ButtonPrimitive from '@kobalte/core/button'
+import type { PolymorphicProps } from '@kobalte/core/polymorphic'
 import { cva, type VariantProps } from 'class-variance-authority'
+import { splitProps, type ValidComponent } from 'solid-js'
 import { cn } from '../lib/utils'
 
 const buttonVariants = cva(
@@ -35,20 +36,24 @@ const buttonVariants = cva(
   }
 )
 
-interface ButtonProps
-  extends Omit<ButtonPrimitive.Props, 'className'>, VariantProps<typeof buttonVariants> {
-  className?: string
+interface ButtonProps<T extends ValidComponent = 'button'>
+  extends ButtonPrimitive.ButtonRootProps<T>, VariantProps<typeof buttonVariants> {
+  class?: string | undefined
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => (
-    <ButtonPrimitive
-      className={cn(buttonVariants({ variant, size, className }))}
-      ref={ref}
-      {...props}
+/**
+ * Kobalte `as` polymorphism replaces Base UI's `render` prop:
+ * `<Button as="a" href="…">` or `<Button as={Link} to="…">`.
+ */
+function Button<T extends ValidComponent = 'button'>(props: PolymorphicProps<T, ButtonProps<T>>) {
+  const [local, rest] = splitProps(props as ButtonProps, ['class', 'variant', 'size'])
+  return (
+    <ButtonPrimitive.Root
+      class={cn(buttonVariants({ variant: local.variant, size: local.size }), local.class)}
+      {...rest}
     />
   )
-)
-Button.displayName = 'Button'
+}
 
 export { Button, buttonVariants }
+export type { ButtonProps }

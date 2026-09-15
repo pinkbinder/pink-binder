@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createStore, produce } from 'solid-js/store'
 
 import { AD_PLATFORMS, type AdPlatform } from '../lib/channels'
 
@@ -141,34 +141,29 @@ export function summarizeAdSpend(campaigns: AdCampaign[]): AdSpendSummary {
   }
 }
 
-interface AdsState {
-  campaigns: AdCampaign[]
-  setCampaignStatus: (id: string, status: CampaignStatus) => void
-  setDailyBudget: (id: string, cents: number) => void
-}
-
 /**
  * Foundational client state for the ad-spend service. Pauses and budget
  * edits are local until the ad platform APIs are connected.
  */
-export const useAdsStore = create<AdsState>()((set) => ({
-  campaigns: createAdsSeed(),
-  setCampaignStatus: (id, status) =>
-    set((state) => ({
-      campaigns: state.campaigns.map((campaign) =>
-        campaign.id === id ? { ...campaign, status, updatedAt: new Date().toISOString() } : campaign
-      ),
-    })),
-  setDailyBudget: (id, cents) =>
-    set((state) => ({
-      campaigns: state.campaigns.map((campaign) =>
-        campaign.id === id
-          ? {
-              ...campaign,
-              dailyBudgetCents: Math.max(0, Math.round(cents)),
-              updatedAt: new Date().toISOString(),
-            }
-          : campaign
-      ),
-    })),
-}))
+export const [adsStore, setAdsStore] = createStore({ campaigns: createAdsSeed() })
+
+export const adsActions = {
+  setCampaignStatus: (id: string, status: CampaignStatus) =>
+    setAdsStore(
+      'campaigns',
+      (campaign) => campaign.id === id,
+      produce((campaign) => {
+        campaign.status = status
+        campaign.updatedAt = new Date().toISOString()
+      })
+    ),
+  setDailyBudget: (id: string, cents: number) =>
+    setAdsStore(
+      'campaigns',
+      (campaign) => campaign.id === id,
+      produce((campaign) => {
+        campaign.dailyBudgetCents = Math.max(0, Math.round(cents))
+        campaign.updatedAt = new Date().toISOString()
+      })
+    ),
+}

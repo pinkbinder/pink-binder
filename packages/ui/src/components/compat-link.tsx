@@ -1,12 +1,8 @@
-'use client'
+import { splitProps, type JSX } from 'solid-js'
 
-import type { AnchorHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
-
-type AnchorProps = DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement>
-
-export interface CompatLinkProps extends Omit<AnchorProps, 'href'> {
+export interface CompatLinkProps extends Omit<JSX.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'> {
   href: string | { pathname?: string; query?: Record<string, string | string[] | undefined> }
-  children?: ReactNode
+  children?: JSX.Element
   /** Accepted for link API compatibility; ignored (Astro handles scroll). */
   scroll?: boolean
   /** Accepted for link API compatibility; ignored (no locale routing). */
@@ -36,21 +32,11 @@ export function resolveCompatHref(href: CompatLinkProps['href']): string {
 }
 
 /**
- * Plain anchor for Astro React islands (same props shape as the framework link import it replaces).
+ * Plain anchor for Astro islands (same props shape as the framework link import it replaces).
  * Renders a plain anchor — no router, no prefetch. Extra link-only props
  * (`scroll`, `locale`, `replace`, `prefetch`) are accepted and ignored.
  */
-export default function CompatLink({
-  href,
-  scroll: _scroll,
-  locale: _locale,
-  replace: _replace,
-  prefetch: _prefetch,
-  ...rest
-}: CompatLinkProps) {
-  void _scroll
-  void _locale
-  void _replace
-  void _prefetch
-  return <a {...rest} href={resolveCompatHref(href)} />
+export default function CompatLink(props: CompatLinkProps) {
+  const [local, rest] = splitProps(props, ['href', 'scroll', 'locale', 'replace', 'prefetch'])
+  return <a {...rest} href={resolveCompatHref(local.href)} />
 }
