@@ -60,6 +60,8 @@ import {
 
 export type { EnrichedPostForGrid }
 
+const DEFAULT_POST_THUMBNAIL = '/images/logo.png'
+
 /** Unfiltered index: first paint shows this many cards; more mount on scroll. */
 const INITIAL_VISIBLE_POSTS = 9
 const LOAD_MORE_ROOT_MARGIN = '480px'
@@ -190,7 +192,9 @@ interface BlogGridProps {
 }
 
 export function BlogGrid(props: BlogGridProps) {
-  const { posts, total, initialQuery = {}, defaultPostThumbnail = '/images/logo.png' } = props
+  // Props are read through the reactive proxy (never destructured) so facet
+  // updates that arrive after hydration stay fine-grained. Defaults apply at
+  // the read site with `??`, not destructuring defaults.
   const [urlFilters, setUrlFilters] = createUrlQueryStates(blogFilterParsers, {
     history: 'push',
   })
@@ -252,7 +256,7 @@ export function BlogGrid(props: BlogGridProps) {
   }))
   const directFilter = () => resolvedQuery().filter ?? null
   const tagFilter = () => resolvedQuery().tag ?? null
-  const initialQueryString = blogGridQueryString(initialQuery)
+  const initialQueryString = blogGridQueryString(props.initialQuery ?? {})
   const gridQuery = () => blogGridQueryString(resolvedQuery())
   const gridResult = createInfiniteQuery((() => ({
     queryKey: blogGridQueryKey(resolvedQuery()),
@@ -260,7 +264,9 @@ export function BlogGrid(props: BlogGridProps) {
       fetchBlogGridPage(resolvedQuery(), pageParam as number, signal),
     initialPageParam: 0,
     initialData:
-      gridQuery() === initialQueryString ? () => blogGridInitialData(posts, total) : undefined,
+      gridQuery() === initialQueryString
+        ? () => blogGridInitialData(props.posts, props.total)
+        : undefined,
     placeholderData: keepPreviousData,
     getNextPageParam: (lastPage: BlogGridPage) =>
       lastPage.nextOffset < lastPage.total ? lastPage.nextOffset : undefined,
@@ -1209,16 +1215,17 @@ export function BlogGrid(props: BlogGridProps) {
                           artworkUrls={post.heroArtworkUrls}
                           fillFrame={post.heroArtworkFill}
                           meta={formatPostDate(post.date)}
-                          fallback={defaultPostThumbnail}
+                          fallback={props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL}
                         />
                       ) : (
                         <PostCard
                           post={{
                             title: post.title,
                             excerpt: post.description,
-                            thumbnail: post.image || defaultPostThumbnail,
+                            thumbnail:
+                              post.image || (props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL),
                             thumbnailAlt: `${post.title} artwork`,
-                            thumbnailFallback: defaultPostThumbnail,
+                            thumbnailFallback: props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL,
                             imageVariant: 'small',
                             thumbnailFit: 'contain',
                             imagePriority: index() === 0,

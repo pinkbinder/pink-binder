@@ -20,6 +20,10 @@ interface SearchableSelectProps {
   clearLabel?: string
   label?: string
   class?: string
+  /** Max options mounted in the open dropdown (default 100). Large catalogs
+   *  (2k+ tag entries) only need the top of a ranked list; typing narrows
+   *  further. Selection display reads the full `options`, not this window. */
+  renderLimit?: number
   /** Render a custom chip for the selected value (shown in trigger). */
   renderSelected?: (option: SearchableSelectOption) => JSX.Element
   /** Custom option filtering (e.g. fuzzy match); defaults to case-insensitive substring on label. */
@@ -31,6 +35,10 @@ interface SearchableSelectProps {
     onAction: (search: string) => void
   }
 }
+
+/** Cap on mounted dropdown rows. Opening a 2,000-button list costs far more
+ *  than the interaction it serves; the overflow hint routes users to search. */
+const DEFAULT_RENDER_LIMIT = 100
 
 export function SearchableSelect(props: SearchableSelectProps) {
   const [open, setOpen] = createSignal(false)
@@ -46,6 +54,9 @@ export function SearchableSelect(props: SearchableSelectProps) {
     const lower = term.toLowerCase()
     return props.options.filter((opt) => opt.label.toLowerCase().includes(lower))
   })
+
+  const rendered = createMemo(() => filtered().slice(0, props.renderLimit ?? DEFAULT_RENDER_LIMIT))
+  const overflowCount = createMemo(() => filtered().length - rendered().length)
 
   const selectedOption = createMemo(
     () => props.options.find((opt) => opt.value === props.value) ?? null
@@ -159,7 +170,7 @@ export function SearchableSelect(props: SearchableSelectProps) {
               </span>
               <span>{resolvedClearLabel()}</span>
             </button>
-            <For each={filtered()}>
+            <For each={rendered()}>
               {(option) => (
                 <button
                   type="button"
@@ -181,6 +192,11 @@ export function SearchableSelect(props: SearchableSelectProps) {
                 </button>
               )}
             </For>
+            <Show when={overflowCount() > 0}>
+              <p class="text-muted-foreground px-2 py-2 text-center text-xs">
+                Keep typing — {overflowCount().toLocaleString()} more matches
+              </p>
+            </Show>
             <Show when={filtered().length === 0}>
               <p class="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
             </Show>
