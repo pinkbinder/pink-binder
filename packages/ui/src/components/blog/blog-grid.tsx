@@ -188,13 +188,13 @@ interface BlogGridProps {
   defaultPostThumbnail?: string
 }
 
-export function BlogGrid({
-  posts,
-  facets,
-  total,
-  initialQuery = {},
-  defaultPostThumbnail = '/images/logo.png',
-}: BlogGridProps) {
+export function BlogGrid(props: BlogGridProps) {
+  const {
+    posts,
+    total,
+    initialQuery = {},
+    defaultPostThumbnail = '/images/logo.png',
+  } = props
   const [urlFilters, setUrlFilters] = createUrlQueryStates(blogFilterParsers, {
     history: 'push',
   })
@@ -204,35 +204,35 @@ export function BlogGrid({
   const [gridEl, setGridEl] = createSignal<HTMLDivElement>()
   let pendingKeyboardFocusIndex: number | null = null
 
-  const typeFilters = facets.types
-  const generationFilters = facets.generations
-  const illustratorFilters = facets.illustrators
-  const themeFilters = facets.themes
-  const expansionFilters = facets.expansions
-  const pokemonFilters = facets.pokemon
-  const roundupListFilters = facets.lists
-  const tagCatalogOptions = facets.tags
+  const typeFilters = () => props.facets.types
+  const generationFilters = () => props.facets.generations
+  const illustratorFilters = () => props.facets.illustrators
+  const themeFilters = () => props.facets.themes
+  const expansionFilters = () => props.facets.expansions
+  const pokemonFilters = () => props.facets.pokemon
+  const roundupListFilters = () => props.facets.lists
+  const tagCatalogOptions = () => props.facets.tags
 
-  const typeFilterSet = createMemo(() => new Set(typeFilters))
-  const generationFilterSet = createMemo(() => new Set(generationFilters))
-  const illustratorFilterSet = createMemo(() => new Set(illustratorFilters))
-  const themeFilterSet = createMemo(() => new Set(themeFilters))
-  const expansionFilterSet = createMemo(() => new Set(expansionFilters.map((entry) => entry.slug)))
-  const pokemonFilterSet = createMemo(() => new Set(pokemonFilters.map((entry) => entry.slug)))
-  const roundupListFilterSet = createMemo(() => new Set(roundupListFilters))
-  const tagCatalogSet = createMemo(() => new Set(tagCatalogOptions.map((entry) => entry.value)))
+  const typeFilterSet = createMemo(() => new Set(typeFilters()))
+  const generationFilterSet = createMemo(() => new Set(generationFilters()))
+  const illustratorFilterSet = createMemo(() => new Set(illustratorFilters()))
+  const themeFilterSet = createMemo(() => new Set(themeFilters()))
+  const expansionFilterSet = createMemo(() => new Set(expansionFilters().map((entry) => entry.slug)))
+  const pokemonFilterSet = createMemo(() => new Set(pokemonFilters().map((entry) => entry.slug)))
+  const roundupListFilterSet = createMemo(() => new Set(roundupListFilters()))
+  const tagCatalogSet = createMemo(() => new Set(tagCatalogOptions().map((entry) => entry.value)))
   const catalogFacetContext = createMemo<CatalogTagFacetContext>(() => ({
-    typeFilters,
-    generationFilters,
-    illustratorFilters,
-    themeFilters,
-    roundupListFilters,
-    pokemonFilters,
-    expansionFilters,
+    typeFilters: typeFilters(),
+    generationFilters: generationFilters(),
+    illustratorFilters: illustratorFilters(),
+    themeFilters: themeFilters(),
+    roundupListFilters: roundupListFilters(),
+    pokemonFilters: pokemonFilters(),
+    expansionFilters: expansionFilters(),
   }))
   const typeVisuals = createMemo(() =>
     Object.fromEntries(
-      typeFilters.map((type) => [
+      typeFilters().map((type) => [
         type,
         {
           lightColors: getPokemonTypeLightColors(type),
@@ -242,7 +242,7 @@ export function BlogGrid({
     )
   )
 
-  const resolvedQuery = createMemo(() => resolveBlogGridQuery(urlFilters(), facets))
+  const resolvedQuery = createMemo(() => resolveBlogGridQuery(urlFilters(), props.facets))
   const groupedFilters = createMemo<GroupedFilters>(() => ({
     type: resolvedQuery().type ?? null,
     generation: resolvedQuery().generation ?? null,
@@ -359,7 +359,7 @@ export function BlogGrid({
     if (!nextTag) {
       return nextTag
     }
-    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTag)
+    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === nextTag)
     const resolved = resolveCatalogTagToFacet(
       nextTag,
       catalogEntry?.label ?? nextTag,
@@ -386,7 +386,7 @@ export function BlogGrid({
       return
     }
 
-    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === nextTag)
+    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === nextTag)
     const promoted = resolveCatalogTagToFacet(
       nextTag,
       catalogEntry?.label ?? nextTag,
@@ -407,11 +407,11 @@ export function BlogGrid({
       const mirrored = catalogSelectValueFromFilters(
         tagFilter(),
         groupedFilters(),
-        tagCatalogOptions,
+        tagCatalogOptions(),
         catalogFacetContext()
       )
       if (mirrored) {
-        const catalogEntry = tagCatalogOptions.find((entry) => entry.value === mirrored)
+        const catalogEntry = tagCatalogOptions().find((entry) => entry.value === mirrored)
         const resolved = resolveCatalogTagToFacet(
           mirrored,
           catalogEntry?.label ?? mirrored,
@@ -428,7 +428,7 @@ export function BlogGrid({
     const currentCatalog = catalogSelectValueFromFilters(
       tagFilter(),
       groupedFilters(),
-      tagCatalogOptions,
+      tagCatalogOptions(),
       catalogFacetContext()
     )
     applyTagFilter(nextCatalogValue === currentCatalog ? null : nextCatalogValue)
@@ -492,7 +492,7 @@ export function BlogGrid({
       const currentCatalog = catalogSelectValueFromFilters(
         tagFilter(),
         groupedFilters(),
-        tagCatalogOptions,
+        tagCatalogOptions(),
         catalogFacetContext()
       )
       applyCatalogFilter(currentCatalog === catalogValue ? null : catalogValue)
@@ -542,7 +542,7 @@ export function BlogGrid({
   }
 
   const typeOptions = createMemo(() =>
-    typeFilters.map((type) => {
+    typeFilters().map((type) => {
       const logoUrl = typeVisuals()[type]?.logoUrl ?? getPokemonTypeLogoUrl(type)
       const lightColors = typeVisuals()[type]?.lightColors ?? getPokemonTypeLightColors(type)
       return {
@@ -561,13 +561,13 @@ export function BlogGrid({
   )
 
   const generationOptions = createMemo(() =>
-    generationFilters.map((g) => ({ value: g, label: generationFilterLabel(g) }))
+    generationFilters().map((g) => ({ value: g, label: generationFilterLabel(g) }))
   )
 
-  const listOptions = createMemo(() => roundupListFilters.map((l) => ({ value: l, label: l })))
+  const listOptions = createMemo(() => roundupListFilters().map((l) => ({ value: l, label: l })))
 
   const illustratorOptions = createMemo(() =>
-    illustratorFilters.map((name) => {
+    illustratorFilters().map((name) => {
       const icon = getCollectionBadgeIcon(name)
       return {
         value: name,
@@ -578,14 +578,14 @@ export function BlogGrid({
   )
 
   const expansionOptions = createMemo(() =>
-    expansionFilters.map((entry) => ({
+    expansionFilters().map((entry) => ({
       value: entry.slug,
       label: entry.label,
     }))
   )
 
   const pokemonOptions = createMemo(() =>
-    pokemonFilters.map((entry) => ({
+    pokemonFilters().map((entry) => ({
       value: entry.slug,
       label: entry.label,
       emphasized: isTopPopularPokemonSlug(entry.slug),
@@ -597,7 +597,7 @@ export function BlogGrid({
   }
 
   const themeOptions = createMemo(() =>
-    themeFilters.map((name) => {
+    themeFilters().map((name) => {
       const icon = getCollectionBadgeIcon(name)
       return {
         value: name,
@@ -613,7 +613,7 @@ export function BlogGrid({
 
     const typeName =
       parseTypeCategory(label) ??
-      typeFilters.find((type) => type.toLowerCase() === catalogValue) ??
+      typeFilters().find((type) => type.toLowerCase() === catalogValue) ??
       null
     if (typeName) {
       const facet = typeOptions().find((option) => option.value === typeName)
@@ -622,7 +622,7 @@ export function BlogGrid({
       }
     }
 
-    const generation = generationFilters.find(
+    const generation = generationFilters().find(
       (gen) =>
         gen.toLowerCase() === catalogValue ||
         gen.toLowerCase() === label.toLowerCase() ||
@@ -635,7 +635,7 @@ export function BlogGrid({
       }
     }
 
-    const theme = themeFilters.find((name) => name.toLowerCase() === catalogValue || name === label)
+    const theme = themeFilters().find((name) => name.toLowerCase() === catalogValue || name === label)
     if (theme) {
       const facet = themeOptions().find((option) => option.value === theme)
       if (facet) {
@@ -643,7 +643,7 @@ export function BlogGrid({
       }
     }
 
-    const illustrator = illustratorFilters.find(
+    const illustrator = illustratorFilters().find(
       (name) => name.toLowerCase() === catalogValue || name === label
     )
     if (illustrator) {
@@ -653,7 +653,7 @@ export function BlogGrid({
       }
     }
 
-    const list = roundupListFilters.find(
+    const list = roundupListFilters().find(
       (name) => name.toLowerCase() === catalogValue || name === label
     )
     if (list) {
@@ -663,7 +663,7 @@ export function BlogGrid({
       }
     }
 
-    const pokemon = pokemonFilters.find(
+    const pokemon = pokemonFilters().find(
       (species) => species.slug === catalogValue || species.label.toLowerCase() === catalogValue
     )
     if (pokemon) {
@@ -673,7 +673,7 @@ export function BlogGrid({
       }
     }
 
-    const expansion = expansionFilters.find(
+    const expansion = expansionFilters().find(
       (expansionEntry) =>
         expansionEntry.slug === catalogValue ||
         expansionEntry.label.toLowerCase() === catalogValue ||
@@ -689,7 +689,7 @@ export function BlogGrid({
     return { value: catalogValue, label }
   }
 
-  const tagOptions = createMemo(() => tagCatalogOptions.map(resolveCatalogTagOption))
+  const tagOptions = createMemo(() => tagCatalogOptions().map(resolveCatalogTagOption))
 
   const filterTagOptions = (options: SearchableSelectOption[], search: string) => {
     const ranked = filterTagCatalogOptionsBySearch(
@@ -706,7 +706,7 @@ export function BlogGrid({
     catalogSelectValueFromFilters(
       tagFilter(),
       groupedFilters(),
-      tagCatalogOptions,
+      tagCatalogOptions(),
       catalogFacetContext()
     )
   )
@@ -720,7 +720,7 @@ export function BlogGrid({
     if (!tag) {
       return false
     }
-    const catalogEntry = tagCatalogOptions.find((entry) => entry.value === tag)
+    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === tag)
     return !isCatalogTagRedundantWithFacet(
       tag,
       catalogEntry?.label ?? tag,
@@ -781,11 +781,11 @@ export function BlogGrid({
       groupedFilters().list,
       groupedFilters().illustrator,
       groupedFilters().expansion
-        ? (expansionFilters.find((entry) => entry.slug === groupedFilters().expansion)?.label ??
+        ? (expansionFilters().find((entry) => entry.slug === groupedFilters().expansion)?.label ??
           groupedFilters().expansion)
         : null,
       groupedFilters().pokemon
-        ? (pokemonFilters.find((entry) => entry.slug === groupedFilters().pokemon)?.label ??
+        ? (pokemonFilters().find((entry) => entry.slug === groupedFilters().pokemon)?.label ??
           groupedFilters().pokemon)
         : null,
       groupedFilters().themes,
@@ -815,17 +815,20 @@ export function BlogGrid({
   })
 
   const pokemonFilterRowClass = 'grid grid-cols-1 gap-3 sm:grid-cols-3'
-  const metaFilterCount =
-    1 +
-    (expansionFilters.length > 0 ? 1 : 0) +
-    (illustratorFilters.length > 0 ? 1 : 0) +
-    (roundupListFilters.length > 0 ? 1 : 0)
-  const metaFilterRowClass =
-    metaFilterCount >= 4
+  const metaFilterCount = createMemo(
+    () =>
+      1 +
+      (expansionFilters().length > 0 ? 1 : 0) +
+      (illustratorFilters().length > 0 ? 1 : 0) +
+      (roundupListFilters().length > 0 ? 1 : 0)
+  )
+  const metaFilterRowClass = createMemo(() =>
+    metaFilterCount() >= 4
       ? 'grid grid-cols-2 gap-3 lg:grid-cols-4'
-      : metaFilterCount >= 3
+      : metaFilterCount() >= 3
         ? 'grid grid-cols-2 gap-3 sm:grid-cols-3'
         : 'grid grid-cols-2 gap-3'
+  )
 
   return (
     <div class="flex flex-col gap-6">
@@ -837,7 +840,7 @@ export function BlogGrid({
         data-analytics-section="blog-filters"
       >
         <div class="flex flex-col gap-4">
-          {tagCatalogOptions.length > 0 ? (
+          {tagCatalogOptions().length > 0 ? (
             <div class="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
               <div class="flex items-center gap-2">
                 <Search class="text-primary-deep h-4 w-4 shrink-0" aria-hidden />
@@ -880,7 +883,7 @@ export function BlogGrid({
           ) : null}
 
           <p class="text-muted-foreground text-sm leading-relaxed">
-            {tagCatalogOptions.length > 0
+            {tagCatalogOptions().length > 0
               ? 'Search the entire catalog above, or expand the section below to filter by Pokémon species, TCG illustrator, and '
               : 'Expand the sections below to browse by Pokémon species, TCG illustrator, or '}
             <span class="text-foreground font-medium">curated binder themes</span>!
@@ -922,7 +925,7 @@ export function BlogGrid({
                       renderSelected={renderTypeChip}
                     />
                   </div>
-                  {pokemonFilters.length > 0 ? (
+                  {pokemonFilters().length > 0 ? (
                     <div class="grid gap-1.5">
                       <BlogFilterGroupLabel
                         group="pokemon"
@@ -957,7 +960,7 @@ export function BlogGrid({
                     section="meta"
                     class="text-muted-foreground text-sm font-medium tracking-[0.18em] uppercase"
                   />
-                  <div class={`mt-2.5 ${metaFilterRowClass}`}>
+                  <div class={`mt-2.5 ${metaFilterRowClass()}`}>
                     <div class="grid gap-1.5">
                       <BlogFilterGroupLabel
                         group="generation"
@@ -970,7 +973,7 @@ export function BlogGrid({
                         label={`Filter by ${BLOG_FILTER_GROUP_LABELS.generation.toLowerCase()}`}
                       />
                     </div>
-                    {expansionFilters.length > 0 ? (
+                    {expansionFilters().length > 0 ? (
                       <div class="grid gap-1.5">
                         <BlogFilterGroupLabel
                           group="expansion"
@@ -984,7 +987,7 @@ export function BlogGrid({
                         />
                       </div>
                     ) : null}
-                    {illustratorFilters.length > 0 ? (
+                    {illustratorFilters().length > 0 ? (
                       <div class="grid gap-1.5">
                         <BlogFilterGroupLabel
                           group="illustrator"
@@ -999,7 +1002,7 @@ export function BlogGrid({
                         />
                       </div>
                     ) : null}
-                    {roundupListFilters.length > 0 ? (
+                    {roundupListFilters().length > 0 ? (
                       <div class="grid gap-1.5">
                         <BlogFilterGroupLabel
                           group="list"
@@ -1113,7 +1116,7 @@ export function BlogGrid({
                 onClick={() => applyGroupedFilter('expansion', null)}
                 class={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
               >
-                {expansionFilters.find((entry) => entry.slug === groupedFilters().expansion)
+                {expansionFilters().find((entry) => entry.slug === groupedFilters().expansion)
                   ?.label ?? groupedFilters().expansion}{' '}
                 <span class="ml-1 text-[10px] opacity-60">×</span>
               </Button>
@@ -1238,7 +1241,7 @@ export function BlogGrid({
                                 tagFilter(),
                                 catalogSelectValue(),
                                 catalogFacetContext(),
-                                tagCatalogOptions
+                                tagCatalogOptions()
                               )}
                               onClick={() => applyCategoryFilter(filterValue)}
                               class={`h-auto ${CLICKABLE_BADGE_CLASS}`}
@@ -1263,7 +1266,7 @@ export function BlogGrid({
                               tagFilter(),
                               catalogSelectValue(),
                               catalogFacetContext(),
-                              tagCatalogOptions
+                              tagCatalogOptions()
                             )}
                             onClick={() => applyCategoryFilter(filterValue)}
                             class={`h-auto ${CLICKABLE_BADGE_CLASS} border-(--type-border) bg-(--type-bg) text-(--type-fg)`}
@@ -1307,7 +1310,7 @@ export function BlogGrid({
                               tagFilter(),
                               catalogSelectValue(),
                               catalogFacetContext(),
-                              tagCatalogOptions
+                              tagCatalogOptions()
                             )}
                             onClick={() =>
                               applyGroupedFilter(
