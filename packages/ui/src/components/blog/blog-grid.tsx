@@ -1,4 +1,13 @@
-import { createEffect, createMemo, createSignal, For, onCleanup, Show } from 'solid-js'
+import {
+  createEffect,
+  createMemo,
+  createSelector,
+  createSignal,
+  For,
+  onCleanup,
+  Show,
+  startTransition,
+} from 'solid-js'
 import Link from '../compat-link'
 import {
   createInfiniteQuery,
@@ -45,6 +54,7 @@ import { Button } from '../button'
 import { SearchableSelect, type SearchableSelectOption } from '../searchable-select'
 import {
   BLOG_GRID_GC_TIME_MS,
+  BLOG_GRID_MAX_PAGES,
   BLOG_GRID_STALE_TIME_MS,
   blogGridInitialData,
   blogGridQueryKey,
@@ -59,6 +69,8 @@ import {
 } from '../../lib/blog-query-state'
 
 export type { EnrichedPostForGrid }
+
+const DEFAULT_POST_THUMBNAIL = '/images/logo.png'
 
 /** Unfiltered index: first paint shows this many cards; more mount on scroll. */
 const INITIAL_VISIBLE_POSTS = 9
@@ -190,7 +202,9 @@ interface BlogGridProps {
 }
 
 export function BlogGrid(props: BlogGridProps) {
-  const { posts, total, initialQuery = {}, defaultPostThumbnail = '/images/logo.png' } = props
+  // Props are read through the reactive proxy (never destructured) so facet
+  // updates that arrive after hydration stay fine-grained. Defaults apply at
+  // the read site with `??`, not destructuring defaults.
   const [urlFilters, setUrlFilters] = createUrlQueryStates(blogFilterParsers, {
     history: 'push',
   })
@@ -252,15 +266,18 @@ export function BlogGrid(props: BlogGridProps) {
   }))
   const directFilter = () => resolvedQuery().filter ?? null
   const tagFilter = () => resolvedQuery().tag ?? null
-  const initialQueryString = blogGridQueryString(initialQuery)
+  const initialQueryString = blogGridQueryString(props.initialQuery ?? {})
   const gridQuery = () => blogGridQueryString(resolvedQuery())
   const gridResult = createInfiniteQuery((() => ({
     queryKey: blogGridQueryKey(resolvedQuery()),
     queryFn: ({ pageParam, signal }) =>
       fetchBlogGridPage(resolvedQuery(), pageParam as number, signal),
     initialPageParam: 0,
+    maxPages: BLOG_GRID_MAX_PAGES,
     initialData:
-      gridQuery() === initialQueryString ? () => blogGridInitialData(posts, total) : undefined,
+      gridQuery() === initialQueryString
+        ? () => blogGridInitialData(props.posts, props.total)
+        : undefined,
     placeholderData: keepPreviousData,
     getNextPageParam: (lastPage: BlogGridPage) =>
       lastPage.nextOffset < lastPage.total ? lastPage.nextOffset : undefined,
@@ -342,13 +359,17 @@ export function BlogGrid(props: BlogGridProps) {
       nextDirectFilter,
       nextTagFilter
     )
-    void setUrlFilters(
-      canonicalBlogFilterState({
-        ...nextGroupedFilters,
-        q: resolvedQuery().q,
-        tag: nextTagFilter,
-        filter: nextDirectFilter,
-      })
+    // The URL write is synchronous; the transition defers the dependent grid
+    // re-render so popover close and chip feedback stay responsive.
+    void startTransition(() =>
+      setUrlFilters(
+        canonicalBlogFilterState({
+          ...nextGroupedFilters,
+          q: resolvedQuery().q,
+          tag: nextTagFilter,
+          filter: nextDirectFilter,
+        })
+      )
     )
   }
 
@@ -446,7 +467,7 @@ export function BlogGrid(props: BlogGridProps) {
     if (term) {
       trackSearch({ searchTerm: term })
     }
-    void setUrlFilters({ q: term || null })
+    void startTransition(() => setUrlFilters({ q: term || null }))
   }
 
   function applyCategoryFilter(filterValue: string) {
@@ -716,6 +737,32 @@ export function BlogGrid(props: BlogGridProps) {
   const selectedTagOption = createMemo(
     () => tagOptions().find((entry) => entry.value === catalogSelectValue()) ?? null
   )
+
+  /**
+   * Chip-active state is a pure function of this snapshot. Each chip wraps it
+   * in `createSelector` so a filter change only re-runs the selectors whose
+   * pressed state actually flips, instead of every card's aria/class effect.
+   */
+  const activeFilterState = createMemo(() => ({
+    grouped: groupedFilters(),
+    direct: directFilter(),
+    tag: tagFilter(),
+    catalog: catalogSelectValue(),
+    ctx: catalogFacetContext(),
+    options: tagCatalogOptions(),
+  }))
+  const createChipActiveSelector = () =>
+    createSelector(activeFilterState, (value: string, state) =>
+      isFilterValueActive(
+        value,
+        state.grouped,
+        state.direct,
+        state.tag,
+        state.catalog,
+        state.ctx,
+        state.options
+      )
+    )
 
   const showCatalogTagChip = createMemo(() => {
     const tag = tagFilter()
@@ -1181,7 +1228,10 @@ export function BlogGrid(props: BlogGridProps) {
                 const typeAura = primaryType ? getPokemonTypeLightColors(primaryType) : null
 
                 return (
-                  <article data-blog-card-index={index()} class="flex h-full flex-col rounded-3xl">
+                  <article
+                    data-blog-card-index={index()}
+                    class="flex h-full flex-col rounded-3xl [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
+                  >
                     <Link
                       href={buildPostHref(post.slug)}
                       onClick={() =>
@@ -1209,16 +1259,17 @@ export function BlogGrid(props: BlogGridProps) {
                           artworkUrls={post.heroArtworkUrls}
                           fillFrame={post.heroArtworkFill}
                           meta={formatPostDate(post.date)}
-                          fallback={defaultPostThumbnail}
+                          fallback={props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL}
                         />
                       ) : (
                         <PostCard
                           post={{
                             title: post.title,
                             excerpt: post.description,
-                            thumbnail: post.image || defaultPostThumbnail,
+                            thumbnail:
+                              post.image || (props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL),
                             thumbnailAlt: `${post.title} artwork`,
-                            thumbnailFallback: defaultPostThumbnail,
+                            thumbnailFallback: props.defaultPostThumbnail ?? DEFAULT_POST_THUMBNAIL,
                             imageVariant: 'small',
                             thumbnailFit: 'contain',
                             imagePriority: index() === 0,
@@ -1233,18 +1284,11 @@ export function BlogGrid(props: BlogGridProps) {
                         const filterValue = getFilterValueForCategory(category)
                         if (!type) {
                           const collectionIcon = getCollectionBadgeIcon(category)
+                          const isActive = createChipActiveSelector()
                           return (
                             <Button
                               variant="filterChip"
-                              aria-pressed={isFilterValueActive(
-                                filterValue,
-                                groupedFilters(),
-                                directFilter(),
-                                tagFilter(),
-                                catalogSelectValue(),
-                                catalogFacetContext(),
-                                tagCatalogOptions()
-                              )}
+                              aria-pressed={isActive(filterValue)}
                               onClick={() => applyCategoryFilter(filterValue)}
                               class={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                             >
@@ -1258,18 +1302,11 @@ export function BlogGrid(props: BlogGridProps) {
 
                         const lightColors = getPokemonTypeLightColors(type)
                         const logoUrl = getPokemonTypeLogoUrl(type)
+                        const isActive = createChipActiveSelector()
                         return (
                           <Button
                             variant="filterChip"
-                            aria-pressed={isFilterValueActive(
-                              filterValue,
-                              groupedFilters(),
-                              directFilter(),
-                              tagFilter(),
-                              catalogSelectValue(),
-                              catalogFacetContext(),
-                              tagCatalogOptions()
-                            )}
+                            aria-pressed={isActive(filterValue)}
                             onClick={() => applyCategoryFilter(filterValue)}
                             class={`h-auto ${CLICKABLE_BADGE_CLASS} border-(--type-border) bg-(--type-bg) text-(--type-fg)`}
                             style={{
@@ -1302,29 +1339,24 @@ export function BlogGrid(props: BlogGridProps) {
                         </span>
                       ) : null}
                       <For each={post.featuredSpeciesFilterTags ?? []}>
-                        {(speciesSlug) => (
-                          <Button
-                            variant="filterChip"
-                            aria-pressed={isFilterValueActive(
-                              speciesSlug,
-                              groupedFilters(),
-                              directFilter(),
-                              tagFilter(),
-                              catalogSelectValue(),
-                              catalogFacetContext(),
-                              tagCatalogOptions()
-                            )}
-                            onClick={() =>
-                              applyGroupedFilter(
-                                'pokemon',
-                                groupedFilters().pokemon === speciesSlug ? null : speciesSlug
-                              )
-                            }
-                            class={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground aria-pressed:bg-primary aria-pressed:text-primary-foreground [@media(hover:hover)]:hover:bg-muted/80`}
-                          >
-                            #{speciesSlug}
-                          </Button>
-                        )}
+                        {(speciesSlug) => {
+                          const isActive = createChipActiveSelector()
+                          return (
+                            <Button
+                              variant="filterChip"
+                              aria-pressed={isActive(speciesSlug)}
+                              onClick={() =>
+                                applyGroupedFilter(
+                                  'pokemon',
+                                  groupedFilters().pokemon === speciesSlug ? null : speciesSlug
+                                )
+                              }
+                              class={`h-auto ${CLICKABLE_BADGE_CLASS} bg-muted text-muted-foreground aria-pressed:bg-primary aria-pressed:text-primary-foreground [@media(hover:hover)]:hover:bg-muted/80`}
+                            >
+                              #{speciesSlug}
+                            </Button>
+                          )
+                        }}
                       </For>
                     </div>
                     {/* Absorb leftover row height below the tags so cards keep

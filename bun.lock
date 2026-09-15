@@ -27,7 +27,7 @@
     },
     "apps/admin": {
       "name": "@repo/admin",
-      "version": "0.6.4",
+      "version": "0.6.5",
       "dependencies": {
         "@repo/config": "workspace:*",
         "@repo/data": "workspace:*",
@@ -57,7 +57,7 @@
     },
     "apps/blog": {
       "name": "@repo/blog",
-      "version": "0.11.3",
+      "version": "0.11.4",
       "dependencies": {
         "@repo/config": "workspace:*",
         "@repo/data": "workspace:*",
@@ -65,6 +65,7 @@
         "@repo/ui": "workspace:*",
         "@tanstack/solid-query": "^5.102.8",
         "solid-js": "^1.9.15",
+        "web-vitals": "^5",
       },
       "devDependencies": {
         "@astrojs/check": "0.9.10",
@@ -84,7 +85,7 @@
     },
     "apps/landing": {
       "name": "@repo/landing",
-      "version": "0.7.3",
+      "version": "0.7.4",
       "dependencies": {
         "@repo/config": "workspace:*",
         "@repo/data": "workspace:*",
@@ -107,7 +108,7 @@
     },
     "apps/store": {
       "name": "@repo/store",
-      "version": "0.6.5",
+      "version": "0.6.6",
       "dependencies": {
         "@astrojs/cloudflare": "14.3.1",
         "@astrojs/solid-js": "^7.0.2",
@@ -149,7 +150,7 @@
     },
     "packages/data": {
       "name": "@repo/data",
-      "version": "2.4.3",
+      "version": "2.4.4",
       "dependencies": {
         "@repo/marketplaces": "workspace:*",
       },
@@ -181,7 +182,7 @@
     },
     "packages/ui": {
       "name": "@repo/ui",
-      "version": "1.7.3",
+      "version": "1.7.4",
       "dependencies": {
         "@kobalte/core": "^0.13.14",
         "@repo/config": "workspace:*",
@@ -1736,6 +1737,8 @@
     "vscode-uri": ["vscode-uri@3.2.0", "", {}, "sha512-m2gXo3bn0G1kT9InzMf07fTbqMbGtyckj3bH5ktLO+1Ssv+yiATZ4dhwaQv9UZWxJh6E9IFGnQyjgWVDWVBDrg=="],
 
     "web-features": ["web-features@3.38.0", "", {}, "sha512-FfexTigrIL9tVr/JgX9kBlzIlMfBG4eD38crZQiJPIo46PJ3Qj8RVUM7zmpsozooq2ImHM7xiUY6gIv5mo/7rQ=="],
+
+    "web-vitals": ["web-vitals@5.3.0", "", {}, "sha512-q6LWsLatGYZp5VGBIOvbTj6JBV2nOmC8KvWztXBmwJcfFAzhwKwbOxhUH306XY3CcaZDUlSmSuNPBsCn0bFu+g=="],
 
     "webdriver-bidi-protocol": ["webdriver-bidi-protocol@0.4.3", "", {}, "sha512-uuN0goWfxP22B7J/uAgBpOYNPttC+XVseYE+rSY5+rQ+YBeVz/VORw8WbmLVcqW78zNg5A4qnjNXYUWR3il2ig=="],
 

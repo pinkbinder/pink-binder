@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'bun:test'
 
-import { STORE_CATEGORIES, matchesSearch, parseCatalogSearch } from '../src/lib/catalog-search'
+import {
+  STORE_CATEGORIES,
+  buildCatalogUrl,
+  matchesSearch,
+  parseCatalogSearch,
+} from '../src/lib/catalog-search'
 import {
   addLine,
   cart,
@@ -67,5 +72,33 @@ describe('store cart state (nanostores)', () => {
   test('formats cent prices without trailing .00', () => {
     expect(formatPriceCents(2900)).toBe('$29')
     expect(formatPriceCents(2950)).toBe('$29.50')
+  })
+})
+
+describe('catalog URL writes', () => {
+  test('text search replaces so typing never spams history', () => {
+    const result = buildCatalogUrl('https://localhost/', 'q', 'pikachu')
+    expect(result.replace).toBe(true)
+    expect(result.url).toBe('https://localhost/?q=pikachu')
+  })
+
+  test('category chips push so Back undoes a filter change', () => {
+    const result = buildCatalogUrl('https://localhost/', 'category', 'Design')
+    expect(result.replace).toBe(false)
+    expect(result.url).toBe('https://localhost/?category=Design')
+  })
+
+  test('empty and default values delete the param', () => {
+    expect(buildCatalogUrl('https://localhost/?q=x', 'q', null).url).toBe('https://localhost/')
+    expect(buildCatalogUrl('https://localhost/?q=x', 'q', '').url).toBe('https://localhost/')
+    expect(buildCatalogUrl('https://localhost/?category=Tools', 'category', 'All').url).toBe(
+      'https://localhost/'
+    )
+  })
+
+  test('unrelated params survive', () => {
+    expect(buildCatalogUrl('https://localhost/?utm=1', 'q', 'x').url).toBe(
+      'https://localhost/?utm=1&q=x'
+    )
   })
 })

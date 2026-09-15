@@ -4,6 +4,9 @@ import { blogGridQueryString } from './blog-query-state'
 
 export const BLOG_GRID_STALE_TIME_MS = 5 * 60 * 1_000
 export const BLOG_GRID_GC_TIME_MS = 30 * 60 * 1_000
+/** Retained page cap: bounds the mounted card DOM (20 pages ≈ 171 cards)
+ *  for very deep scrollers without affecting normal use. */
+export const BLOG_GRID_MAX_PAGES = 20
 export const BLOG_GRID_INITIAL_PAGE_SIZE = 9
 export const BLOG_GRID_NEXT_PAGE_SIZE = 24
 

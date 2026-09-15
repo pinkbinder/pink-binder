@@ -13,6 +13,7 @@ import {
 } from '@repo/ui'
 
 import { ChannelDot, IntegrationNotice, PageHeader } from '../components/console'
+import { DebouncedInput } from '../components/debounced-input'
 import { CONTENT_PLATFORM_META, type ContentPlatform } from '../lib/channels'
 import { contentSearchParsers, CONTENT_PLATFORM_FILTERS } from '../lib/console-search'
 import { formatDate } from '../lib/format'
@@ -76,9 +77,9 @@ function ContentStudioPage() {
       </IntegrationNotice>
 
       <div class="mb-4 flex flex-wrap items-center gap-2">
-        <Input
+        <DebouncedInput
           value={q()}
-          onInput={(event) => setParam('q', event.target.value || null)}
+          onCommit={(value) => setParam('q', value || null)}
           placeholder="Search drafts…"
           aria-label="Search content drafts"
           class="w-56"
