@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.5...pink-binder-v2.7.6) (2026-09-15)
+
+
+### Maintenance
+
+* enforce @shadcn/lint and migrate @repo/ui to Base UI ([#120](https://github.com/pinkbinder/pink-binder/issues/120)) ([cdd0654](https://github.com/pinkbinder/pink-binder/commit/cdd06543a21f762a919dcd6f8fca2de611444580))
+
 ## [2.7.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.4...pink-binder-v2.7.5) (2026-09-15)
 
 
