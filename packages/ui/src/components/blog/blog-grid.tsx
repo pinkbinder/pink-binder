@@ -2,6 +2,7 @@ import { createEffect, createMemo, createSignal, For, onCleanup, Show } from 'so
 import Link from '../compat-link'
 import {
   createInfiniteQuery,
+  keepPreviousData,
   type UndefinedInitialDataInfiniteOptions,
 } from '@tanstack/solid-query'
 import { createUrlQueryStates } from '../../lib/compat-navigation'
@@ -260,6 +261,7 @@ export function BlogGrid(props: BlogGridProps) {
     initialPageParam: 0,
     initialData:
       gridQuery() === initialQueryString ? () => blogGridInitialData(posts, total) : undefined,
+    placeholderData: keepPreviousData,
     getNextPageParam: (lastPage: BlogGridPage) =>
       lastPage.nextOffset < lastPage.total ? lastPage.nextOffset : undefined,
     staleTime: BLOG_GRID_STALE_TIME_MS,
@@ -273,12 +275,13 @@ export function BlogGrid(props: BlogGridProps) {
     return [...bySlug.values()]
   })
   const resultTotal = () => gridResult.data?.pages.at(-1)?.total ?? 0
-  const isLoadingPosts = () => gridResult.isPending || gridResult.isFetchingNextPage
+  const isLoadingPosts = () =>
+    gridResult.isPending || gridResult.isPlaceholderData || gridResult.isFetchingNextPage
   const loadError = () => gridResult.error
   const hasMoreToRender = () => gridResult.hasNextPage ?? postsToRender().length < resultTotal()
 
   createEffect(() => {
-    if (gridResult.isPending) {
+    if (gridResult.isPending || gridResult.isPlaceholderData) {
       setLiveMessage('Loading collector guides.')
     } else if (gridResult.error) {
       setLiveMessage('Collector guides could not be loaded. Use Retry to try again.')
