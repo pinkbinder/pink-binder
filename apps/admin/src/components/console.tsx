@@ -1,7 +1,8 @@
-import type { CSSProperties, ReactNode } from 'react'
-import { Info } from 'lucide-react'
+import type { JSX } from 'solid-js'
+import { Info } from 'lucide-solid'
 import { cn } from '@repo/ui'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
+import { Show } from 'solid-js'
 
 import type { ChannelMeta } from '../lib/channels'
 
@@ -11,69 +12,68 @@ import type { ChannelMeta } from '../lib/channels'
  * dashboard reuses.
  */
 
-export function ChannelDot({ meta, className }: { meta: ChannelMeta; className?: string }) {
+export function ChannelDot(props: { meta: ChannelMeta; class?: string }) {
   return (
     <span
       aria-hidden
-      className={cn(
+      class={cn(
         'inline-block size-2.5 shrink-0 rounded-full',
-        meta.dotClass,
-        meta.dotStyle && 'dot-fill',
-        className
+        props.meta.dotClass,
+        props.meta.dotStyle && 'dot-fill',
+        props.class
       )}
-      style={meta.dotStyle ? ({ '--dot-fill': meta.dotStyle } as CSSProperties) : undefined}
+      style={props.meta.dotStyle ? { '--dot-fill': props.meta.dotStyle } : undefined}
     />
   )
 }
 
-export function PageHeader({
-  eyebrow,
-  title,
-  description,
-  actions,
-}: {
+export function PageHeader(props: {
   eyebrow?: string
   title: string
   description?: string
-  actions?: ReactNode
+  actions?: JSX.Element
 }) {
   return (
-    <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
+    <div class="mb-6 flex flex-wrap items-start justify-between gap-4">
       <div>
-        {eyebrow && (
-          <p className="text-muted-foreground mb-1 text-xs font-semibold tracking-widest uppercase">
-            {eyebrow}
+        <Show when={props.eyebrow}>
+          <p class="text-muted-foreground mb-1 text-xs font-semibold tracking-widest uppercase">
+            {props.eyebrow}
           </p>
-        )}
-        <h1 className="font-title text-2xl font-bold tracking-tight">{title}</h1>
-        {description && <p className="text-muted-foreground mt-1 max-w-2xl">{description}</p>}
+        </Show>
+        <h1 class="font-title text-2xl font-bold tracking-tight">{props.title}</h1>
+        <Show when={props.description}>
+          <p class="text-muted-foreground mt-1 max-w-2xl">{props.description}</p>
+        </Show>
       </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      <Show when={props.actions}>
+        <div class="flex flex-wrap items-center gap-2">{props.actions}</div>
+      </Show>
     </div>
   )
 }
 
-export function StatCard({ label, value, hint }: { label: string; value: string; hint?: string }) {
+export function StatCard(props: { label: string; value: string; hint?: string }) {
   return (
     <Card>
-      <CardHeader className="pb-2">
-        <CardDescription>{label}</CardDescription>
-        <CardTitle size="metric">{value}</CardTitle>
+      <CardHeader class="pb-2">
+        <CardDescription>{props.label}</CardDescription>
+        <CardTitle size="metric">{props.value}</CardTitle>
       </CardHeader>
-      {hint && (
+      <Show when={props.hint}>
         <CardContent>
-          <p className="text-muted-foreground text-xs">{hint}</p>
+          <p class="text-muted-foreground text-xs">{props.hint}</p>
         </CardContent>
-      )}
+      </Show>
     </Card>
   )
 }
 
-export function IntegrationNotice({ children }: { children: ReactNode }) {
+export function IntegrationNotice(props: { children?: JSX.Element }) {
   return (
-    <div className="border-warning/30 bg-warning/10 text-warning-foreground mb-6 flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm">
-      <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
-      <p>{children}</p>
+    <div class="border-warning/30 bg-warning/10 text-warning-foreground mb-6 flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm">
+      <Info class="mt-0.5 size-4 shrink-0" aria-hidden />
+      <p>{props.children}</p>
     </div>
   )
 }

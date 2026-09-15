@@ -1,7 +1,5 @@
-'use client'
-
-import * as React from 'react'
 import { pokemonR2ImageVariantUrl } from '@repo/data/client'
+import { createEffect, createMemo, createSignal, on, Show, splitProps, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
@@ -17,73 +15,81 @@ interface PostCardPost {
   meta?: string
 }
 
-interface PostCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface PostCardProps extends JSX.HTMLAttributes<HTMLDivElement> {
   post: PostCardPost
 }
 
-function PostCard({ post, className, ...props }: PostCardProps) {
-  const thumbnailFit = post.thumbnailFit ?? 'cover'
-  const primaryThumbnail = post.thumbnail ?? post.thumbnailFallback
-  const thumbnailCandidates = React.useMemo(() => {
+function PostCard(props: PostCardProps) {
+  const [local, rest] = splitProps(props, ['post', 'class'])
+  const thumbnailFit = () => local.post.thumbnailFit ?? 'cover'
+  const primaryThumbnail = () => local.post.thumbnail ?? local.post.thumbnailFallback
+  const thumbnailCandidates = createMemo(() => {
+    const primary = primaryThumbnail()
     const optimized =
-      post.imageVariant && primaryThumbnail
-        ? pokemonR2ImageVariantUrl(primaryThumbnail, post.imageVariant)
+      local.post.imageVariant && primary
+        ? pokemonR2ImageVariantUrl(primary, local.post.imageVariant)
         : null
     return [
-      ...new Set([optimized, primaryThumbnail, post.thumbnailFallback].filter(Boolean)),
+      ...new Set([optimized, primary, local.post.thumbnailFallback].filter(Boolean)),
     ] as string[]
-  }, [post.imageVariant, post.thumbnailFallback, primaryThumbnail])
-  const [thumbnailIndex, setThumbnailIndex] = React.useState(0)
-  React.useEffect(() => {
-    setThumbnailIndex(0)
-  }, [thumbnailCandidates])
-  const thumbnailSrc = thumbnailCandidates[thumbnailIndex]
+  })
+  const [thumbnailIndex, setThumbnailIndex] = createSignal(0)
+  // Restart the fallback chain when the candidate list changes.
+  createEffect(on(thumbnailCandidates, () => setThumbnailIndex(0), { defer: true }))
+  const thumbnailSrc = () => thumbnailCandidates()[thumbnailIndex()]
 
   return (
     <Card
-      className={cn(
+      class={cn(
         'bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg',
-        className
+        local.class
       )}
-      {...props}
+      {...rest}
     >
-      <div className="bg-muted aspect-[16/10] overflow-hidden">
-        {thumbnailSrc ? (
-          <img
-            src={thumbnailSrc}
-            alt={post.thumbnailAlt ?? post.title}
-            loading={post.imagePriority ? 'eager' : 'lazy'}
-            fetchPriority={post.imagePriority ? 'high' : 'auto'}
-            decoding="async"
-            className={cn(
-              'h-full w-full transition-transform duration-300 group-hover:scale-[1.025]',
-              thumbnailFit === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
-            )}
-            onError={() => {
-              setThumbnailIndex((current) =>
-                current + 1 < thumbnailCandidates.length ? current + 1 : current
-              )
-            }}
-          />
-        ) : (
-          <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-linear-to-br px-6 text-center">
-            <span className="font-title text-foreground text-lg font-semibold">{post.title}</span>
-          </div>
-        )}
+      <div class="bg-muted aspect-[16/10] overflow-hidden">
+        <Show
+          when={thumbnailSrc()}
+          fallback={
+            <div class="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-linear-to-br px-6 text-center">
+              <span class="font-title text-foreground text-lg font-semibold">
+                {local.post.title}
+              </span>
+            </div>
+          }
+        >
+          {(src) => (
+            <img
+              src={src()}
+              alt={local.post.thumbnailAlt ?? local.post.title}
+              loading={local.post.imagePriority ? 'eager' : 'lazy'}
+              fetchpriority={local.post.imagePriority ? 'high' : 'auto'}
+              decoding="async"
+              class={cn(
+                'h-full w-full transition-transform duration-300 group-hover:scale-[1.025]',
+                thumbnailFit() === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
+              )}
+              onError={() => {
+                setThumbnailIndex((current) =>
+                  current + 1 < thumbnailCandidates().length ? current + 1 : current
+                )
+              }}
+            />
+          )}
+        </Show>
       </div>
-      <CardHeader className="space-y-3">
-        {post.meta ? (
-          <p className="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">
-            {post.meta}
+      <CardHeader class="space-y-3">
+        <Show when={local.post.meta}>
+          <p class="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">
+            {local.post.meta}
           </p>
-        ) : null}
-        <CardTitle className="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
-          {post.title}
+        </Show>
+        <CardTitle class="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
+          {local.post.title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <p className="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">
-          {post.excerpt}
+      <CardContent class="space-y-4">
+        <p class="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">
+          {local.post.excerpt}
         </p>
       </CardContent>
     </Card>

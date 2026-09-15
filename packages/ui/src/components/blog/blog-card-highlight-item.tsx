@@ -1,19 +1,19 @@
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 
 export function BlogCardHighlightItem({
   children,
   supportingText,
   supportingSlot,
 }: {
-  children: ReactNode
+  children: JSX.Element
   supportingText: string
-  supportingSlot?: ReactNode
+  supportingSlot?: JSX.Element
 }) {
   return (
-    <div className="space-y-2">
+    <div class="space-y-2">
       {children}
       {supportingSlot}
-      <p className="text-muted-foreground text-xs leading-relaxed">{supportingText}</p>
+      <p class="text-muted-foreground text-xs leading-relaxed">{supportingText}</p>
     </div>
   )
 }

@@ -1,10 +1,10 @@
 import type { BlogGridFacets, BlogGridQuery } from '@repo/data/client'
 import { type CatalogTagFacetContext, resolveCatalogTagToFacet } from '@repo/data/client'
-import { createParser, type inferParserType } from 'nuqs/server'
+import type { ParsedSearchParams, SearchParamParser } from './compat-navigation'
 
 const MAX_FILTER_LENGTH = 120
 
-const parseFilterValue = createParser({
+const parseFilterValue: SearchParamParser = {
   parse(value) {
     const trimmed = value.trim()
     return trimmed && trimmed.length <= MAX_FILTER_LENGTH ? trimmed : null
@@ -12,7 +12,7 @@ const parseFilterValue = createParser({
   serialize(value) {
     return value.trim()
   },
-})
+}
 
 export const blogFilterParsers = {
   q: parseFilterValue,
@@ -29,7 +29,7 @@ export const blogFilterParsers = {
   collection: parseFilterValue,
 }
 
-export type BlogFilterSearchParams = inferParserType<typeof blogFilterParsers>
+export type BlogFilterSearchParams = ParsedSearchParams<typeof blogFilterParsers>
 
 /** Resolve aliases and reject values absent from the server-provided facet catalog. */
 export function resolveBlogGridQuery(

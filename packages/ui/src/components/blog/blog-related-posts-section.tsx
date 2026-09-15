@@ -22,7 +22,7 @@ export function BlogRelatedPostsSection({
       description={description}
       descriptionClassName="mt-2 text-muted-foreground"
     >
-      <BlogLinkPillList className="mt-4" items={items} />
+      <BlogLinkPillList class="mt-4" items={items} />
     </BlogSectionCard>
   )
 }

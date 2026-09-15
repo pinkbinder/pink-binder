@@ -1,8 +1,5 @@
-'use client'
-
-import { NuqsAdapter } from 'nuqs/adapters/react'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import type { JSX } from 'solid-js'
 
 const QUERY_STALE_TIME_MS = 5 * 60 * 1_000
 const QUERY_GC_TIME_MS = 30 * 60 * 1_000
@@ -30,14 +27,9 @@ function getBlogQueryClient() {
 }
 
 /**
- * Client providers for Astro blog islands. Uses the framework-agnostic
- * `nuqs/adapters/react` adapter (history API only) so the same BlogGrid
- * filter state works across server-rendered pages and client islands.
+ * Client providers for Astro blog islands. BlogGrid reads URL filter state
+ * straight from `window.history`, so no search-param adapter is needed.
  */
-export function BlogProviders({ children }: { children: ReactNode }) {
-  return (
-    <NuqsAdapter>
-      <QueryClientProvider client={getBlogQueryClient()}>{children}</QueryClientProvider>
-    </NuqsAdapter>
-  )
+export function BlogProviders(props: { children?: JSX.Element }) {
+  return <QueryClientProvider client={getBlogQueryClient()}>{props.children}</QueryClientProvider>
 }

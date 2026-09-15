@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createStore, produce } from 'solid-js/store'
 
 import { INVENTORY_CHANNELS, type InventoryChannel } from '../lib/channels'
 
@@ -269,75 +269,44 @@ export function summarizeInventory(items: InventoryItem[]): InventorySummary {
   return { totalItems: items.length, totalUnits, needsSync, lowStock, valueCents, byChannel }
 }
 
-interface InventoryState {
-  items: InventoryItem[]
-  adjustQuantity: (id: string, delta: number) => void
-  /** Re-queue every failed listing on an item. */
-  queueSync: (id: string) => void
-  /** Confirm every pending listing now matches the channels. */
-  markSynced: (id: string) => void
-  /** Queue a first listing on a channel the item is not on yet. */
-  addListing: (id: string, channel: InventoryChannel) => void
-}
-
 /**
  * Foundational client state for the inventory service. Until the marketplace
  * integrations exist these stores are the source of truth; swap the seed for
  * query data later without touching the UI.
  */
-export const useInventoryStore = create<InventoryState>()((set) => ({
+export const [inventoryStore, setInventoryStore] = createStore({
   items: createInventorySeed(),
-  adjustQuantity: (id, delta) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              quantity: Math.max(0, item.quantity + delta),
-              updatedAt: new Date().toISOString(),
-            }
-          : item
-      ),
-    })),
-  queueSync: (id) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              listings: item.listings.map((entry) =>
-                entry.state === 'error' ? { ...entry, state: 'pending' as const } : entry
-              ),
-            }
-          : item
-      ),
-    })),
-  markSynced: (id) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              listings: item.listings.map((entry) =>
-                entry.state === 'pending' ? { ...entry, state: 'synced' as const } : entry
-              ),
-            }
-          : item
-      ),
-    })),
-  addListing: (id, channel) =>
-    set((state) => ({
-      items: state.items.map((item) =>
-        item.id === id
-          ? {
-              ...item,
-              listings: item.listings.map((entry) =>
-                entry.channel === channel && entry.state === 'unlinked'
-                  ? { ...entry, state: 'pending' as const }
-                  : entry
-              ),
-            }
-          : item
-      ),
-    })),
-}))
+})
+
+function updateItem(id: string, update: (item: InventoryItem) => void): void {
+  setInventoryStore('items', (item) => item.id === id, produce(update))
+}
+
+export const inventoryActions = {
+  adjustQuantity: (id: string, delta: number) =>
+    updateItem(id, (item) => {
+      item.quantity = Math.max(0, item.quantity + delta)
+      item.updatedAt = new Date().toISOString()
+    }),
+  /** Re-queue every failed listing on an item. */
+  queueSync: (id: string) =>
+    updateItem(id, (item) => {
+      for (const entry of item.listings) {
+        if (entry.state === 'error') entry.state = 'pending'
+      }
+    }),
+  /** Confirm every pending listing now matches the channels. */
+  markSynced: (id: string) =>
+    updateItem(id, (item) => {
+      for (const entry of item.listings) {
+        if (entry.state === 'pending') entry.state = 'synced'
+      }
+    }),
+  /** Queue a first listing on a channel the item is not on yet. */
+  addListing: (id: string, channel: InventoryChannel) =>
+    updateItem(id, (item) => {
+      for (const entry of item.listings) {
+        if (entry.channel === channel && entry.state === 'unlinked') entry.state = 'pending'
+      }
+    }),
+}

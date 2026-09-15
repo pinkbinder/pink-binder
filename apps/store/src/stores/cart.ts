@@ -1,5 +1,6 @@
-import { useStore } from '@nanostores/react'
+import { useStore } from '@nanostores/solid'
 import { atom, computed } from 'nanostores'
+import type { Accessor } from 'solid-js'
 
 export interface CartLine {
   id: string
@@ -27,8 +28,8 @@ function upsert(lines: CartLine[], line: Omit<CartLine, 'qty'>, qty: number): Ca
 /**
  * Nanostores cart (starter pattern). The atom is the single source of truth;
  * `hydrateCartFromStorage` is called once from the layout island mount so the
- * server render never touches localStorage. Mutations mirror the old zustand
- * behavior: quantities clamp to 1..99 and removing is a qty <= 0 side effect.
+ * server render never touches localStorage. Quantities clamp to 1..99 and
+ * removing a line is a qty <= 0 side effect.
  */
 export const cart = atom<CartState>({ lines: [], isOpen: false, lastAddedAt: null })
 
@@ -96,11 +97,11 @@ export const cartTotalCents = computed(cart, (state) =>
   state.lines.reduce((sum, line) => sum + line.qty * line.priceCents, 0)
 )
 
-export function useCart(): CartState {
+export function useCart(): Accessor<CartState> {
   return useStore(cart)
 }
 
-export function useCartTotal(): number {
+export function useCartTotal(): Accessor<number> {
   return useStore(cartTotalCents)
 }
 

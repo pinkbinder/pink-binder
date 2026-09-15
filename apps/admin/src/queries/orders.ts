@@ -1,4 +1,4 @@
-import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
+import { createQuery, queryOptions } from '@tanstack/solid-query'
 import { getOrders, type OrdersQuery } from '../server/orders'
 
 export function ordersQueryOptions(query: OrdersQuery) {
@@ -14,5 +14,5 @@ export function ordersQueryOptions(query: OrdersQuery) {
 }
 
 export function useOrdersQuery(query: OrdersQuery) {
-  return useSuspenseQuery(ordersQueryOptions(query))
+  return createQuery(() => ordersQueryOptions(query))
 }

@@ -1,5 +1,3 @@
-'use client'
-
 import { RoundupHeroArtworkGrid } from './blog/roundup-hero-artwork-grid'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
@@ -11,7 +9,7 @@ interface RoundupPostCardProps {
   fillFrame?: boolean
   meta?: string
   fallback?: string
-  className?: string
+  class?: string
 }
 
 /** Roundup hero grid for blog index and landing highlights. */
@@ -22,27 +20,23 @@ export function RoundupPostCard({
   fillFrame = false,
   meta,
   fallback,
-  className,
+  class: className,
 }: RoundupPostCardProps) {
   return (
     <Card
-      className={`bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg ${className ?? ''}`}
+      class={`bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg ${className ?? ''}`}
     >
       <RoundupHeroArtworkGrid artworkUrls={artworkUrls} fallback={fallback} fillFrame={fillFrame} />
-      <CardHeader className="space-y-3">
+      <CardHeader class="space-y-3">
         {meta ? (
-          <p className="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">
-            {meta}
-          </p>
+          <p class="text-primary-deep text-xs font-semibold tracking-[0.25em] uppercase">{meta}</p>
         ) : null}
-        <CardTitle className="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
+        <CardTitle class="font-title line-clamp-3 min-h-[5.625rem] text-2xl leading-tight">
           {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">
-          {excerpt}
-        </p>
+        <p class="text-muted-foreground line-clamp-4 min-h-[6rem] text-sm leading-6">{excerpt}</p>
       </CardContent>
     </Card>
   )

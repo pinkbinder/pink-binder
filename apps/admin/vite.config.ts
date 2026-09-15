@@ -1,7 +1,7 @@
 import tailwindcss from '@tailwindcss/vite'
 import { cloudflare } from '@cloudflare/vite-plugin'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import viteReact from '@vitejs/plugin-react'
+import { tanstackStart } from '@tanstack/solid-start/plugin/vite'
+import viteSolid from 'vite-plugin-solid'
 import { defineConfig } from 'vite'
 
 // The Cloudflare plugin must precede tanstackStart() so the SSR environment
@@ -15,7 +15,7 @@ export default defineConfig({
   plugins: [
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tanstackStart(),
-    viteReact(),
+    viteSolid({ ssr: true }),
     tailwindcss(),
   ],
 })

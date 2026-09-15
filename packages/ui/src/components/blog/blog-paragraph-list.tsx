@@ -3,11 +3,11 @@ import { cn } from '../../lib/utils'
 
 export function BlogParagraphList({
   paragraphs,
-  className,
+  class: className,
   paragraphClassName,
 }: {
   paragraphs: string[]
-  className?: string
+  class?: string
   paragraphClassName?: string
 }) {
   if (paragraphs.length === 0) {
@@ -15,12 +15,9 @@ export function BlogParagraphList({
   }
 
   return (
-    <div className={cn('space-y-3', className)}>
-      {paragraphs.map((paragraph, index) => (
-        <p
-          key={`${index}-${paragraph.slice(0, 48)}`}
-          className={cn('text-foreground/85 leading-relaxed', paragraphClassName)}
-        >
+    <div class={cn('space-y-3', className)}>
+      {paragraphs.map((paragraph) => (
+        <p class={cn('text-foreground/85 leading-relaxed', paragraphClassName)}>
           <BlogInlineText text={paragraph} />
         </p>
       ))}

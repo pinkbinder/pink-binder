@@ -3,12 +3,7 @@
   "compilerOptions": {
     "strict": true,
     "baseUrl": ".",
-    "paths": {
-      "react": ["./node_modules/react"],
-      "react-dom": ["./node_modules/react-dom"],
-      "react-dom/client": ["./node_modules/react-dom/client"],
-      "react/jsx-runtime": ["./node_modules/react/jsx-runtime"],
-      "react/jsx-dev-runtime": ["./node_modules/react/jsx-dev-runtime"]
-    }
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   }
 }

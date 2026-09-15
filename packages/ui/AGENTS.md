@@ -8,16 +8,23 @@ before handoff. Warnings are treated as errors everywhere
 
 ## One primitive layer
 
-Components here are built on **Base UI** (`@base-ui/react/*`). `asChild` does
-not exist — use the `render` prop instead (`<Button render={<a href="…"/>}>`).
-State attributes are `data-open`/`data-closed`/`data-panel-open`,
-`data-starting-style`/`data-ending-style`, `data-highlighted`,
-`data-side`/`data-align`; popup widths use `--anchor-width`/`--anchor-height`
-and accordion panels use `--accordion-panel-height`.
+Components here are **Solid** (`solid-js`) components built on **Kobalte**
+(`@kobalte/core`). Use `class` (not `className`), signals/accessors
+(`value()`, not `value`), `createEffect` without dependency arrays, and
+`onCleanup` for effect cleanup. Control flow uses `<For>`, `<Show>`,
+`<Switch>`/`<Match>` instead of `.map`/ternaries where fine-grained
+reactivity matters.
+
+Kobalte composes through the `as` polymorphic prop, not `render` or
+`asChild` — e.g. `<Button as="a" href="…">` to render a link. State
+attributes include `data-expanded`/`data-closed`, `data-highlighted`,
+`data-selected`, `data-side`/`data-align`, and per-part `data-key`; check the
+wrapper implementations in `src/components/` for the attributes each
+primitive emits.
 
 `no-restricted-imports` blocks direct imports of primitive libraries —
-`@radix-ui/**`, `@base-ui/**`, `@base-ui-components/**`, `react-aria`,
-`react-aria-components`, `@react-aria/**`, `@react-stately/**`,
+`@kobalte/**`, `@radix-ui/**`, `@base-ui/**`, `@base-ui-components/**`,
+`react-aria`, `react-aria-components`, `@react-aria/**`, `@react-stately/**`,
 `@headlessui/**` — everywhere except inside `packages/ui` itself. If a needed
 primitive has no wrapper here, add the wrapper in `src/components/` and export
 it from `src/index.ts`; never import primitives from app code.

@@ -1,4 +1,4 @@
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient } from '@tanstack/solid-query'
 
 const QUERY_STALE_TIME_MS = 60 * 1_000
 const QUERY_GC_TIME_MS = 10 * 60 * 1_000

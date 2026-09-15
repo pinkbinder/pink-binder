@@ -2,7 +2,7 @@
   "extends": "@repo/typescript-config/base.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "jsx": "preserve",
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "allowImportingTsExtensions": true,
@@ -16,6 +16,7 @@
     "types": ["vite/client"],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "jsxImportSource": "solid-js"
   }
 }

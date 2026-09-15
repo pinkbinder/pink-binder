@@ -1,7 +1,5 @@
-'use client'
-
-import { ChevronDown, List } from 'lucide-react'
-import { useEffect, useId, useRef, useState } from 'react'
+import { ChevronDown, List } from 'lucide-solid'
+import { createEffect, createSignal, createUniqueId, For, onCleanup, Show } from 'solid-js'
 import { cn } from '../../lib/utils'
 
 type BlogTableOfContentsVariant = 'desktop' | 'mobile'
@@ -60,38 +58,35 @@ function collectArticleHeadings(article: HTMLElement) {
   )
 }
 
-function TableOfContentsLinks({
-  items,
-  activeId,
-  onNavigate,
-}: {
+function TableOfContentsLinks(props: {
   items: BlogTableOfContentsItem[]
   activeId?: string
   onNavigate?: () => void
 }) {
   return (
-    <ol className="space-y-1">
-      {items.map((item) => {
-        const isActive = item.id === activeId
-
-        return (
-          <li key={item.id} className={item.level === 3 ? 'pl-3' : undefined}>
-            <a
-              href={`#${item.id}`}
-              aria-current={isActive ? 'location' : undefined}
-              onClick={onNavigate}
-              className={cn(
-                'focus-visible:ring-ring block rounded-md px-2 py-1.5 text-sm leading-snug transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
-                isActive
-                  ? 'bg-accent text-accent-foreground font-semibold'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground'
-              )}
-            >
-              {item.label}
-            </a>
-          </li>
-        )
-      })}
+    <ol class="space-y-1">
+      <For each={props.items}>
+        {(item) => {
+          const isActive = () => item.id === props.activeId
+          return (
+            <li class={item.level === 3 ? 'pl-3' : undefined}>
+              <a
+                href={`#${item.id}`}
+                aria-current={isActive() ? 'location' : undefined}
+                onClick={props.onNavigate}
+                class={cn(
+                  'focus-visible:ring-ring block rounded-md px-2 py-1.5 text-sm leading-snug transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
+                  isActive()
+                    ? 'bg-accent text-accent-foreground font-semibold'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                )}
+              >
+                {item.label}
+              </a>
+            </li>
+          )
+        }}
+      </For>
     </ol>
   )
 }
@@ -99,49 +94,45 @@ function TableOfContentsLinks({
 /** Server-rendered desktop TOC for the static prebuilt pipeline: identical
  * markup to the hydrated desktop variant, driven by entries extracted at
  * render time instead of a client DOM scan (post pages ship zero JS). */
-export function BlogStaticTableOfContents({
-  articleId,
-  items,
-}: {
+export function BlogStaticTableOfContents(props: {
   articleId: string
   items: BlogTableOfContentsItem[]
 }) {
-  const labelId = `${articleId}-static-toc`
+  const labelId = `${props.articleId}-static-toc`
 
   return (
-    <aside className="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
+    <aside class="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
       <nav
         aria-labelledby={labelId}
-        className="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+        class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
       >
         <p
           id={labelId}
-          className="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+          class="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
         >
-          <List className="text-primary h-4 w-4" aria-hidden />
+          <List class="text-primary h-4 w-4" aria-hidden />
           On this page
         </p>
-        <TableOfContentsLinks items={items} />
+        <TableOfContentsLinks items={props.items} />
       </nav>
     </aside>
   )
 }
 
-export function BlogTableOfContents({
-  articleId,
-  variant,
-}: {
+export function BlogTableOfContents(props: {
   articleId: string
   variant: BlogTableOfContentsVariant
 }) {
-  const labelId = useId()
-  const detailsRef = useRef<HTMLDetailsElement>(null)
-  const [items, setItems] = useState<BlogTableOfContentsItem[]>([])
-  const [activeId, setActiveId] = useState<string>()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const mobileNavId = useId()
+  const labelId = createUniqueId()
+  const mobileNavId = createUniqueId()
+  const [details, setDetails] = createSignal<HTMLDetailsElement>()
+  const [items, setItems] = createSignal<BlogTableOfContentsItem[]>([])
+  const [activeId, setActiveId] = createSignal<string>()
+  const [mobileOpen, setMobileOpen] = createSignal(false)
 
-  useEffect(() => {
+  createEffect(() => {
+    const articleId = props.articleId
+    const variant = props.variant
     const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY)
     let disposeActiveTracker = () => {}
 
@@ -207,73 +198,73 @@ export function BlogTableOfContents({
     setupActiveTracker()
     mediaQuery.addEventListener('change', setupActiveTracker)
 
-    return () => {
+    onCleanup(() => {
       mediaQuery.removeEventListener('change', setupActiveTracker)
       disposeActiveTracker()
-    }
-  }, [articleId, variant])
-
-  if (items.length < 2) {
-    return null
-  }
-
-  if (variant === 'mobile') {
-    return (
-      <details
-        ref={detailsRef}
-        onToggle={(event) => setMobileOpen(event.currentTarget.open)}
-        className="group bg-card/80 mt-5 rounded-xl border px-4 py-3 lg:hidden"
-      >
-        <summary
-          aria-expanded={mobileOpen}
-          aria-controls={mobileNavId}
-          className="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden"
-        >
-          <span className="inline-flex items-center gap-2">
-            <List className="text-primary h-4 w-4" aria-hidden />
-            On this page
-          </span>
-          <ChevronDown
-            className="text-muted-foreground h-4 w-4 transition-transform group-open:rotate-180"
-            aria-hidden
-          />
-          <span className="sr-only" aria-live="polite">
-            {activeId
-              ? `Current section: ${items.find((item) => item.id === activeId)?.label ?? ''}`
-              : ''}
-          </span>
-        </summary>
-        <nav id={mobileNavId} aria-label="Table of contents" className="mt-3 border-t pt-3">
-          <TableOfContentsLinks
-            items={items}
-            activeId={activeId}
-            onNavigate={() => {
-              if (detailsRef.current) {
-                detailsRef.current.open = false
-              }
-              setMobileOpen(false)
-            }}
-          />
-        </nav>
-      </details>
-    )
-  }
+    })
+  })
 
   return (
-    <aside className="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
-      <nav
-        aria-labelledby={labelId}
-        className="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+    <Show when={items().length >= 2}>
+      <Show
+        when={props.variant === 'mobile'}
+        fallback={
+          <aside class="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
+            <nav
+              aria-labelledby={labelId}
+              class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+            >
+              <p
+                id={labelId}
+                class="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+              >
+                <List class="text-primary h-4 w-4" aria-hidden />
+                On this page
+              </p>
+              <TableOfContentsLinks items={items()} activeId={activeId()} />
+            </nav>
+          </aside>
+        }
       >
-        <p
-          id={labelId}
-          className="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+        <details
+          ref={setDetails}
+          onToggle={(event) => setMobileOpen(event.currentTarget.open)}
+          class="group bg-card/80 mt-5 rounded-xl border px-4 py-3 lg:hidden"
         >
-          <List className="text-primary h-4 w-4" aria-hidden />
-          On this page
-        </p>
-        <TableOfContentsLinks items={items} activeId={activeId} />
-      </nav>
-    </aside>
+          <summary
+            aria-expanded={mobileOpen()}
+            aria-controls={mobileNavId}
+            class="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden"
+          >
+            <span class="inline-flex items-center gap-2">
+              <List class="text-primary h-4 w-4" aria-hidden />
+              On this page
+            </span>
+            <ChevronDown
+              class="text-muted-foreground h-4 w-4 transition-transform group-open:rotate-180"
+              aria-hidden
+            />
+            <span class="sr-only" aria-live="polite">
+              {activeId()
+                ? `Current section: ${items().find((item) => item.id === activeId())?.label ?? ''}`
+                : ''}
+            </span>
+          </summary>
+          <nav id={mobileNavId} aria-label="Table of contents" class="mt-3 border-t pt-3">
+            <TableOfContentsLinks
+              items={items()}
+              activeId={activeId()}
+              onNavigate={() => {
+                const el = details()
+                if (el) {
+                  el.open = false
+                }
+                setMobileOpen(false)
+              }}
+            />
+          </nav>
+        </details>
+      </Show>
+    </Show>
   )
 }

@@ -1,5 +1,5 @@
-import * as React from 'react'
 import { SOCIAL_ICON_PATHS, type SocialIcon, type SocialLink } from '@repo/config'
+import { For, splitProps, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 import { Button } from './button'
 
@@ -8,13 +8,13 @@ const ICON_BUTTON_CN =
 
 const SOCIAL_ICON_SVG_CN = 'size-7'
 
-interface IconButtonLinkProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+interface IconButtonLinkProps extends JSX.AnchorHTMLAttributes<HTMLAnchorElement> {
   label: string
   href: string
   external?: boolean
 }
 
-interface IconButtonActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface IconButtonActionProps extends JSX.ButtonHTMLAttributes<HTMLButtonElement> {
   label: string
   href?: undefined
   external?: never
@@ -22,82 +22,88 @@ interface IconButtonActionProps extends React.ButtonHTMLAttributes<HTMLButtonEle
 
 type IconButtonProps = IconButtonLinkProps | IconButtonActionProps
 
-function IconButton({ label, className, children, ...props }: IconButtonProps) {
+function IconButton(props: IconButtonProps) {
   if ('href' in props && props.href) {
-    const { href, external, target, rel, ...rest } = props as IconButtonLinkProps
+    const [local, rest] = splitProps(props as IconButtonLinkProps, [
+      'label',
+      'href',
+      'external',
+      'target',
+      'rel',
+      'class',
+      'children',
+    ])
     return (
       <Button
         variant="ghost"
         size="icon"
-        className={cn(ICON_BUTTON_CN, className)}
-        render={
-          <a
-            href={href}
-            aria-label={label}
-            target={external ? '_blank' : target}
-            rel={external ? 'noopener noreferrer' : rel}
-            {...rest}
-          >
-            {children}
-          </a>
-        }
-      />
+        class={cn(ICON_BUTTON_CN, local.class)}
+        as="a"
+        href={local.href}
+        aria-label={local.label}
+        target={local.external ? '_blank' : local.target}
+        rel={local.external ? 'noopener noreferrer' : local.rel}
+        {...rest}
+      >
+        {local.children}
+      </Button>
     )
   }
+  return <IconButtonAction {...(props as IconButtonActionProps)} />
+}
 
-  const { ...rest } = props as IconButtonActionProps
+function IconButtonAction(props: IconButtonActionProps) {
+  const [local, rest] = splitProps(props, ['label', 'class', 'children'])
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
-      aria-label={label}
-      className={cn(ICON_BUTTON_CN, className)}
+      aria-label={local.label}
+      class={cn(ICON_BUTTON_CN, local.class)}
       {...rest}
     >
-      {children}
+      {local.children}
     </Button>
   )
 }
 
-function SocialIconSvg({ icon, label }: { icon: SocialIcon; label: string }) {
+function SocialIconSvg(props: { icon: SocialIcon; label: string }) {
   return (
     <svg
       role="img"
-      aria-label={label}
+      aria-label={props.label}
       viewBox="0 0 24 24"
       fill="currentColor"
-      className={SOCIAL_ICON_SVG_CN}
+      class={SOCIAL_ICON_SVG_CN}
     >
-      <title>{label}</title>
-      <path d={SOCIAL_ICON_PATHS[icon]} />
+      <title>{props.label}</title>
+      <path d={SOCIAL_ICON_PATHS[props.icon]} />
     </svg>
   )
 }
 
-interface SocialBarProps extends React.HTMLAttributes<HTMLDivElement> {
+interface SocialBarProps extends JSX.HTMLAttributes<HTMLDivElement> {
   socials: SocialLink[]
 }
 
-function SocialBar({ socials, className, ...props }: SocialBarProps) {
+function SocialBar(props: SocialBarProps) {
+  const [local, rest] = splitProps(props, ['socials', 'class'])
   return (
     <div
-      className={cn(
+      class={cn(
         'mx-auto flex w-full max-w-[19rem] flex-wrap items-center justify-center gap-3 sm:gap-4',
-        className
+        local.class
       )}
-      {...props}
+      {...rest}
     >
-      {socials.map((social) => (
-        <IconButton
-          key={social.href}
-          href={social.href}
-          label={social.label}
-          external={social.icon !== 'email'}
-        >
-          <SocialIconSvg icon={social.icon} label={social.label} />
-        </IconButton>
-      ))}
+      <For each={local.socials}>
+        {(social) => (
+          <IconButton href={social.href} label={social.label} external={social.icon !== 'email'}>
+            <SocialIconSvg icon={social.icon} label={social.label} />
+          </IconButton>
+        )}
+      </For>
     </div>
   )
 }

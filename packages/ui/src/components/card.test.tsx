@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'bun:test'
-import { render, screen } from '@testing-library/react'
+import { render, screen } from '@solidjs/testing-library'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
 
 describe('ui/components/card', () => {
   it('renders a card with merged class names', () => {
-    render(
-      <Card data-testid="card" className="custom-card">
+    render(() => (
+      <Card data-testid="card" class="custom-card">
         content
       </Card>
-    )
+    ))
     const card = screen.getByTestId('card')
     expect(card.className).toContain('bg-card')
     expect(card.className).toContain('custom-card')
@@ -17,7 +17,7 @@ describe('ui/components/card', () => {
 
   it('forwards a ref to the underlying element', () => {
     let node: HTMLDivElement | null = null
-    render(
+    render(() => (
       <Card
         ref={(el) => {
           node = el
@@ -25,12 +25,12 @@ describe('ui/components/card', () => {
       >
         x
       </Card>
-    )
+    ))
     expect(node).toBeInstanceOf(HTMLDivElement)
   })
 
   it('renders the full card composition', () => {
-    render(
+    render(() => (
       <Card>
         <CardHeader>
           <CardTitle>Title text</CardTitle>
@@ -39,7 +39,7 @@ describe('ui/components/card', () => {
         <CardContent>Body</CardContent>
         <CardFooter>Foot</CardFooter>
       </Card>
-    )
+    ))
     expect(screen.getByText('Title text')).toBeTruthy()
     expect(screen.getByText('Desc text')).toBeTruthy()
     expect(screen.getByText('Body')).toBeTruthy()
@@ -47,7 +47,7 @@ describe('ui/components/card', () => {
   })
 
   it('applies custom class names to subcomponents', () => {
-    render(<CardTitle className="my-title">x</CardTitle>)
+    render(() => <CardTitle class="my-title">x</CardTitle>)
     expect(screen.getByText('x').className).toContain('my-title')
     expect(screen.getByText('x').className).toContain('text-2xl')
   })

@@ -1,12 +1,10 @@
-'use client'
-
 import {
   buildProjectPokemonSpriteUrls,
   projectPokemonSpriteSlugCandidates,
   pokemonR2ImageVariantCandidates,
   spriteUrlCandidates,
 } from '@repo/data/client'
-import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
+import { createEffect, createMemo, createSignal, Match, on, Show, Switch } from 'solid-js'
 
 interface Pokemon3dSpriteShowcaseProps {
   slug: string
@@ -15,141 +13,129 @@ interface Pokemon3dSpriteShowcaseProps {
   showdownSpriteUrl?: string | null
 }
 
-export function Pokemon3dSpriteShowcase({
-  slug,
-  displayName,
-  showdownSpriteUrl,
-}: Pokemon3dSpriteShowcaseProps) {
-  const candidates = useMemo(() => projectPokemonSpriteSlugCandidates(slug), [slug])
-  const showdownCandidates = useMemo(
-    () => spriteUrlCandidates(showdownSpriteUrl, null),
-    [showdownSpriteUrl]
-  )
-  const [slugIndex, setSlugIndex] = useState(0)
-  const [mode, setMode] = useState<'project' | 'showdown'>('project')
-  const loadFailures = useRef(0)
+export function Pokemon3dSpriteShowcase(props: Pokemon3dSpriteShowcaseProps) {
+  const candidates = createMemo(() => projectPokemonSpriteSlugCandidates(props.slug))
+  const showdownCandidates = createMemo(() => spriteUrlCandidates(props.showdownSpriteUrl, null))
+  const [slugIndex, setSlugIndex] = createSignal(0)
+  const [mode, setMode] = createSignal<'project' | 'showdown'>('project')
+  let loadFailures = 0
 
-  const spriteSlug = candidates[slugIndex]
-  const urls = spriteSlug ? buildProjectPokemonSpriteUrls(spriteSlug) : null
+  const spriteSlug = () => candidates()[slugIndex()]
+  const urls = () => {
+    const slug = spriteSlug()
+    return slug ? buildProjectPokemonSpriteUrls(slug) : null
+  }
 
-  useEffect(() => {
-    loadFailures.current = 0
-  }, [slugIndex, mode])
-
-  if (mode === 'showdown' && showdownCandidates.length > 0) {
-    return (
-      <ShowdownSpriteSection
-        displayName={displayName}
-        url={showdownCandidates[0]!}
-        fallbackUrls={showdownCandidates.slice(1)}
-      />
+  createEffect(
+    on(
+      () => [slugIndex(), mode()],
+      () => {
+        loadFailures = 0
+      },
+      { defer: true }
     )
-  }
-
-  if (!candidates.length) {
-    if (showdownCandidates.length > 0) {
-      return (
-        <ShowdownSpriteSection
-          displayName={displayName}
-          url={showdownCandidates[0]!}
-          fallbackUrls={showdownCandidates.slice(1)}
-        />
-      )
-    }
-    return null
-  }
-
-  if (mode !== 'project' || !urls) {
-    return null
-  }
+  )
 
   const handleSpriteError = () => {
-    loadFailures.current += 1
-    if (loadFailures.current < 2) return
-    loadFailures.current = 0
-    if (slugIndex + 1 < candidates.length) {
+    loadFailures += 1
+    if (loadFailures < 2) return
+    loadFailures = 0
+    if (slugIndex() + 1 < candidates().length) {
       setSlugIndex((current) => current + 1)
-    } else if (showdownCandidates.length > 0) {
+    } else if (showdownCandidates().length > 0) {
       setMode('showdown')
     }
   }
 
+  const section = createMemo<'showdown' | 'project' | 'none'>(() => {
+    if (mode() === 'showdown' && showdownCandidates().length > 0) return 'showdown'
+    if (candidates().length === 0) {
+      return showdownCandidates().length > 0 ? 'showdown' : 'none'
+    }
+    if (mode() !== 'project' || !urls()) return 'none'
+    return 'project'
+  })
+
   return (
-    <div className="mt-8 border-t pt-6">
-      <h3 className="text-sm font-semibold tracking-tight">3D battle sprites</h3>
-      <p className="text-muted-foreground mt-1 text-sm">
-        Animated Showdown-style models for {displayName} — normal and shiny.
-      </p>
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <SpriteTile
-          label="Normal"
-          url={urls.normal}
-          alt={`${displayName} normal 3D sprite`}
-          onFailed={handleSpriteError}
+    <Switch>
+      <Match when={section() === 'showdown'}>
+        <ShowdownSpriteSection
+          displayName={props.displayName}
+          url={showdownCandidates()[0]!}
+          fallbackUrls={showdownCandidates().slice(1)}
         />
-        <SpriteTile
-          label="Shiny"
-          url={urls.shiny}
-          alt={`${displayName} shiny 3D sprite`}
-          onFailed={handleSpriteError}
-        />
-      </div>
-      <p className="text-muted-foreground mt-4 text-xs">
-        Sprites via{' '}
-        <a
-          href="https://projectpokemon.org/home/docs/Sprite_Resource_148"
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-2"
-        >
-          Project Pokémon
-        </a>
-        . Pokémon and character names are trademarks of Nintendo / Creatures / GAME FREAK.
-      </p>
-    </div>
+      </Match>
+      <Match when={section() === 'project'}>
+        <div class="mt-8 border-t pt-6">
+          <h3 class="text-sm font-semibold tracking-tight">3D battle sprites</h3>
+          <p class="text-muted-foreground mt-1 text-sm">
+            Animated Showdown-style models for {props.displayName} — normal and shiny.
+          </p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <SpriteTile
+              label="Normal"
+              url={urls()!.normal}
+              alt={`${props.displayName} normal 3D sprite`}
+              onFailed={handleSpriteError}
+            />
+            <SpriteTile
+              label="Shiny"
+              url={urls()!.shiny}
+              alt={`${props.displayName} shiny 3D sprite`}
+              onFailed={handleSpriteError}
+            />
+          </div>
+          <p class="text-muted-foreground mt-4 text-xs">
+            Sprites via{' '}
+            <a
+              href="https://projectpokemon.org/home/docs/Sprite_Resource_148"
+              target="_blank"
+              rel="noreferrer"
+              class="underline underline-offset-2"
+            >
+              Project Pokémon
+            </a>
+            . Pokémon and character names are trademarks of Nintendo / Creatures / GAME FREAK.
+          </p>
+        </div>
+      </Match>
+    </Switch>
   )
 }
 
-function ShowdownSpriteSection({
-  displayName,
-  url,
-  fallbackUrls,
-}: {
+function ShowdownSpriteSection(props: {
   displayName: string
   url: string
   fallbackUrls: string[]
 }) {
-  const [candidateIndex, setCandidateIndex] = useState(0)
-  const candidates = useMemo(
-    () => pokemonR2ImageVariantCandidates([url, ...fallbackUrls], 'small'),
-    [url, fallbackUrls]
+  const [candidateIndex, setCandidateIndex] = createSignal(0)
+  const candidates = createMemo(() =>
+    pokemonR2ImageVariantCandidates([props.url, ...props.fallbackUrls], 'small')
   )
-  const src = candidates[candidateIndex]
-
-  if (!src) {
-    return null
-  }
+  const src = () => candidates()[candidateIndex()]
 
   return (
-    <div className="mt-8 border-t pt-6">
-      <h3 className="text-sm font-semibold tracking-tight">Battle sprite</h3>
-      <p className="text-muted-foreground mt-1 text-sm">
-        Animated Showdown sprite for {displayName} (from our species art cache — 3D Project Pokémon
-        models are not available for this species yet).
-      </p>
-      <div className="mt-4 flex justify-center">
-        <SpriteTile
-          label="Showdown"
-          url={src}
-          alt={`${displayName} Showdown battle sprite`}
-          onFailed={() => {
-            setCandidateIndex((current) =>
-              current + 1 < candidates.length ? current + 1 : current
-            )
-          }}
-        />
-      </div>
-    </div>
+    <Show when={src()}>
+      {(current) => (
+        <div class="mt-8 border-t pt-6">
+          <h3 class="text-sm font-semibold tracking-tight">Battle sprite</h3>
+          <p class="text-muted-foreground mt-1 text-sm">
+            Animated Showdown sprite for {props.displayName} (from our species art cache — 3D
+            Project Pokémon models are not available for this species yet).
+          </p>
+          <div class="mt-4 flex justify-center">
+            <SpriteTile
+              label="Showdown"
+              url={current()}
+              alt={`${props.displayName} Showdown battle sprite`}
+              onFailed={() => {
+                setCandidateIndex((index) => (index + 1 < candidates().length ? index + 1 : index))
+              }}
+            />
+          </div>
+        </div>
+      )}
+    </Show>
   )
 }
 
@@ -158,32 +144,22 @@ const SPRITE_TILE_MIN_HEIGHT_PX = 58
 const SPRITE_IMG_CLASS =
   'h-auto w-auto max-w-full origin-bottom object-contain object-bottom drop-shadow-md [image-rendering:pixelated] [-ms-interpolation-mode:nearest-neighbor]'
 
-function SpriteTile({
-  label,
-  url,
-  alt,
-  onFailed,
-}: {
-  label: string
-  url: string
-  alt: string
-  onFailed: () => void
-}) {
+function SpriteTile(props: { label: string; url: string; alt: string; onFailed: () => void }) {
   return (
-    <figure className="bg-muted/30 flex flex-col items-center overflow-visible rounded-xl border px-3 pt-2.5 pb-3">
-      <figcaption className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
-        {label}
+    <figure class="bg-muted/30 flex flex-col items-center overflow-visible rounded-xl border px-3 pt-2.5 pb-3">
+      <figcaption class="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">
+        {props.label}
       </figcaption>
       <div
-        className="flex min-h-(--sprite-min-h) w-full items-end justify-center"
-        style={{ '--sprite-min-h': `${SPRITE_TILE_MIN_HEIGHT_PX}px` } as CSSProperties}
+        class="flex min-h-(--sprite-min-h) w-full items-end justify-center"
+        style={{ '--sprite-min-h': `${SPRITE_TILE_MIN_HEIGHT_PX}px` }}
       >
         <img
-          src={url}
-          alt={alt}
-          className={`${SPRITE_IMG_CLASS} [image-rendering:pixelated]`}
+          src={props.url}
+          alt={props.alt}
+          class={`${SPRITE_IMG_CLASS} [image-rendering:pixelated]`}
           decoding="async"
-          onError={onFailed}
+          onError={props.onFailed}
         />
       </div>
     </figure>

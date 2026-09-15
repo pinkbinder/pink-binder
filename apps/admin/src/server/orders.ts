@@ -1,4 +1,4 @@
-import { createServerFn } from '@tanstack/react-start'
+import { createServerFn } from '@tanstack/solid-start'
 
 export type OrderStatus = 'completed' | 'pending' | 'processing'
 

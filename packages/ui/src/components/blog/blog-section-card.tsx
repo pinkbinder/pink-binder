@@ -1,25 +1,30 @@
-import { isValidElement, type ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 import { Card, CardContent } from '../card'
 import { cn } from '../../lib/utils'
 
-function getReactNodeText(node: ReactNode): string {
+function getNodeText(node: JSX.Element): string {
+  if (node === null || node === undefined || typeof node === 'boolean') {
+    return ''
+  }
+
   if (typeof node === 'string' || typeof node === 'number') {
     return String(node)
   }
 
   if (Array.isArray(node)) {
-    return node.map(getReactNodeText).join(' ')
+    return node.map(getNodeText).join(' ')
   }
 
-  if (isValidElement<{ children?: ReactNode }>(node)) {
-    return getReactNodeText(node.props.children)
+  // Rendered DOM nodes carry their text content directly.
+  if (typeof node === 'object' && 'textContent' in node) {
+    return String(node.textContent ?? '')
   }
 
   return ''
 }
 
-function createSectionId(title: ReactNode) {
-  const slug = getReactNodeText(title)
+function createSectionId(title: JSX.Element) {
+  const slug = getNodeText(title)
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[’']/g, '')
@@ -34,17 +39,17 @@ export function BlogSectionCard({
   title,
   description,
   children,
-  className,
+  class: className,
   contentClassName,
   titleClassName,
   descriptionClassName,
   titleAs = 'h2',
   sectionId,
 }: {
-  title?: ReactNode
-  description?: ReactNode
-  children: ReactNode
-  className?: string
+  title?: JSX.Element
+  description?: JSX.Element
+  children: JSX.Element
+  class?: string
   contentClassName?: string
   titleClassName?: string
   descriptionClassName?: string
@@ -55,13 +60,13 @@ export function BlogSectionCard({
   const resolvedSectionId = sectionId ?? createSectionId(title)
 
   return (
-    <Card className={cn('bg-card rounded-2xl border shadow-none', className)}>
-      <CardContent className={cn('p-5', contentClassName)}>
+    <Card class={cn('bg-card rounded-2xl border shadow-none', className)}>
+      <CardContent class={cn('p-5', contentClassName)}>
         {title ? (
           <TitleTag
             id={resolvedSectionId}
             data-blog-toc-heading
-            className={cn(
+            class={cn(
               'font-title scroll-mt-24 text-xl leading-tight font-semibold tracking-tight sm:text-2xl',
               titleClassName
             )}
@@ -71,7 +76,7 @@ export function BlogSectionCard({
         ) : null}
         {description ? (
           <p
-            className={cn(
+            class={cn(
               'text-muted-foreground mt-2 text-sm leading-relaxed sm:text-base',
               descriptionClassName
             )}
