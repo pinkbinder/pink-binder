@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.4](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.3...blog-v0.11.4) (2026-09-15)
+
+
+### Maintenance
+
+* enforce @shadcn/lint and migrate @repo/ui to Base UI ([#120](https://github.com/pinkbinder/pink-binder/issues/120)) ([cdd0654](https://github.com/pinkbinder/pink-binder/commit/cdd06543a21f762a919dcd6f8fca2de611444580))
+
 ## [0.11.3](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.2...blog-v0.11.3) (2026-09-14)
 
 
