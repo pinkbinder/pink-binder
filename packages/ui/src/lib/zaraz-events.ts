@@ -293,6 +293,38 @@ export function trackPostView({
   fireClarity('post_view')
 }
 
+const WEB_VITALS_VALUE_LIMIT = 4096
+
+/**
+ * Fire a `web_vitals` event with one Core Web Vitals sample (LCP, INP, CLS,
+ * TTFB). Field data per template — not lab throttling — is what tells us the
+ * UX performance standards are actually holding (see
+ * docs/UX_PERFORMANCE_STANDARDS.md). Values are rounded to two decimals to
+ * keep the payload bounded.
+ */
+export function trackWebVital({
+  name,
+  value,
+  rating,
+  id,
+  navigationType,
+}: {
+  name: string
+  value: number
+  rating?: string
+  id?: string
+  navigationType?: string
+}) {
+  if (!Number.isFinite(value)) return
+  sendZarazEvent('web_vitals', {
+    metric: name.slice(0, 16),
+    value: Math.round(value * 100) / 100,
+    ...(rating ? { rating: rating.slice(0, 16) } : {}),
+    ...(id ? { id: id.slice(0, WEB_VITALS_VALUE_LIMIT) } : {}),
+    ...(navigationType ? { navigation_type: navigationType.slice(0, 32) } : {}),
+  })
+}
+
 /**
  * Fire a `share` event – used when a visitor shares content via the share dialog.
  *

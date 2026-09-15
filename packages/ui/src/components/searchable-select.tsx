@@ -1,6 +1,6 @@
 import * as PopoverPrimitive from '@kobalte/core/popover'
 import { Check, ChevronDown, Search } from 'lucide-solid'
-import { createMemo, createSignal, For, Show, type JSX } from 'solid-js'
+import { createMemo, createSignal, For, onCleanup, Show, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
 export interface SearchableSelectOption {
@@ -40,13 +40,19 @@ interface SearchableSelectProps {
  *  than the interaction it serves; the overflow hint routes users to search. */
 const DEFAULT_RENDER_LIMIT = 100
 
+/** Idle window before keystrokes re-rank/filter the option list. The ranked
+ *  catalogs can hold 2k+ entries, so the filter memo must not run per
+ *  character; the input value itself stays unsprung for immediate feedback. */
+const FILTER_DEBOUNCE_MS = 60
+
 export function SearchableSelect(props: SearchableSelectProps) {
   const [open, setOpen] = createSignal(false)
-  const [search, setSearch] = createSignal('')
+  const [searchInput, setSearchInput] = createSignal('')
+  const [appliedSearch, setAppliedSearch] = createSignal('')
   const resolvedClearLabel = () => props.clearLabel ?? props.placeholder ?? 'All'
 
   const filtered = createMemo(() => {
-    const term = search()
+    const term = appliedSearch()
     if (!term) return props.options
     if (props.filterOptions) {
       return props.filterOptions(props.options, term)
@@ -62,32 +68,63 @@ export function SearchableSelect(props: SearchableSelectProps) {
     () => props.options.find((opt) => opt.value === props.value) ?? null
   )
 
+  function resetSearch() {
+    if (filterTimer !== undefined) {
+      clearTimeout(filterTimer)
+      filterTimer = undefined
+    }
+    setSearchInput('')
+    setAppliedSearch('')
+  }
+
   function handleSelect(optionValue: string) {
     props.onValueChange(props.value === optionValue ? null : optionValue)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
 
   function handleClear() {
     props.onValueChange(null)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
 
+  let filterTimer: ReturnType<typeof setTimeout> | undefined
+
   function handleFreeText() {
-    const term = search().trim()
+    const term = searchInput().trim()
     if (!props.freeText || !term) return
     props.freeText.onAction(term)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
+
+  function handleSearchInput(value: string) {
+    setSearchInput(value)
+    if (filterTimer !== undefined) {
+      clearTimeout(filterTimer)
+      filterTimer = undefined
+    }
+    if (!value) {
+      setAppliedSearch('')
+      return
+    }
+    filterTimer = setTimeout(() => {
+      filterTimer = undefined
+      setAppliedSearch(searchInput().trim())
+    }, FILTER_DEBOUNCE_MS)
+  }
+
+  onCleanup(() => {
+    if (filterTimer !== undefined) clearTimeout(filterTimer)
+  })
 
   return (
     <PopoverPrimitive.Root
       open={open()}
       onOpenChange={(next) => {
         setOpen(next)
-        if (!next) setSearch('')
+        if (!next) resetSearch()
       }}
       placement="bottom-start"
       gutter={4}
@@ -129,10 +166,10 @@ export function SearchableSelect(props: SearchableSelectProps) {
               type="text"
               placeholder="Search…"
               autofocus
-              value={search()}
-              onInput={(e) => setSearch(e.currentTarget.value)}
+              value={searchInput()}
+              onInput={(e) => handleSearchInput(e.currentTarget.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && props.freeText && search().trim()) {
+                if (e.key === 'Enter' && props.freeText && searchInput().trim()) {
                   e.preventDefault()
                   handleFreeText()
                 }
@@ -141,7 +178,7 @@ export function SearchableSelect(props: SearchableSelectProps) {
             />
           </div>
           <div class="max-h-60 overflow-y-auto p-1">
-            <Show when={props.freeText && search().trim() ? props.freeText : undefined}>
+            <Show when={props.freeText && searchInput().trim() ? props.freeText : undefined}>
               {(freeText) => (
                 <button
                   type="button"
@@ -151,7 +188,9 @@ export function SearchableSelect(props: SearchableSelectProps) {
                   <span class="flex h-4 w-4 shrink-0 items-center justify-center">
                     <Search class="text-muted-foreground h-3.5 w-3.5" />
                   </span>
-                  <span class="truncate font-medium">{freeText().labelFor(search().trim())}</span>
+                  <span class="truncate font-medium">
+                    {freeText().labelFor(searchInput().trim())}
+                  </span>
                 </button>
               )}
             </Show>

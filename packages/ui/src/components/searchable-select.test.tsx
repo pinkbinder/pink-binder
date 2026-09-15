@@ -43,17 +43,33 @@ describe('ui/components/searchable-select', () => {
     expect(screen.getByText(/more matches/).textContent).toMatch(/150/)
   })
 
-  test('searching narrows the catalog and clears the overflow hint', () => {
+  test('searching narrows the catalog and clears the overflow hint', async () => {
     render(() => <SearchableSelect options={MANY_OPTIONS} value={null} onValueChange={() => {}} />)
 
     openDropdown()
     const search = screen.getByPlaceholderText('Search…') as HTMLInputElement
     search.value = 'Option 249'
     fireEvent.input(search)
+    // Option filtering is debounced; the input value itself updates instantly.
+    expect(search.value).toBe('Option 249')
+    await Bun.sleep(120)
 
     const mounted = renderedOptionLabels()
     expect(mounted).toEqual(['Option 249'])
     expect(screen.queryByText(/more matches/)).toBeNull()
+  })
+
+  test('option filtering is debounced — the ranked list lags the input slightly', async () => {
+    render(() => <SearchableSelect options={MANY_OPTIONS} value={null} onValueChange={() => {}} />)
+
+    openDropdown()
+    const search = screen.getByPlaceholderText('Search…') as HTMLInputElement
+    search.value = 'Option 249'
+    fireEvent.input(search)
+    // Inside the debounce window the full (capped) list is still mounted.
+    expect(renderedOptionLabels().length).toBe(100)
+    await Bun.sleep(120)
+    expect(renderedOptionLabels()).toEqual(['Option 249'])
   })
 
   test('the selected chip renders even when the option sits outside the mounted window', () => {
