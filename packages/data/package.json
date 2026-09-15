@@ -16,7 +16,7 @@
     "./package.json": "./package.json"
   },
   "scripts": {
-    "lint": "oxlint src test --max-warnings 0",
+    "lint": "oxlint . --max-warnings 0",
     "type-check": "tsc --noEmit",
     "test": "cd ../.. && bun test --isolate packages/data",
     "test:watch": "cd ../.. && bun test --watch packages/data",

@@ -9,7 +9,6 @@ describe('badge-styles', () => {
   })
 
   it('exposes a mythical platinum tone class string', () => {
-    expect(MYTHICAL_PLATINUM_TONE_CLASS).toContain('border-[#7DA8FF]')
-    expect(MYTHICAL_PLATINUM_TONE_CLASS).toContain('text-[#2457B8]')
+    expect(MYTHICAL_PLATINUM_TONE_CLASS).toContain('mythical-badge')
   })
 })

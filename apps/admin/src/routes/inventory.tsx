@@ -106,7 +106,7 @@ function InventoryPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
+          <CardTitle size="xs">
             {visible.length} {visible.length === 1 ? 'item' : 'items'}
           </CardTitle>
         </CardHeader>
@@ -149,7 +149,7 @@ function InventoryTable({
 }: InventoryTableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[720px] text-sm">
+      <table className="w-full min-w-180 text-sm">
         <thead>
           <tr className="text-muted-foreground border-b">
             <th className="pb-2 text-left font-medium">Item</th>
@@ -248,7 +248,7 @@ function QuantityStepper({
           Out of stock
         </Badge>
       ) : item.quantity <= LOW_STOCK_THRESHOLD ? (
-        <Badge className="ml-1 border-amber-600/30 bg-amber-400/15 text-amber-900 dark:text-amber-200">
+        <Badge variant="warning" className="ml-1">
           Low
         </Badge>
       ) : null}
@@ -258,7 +258,7 @@ function QuantityStepper({
 
 const CHIP_STATE_CLASS: Record<SyncState, string> = {
   synced: '',
-  pending: 'ring-2 ring-amber-500/70',
+  pending: 'ring-warning/70 ring-2',
   error: 'ring-2 ring-destructive/80',
   unlinked: 'opacity-25',
 }
@@ -285,7 +285,7 @@ function ChannelLegend() {
             aria-hidden
             className={cn(
               'bg-muted-foreground/60 inline-block size-2.5 rounded-full',
-              state === 'pending' && 'bg-amber-500 ring-2 ring-amber-500/70',
+              state === 'pending' && 'bg-warning ring-warning/70 ring-2',
               state === 'error' && 'bg-destructive ring-2 ring-destructive/80',
               state === 'unlinked' && 'opacity-25'
             )}

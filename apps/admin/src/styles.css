@@ -17,3 +17,26 @@
     --destructive: 0 72% 40%;
   }
 }
+
+/* Marketplace and social channel identity colors for the console's
+   brand-tinted dots. Third-party brand colors, declared as tokens. */
+@theme {
+  --color-channel-shopify: hsl(96 48% 38%);
+  --color-channel-ebay: hsl(355 78% 50%);
+  --color-channel-tcgplayer: hsl(216 65% 36%);
+  --color-channel-whatnot: hsl(42 93% 44%);
+  --color-channel-x: hsl(0 0% 12%);
+  --color-channel-facebook: hsl(221 89% 48%);
+  --color-channel-pinterest: hsl(350 100% 44%);
+  --color-channel-tiktok: hsl(175 80% 32%);
+}
+
+/* Sidebar collapse animates width only. */
+@utility transition-width {
+  transition-property: width;
+}
+
+/* Channel identity dots can carry a gradient fill via --dot-fill. */
+@utility dot-fill {
+  background: var(--dot-fill);
+}

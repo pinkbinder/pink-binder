@@ -22,7 +22,7 @@ export function TcgCardPriceLabel({
 
   return (
     <div className="flex flex-wrap items-center gap-2 px-0.5">
-      <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300">
+      <p className="text-success-foreground text-sm font-semibold">
         {formatUsd(market)} <span className="text-muted-foreground font-normal">NM market</span>
       </p>
       {card.tcgplayerUrl ? (

@@ -124,13 +124,7 @@ function ThemeToggle({ expanded }: { expanded?: boolean }) {
   const toggleTheme = useAdminPreferences((state) => state.toggleTheme)
   const label = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={toggleTheme}
-      aria-label={label}
-      className="text-muted-foreground justify-start gap-2.5 px-2"
-    >
+    <Button variant="navItem" size="sm" onClick={toggleTheme} aria-label={label}>
       {theme === 'light' ? <Moon className="size-4" /> : <Sun className="size-4" />}
       {expanded && (
         <span className="text-sm">{theme === 'light' ? 'Dark mode' : 'Light mode'}</span>
@@ -147,8 +141,8 @@ function DesktopSidebar() {
   return (
     <aside
       className={cn(
-        'bg-card/40 sticky top-0 hidden h-screen shrink-0 flex-col border-r transition-[width] duration-200 md:flex',
-        sidebarOpen ? 'w-64' : 'w-[4.25rem]'
+        'bg-card/40 transition-width sticky top-0 hidden h-screen shrink-0 flex-col border-r duration-200 md:flex',
+        sidebarOpen ? 'w-64' : 'w-17'
       )}
     >
       <div className={cn('flex items-center gap-2 px-4 pt-5 pb-4', !sidebarOpen && 'px-3')}>
@@ -159,7 +153,7 @@ function DesktopSidebar() {
           <div key={section.label}>
             <p
               className={cn(
-                'text-muted-foreground mb-1.5 px-2 text-[11px] font-semibold tracking-widest uppercase',
+                'text-muted-foreground mb-1.5 px-2 text-xs font-semibold tracking-widest uppercase',
                 !sidebarOpen && 'sr-only'
               )}
             >
@@ -201,12 +195,11 @@ function DesktopSidebar() {
       >
         <ThemeToggle expanded={sidebarOpen} />
         <Button
-          variant="ghost"
+          variant="navItem"
           size="sm"
           onClick={() => setSidebarOpen(!sidebarOpen)}
           aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
           aria-expanded={sidebarOpen}
-          className="text-muted-foreground justify-start gap-2.5 px-2"
         >
           {sidebarOpen ? (
             <PanelLeftClose className="size-4" aria-hidden />

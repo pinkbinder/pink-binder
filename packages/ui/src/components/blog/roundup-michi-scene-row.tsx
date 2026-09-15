@@ -20,7 +20,7 @@ export function RoundupMichiSceneRow({
   }
 
   return (
-    <div className="mt-5 border-t border-pink-100/80 pt-5">
+    <div className="border-secondary/80 mt-5 border-t pt-5">
       <h3 className="text-sm font-semibold tracking-tight">Michi Method scene art</h3>
       <p className="text-muted-foreground mt-1 text-xs">
         Wide scenes for binder spreads — curated for {displayName}.

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useEffect, useRef, useCallback } from 'react'
+import { useState, useMemo, useEffect, useRef, useCallback, type CSSProperties } from 'react'
 import Link from '../compat-link'
 import { useInfiniteQuery } from '@tanstack/react-query'
 import { useQueryStates } from 'nuqs'
@@ -578,8 +578,10 @@ export function BlogGrid({
           label: type,
           icon: logoUrl ? (
             <span
-              className="inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-semibold"
-              style={{ backgroundColor: lightColors.bg, color: lightColors.text }}
+              className="inline-flex items-center gap-1 rounded-full bg-(--type-bg) px-1.5 py-0.5 text-[10px] font-semibold text-(--type-fg)"
+              style={
+                { '--type-bg': lightColors.bg, '--type-fg': lightColors.text } as CSSProperties
+              }
             >
               <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(type)} />
             </span>
@@ -802,14 +804,14 @@ export function BlogGrid({
     const logoUrl = getPokemonTypeLogoUrl(option.value)
     return (
       <span
-        className="inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
-        style={{
-          backgroundColor: lightColors.bg,
-          color: lightColors.text,
-          borderColor: lightColors.border,
-          borderWidth: '1px',
-          borderStyle: 'solid',
-        }}
+        className="inline-flex items-center gap-1.5 rounded-full border border-(--type-border) bg-(--type-bg) px-2 py-0.5 text-xs font-semibold text-(--type-fg)"
+        style={
+          {
+            '--type-bg': lightColors.bg,
+            '--type-fg': lightColors.text,
+            '--type-border': lightColors.border,
+          } as CSSProperties
+        }
       >
         {logoUrl ? (
           <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(option.value)} />
@@ -954,10 +956,8 @@ export function BlogGrid({
 
           <h2 className="sr-only">Post filters</h2>
           <Accordion
-            type="single"
-            collapsible
-            value={filtersAccordionValue}
-            onValueChange={setFiltersAccordionValue}
+            value={filtersAccordionValue ? [filtersAccordionValue] : []}
+            onValueChange={(next) => setFiltersAccordionValue((next[0] as string) ?? '')}
             className="border-border/60 bg-muted/30 rounded-xl border px-3 sm:px-4"
           >
             <AccordionItem value="filters" className="border-b-0">
@@ -1112,12 +1112,14 @@ export function BlogGrid({
                 variant="filterChip"
                 aria-pressed
                 onClick={() => applyGroupedFilter('type', null)}
-                className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                style={{
-                  borderColor: getPokemonTypeLightColors(groupedFilters.type).border,
-                  backgroundColor: getPokemonTypeLightColors(groupedFilters.type).bg,
-                  color: getPokemonTypeLightColors(groupedFilters.type).text,
-                }}
+                className={`h-auto ${CLICKABLE_BADGE_CLASS} border-(--type-border) bg-(--type-bg) text-(--type-fg)`}
+                style={
+                  {
+                    '--type-border': getPokemonTypeLightColors(groupedFilters.type).border,
+                    '--type-bg': getPokemonTypeLightColors(groupedFilters.type).bg,
+                    '--type-fg': getPokemonTypeLightColors(groupedFilters.type).text,
+                  } as CSSProperties
+                }
               >
                 <span className="inline-flex items-center gap-1.5">
                   {getPokemonTypeLogoUrl(groupedFilters.type) ? (
@@ -1245,13 +1247,18 @@ export function BlogGrid({
                     onClick={() =>
                       trackSelectContent({ contentType: 'blog_post', itemId: post.slug })
                     }
-                    className="group focus-visible:ring-ring block rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
+                    className={`group focus-visible:ring-ring block rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden ${
+                      typeAura
+                        ? 'bg-[linear-gradient(145deg,var(--aura-from),var(--aura-to))] shadow-[0_12px_34px_-24px_var(--aura-glow)]'
+                        : ''
+                    }`}
                     style={
                       typeAura
-                        ? {
-                            background: `linear-gradient(145deg, ${typeAura.border}, ${typeAura.bg})`,
-                            boxShadow: `0 12px 34px -24px ${typeAura.text}`,
-                          }
+                        ? ({
+                            '--aura-from': typeAura.border,
+                            '--aura-to': typeAura.bg,
+                            '--aura-glow': typeAura.text,
+                          } as CSSProperties)
                         : undefined
                     }
                   >
@@ -1326,12 +1333,14 @@ export function BlogGrid({
                           )}
                           key={`${post.slug}-${category}`}
                           onClick={() => applyCategoryFilter(filterValue)}
-                          className={`h-auto ${CLICKABLE_BADGE_CLASS}`}
-                          style={{
-                            borderColor: lightColors.border,
-                            backgroundColor: lightColors.bg,
-                            color: lightColors.text,
-                          }}
+                          className={`h-auto ${CLICKABLE_BADGE_CLASS} border-(--type-border) bg-(--type-bg) text-(--type-fg)`}
+                          style={
+                            {
+                              '--type-border': lightColors.border,
+                              '--type-bg': lightColors.bg,
+                              '--type-fg': lightColors.text,
+                            } as CSSProperties
+                          }
                         >
                           <span className="inline-flex items-center gap-1.5">
                             {logoUrl ? (
@@ -1351,7 +1360,7 @@ export function BlogGrid({
                       </span>
                     ) : post.isLegendary ? (
                       <span
-                        className={`${CLICKABLE_BADGE_CLASS} border-amber-300 bg-amber-100 text-amber-700 dark:border-amber-700 dark:bg-amber-900/30 dark:text-amber-400`}
+                        className={`${CLICKABLE_BADGE_CLASS} border-warning/40 bg-warning/15 text-warning-foreground`}
                       >
                         ★ Legendary
                       </span>

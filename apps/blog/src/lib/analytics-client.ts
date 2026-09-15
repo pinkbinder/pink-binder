@@ -8,7 +8,7 @@ import { trackButtonClick, trackOutboundClick, trackPostView } from '@repo/ui/za
 
 const INTERACTIVE_SELECTOR = 'button, [role="button"]'
 
-/** Radix generates unstable ids (`radix-:r0:`) that are noise as a dimension. */
+/** Primitive libraries generate unstable ids (`radix-…`, `«r0»`, `:r0:`) that are noise as a dimension. */
 const GENERATED_ID_PATTERN = /^(radix-|[:«]r)/
 
 export interface ButtonClickInfo {

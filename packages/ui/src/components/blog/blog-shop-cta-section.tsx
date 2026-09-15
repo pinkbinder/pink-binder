@@ -25,7 +25,7 @@ export function BlogShopCtaSection({
         <a
           href={shopUrl}
           rel="noopener noreferrer"
-          className="group relative mx-auto block w-full max-w-[420px] overflow-hidden rounded-xl border border-pink-200 bg-pink-50 shadow-xs transition-transform hover:-translate-y-0.5 sm:mx-0 sm:w-[272px]"
+          className="group border-brand-light-pink bg-secondary relative mx-auto block w-full max-w-[420px] overflow-hidden rounded-xl border shadow-xs transition-transform hover:-translate-y-0.5 sm:mx-0 sm:w-[272px]"
           aria-label="Open The Pink Binder Shop"
         >
           {isDefaultPromo ? (
@@ -48,8 +48,7 @@ export function BlogShopCtaSection({
               alt="The Pink Binder live promo"
               width={272}
               height={272}
-              className="aspect-square w-full object-cover sm:w-[272px]"
-              style={{ height: 'auto' }}
+              className="aspect-square h-auto w-full object-cover sm:w-[272px]"
               sizes="(max-width: 640px) 100vw, 272px"
               priority={false}
             />
@@ -63,8 +62,8 @@ export function BlogShopCtaSection({
             Ready to buy? Visit The Pink Binder Shop hub for direct links to our latest card
             listings across marketplaces.
           </p>
-          <div className="flex items-center gap-3 rounded-xl border border-pink-100 bg-pink-50/60 px-3 py-2">
-            <div className="relative h-24 w-24 overflow-hidden rounded-full border border-pink-200 bg-white">
+          <div className="border-secondary bg-secondary/60 flex items-center gap-3 rounded-xl border px-3 py-2">
+            <div className="border-brand-light-pink relative h-24 w-24 overflow-hidden rounded-full border bg-white">
               {isDefaultLogo ? (
                 <RemoteImageWithFallback
                   candidates={[BLOG_R2_ASSETS.logo.medium, BLOG_LOCAL_ASSETS.logo]}
@@ -86,19 +85,19 @@ export function BlogShopCtaSection({
                 />
               )}
             </div>
-            <p className="text-sm font-medium text-pink-900">
+            <p className="text-foreground text-sm font-medium">
               Singles, packs, keychains, and more!
             </p>
           </div>
           <Button
             variant="link"
-            asChild
             className="text-primary-deep h-auto w-fit p-0 font-semibold"
-          >
-            <a href={shopUrl} rel="noopener noreferrer">
-              Visit The Pink Binder Shop →
-            </a>
-          </Button>
+            render={
+              <a href={shopUrl} rel="noopener noreferrer">
+                Visit The Pink Binder Shop →
+              </a>
+            }
+          />
         </div>
       </div>
     </BlogSectionCard>

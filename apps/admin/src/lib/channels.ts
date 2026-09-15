@@ -22,10 +22,10 @@ export const INVENTORY_CHANNELS = ['shopify', 'ebay', 'tcgplayer', 'whatnot'] as
 export type InventoryChannel = (typeof INVENTORY_CHANNELS)[number]
 
 export const INVENTORY_CHANNEL_META: Record<InventoryChannel, ChannelMeta> = {
-  shopify: { label: 'Shopify', dotClass: 'bg-[hsl(96_48%_38%)]' },
-  ebay: { label: 'eBay', dotClass: 'bg-[hsl(355_78%_50%)]' },
-  tcgplayer: { label: 'TCGPlayer', dotClass: 'bg-[hsl(216_65%_36%)]' },
-  whatnot: { label: 'Whatnot', dotClass: 'bg-[hsl(42_93%_44%)]' },
+  shopify: { label: 'Shopify', dotClass: 'bg-channel-shopify' },
+  ebay: { label: 'eBay', dotClass: 'bg-channel-ebay' },
+  tcgplayer: { label: 'TCGPlayer', dotClass: 'bg-channel-tcgplayer' },
+  whatnot: { label: 'Whatnot', dotClass: 'bg-channel-whatnot' },
 }
 
 export const CONTENT_PLATFORMS = [
@@ -40,28 +40,28 @@ export type ContentPlatform = (typeof CONTENT_PLATFORMS)[number]
 
 export const CONTENT_PLATFORM_META: Record<ContentPlatform, ChannelMeta> = {
   blog: { label: 'Blog', dotClass: 'bg-primary' },
-  twitter: { label: 'X / Twitter', dotClass: 'bg-[hsl(0_0%_12%)]' },
+  twitter: { label: 'X / Twitter', dotClass: 'bg-channel-x' },
   instagram: {
     label: 'Instagram',
     dotClass: 'bg-transparent',
     dotStyle: 'conic-gradient(from 210deg, #F58529, #DD2A7B, #8134AF, #515BD4, #F58529)',
   },
-  facebook: { label: 'Facebook', dotClass: 'bg-[hsl(221_89%_48%)]' },
-  pinterest: { label: 'Pinterest', dotClass: 'bg-[hsl(350_100%_44%)]' },
-  tiktok: { label: 'TikTok', dotClass: 'bg-[hsl(175_80%_32%)]' },
+  facebook: { label: 'Facebook', dotClass: 'bg-channel-facebook' },
+  pinterest: { label: 'Pinterest', dotClass: 'bg-channel-pinterest' },
+  tiktok: { label: 'TikTok', dotClass: 'bg-channel-tiktok' },
 }
 
 export const AD_PLATFORMS = ['facebook', 'google', 'twitter', 'pinterest', 'other'] as const
 export type AdPlatform = (typeof AD_PLATFORMS)[number]
 
 export const AD_PLATFORM_META: Record<AdPlatform, ChannelMeta> = {
-  facebook: { label: 'Facebook', dotClass: 'bg-[hsl(221_89%_48%)]' },
+  facebook: { label: 'Facebook', dotClass: 'bg-channel-facebook' },
   google: {
     label: 'Google',
     dotClass: 'bg-transparent',
     dotStyle: 'conic-gradient(#4285F4, #EA4335, #FBBC05, #34A853, #4285F4)',
   },
-  twitter: { label: 'X / Twitter', dotClass: 'bg-[hsl(0_0%_12%)]' },
-  pinterest: { label: 'Pinterest', dotClass: 'bg-[hsl(350_100%_44%)]' },
+  twitter: { label: 'X / Twitter', dotClass: 'bg-channel-x' },
+  pinterest: { label: 'Pinterest', dotClass: 'bg-channel-pinterest' },
   other: { label: 'Other', dotClass: 'bg-muted-foreground/60' },
 }
