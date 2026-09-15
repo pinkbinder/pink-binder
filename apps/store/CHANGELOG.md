@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.7.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.6.6...store-v0.7.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122))
+
+### Maintenance
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122)) ([6940cfe](https://github.com/pinkbinder/pink-binder/commit/6940cfe8b9158e504de477857da821cadf162c44))
+
 ## [0.6.6](https://github.com/pinkbinder/pink-binder/compare/store-v0.6.5...store-v0.6.6) (2026-09-15)
 
 
