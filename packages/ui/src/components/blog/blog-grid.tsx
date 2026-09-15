@@ -189,12 +189,7 @@ interface BlogGridProps {
 }
 
 export function BlogGrid(props: BlogGridProps) {
-  const {
-    posts,
-    total,
-    initialQuery = {},
-    defaultPostThumbnail = '/images/logo.png',
-  } = props
+  const { posts, total, initialQuery = {}, defaultPostThumbnail = '/images/logo.png' } = props
   const [urlFilters, setUrlFilters] = createUrlQueryStates(blogFilterParsers, {
     history: 'push',
   })
@@ -217,7 +212,9 @@ export function BlogGrid(props: BlogGridProps) {
   const generationFilterSet = createMemo(() => new Set(generationFilters()))
   const illustratorFilterSet = createMemo(() => new Set(illustratorFilters()))
   const themeFilterSet = createMemo(() => new Set(themeFilters()))
-  const expansionFilterSet = createMemo(() => new Set(expansionFilters().map((entry) => entry.slug)))
+  const expansionFilterSet = createMemo(
+    () => new Set(expansionFilters().map((entry) => entry.slug))
+  )
   const pokemonFilterSet = createMemo(() => new Set(pokemonFilters().map((entry) => entry.slug)))
   const roundupListFilterSet = createMemo(() => new Set(roundupListFilters()))
   const tagCatalogSet = createMemo(() => new Set(tagCatalogOptions().map((entry) => entry.value)))
@@ -635,7 +632,9 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const theme = themeFilters().find((name) => name.toLowerCase() === catalogValue || name === label)
+    const theme = themeFilters().find(
+      (name) => name.toLowerCase() === catalogValue || name === label
+    )
     if (theme) {
       const facet = themeOptions().find((option) => option.value === theme)
       if (facet) {

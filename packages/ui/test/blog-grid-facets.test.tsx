@@ -6,8 +6,14 @@ import { BlogGrid } from '../src/components/blog/blog-grid'
 import type { BlogGridFacets } from '@repo/data/client'
 
 const EMPTY: BlogGridFacets = {
-  types: [], generations: [], lists: [], illustrators: [],
-  expansions: [], pokemon: [], themes: [], tags: [],
+  types: [],
+  generations: [],
+  lists: [],
+  illustrators: [],
+  expansions: [],
+  pokemon: [],
+  themes: [],
+  tags: [],
 }
 
 describe('BlogGrid facets reactivity', () => {
