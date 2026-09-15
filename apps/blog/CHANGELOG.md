@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.12.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.4...blog-v0.12.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122))
+
+### Maintenance
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122)) ([6940cfe](https://github.com/pinkbinder/pink-binder/commit/6940cfe8b9158e504de477857da821cadf162c44))
+
 ## [0.11.4](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.3...blog-v0.11.4) (2026-09-15)
 
 
