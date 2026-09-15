@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { Info } from 'lucide-react'
 import { cn } from '@repo/ui'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
@@ -15,8 +15,13 @@ export function ChannelDot({ meta, className }: { meta: ChannelMeta; className?:
   return (
     <span
       aria-hidden
-      className={cn('inline-block size-2.5 shrink-0 rounded-full', meta.dotClass, className)}
-      style={meta.dotStyle ? { background: meta.dotStyle } : undefined}
+      className={cn(
+        'inline-block size-2.5 shrink-0 rounded-full',
+        meta.dotClass,
+        meta.dotStyle && 'dot-fill',
+        className
+      )}
+      style={meta.dotStyle ? ({ '--dot-fill': meta.dotStyle } as CSSProperties) : undefined}
     />
   )
 }
@@ -53,7 +58,7 @@ export function StatCard({ label, value, hint }: { label: string; value: string;
     <Card>
       <CardHeader className="pb-2">
         <CardDescription>{label}</CardDescription>
-        <CardTitle className="text-3xl tabular-nums">{value}</CardTitle>
+        <CardTitle size="metric">{value}</CardTitle>
       </CardHeader>
       {hint && (
         <CardContent>
@@ -66,7 +71,7 @@ export function StatCard({ label, value, hint }: { label: string; value: string;
 
 export function IntegrationNotice({ children }: { children: ReactNode }) {
   return (
-    <div className="border-amber-600/30 bg-amber-400/10 text-amber-900 dark:border-amber-400/30 dark:bg-amber-400/10 dark:text-amber-200 mb-6 flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm">
+    <div className="border-warning/30 bg-warning/10 text-warning-foreground mb-6 flex items-start gap-2.5 rounded-lg border px-4 py-3 text-sm">
       <Info className="mt-0.5 size-4 shrink-0" aria-hidden />
       <p>{children}</p>
     </div>

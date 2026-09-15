@@ -8,6 +8,10 @@ import { defineConfig } from 'vite'
 // is available when Start wires up its server/client builds.
 // https://developers.cloudflare.com/workers/framework-guides/web-apps/tanstack-start/
 export default defineConfig({
+  server: {
+    // Tailscale MagicDNS hostname used for shared dev-server links.
+    allowedHosts: ['amf-mb-pro'],
+  },
   plugins: [
     cloudflare({ viteEnvironment: { name: 'ssr' } }),
     tanstackStart(),

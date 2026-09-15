@@ -98,7 +98,7 @@ export function CatalogSection({ products, categories }: Props) {
                     <Badge variant="outline">{product.category}</Badge>
                     {product.badge && <Badge>{product.badge}</Badge>}
                   </div>
-                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                  <CardTitle size="sm">{product.name}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold">{formatPriceCents(product.priceCents)}</p>

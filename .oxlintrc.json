@@ -1,13 +1,72 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["@shadcn/lint"],
   "categories": {
     "correctness": "error",
     "suspicious": "off"
   },
+  "settings": {
+    "shadcn": {
+      "ui": "@repo/ui",
+      "mergeFunctions": ["cn", "clsx", "twMerge", "cx"],
+      "variantFunctions": ["cva", "tv"],
+      "note": "Design system lives in @repo/ui (packages/ui). Prefer component variants, sizes, and theme tokens from src/globals.css over raw Tailwind values."
+    }
+  },
   "rules": {
     // Carried over from @typescript-eslint/recommended.
     "typescript/no-explicit-any": "error",
-    "typescript/no-require-imports": "error"
+    "typescript/no-require-imports": "error",
+    // One primitive layer: apps must use @repo/ui wrappers, never primitive
+    // libraries or package internals directly. The packages/ui override below
+    // re-enables primitive imports inside the design system itself.
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": [
+              "@radix-ui/**",
+              "@base-ui/**",
+              "@base-ui-components/**",
+              "react-aria",
+              "react-aria-components",
+              "@react-aria/**",
+              "@react-stately/**",
+              "@headlessui/**"
+            ],
+            "message": "Import the wrapped component from @repo/ui instead of a primitive library. If no wrapper exists, add one in packages/ui."
+          },
+          {
+            "group": ["@repo/ui/src/**"],
+            "message": "Import from @repo/ui public exports (root or /server), not internal src paths."
+          }
+        ]
+      }
+    ],
+    "shadcn/no-restyle": [
+      "error",
+      {
+        "allow": ["layout"],
+        "contracts": [
+          // Card sections accept layout + spacing adjustments (padding, gap).
+          {
+            "pattern": "^Card(Content|Header|Footer)?$",
+            "allow": ["layout", "spacing"]
+          },
+          // Numeric inputs may opt into tabular figures.
+          {
+            "pattern": "^Input$",
+            "allow": ["layout", "tabular-nums"]
+          }
+        ]
+      }
+    ],
+    "shadcn/no-raw-colors": ["error", { "scanAllStrings": true }],
+    "shadcn/no-arbitrary-values": ["error", { "scanAllStrings": true }],
+    "shadcn/no-inline-styles": "error",
+    "shadcn/no-unknown-classes": "error",
+    "shadcn/require-static-classes": "error"
   },
   "overrides": [
     {
@@ -30,11 +89,41 @@
         "typescript/no-explicit-any": "off",
         "no-unused-vars": "off"
       }
+    },
+    {
+      // The design system owns the primitive layer.
+      "files": ["packages/ui/**"],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    },
+    {
+      // Design-system components own their internals; consumers are checked.
+      "files": ["packages/ui/src/components/**"],
+      "rules": {
+        "shadcn/no-restyle": "off",
+        "shadcn/no-arbitrary-values": "off",
+        "shadcn/require-static-classes": "off"
+      }
+    },
+    {
+      // Tests verify cn() merging and prop plumbing with intentionally fake classes.
+      "files": ["**/*.test.{ts,tsx}", "**/test/**", "**/tests/**"],
+      "rules": {
+        "shadcn/no-restyle": "off",
+        "shadcn/no-raw-colors": "off",
+        "shadcn/no-arbitrary-values": "off",
+        "shadcn/no-inline-styles": "off",
+        "shadcn/no-unknown-classes": "off",
+        "shadcn/require-static-classes": "off"
+      }
     }
   ],
   "ignorePatterns": [
     "node_modules/**",
     "**/.wrangler/**",
+    "**/.astro/**",
+    "**/.tanstack/**",
     "**/dist/**",
     "build/**",
     "coverage/**",

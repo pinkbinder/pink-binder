@@ -1,4 +1,5 @@
 import * as React from 'react'
+import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '../lib/utils'
 
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
@@ -19,13 +20,29 @@ const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDiv
 )
 CardHeader.displayName = 'CardHeader'
 
-const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
-  ({ className, ...props }, ref) => (
-    <h3
-      ref={ref}
-      className={cn('text-2xl leading-none font-semibold tracking-tight', className)}
-      {...props}
-    />
+const cardTitleVariants = cva('font-semibold tracking-tight', {
+  variants: {
+    size: {
+      default: 'text-2xl leading-none',
+      /** Compact section titles, e.g. catalog product names. */
+      sm: 'text-lg leading-tight',
+      /** Dense table or dashboard summary cards. */
+      xs: 'text-base leading-snug',
+      /** Large numeric stats; figures align across cards. */
+      metric: 'text-3xl leading-none tabular-nums',
+    },
+  },
+  defaultVariants: {
+    size: 'default',
+  },
+})
+
+interface CardTitleProps
+  extends React.HTMLAttributes<HTMLHeadingElement>, VariantProps<typeof cardTitleVariants> {}
+
+const CardTitle = React.forwardRef<HTMLHeadingElement, CardTitleProps>(
+  ({ className, size, ...props }, ref) => (
+    <h3 ref={ref} className={cn(cardTitleVariants({ size, className }))} {...props} />
   )
 )
 CardTitle.displayName = 'CardTitle'

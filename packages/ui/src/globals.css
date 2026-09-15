@@ -30,6 +30,11 @@
   --color-card-foreground: hsl(var(--card-foreground));
   --color-primary-deep: hsl(var(--primary-deep));
 
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+
   --font-body:
     'Avenir Next', 'Nunito', 'Segoe UI', 'Helvetica Neue', 'Trebuchet MS', 'Arial Rounded MT',
     Arial, sans-serif;
@@ -41,26 +46,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --animate-accordion-down: accordion-down 200ms ease-out;
-  --animate-accordion-up: accordion-up 200ms ease-out;
-
-  @keyframes accordion-down {
-    from {
-      height: 0;
-    }
-    to {
-      height: var(--radix-accordion-content-height);
-    }
-  }
-
-  @keyframes accordion-up {
-    from {
-      height: var(--radix-accordion-content-height);
-    }
-    to {
-      height: 0;
-    }
-  }
+  /* Accordion panels animate via the --accordion-panel-height var Base UI sets. */
 }
 
 @layer base {
@@ -87,6 +73,10 @@
     --border: 334 42% 78%;
     --input: 334 42% 78%;
     --ring: 335 77% 73%;
+    --warning: 37.7 92.1% 50.2%;
+    --warning-foreground: 27.6 83.3% 25.3%;
+    --success: 160.1 84.1% 39.4%;
+    --success-foreground: 162.9 93.5% 24.3%;
     --radius: 0.75rem;
   }
 
@@ -110,6 +100,10 @@
     --border: 330 22% 28%;
     --input: 330 22% 28%;
     --ring: 335 70% 72%;
+    --warning: 43.3 96.4% 56.9%;
+    --warning-foreground: 45.9 96.7% 64.5%;
+    --success: 158.1 64.4% 51.6%;
+    --success-foreground: 152.4 76% 80.4%;
   }
 
   * {
@@ -127,4 +121,36 @@
 
 @utility bg-primary-deep {
   background-color: var(--color-primary-deep);
+}
+
+/* Pokémon TCG card-back artwork: night-sky gradient used behind the border frame. */
+@utility tcg-card-back {
+  background-image: linear-gradient(to bottom right, #312e81, #1e40af, #0e7490);
+}
+
+/* Mythical (platinum) badge treatment — distinct from the brand pink scale. */
+@utility mythical-badge {
+  border-color: #7da8ff;
+  background-color: #dde8ff;
+  color: #2457b8;
+
+  @variant dark {
+    border-color: #7da8ff;
+    background-color: rgb(15 42 99 / 45%);
+    color: #9cc0ff;
+  }
+}
+
+/* Masked Pokémon type logo. Tint and artwork come from the element's
+   --type-logo-color and --type-logo-url custom properties. */
+@utility type-logo-mask {
+  background-color: var(--type-logo-color);
+  -webkit-mask-image: var(--type-logo-url);
+  mask-image: var(--type-logo-url);
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
 }

@@ -6,7 +6,7 @@ import {
   pokemonR2ImageVariantCandidates,
   spriteUrlCandidates,
 } from '@repo/data/client'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 
 interface Pokemon3dSpriteShowcaseProps {
   slug: string
@@ -175,14 +175,13 @@ function SpriteTile({
         {label}
       </figcaption>
       <div
-        className="flex w-full items-end justify-center"
-        style={{ minHeight: `${SPRITE_TILE_MIN_HEIGHT_PX}px` }}
+        className="flex min-h-(--sprite-min-h) w-full items-end justify-center"
+        style={{ '--sprite-min-h': `${SPRITE_TILE_MIN_HEIGHT_PX}px` } as CSSProperties}
       >
         <img
           src={url}
           alt={alt}
-          className={SPRITE_IMG_CLASS}
-          style={{ imageRendering: 'pixelated' }}
+          className={`${SPRITE_IMG_CLASS} [image-rendering:pixelated]`}
           decoding="async"
           onError={onFailed}
         />

@@ -32,16 +32,16 @@ export function BlogLinkPillList({
           <Button
             key={item.key}
             variant="ghost"
-            asChild
             className={cn(
               'bg-muted hover:bg-muted/80 h-auto rounded-full px-3 py-1 text-sm font-medium transition-colors',
               externalItemClassName
             )}
-          >
-            <a href={item.href} target="_blank" rel="noreferrer">
-              {item.label}
-            </a>
-          </Button>
+            render={
+              <a href={item.href} target="_blank" rel="noreferrer">
+                {item.label}
+              </a>
+            }
+          />
         ) : (
           <Link
             key={item.key}
