@@ -12,7 +12,7 @@
     "./edge-cache": "./src/edge-cache.ts"
   },
   "scripts": {
-    "lint": "oxlint . --max-warnings 0",
+    "lint": "oxlint . --max-warnings 0 ${CI:+--threads 1}",
     "type-check": "tsc --noEmit",
     "test": "cd ../.. && bun test packages/config",
     "test:watch": "cd ../.. && bun test --watch packages/config",

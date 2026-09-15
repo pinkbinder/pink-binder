@@ -16,7 +16,7 @@
     "dev:admin": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/admin",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
-    "lint": "oxlint . --max-warnings 0",
+    "lint": "oxlint . --max-warnings 0 ${CI:+--threads 1}",
     "type-check": "turbo run type-check",
     "type:check": "turbo run type-check",
     "start": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
@@ -27,8 +27,8 @@
     "test:watch": "bun test --watch",
     "test:coverage": "bun test --coverage --isolate --max-concurrency=4",
     "lint-staged": "lint-staged",
-    "validate": "node scripts/with-env.mjs turbo run format type-check && oxlint . --max-warnings 0",
-    "validate:pre-commit": "node scripts/with-env.mjs turbo run type-check && oxlint . --max-warnings 0",
+    "validate": "node scripts/with-env.mjs turbo run format type-check && oxlint . --max-warnings 0 ${CI:+--threads 1}",
+    "validate:pre-commit": "node scripts/with-env.mjs turbo run type-check && oxlint . --max-warnings 0 ${CI:+--threads 1}",
     "format:check": "oxfmt --check ."
   },
   "dependencies": {
