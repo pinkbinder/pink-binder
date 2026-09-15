@@ -9,12 +9,12 @@ mock.module('@tanstack/solid-start', () => ({
 }))
 
 import { ordersSearchParsers } from '../src/lib/order-search'
+import { formatAmountCents } from '../src/lib/format'
 import { securityHeadersMiddleware } from '../src/middleware/security-headers'
 import {
   adminPreferences,
   adminSelection,
   clearSelection,
-  formatAmountCents,
   setAdminPreferences,
   setAdminSelection,
   setSidebarOpen,

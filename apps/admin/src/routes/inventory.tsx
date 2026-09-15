@@ -1,10 +1,11 @@
 import { createFileRoute, stripSearchParams, useNavigate } from '@tanstack/solid-router'
 import { Minus, Plus } from 'lucide-solid'
 import { createMemo, For, Show } from 'solid-js'
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from '@repo/ui'
+import { Badge, Button, Card, CardContent, CardHeader, CardTitle } from '@repo/ui'
 import { cn } from '@repo/ui'
 
 import { ChannelDot, IntegrationNotice, PageHeader, StatCard } from '../components/console'
+import { DebouncedInput } from '../components/debounced-input'
 import { INVENTORY_CHANNELS, INVENTORY_CHANNEL_META, type ChannelMeta } from '../lib/channels'
 import { inventorySearchParsers, INVENTORY_CATEGORY_FILTERS } from '../lib/console-search'
 import { formatCents } from '../lib/format'
@@ -89,9 +90,9 @@ function InventoryPage() {
       </div>
 
       <div class="mb-4 flex flex-wrap items-center gap-2">
-        <Input
+        <DebouncedInput
           value={q()}
-          onInput={(event) => setParam('q', event.target.value || null)}
+          onCommit={(value) => setParam('q', value || null)}
           placeholder="Search items or SKUs…"
           aria-label="Search inventory"
           class="w-56"
