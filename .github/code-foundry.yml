@@ -7,7 +7,7 @@ runtime_repository: 0xPlayerOne/code-foundry
 runtime_ref: v1.28.14
 runner: ubuntu-slim
 unit_runner: ubuntu-slim
-ci_runner: ubuntu-slim
+ci_runner: ubuntu-latest
 test_runner: ubuntu-slim
 security_runner: ubuntu-slim
 codeql_runner: ubuntu-latest

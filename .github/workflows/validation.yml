@@ -85,7 +85,7 @@ jobs:
       # manually dispatched audits use a separate default-branch-pinned caller,
       # so this caller-selected ref never runs with default-branch cache access.
       runtime-ref: v1.28.14
-      ci-runner: ubuntu-slim
+      ci-runner: ubuntu-latest
       test-runner: ubuntu-slim
       unit-runner: ubuntu-slim
       performance-runner: ubuntu-latest
