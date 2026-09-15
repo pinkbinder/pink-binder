@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'bun:test'
-import { render } from '@testing-library/react'
+import { render } from '@solidjs/testing-library'
 import { BlogInlineText, splitBlogInlineText } from './blog-inline-text'
 
 describe('splitBlogInlineText', () => {
@@ -82,13 +82,15 @@ describe('splitBlogInlineText', () => {
 
 describe('BlogInlineText', () => {
   it('renders plain text when there are no links', () => {
-    const { container } = render(<BlogInlineText text="Hello world" />)
+    const { container } = render(() => <BlogInlineText text="Hello world" />)
     expect(container?.textContent).toBe('Hello world')
     expect(container?.querySelector('a')).toBeNull()
   })
 
   it('renders an anchor with correct attributes for a markdown link', () => {
-    const { container } = render(<BlogInlineText text="[Pikachu](https://example.com/pikachu)" />)
+    const { container } = render(() => (
+      <BlogInlineText text="[Pikachu](https://example.com/pikachu)" />
+    ))
     const anchor = container?.querySelector('a')
     expect(anchor).not.toBeNull()
     expect(anchor?.getAttribute('href')).toBe('https://example.com/pikachu')
@@ -98,24 +100,24 @@ describe('BlogInlineText', () => {
   })
 
   it('renders surrounding text and anchors together', () => {
-    const { container } = render(
+    const { container } = render(() => (
       <BlogInlineText text="See [Pikachu](https://example.com/pikachu) now" />
-    )
+    ))
     expect(container?.textContent).toBe('See Pikachu now')
     expect(container?.querySelectorAll('a').length).toBe(1)
   })
 
   it('applies a custom linkClassName', () => {
-    const { container } = render(
+    const { container } = render(() => (
       <BlogInlineText text="[Pikachu](https://example.com/pikachu)" linkClassName="text-red-500" />
-    )
+    ))
     expect(container?.querySelector('a')?.className).toBe('text-red-500')
   })
 
   it('renders anchors for the legacy Bulbapedia link format', () => {
-    const { container } = render(
+    const { container } = render(() => (
       <BlogInlineText text="See [https://bulbapedia.com/Pikachu Pikachu]" />
-    )
+    ))
     const anchor = container?.querySelector('a')
     expect(anchor).not.toBeNull()
     expect(anchor?.getAttribute('href')).toBe('https://bulbapedia.com/Pikachu')

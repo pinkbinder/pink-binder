@@ -1,8 +1,6 @@
-'use client'
+import { splitProps, type JSX } from 'solid-js'
 
-import type { CSSProperties, ImgHTMLAttributes } from 'react'
-
-interface CompatImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet'> {
+interface CompatImageProps extends Omit<JSX.ImgHTMLAttributes<HTMLImageElement>, 'src' | 'srcSet'> {
   src: string
   alt: string
   width?: number
@@ -17,47 +15,44 @@ interface CompatImageProps extends Omit<ImgHTMLAttributes<HTMLImageElement>, 'sr
   quality?: number
   placeholder?: 'blur' | 'empty'
   blurDataURL?: string
-  style?: CSSProperties
+  style?: JSX.CSSProperties
   onError?: () => void
 }
 
 /**
- * Plain img for Astro React islands (same props shape as the framework image import it replaces).
+ * Plain img for Astro islands (same props shape as the framework image import it replaces).
  * The blog serves prebuilt R2 variants and local assets directly — there is
  * no optimizer to route through. `fill` maps to absolute inset positioning
  * (matching the existing RemoteImageWithFallback convention).
  */
-export default function CompatImage({
-  src,
-  alt,
-  width,
-  height,
-  priority = false,
-  unoptimized: _unoptimized,
-  fill = false,
-  sizes,
-  quality: _quality,
-  placeholder: _placeholder,
-  blurDataURL: _blurDataURL,
-  style,
-  className,
-  ...rest
-}: CompatImageProps) {
-  void _unoptimized
-  void _quality
-  void _placeholder
-  void _blurDataURL
+export default function CompatImage(props: CompatImageProps) {
+  const [local, rest] = splitProps(props, [
+    'src',
+    'alt',
+    'width',
+    'height',
+    'priority',
+    'unoptimized',
+    'fill',
+    'sizes',
+    'quality',
+    'placeholder',
+    'blurDataURL',
+    'style',
+    'class',
+  ])
   return (
     <img
-      src={src}
-      alt={alt}
-      width={fill ? undefined : width}
-      height={fill ? undefined : height}
-      sizes={sizes}
-      style={style}
-      className={fill ? `absolute inset-0 h-full w-full ${className ?? ''}` : className}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchPriority={priority ? 'high' : undefined}
+      src={local.src}
+      alt={local.alt}
+      width={local.fill ? undefined : local.width}
+      height={local.fill ? undefined : local.height}
+      sizes={local.sizes}
+      // oxlint-disable-next-line shadcn/no-inline-styles
+      style={local.style}
+      class={local.fill ? `absolute inset-0 h-full w-full ${local.class ?? ''}` : local.class}
+      loading={local.priority ? 'eager' : 'lazy'}
+      fetchpriority={local.priority ? 'high' : undefined}
       decoding="async"
       {...rest}
     />

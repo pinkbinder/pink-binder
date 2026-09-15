@@ -26,32 +26,32 @@ export function PokemonTcgCardGallery({
 
   return (
     <>
-      <p className="text-muted-foreground mt-2 text-sm">{introLine}</p>
-      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+      <p class="text-muted-foreground mt-2 text-sm">{introLine}</p>
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {visibleCards.map((card) => (
-          <PokemonTcgCardTile key={card.id} card={card} />
+          <PokemonTcgCardTile card={card} />
         ))}
       </div>
       {hiddenCards.length > 0 ? (
-        <details className="group mt-4">
-          <summary className="border-border bg-background hover:bg-accent/50 focus-visible:ring-ring mt-0 flex w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden">
-            <span className="group-open:hidden">Show more ({hiddenCards.length} remaining)</span>
-            <span className="hidden group-open:inline">Show less</span>
+        <details class="group mt-4">
+          <summary class="border-border bg-background hover:bg-accent/50 focus-visible:ring-ring mt-0 flex w-full cursor-pointer list-none items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden">
+            <span class="group-open:hidden">Show more ({hiddenCards.length} remaining)</span>
+            <span class="hidden group-open:inline">Show less</span>
           </summary>
-          <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+          <div class="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
             {hiddenCards.map((card) => (
-              <PokemonTcgCardTile key={card.id} card={card} />
+              <PokemonTcgCardTile card={card} />
             ))}
           </div>
         </details>
       ) : null}
-      <p className="text-muted-foreground mt-4 text-xs">
+      <p class="text-muted-foreground mt-4 text-xs">
         Showing {cards.length} of {totalCount} cards · card data from{' '}
         <a
           href={primarySource.href}
           target="_blank"
           rel="noreferrer"
-          className="underline underline-offset-2"
+          class="underline underline-offset-2"
         >
           {primarySource.label}
         </a>{' '}
@@ -60,7 +60,7 @@ export function PokemonTcgCardGallery({
           href={backupSource.href}
           target="_blank"
           rel="noreferrer"
-          className="underline underline-offset-2"
+          class="underline underline-offset-2"
         >
           {backupSource.label}
         </a>{' '}

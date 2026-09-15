@@ -1,14 +1,12 @@
-'use client'
-
-import * as React from 'react'
-import { Popover as PopoverPrimitive } from '@base-ui/react/popover'
-import { Check, ChevronDown, Search } from 'lucide-react'
+import * as PopoverPrimitive from '@kobalte/core/popover'
+import { Check, ChevronDown, Search } from 'lucide-solid'
+import { createMemo, createSignal, For, Show, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
 export interface SearchableSelectOption {
   value: string
   label: string
-  icon?: React.ReactNode
+  icon?: JSX.Element
   /** Stronger label weight in the dropdown (e.g. fan-favorite species). */
   emphasized?: boolean
 }
@@ -21,9 +19,9 @@ interface SearchableSelectProps {
   /** Label for the clear row in the dropdown (defaults to placeholder, then "All"). */
   clearLabel?: string
   label?: string
-  className?: string
+  class?: string
   /** Render a custom chip for the selected value (shown in trigger). */
-  renderSelected?: (option: SearchableSelectOption) => React.ReactNode
+  renderSelected?: (option: SearchableSelectOption) => JSX.Element
   /** Custom option filtering (e.g. fuzzy match); defaults to case-insensitive substring on label. */
   filterOptions?: (options: SearchableSelectOption[], search: string) => SearchableSelectOption[]
   /** When set, non-empty search text offers a free-text action row (and Enter
@@ -34,169 +32,160 @@ interface SearchableSelectProps {
   }
 }
 
-export function SearchableSelect({
-  options,
-  value,
-  onValueChange,
-  placeholder = 'All',
-  clearLabel,
-  label,
-  className,
-  renderSelected,
-  filterOptions,
-  freeText,
-}: SearchableSelectProps) {
-  const [open, setOpen] = React.useState(false)
-  const [search, setSearch] = React.useState('')
-  const inputRef = React.useRef<HTMLInputElement>(null)
-  const resolvedClearLabel = clearLabel ?? placeholder
+export function SearchableSelect(props: SearchableSelectProps) {
+  const [open, setOpen] = createSignal(false)
+  const [search, setSearch] = createSignal('')
+  const resolvedClearLabel = () => props.clearLabel ?? props.placeholder ?? 'All'
 
-  const filtered = React.useMemo(() => {
-    if (!search) return options
-    if (filterOptions) {
-      return filterOptions(options, search)
+  const filtered = createMemo(() => {
+    const term = search()
+    if (!term) return props.options
+    if (props.filterOptions) {
+      return props.filterOptions(props.options, term)
     }
-    const lower = search.toLowerCase()
-    return options.filter((opt) => opt.label.toLowerCase().includes(lower))
-  }, [options, search, filterOptions])
+    const lower = term.toLowerCase()
+    return props.options.filter((opt) => opt.label.toLowerCase().includes(lower))
+  })
 
-  const selectedOption = React.useMemo(
-    () => options.find((opt) => opt.value === value) ?? null,
-    [options, value]
+  const selectedOption = createMemo(
+    () => props.options.find((opt) => opt.value === props.value) ?? null
   )
 
   function handleSelect(optionValue: string) {
-    onValueChange(value === optionValue ? null : optionValue)
+    props.onValueChange(props.value === optionValue ? null : optionValue)
     setOpen(false)
     setSearch('')
   }
 
   function handleClear() {
-    onValueChange(null)
+    props.onValueChange(null)
     setOpen(false)
     setSearch('')
   }
 
   function handleFreeText() {
-    if (!freeText || !search.trim()) return
-    freeText.onAction(search.trim())
+    const term = search().trim()
+    if (!props.freeText || !term) return
+    props.freeText.onAction(term)
     setOpen(false)
     setSearch('')
   }
 
   return (
     <PopoverPrimitive.Root
-      open={open}
-      onOpenChange={(next: boolean) => {
+      open={open()}
+      onOpenChange={(next) => {
         setOpen(next)
         if (!next) setSearch('')
       }}
+      placement="bottom-start"
+      gutter={4}
     >
       <PopoverPrimitive.Trigger
         type="button"
         role="combobox"
-        aria-expanded={open}
-        aria-label={label}
-        className={cn(
+        aria-expanded={open()}
+        aria-label={props.label}
+        class={cn(
           'border-input bg-background ring-offset-background hover:bg-accent/50 focus-visible:ring-ring flex h-9 w-full items-center justify-between gap-2 rounded-xl border px-3 py-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden',
-          className
+          props.class
         )}
       >
-        <span className="truncate">
-          {selectedOption ? (
-            renderSelected ? (
-              renderSelected(selectedOption)
-            ) : selectedOption.icon ? (
-              <span className="inline-flex items-center gap-1.5">
-                {selectedOption.icon}
-                <span>{selectedOption.label}</span>
-              </span>
-            ) : (
-              <span className={cn(selectedOption.emphasized && 'font-bold')}>
-                {selectedOption.label}
-              </span>
-            )
-          ) : (
-            placeholder
-          )}
+        <span class="truncate">
+          <Show when={selectedOption()} fallback={props.placeholder ?? 'All'}>
+            {(selected) =>
+              props.renderSelected ? (
+                props.renderSelected(selected())
+              ) : selected().icon ? (
+                <span class="inline-flex items-center gap-1.5">
+                  {selected().icon}
+                  <span>{selected().label}</span>
+                </span>
+              ) : (
+                <span class={cn(selected().emphasized && 'font-bold')}>{selected().label}</span>
+              )
+            }
+          </Show>
         </span>
-        <ChevronDown className="h-3.5 w-3.5 shrink-0 opacity-50" />
+        <ChevronDown class="h-3.5 w-3.5 shrink-0 opacity-50" />
       </PopoverPrimitive.Trigger>
 
       <PopoverPrimitive.Portal>
-        <PopoverPrimitive.Positioner sideOffset={4} align="start" className="z-50">
-          <PopoverPrimitive.Popup
-            initialFocus={inputRef}
-            className="bg-popover text-popover-foreground data-[open]:animate-in data-[closed]:animate-out data-[closed]:fade-out-0 data-[open]:fade-in-0 data-[closed]:zoom-out-95 data-[open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=top]:slide-in-from-bottom-2 w-(--anchor-width) min-w-50 rounded-xl border p-0 shadow-md outline-hidden"
-          >
-            <div className="flex items-center gap-2 border-b px-3 py-2">
-              <Search className="text-muted-foreground h-4 w-4 shrink-0" />
-              <input
-                ref={inputRef}
-                type="text"
-                placeholder="Search…"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && freeText && search.trim()) {
-                    e.preventDefault()
-                    handleFreeText()
-                  }
-                }}
-                className="placeholder:text-muted-foreground flex-1 bg-transparent text-sm outline-hidden"
-              />
-            </div>
-            <div className="max-h-[240px] overflow-y-auto p-1">
-              {freeText && search.trim() ? (
+        <PopoverPrimitive.Content class="bg-popover text-popover-foreground data-[closed]:animate-out data-[closed]:fade-out-0 data-[expanded]:animate-in data-[expanded]:fade-in-0 data-[closed]:zoom-out-95 data-[expanded]:zoom-in-95 w-(--kb-popper-anchor-width) min-w-50 rounded-xl border p-0 shadow-md outline-hidden">
+          <div class="flex items-center gap-2 border-b px-3 py-2">
+            <Search class="text-muted-foreground h-4 w-4 shrink-0" />
+            <input
+              type="text"
+              placeholder="Search…"
+              autofocus
+              value={search()}
+              onInput={(e) => setSearch(e.currentTarget.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && props.freeText && search().trim()) {
+                  e.preventDefault()
+                  handleFreeText()
+                }
+              }}
+              class="placeholder:text-muted-foreground flex-1 bg-transparent text-sm outline-hidden"
+            />
+          </div>
+          <div class="max-h-60 overflow-y-auto p-1">
+            <Show when={props.freeText && search().trim() ? props.freeText : undefined}>
+              {(freeText) => (
                 <button
                   type="button"
                   onClick={handleFreeText}
-                  className="hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
+                  class="hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors"
                 >
-                  <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-                    <Search className="text-muted-foreground h-3.5 w-3.5" />
+                  <span class="flex h-4 w-4 shrink-0 items-center justify-center">
+                    <Search class="text-muted-foreground h-3.5 w-3.5" />
                   </span>
-                  <span className="truncate font-medium">{freeText.labelFor(search.trim())}</span>
+                  <span class="truncate font-medium">{freeText().labelFor(search().trim())}</span>
                 </button>
-              ) : null}
-              <button
-                type="button"
-                onClick={handleClear}
-                className={cn(
-                  'hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
-                  !value && 'font-medium'
-                )}
-              >
-                <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-                  {!value ? <Check className="h-3.5 w-3.5" /> : null}
-                </span>
-                <span>{resolvedClearLabel}</span>
-              </button>
-              {filtered.map((option) => (
+              )}
+            </Show>
+            <button
+              type="button"
+              onClick={handleClear}
+              class={cn(
+                'hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
+                !props.value && 'font-medium'
+              )}
+            >
+              <span class="flex h-4 w-4 shrink-0 items-center justify-center">
+                <Show when={!props.value}>
+                  <Check class="h-3.5 w-3.5" />
+                </Show>
+              </span>
+              <span>{resolvedClearLabel()}</span>
+            </button>
+            <For each={filtered()}>
+              {(option) => (
                 <button
-                  key={option.value}
                   type="button"
                   onClick={() => handleSelect(option.value)}
-                  className={cn(
+                  class={cn(
                     'hover:bg-accent flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors',
-                    value === option.value && 'font-medium'
+                    props.value === option.value && 'font-medium'
                   )}
                 >
-                  <span className="flex h-4 w-4 shrink-0 items-center justify-center">
-                    {value === option.value ? <Check className="h-3.5 w-3.5" /> : null}
+                  <span class="flex h-4 w-4 shrink-0 items-center justify-center">
+                    <Show when={props.value === option.value}>
+                      <Check class="h-3.5 w-3.5" />
+                    </Show>
                   </span>
-                  <span className="inline-flex items-center gap-1.5 truncate">
+                  <span class="inline-flex items-center gap-1.5 truncate">
                     {option.icon}
-                    <span className={cn(option.emphasized && 'font-bold')}>{option.label}</span>
+                    <span class={cn(option.emphasized && 'font-bold')}>{option.label}</span>
                   </span>
                 </button>
-              ))}
-              {filtered.length === 0 ? (
-                <p className="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
-              ) : null}
-            </div>
-          </PopoverPrimitive.Popup>
-        </PopoverPrimitive.Positioner>
+              )}
+            </For>
+            <Show when={filtered().length === 0}>
+              <p class="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
+            </Show>
+          </div>
+        </PopoverPrimitive.Content>
       </PopoverPrimitive.Portal>
     </PopoverPrimitive.Root>
   )

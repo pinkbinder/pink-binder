@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createStore } from 'solid-js/store'
 
 import type { ContentPlatform } from '../lib/channels'
 
@@ -171,75 +171,25 @@ function transitionDrafts(
   return changed ? next : null
 }
 
-interface ContentState {
-  drafts: ContentDraft[]
-  submitForReview: (id: string) => boolean
-  requestRevision: (id: string, note: string) => boolean
-  approve: (id: string) => boolean
-  schedule: (id: string, scheduledFor: string) => boolean
-  publish: (id: string) => boolean
-  discardToDraft: (id: string) => boolean
-}
-
 /**
  * Foundational client state for the content service. Actions return whether
  * the transition was allowed so callers (and tests) can assert against the
  * pipeline rules; guarded moves leave the store untouched.
  */
-export const useContentStore = create<ContentState>()((set) => ({
-  drafts: createContentSeed(),
-  submitForReview: (id) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'in_review')
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-  requestRevision: (id, note) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'revision', { revisionNote: note })
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-  approve: (id) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'approved')
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-  schedule: (id, scheduledFor) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'scheduled', { scheduledFor })
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-  publish: (id) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'published')
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-  discardToDraft: (id) => {
-    let moved = false
-    set((state) => {
-      const next = transitionDrafts(state.drafts, id, 'draft')
-      if (next) moved = true
-      return next ? { drafts: next } : state
-    })
-    return moved
-  },
-}))
+export const [contentStore, setContentStore] = createStore({ drafts: createContentSeed() })
+
+function transition(id: string, to: ContentStatus, patch: Partial<ContentDraft> = {}): boolean {
+  const next = transitionDrafts(contentStore.drafts, id, to, patch)
+  if (!next) return false
+  setContentStore('drafts', next)
+  return true
+}
+
+export const contentActions = {
+  submitForReview: (id: string) => transition(id, 'in_review'),
+  requestRevision: (id: string, note: string) => transition(id, 'revision', { revisionNote: note }),
+  approve: (id: string) => transition(id, 'approved'),
+  schedule: (id: string, scheduledFor: string) => transition(id, 'scheduled', { scheduledFor }),
+  publish: (id: string) => transition(id, 'published'),
+  discardToDraft: (id: string) => transition(id, 'draft'),
+}

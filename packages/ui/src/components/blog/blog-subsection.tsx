@@ -1,30 +1,28 @@
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 import { cn } from '../../lib/utils'
 
 export function BlogSubsection({
   title,
   description,
   children,
-  className,
+  class: className,
   titleClassName,
   descriptionClassName,
 }: {
-  title?: ReactNode
-  description?: ReactNode
-  children: ReactNode
-  className?: string
+  title?: JSX.Element
+  description?: JSX.Element
+  children: JSX.Element
+  class?: string
   titleClassName?: string
   descriptionClassName?: string
 }) {
   return (
-    <div className={className}>
+    <div class={className}>
       {title ? (
-        <h3 className={cn('text-sm font-semibold tracking-tight', titleClassName)}>{title}</h3>
+        <h3 class={cn('text-sm font-semibold tracking-tight', titleClassName)}>{title}</h3>
       ) : null}
       {description ? (
-        <p className={cn('text-muted-foreground mt-1 text-sm', descriptionClassName)}>
-          {description}
-        </p>
+        <p class={cn('text-muted-foreground mt-1 text-sm', descriptionClassName)}>{description}</p>
       ) : null}
       {children}
     </div>

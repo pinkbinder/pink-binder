@@ -1,59 +1,66 @@
-'use client'
-
-import * as React from 'react'
-import { Accordion as AccordionPrimitive } from '@base-ui/react/accordion'
-import { ChevronDown } from 'lucide-react'
+import * as AccordionPrimitive from '@kobalte/core/accordion'
+import { ChevronDown } from 'lucide-solid'
+import { splitProps, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
 const Accordion = AccordionPrimitive.Root
 
-const AccordionItem = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Item>
->(({ className, ...props }, ref) => (
-  <AccordionPrimitive.Item
-    ref={ref}
-    className={cn('border-border/60 border-b last:border-b-0', className)}
-    {...props}
-  />
-))
-AccordionItem.displayName = 'AccordionItem'
+type AccordionItemProps = AccordionPrimitive.AccordionItemProps & {
+  class?: string
+  children?: JSX.Element
+}
 
-const AccordionTrigger = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Header className="flex">
-    <AccordionPrimitive.Trigger
-      ref={ref}
-      className={cn(
-        'hover:text-foreground focus-visible:ring-ring flex flex-1 items-center justify-between gap-2 rounded-md py-3 text-left text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&[data-panel-open]>svg]:rotate-180',
-        className
-      )}
-      {...props}
+function AccordionItem(props: AccordionItemProps) {
+  const [local, rest] = splitProps(props, ['class'])
+  return (
+    <AccordionPrimitive.Item
+      class={cn('border-border/60 border-b last:border-b-0', local.class)}
+      {...rest}
+    />
+  )
+}
+
+type AccordionTriggerProps = AccordionPrimitive.AccordionTriggerProps & {
+  class?: string
+  children?: JSX.Element
+}
+
+function AccordionTrigger(props: AccordionTriggerProps) {
+  const [local, rest] = splitProps(props, ['class', 'children'])
+  return (
+    <AccordionPrimitive.Header class="flex">
+      <AccordionPrimitive.Trigger
+        class={cn(
+          'hover:text-foreground focus-visible:ring-ring flex flex-1 items-center justify-between gap-2 rounded-md py-3 text-left text-sm font-medium transition-all focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&[data-expanded]>svg]:rotate-180',
+          local.class
+        )}
+        {...rest}
+      >
+        {local.children}
+        <ChevronDown
+          class="text-muted-foreground size-4 shrink-0 transition-transform duration-200"
+          aria-hidden
+        />
+      </AccordionPrimitive.Trigger>
+    </AccordionPrimitive.Header>
+  )
+}
+
+type AccordionContentProps = AccordionPrimitive.AccordionContentProps & {
+  class?: string
+  children?: JSX.Element
+}
+
+function AccordionContent(props: AccordionContentProps) {
+  const [local, rest] = splitProps(props, ['class', 'children'])
+  return (
+    <AccordionPrimitive.Content
+      class="overflow-hidden text-sm data-[closed]:animate-accordion-up data-[expanded]:animate-accordion-down"
+      {...rest}
     >
-      {children}
-      <ChevronDown
-        className="text-muted-foreground size-4 shrink-0 transition-transform duration-200"
-        aria-hidden
-      />
-    </AccordionPrimitive.Trigger>
-  </AccordionPrimitive.Header>
-))
-AccordionTrigger.displayName = AccordionPrimitive.Trigger.displayName
-
-const AccordionContent = React.forwardRef<
-  React.ElementRef<typeof AccordionPrimitive.Panel>,
-  React.ComponentPropsWithoutRef<typeof AccordionPrimitive.Panel>
->(({ className, children, ...props }, ref) => (
-  <AccordionPrimitive.Panel
-    ref={ref}
-    className="h-[var(--accordion-panel-height)] overflow-hidden text-sm transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0"
-    {...props}
-  >
-    <div className={cn('pt-0 pb-4', className)}>{children}</div>
-  </AccordionPrimitive.Panel>
-))
-AccordionContent.displayName = 'AccordionContent'
+      <div class={cn('pt-0 pb-4', local.class)}>{local.children}</div>
+    </AccordionPrimitive.Content>
+  )
+}
 
 export { Accordion, AccordionItem, AccordionTrigger, AccordionContent }

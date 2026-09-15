@@ -1,10 +1,58 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
+import { plugin } from 'bun'
 import { mock } from 'bun:test'
 
-// Register happy-dom globals BEFORE @testing-library/dom is loaded by any test.
+// Register happy-dom globals BEFORE any testing-library/Solid modules load.
 if (!(globalThis as { happyDOM?: unknown }).happyDOM) {
   GlobalRegistrator.register()
 }
 
 // Keep the `server-only` import as a no-op in the Bun test environment.
 mock.module('server-only', () => ({}))
+
+const SOLID_ROOT = new URL('../node_modules/solid-js', import.meta.url).pathname
+
+/**
+ * Bun resolves `solid-js` with the `node` export condition, which points at the
+ * server build where DOM rendering APIs throw. Tests run against happy-dom, so
+ * redirect the server dist files to their browser counterparts in `onLoad`
+ * (Bun's plugin `onResolve` does not intercept runtime resolution under
+ * `bun test`, and `mock.module` does not reach node_modules importers).
+ */
+const SERVER_BUILD_REDIRECTS: [RegExp, string][] = [
+  [/\/solid-js\/dist\/server\.js$/, `${SOLID_ROOT}/dist/solid.js`],
+  [/\/solid-js\/web\/dist\/server\.js$/, `${SOLID_ROOT}/web/dist/web.js`],
+  [/\/solid-js\/store\/dist\/server\.js$/, `${SOLID_ROOT}/store/dist/store.js`],
+]
+
+/**
+ * `.tsx` sources are compiled with babel-preset-solid; Bun's own JSX pipeline
+ * can't emit Solid's `createComponent` output.
+ */
+plugin({
+  name: 'solid-test-env',
+  setup(build) {
+    for (const [filter, target] of SERVER_BUILD_REDIRECTS) {
+      build.onLoad({ filter }, async () => ({
+        contents: await Bun.file(target).text(),
+        loader: 'js',
+      }))
+    }
+    build.onLoad({ filter: /\.tsx$/ }, async ({ path }) => {
+      if (path.includes('/node_modules/')) return undefined
+      const source = await Bun.file(path).text()
+      const { transformAsync } = await import('@babel/core')
+      const result = await transformAsync(source, {
+        filename: path,
+        babelrc: false,
+        configFile: false,
+        presets: [
+          ['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
+          'babel-preset-solid',
+        ],
+        sourceMaps: 'inline',
+      })
+      return { contents: result?.code ?? '', loader: 'js' }
+    })
+  },
+})

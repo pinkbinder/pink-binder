@@ -1,29 +1,29 @@
 import Link from '../compat-link'
-import type { CSSProperties, ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 
 export interface BlogHeaderTagChipItem {
   key: string
   label: string
   href?: string
   title?: string
-  className: string
-  style?: CSSProperties
-  icon?: ReactNode
+  class: string
+  style?: JSX.CSSProperties
+  icon?: JSX.Element
 }
 
 export function BlogHeaderTagChips({
   items,
-  className = 'mt-4 flex flex-wrap gap-2',
+  class: className = 'mt-4 flex flex-wrap gap-2',
 }: {
   items: BlogHeaderTagChipItem[]
-  className?: string
+  class?: string
 }) {
   if (items.length === 0) {
     return null
   }
 
   return (
-    <div className={className}>
+    <div class={className}>
       {items.map((item) => {
         const content = (
           <>
@@ -34,21 +34,15 @@ export function BlogHeaderTagChips({
 
         if (item.href) {
           return (
-            <Link
-              key={item.key}
-              href={item.href}
-              className={item.className}
-              style={item.style}
-              title={item.title}
-            >
-              <span className="inline-flex items-center gap-1.5">{content}</span>
+            <Link href={item.href} class={item.class} style={item.style} title={item.title}>
+              <span class="inline-flex items-center gap-1.5">{content}</span>
             </Link>
           )
         }
 
         return (
-          <span key={item.key} className={item.className} style={item.style} title={item.title}>
-            <span className="inline-flex items-center gap-1.5">{content}</span>
+          <span class={item.class} style={item.style} title={item.title}>
+            <span class="inline-flex items-center gap-1.5">{content}</span>
           </span>
         )
       })}

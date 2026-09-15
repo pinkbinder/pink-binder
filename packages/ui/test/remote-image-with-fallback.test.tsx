@@ -1,10 +1,10 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { fireEvent, render, screen, waitFor } from '@solidjs/testing-library'
 import { describe, expect, it } from 'bun:test'
 import { RemoteImageWithFallback } from '../src/components/remote-image-with-fallback'
 
 describe('RemoteImageWithFallback', () => {
   it('prefers the static R2 variant and falls back to the source URL', async () => {
-    render(
+    render(() => (
       <RemoteImageWithFallback
         candidates={[
           'https://images.pinkbinder.shop/pokemon/sprites/pikachu/official.png',
@@ -17,7 +17,7 @@ describe('RemoteImageWithFallback', () => {
         width={160}
         height={160}
       />
-    )
+    ))
 
     const image = screen.getByRole('img', { name: 'Pikachu' })
     expect(image.getAttribute('src')).toBe(

@@ -4,15 +4,15 @@
  *
  * The blog index is mostly read-only: cards and the filter chrome are fully
  * server-rendered, so visitors who never touch a filter never pay for the
- * ~250 KB island bundle (measured: mobile perf 78 → 97 with no hydration).
- * The first hover, tap, or keyboard focus inside the island hydrates React;
- * state tooling is unchanged (nuqs + TanStack Query hydrate as-is).
+ * island bundle (measured: mobile perf 78 → 97 with no hydration).
+ * The first hover, tap, or keyboard focus inside the island hydrates Solid;
+ * state tooling is unchanged (TanStack Query hydrates as-is).
  *
  * astro-island invokes the directive with only the `load` callback, so
  * listeners are global but scoped to events targeting inside the island.
- * Tradeoff: the interaction that triggers hydration lands before React is
+ * Tradeoff: the interaction that triggers hydration lands before Solid is
  * attached — plain links still work (native navigation); a click on a
- * React-only control during hydration may need a second tap.
+ * client-only control during hydration may need a second tap.
  */
 const interactionDirective = (load) => {
   const hydrate = async () => {

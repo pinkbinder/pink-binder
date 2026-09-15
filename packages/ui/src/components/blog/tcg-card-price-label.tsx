@@ -21,16 +21,16 @@ export function TcgCardPriceLabel({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-2 px-0.5">
-      <p className="text-success-foreground text-sm font-semibold">
-        {formatUsd(market)} <span className="text-muted-foreground font-normal">NM market</span>
+    <div class="flex flex-wrap items-center gap-2 px-0.5">
+      <p class="text-success-foreground text-sm font-semibold">
+        {formatUsd(market)} <span class="text-muted-foreground font-normal">NM market</span>
       </p>
       {card.tcgplayerUrl ? (
         <a
           href={card.tcgplayerUrl}
           target="_blank"
           rel="noreferrer sponsored"
-          className="text-primary-deep inline-flex items-center gap-1.5 text-xs font-semibold underline underline-offset-2"
+          class="text-primary-deep inline-flex items-center gap-1.5 text-xs font-semibold underline underline-offset-2"
         >
           {showTcgplayerLogo ? (
             <img

@@ -1,4 +1,4 @@
-import { createMiddleware } from '@tanstack/react-start'
+import { createMiddleware } from '@tanstack/solid-start'
 import { SECURITY_HEADERS } from '@repo/config'
 
 /**

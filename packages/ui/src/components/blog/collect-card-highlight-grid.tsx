@@ -1,7 +1,5 @@
-'use client'
-
 import type { PokemonTcgCard } from '@repo/data/client'
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 import { cn } from '../../lib/utils'
 import { TcgCardImage } from './tcg-card-image'
 
@@ -14,7 +12,7 @@ export const PORTRAIT_CARD_MIN_HEIGHT_CLASS = 'min-h-[15.4rem] sm:min-h-[18.2rem
 export type CollectCardHighlightGridItem = {
   card: PokemonTcgCard
   supportingText?: string
-  supportingSlot?: ReactNode
+  supportingSlot?: JSX.Element
 }
 
 function gridColumnClass(count: number, options?: { responsiveStrip?: boolean }): string {
@@ -31,13 +29,13 @@ function gridColumnClass(count: number, options?: { responsiveStrip?: boolean })
 /** Three-up strip matching {@link RoundupHeroArtworkGrid} `variant="article"` cells. */
 export function CollectCardHighlightGrid({
   items,
-  className,
+  class: className,
   imageFit = 'contain',
   aspectRatio = 'strip',
   showSupportingMeta = true,
 }: {
   items: CollectCardHighlightGridItem[]
-  className?: string
+  class?: string
   /** `contain` shows the full card; `cover` crops to fill the strip cell. */
   imageFit?: 'cover' | 'contain'
   /** `portrait` — single flagship card at TCG proportions (popular lists). */
@@ -64,9 +62,9 @@ export function CollectCardHighlightGrid({
   const stripContain = containCard && stripLayout
 
   return (
-    <div className={cn('space-y-3', className)}>
+    <div class={cn('space-y-3', className)}>
       <div
-        className={cn(
+        class={cn(
           'bg-muted grid w-full rounded-xl border',
           portraitCard && PORTRAIT_CARD_MEDIA_CLASS,
           stripLayout && 'gap-3 p-2 sm:aspect-[12/5] sm:grid-rows-1 sm:gap-3 sm:p-3',
@@ -81,8 +79,7 @@ export function CollectCardHighlightGrid({
           const wrapThirdAlone = stripContain && visible.length === 3 && index === 2
           return (
             <div
-              key={item.card.id}
-              className={cn(
+              class={cn(
                 'relative min-h-0 min-w-0',
                 containCard
                   ? cn(
@@ -96,15 +93,12 @@ export function CollectCardHighlightGrid({
               )}
             >
               <div
-                className={cn(
-                  'relative',
-                  containCard ? 'h-full min-h-0 w-full' : 'absolute inset-0'
-                )}
+                class={cn('relative', containCard ? 'h-full min-h-0 w-full' : 'absolute inset-0')}
               >
                 <TcgCardImage
                   card={item.card}
                   alt={alt}
-                  className={cn(containCard ? 'object-contain drop-shadow-md' : 'object-cover')}
+                  class={cn(containCard ? 'object-contain drop-shadow-md' : 'object-cover')}
                   sizes={imageSizes}
                 />
               </div>
@@ -113,23 +107,21 @@ export function CollectCardHighlightGrid({
                 target="_blank"
                 rel="noopener noreferrer"
                 title={`View larger image of ${item.card.name}`}
-                className="absolute inset-0 z-[1] cursor-zoom-in transition-transform duration-200 hover:scale-[1.02]"
+                class="absolute inset-0 z-[1] cursor-zoom-in transition-transform duration-200 hover:scale-[1.02]"
               >
-                <span className="sr-only">View larger image: {alt}</span>
+                <span class="sr-only">View larger image: {alt}</span>
               </a>
             </div>
           )
         })}
       </div>
       {showMeta ? (
-        <div className={cn('grid gap-3', columns)}>
+        <div class={cn('grid gap-3', columns)}>
           {visible.map((item) => (
-            <div key={`meta-${item.card.id}`} className="min-w-0 space-y-1">
+            <div class="min-w-0 space-y-1">
               {item.supportingSlot}
               {item.supportingText ? (
-                <p className="text-muted-foreground text-xs leading-relaxed">
-                  {item.supportingText}
-                </p>
+                <p class="text-muted-foreground text-xs leading-relaxed">{item.supportingText}</p>
               ) : null}
             </div>
           ))}

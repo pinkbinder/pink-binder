@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { JSX } from 'solid-js'
 
 type BlogInlineSegment =
   | { kind: 'text'; value: string }
@@ -125,20 +125,14 @@ export function BlogInlineText({
     return <>{segments[0].value}</>
   }
 
-  const nodes: ReactNode[] = []
+  const nodes: JSX.Element[] = []
   for (const segment of segments) {
     if (segment.kind === 'text') {
       nodes.push(segment.value)
       continue
     }
     nodes.push(
-      <a
-        key={`${segment.href}-${nodes.length}`}
-        href={segment.href}
-        className={linkClassName}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
+      <a href={segment.href} class={linkClassName} target="_blank" rel="noopener noreferrer">
         {segment.label}
       </a>
     )
