@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.7.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.4...pink-binder-v2.7.5) (2026-09-15)
+
+
+### Tests
+
+* **data:** add coverage for blog post date validation (post-dates.ts) ([#117](https://github.com/pinkbinder/pink-binder/issues/117)) ([a75800c](https://github.com/pinkbinder/pink-binder/commit/a75800c3f830499743a0e33cc10afe882c6e7b05))
+
 ## [2.7.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.3...pink-binder-v2.7.4) (2026-09-14)
 
 
