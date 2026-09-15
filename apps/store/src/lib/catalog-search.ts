@@ -41,3 +41,20 @@ export function matchesSearch(
   if (search.category && search.category !== 'All' && category !== search.category) return false
   return true
 }
+
+/**
+ * URL write for a catalog param change, plus the history mode it needs:
+ * text search replaces the current entry (one keystroke must never become one
+ * history entry), while category chips push so Back undoes a filter change.
+ * Null/empty values delete the param (clear-on-default semantics).
+ */
+export function buildCatalogUrl(
+  href: string,
+  key: 'q' | 'category',
+  value: string | null
+): { url: string; replace: boolean } {
+  const url = new URL(href)
+  if (value === null || value === '' || value === 'All') url.searchParams.delete(key)
+  else url.searchParams.set(key, value)
+  return { url: url.toString(), replace: key === 'q' }
+}
