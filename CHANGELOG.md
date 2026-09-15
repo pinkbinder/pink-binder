@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.6...pink-binder-v3.0.0) (2026-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122))
+
+### Maintenance
+
+* migrate the monorepo from React to Solid + Kobalte ([#122](https://github.com/pinkbinder/pink-binder/issues/122)) ([6940cfe](https://github.com/pinkbinder/pink-binder/commit/6940cfe8b9158e504de477857da821cadf162c44))
+
 ## [2.7.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.5...pink-binder-v2.7.6) (2026-09-15)
 
 
