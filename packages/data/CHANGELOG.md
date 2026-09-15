@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.4](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.3...data-v2.4.4) (2026-09-15)
+
+
+### Maintenance
+
+* enforce @shadcn/lint and migrate @repo/ui to Base UI ([#120](https://github.com/pinkbinder/pink-binder/issues/120)) ([cdd0654](https://github.com/pinkbinder/pink-binder/commit/cdd06543a21f762a919dcd6f8fca2de611444580))
+
 ## [2.4.3](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.2...data-v2.4.3) (2026-09-15)
 
 
