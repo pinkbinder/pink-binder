@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import { cn } from '../../lib/utils'
 
 type PokemonStatListEntry = {
@@ -78,8 +79,13 @@ export function PokemonStatList({
                 aria-valuemax={255}
               >
                 <div
-                  className="h-full rounded-full"
-                  style={{ width: `${pct}%`, backgroundColor: statBarColor(stat.value) }}
+                  className="h-full w-(--stat-fill) rounded-full bg-(--stat-color)"
+                  style={
+                    {
+                      '--stat-fill': `${pct}%`,
+                      '--stat-color': statBarColor(stat.value),
+                    } as CSSProperties
+                  }
                 />
               </div>
               <p className="text-muted-foreground col-start-3 text-xs font-medium sm:col-start-4 sm:text-right">

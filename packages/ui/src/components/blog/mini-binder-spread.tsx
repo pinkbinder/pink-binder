@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { MichiSceneArtImage } from './michi-scene-art-image'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
@@ -139,20 +139,22 @@ function BinderPage({
       <p className="text-muted-foreground mb-2 text-center text-xs font-medium tracking-wide uppercase">
         {pageLabel}
       </p>
-      <div className="grid grid-cols-3 grid-rows-3 gap-2" style={{ minHeight: 'min(420px, 52vw)' }}>
+      <div className="grid min-h-[min(420px,52vw)] grid-cols-3 grid-rows-3 gap-2">
         {slots.map((placed, index) => {
           const { slot, row, col, colSpan } = placed
           const selected = selectedIndex === index
           return (
             <div
               key={`${pageLabel}-${row}-${col}`}
-              className={`bg-card relative overflow-hidden rounded-md border shadow-xs transition ${
+              className={`bg-card relative overflow-hidden rounded-md border shadow-xs transition [grid-column:var(--slot-col)] [grid-row:var(--slot-row)] ${
                 selected ? 'ring-primary ring-2 ring-offset-2' : 'hover:border-primary/60'
               } ${colSpan === 2 ? 'aspect-[10/7] min-h-0' : 'aspect-[5/7] min-h-0'}`}
-              style={{
-                gridColumn: `${col + 1} / span ${colSpan}`,
-                gridRow: `${row + 1}`,
-              }}
+              style={
+                {
+                  '--slot-col': `${col + 1} / span ${colSpan}`,
+                  '--slot-row': `${row + 1}`,
+                } as CSSProperties
+              }
             >
               {slot.kind === 'card' ? (
                 <div className="h-full scale-[0.92] p-0.5">
@@ -167,7 +169,7 @@ function BinderPage({
                   />
                 </div>
               ) : slot.kind === 'back' ? (
-                <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-indigo-900 via-blue-800 to-cyan-700 p-2 text-white">
+                <div className="tcg-card-back relative flex h-full w-full flex-col items-center justify-center p-2 text-white">
                   <div className="absolute inset-1 rounded-xs border border-white/30" />
                   <div className="absolute inset-2 rounded-xs border border-white/20" />
                   <div className="relative text-center">

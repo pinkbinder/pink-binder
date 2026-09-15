@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useQueryState } from 'nuqs'
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from '@repo/ui'
 import { cn } from '@repo/ui'
 
@@ -62,7 +62,7 @@ function AdsPage() {
 
       <Card className="mb-6">
         <CardHeader>
-          <CardTitle className="text-base">Spend by platform</CardTitle>
+          <CardTitle size="xs">Spend by platform</CardTitle>
         </CardHeader>
         <CardContent>
           <ul className="space-y-3">
@@ -77,8 +77,12 @@ function AdsPage() {
                   className="bg-muted h-2 flex-1 overflow-hidden rounded-full"
                 >
                   <span
-                    className="bg-primary block h-full rounded-full"
-                    style={{ width: `${Math.round((entry.spendCents / maxPlatformSpend) * 100)}%` }}
+                    className="bg-primary block h-full w-(--bar-pct) rounded-full"
+                    style={
+                      {
+                        '--bar-pct': `${Math.round((entry.spendCents / maxPlatformSpend) * 100)}%`,
+                      } as CSSProperties
+                    }
                   />
                 </span>
                 <span className="w-24 shrink-0 text-right text-sm font-medium tabular-nums">
@@ -112,7 +116,7 @@ function AdsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
+          <CardTitle size="xs">
             {visible.length} campaign{visible.length === 1 ? '' : 's'}
           </CardTitle>
         </CardHeader>
@@ -125,8 +129,8 @@ function AdsPage() {
 }
 
 function roasTone(roas: number): string {
-  if (roas >= 2) return 'text-emerald-700 dark:text-emerald-400'
-  if (roas >= 1) return 'text-amber-700 dark:text-amber-400'
+  if (roas >= 2) return 'text-success-foreground'
+  if (roas >= 1) return 'text-warning-foreground'
   return 'text-destructive'
 }
 
@@ -136,7 +140,7 @@ function CampaignTable({ campaigns }: { campaigns: AdCampaign[] }) {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full min-w-[680px] text-sm">
+      <table className="w-full min-w-170 text-sm">
         <thead>
           <tr className="text-muted-foreground border-b">
             <th className="pb-2 text-left font-medium">Campaign</th>

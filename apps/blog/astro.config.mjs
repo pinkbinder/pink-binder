@@ -41,6 +41,10 @@ export default defineConfig({
   }),
   integrations: [react(), interactionDirective()],
   vite: {
+    server: {
+      // Tailscale MagicDNS hostname used for shared dev-server links.
+      allowedHosts: ['amf-mb-pro'],
+    },
     ssr: {
       noExternal: ['@repo/config', '@repo/data', '@repo/marketplaces', '@repo/ui'],
     },

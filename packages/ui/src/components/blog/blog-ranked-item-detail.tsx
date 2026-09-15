@@ -13,7 +13,7 @@ export function BlogRankedItemDetail({
   titleClassName?: string
 }) {
   return (
-    <div className={cn('mt-5 border-t border-pink-100/80 pt-5', className)}>
+    <div className={cn('border-secondary/80 mt-5 border-t pt-5', className)}>
       {title ? (
         <h3 className={cn('text-sm font-semibold tracking-tight', titleClassName)}>{title}</h3>
       ) : null}

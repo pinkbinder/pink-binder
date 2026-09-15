@@ -42,7 +42,7 @@ function PostCard({ post, className, ...props }: PostCardProps) {
   return (
     <Card
       className={cn(
-        'bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border-pink-200/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg',
+        'bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg',
         className
       )}
       {...props}
@@ -66,7 +66,7 @@ function PostCard({ post, className, ...props }: PostCardProps) {
             }}
           />
         ) : (
-          <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-gradient-to-br px-6 text-center">
+          <div className="from-primary/20 to-secondary flex h-full w-full items-center justify-center bg-linear-to-br px-6 text-center">
             <span className="font-title text-foreground text-lg font-semibold">{post.title}</span>
           </div>
         )}

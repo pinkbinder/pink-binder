@@ -46,7 +46,7 @@ function OrdersPage() {
           <Card key={stat.label}>
             <CardHeader className="pb-2">
               <CardDescription>{stat.label}</CardDescription>
-              <CardTitle className="text-3xl tabular-nums">{stat.value}</CardTitle>
+              <CardTitle size="metric">{stat.value}</CardTitle>
             </CardHeader>
             <CardContent>
               <Badge variant={stat.positive ? 'default' : 'destructive'}>{stat.change}</Badge>

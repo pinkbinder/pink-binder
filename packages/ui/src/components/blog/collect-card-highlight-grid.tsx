@@ -71,7 +71,7 @@ export function CollectCardHighlightGrid({
           portraitCard && PORTRAIT_CARD_MEDIA_CLASS,
           stripLayout && 'gap-3 p-2 sm:aspect-[12/5] sm:grid-rows-1 sm:gap-3 sm:p-3',
           !stripLayout && !portraitCard && 'aspect-[12/5] grid-rows-1',
-          stripContain ? null : !stripLayout && 'divide-x divide-pink-100/80 overflow-hidden',
+          stripContain ? null : !stripLayout && 'divide-secondary/80 divide-x overflow-hidden',
           !stripLayout && !portraitCard && columns,
           stripLayout && columns
         )}

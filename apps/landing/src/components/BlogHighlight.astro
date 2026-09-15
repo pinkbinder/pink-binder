@@ -39,10 +39,10 @@ const thumbnailCandidates = post.thumbnail
     class="group focus-visible:ring-ring block rounded-3xl focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden"
   >
     {artworkLists.length > 0 ? (
-      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-pink-200/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
+      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-brand-light-pink/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
         <div
           class:list={[
-            'bg-muted grid grid-rows-1 divide-x divide-pink-100/80 aspect-[16/10]',
+            'bg-muted grid grid-rows-1 divide-x divide-secondary/80 aspect-[16/10]',
             artworkLists.length >= 3 ? 'grid-cols-3' : artworkLists.length === 2 ? 'grid-cols-2' : 'grid-cols-1',
           ]}
         >
@@ -75,7 +75,7 @@ const thumbnailCandidates = post.thumbnail
         </div>
       </article>
     ) : thumbnailCandidates.length > 0 ? (
-      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-pink-200/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
+      <article class="bg-card/95 group-hover:border-primary/45 h-full overflow-hidden rounded-3xl border border-brand-light-pink/70 shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
         <div class="bg-muted aspect-[16/10] overflow-hidden">
           <img
             src={thumbnailCandidates[0]}
@@ -97,7 +97,7 @@ const thumbnailCandidates = post.thumbnail
         </div>
       </article>
     ) : (
-      <article class="from-primary/20 to-secondary flex min-h-72 items-center justify-center rounded-3xl bg-gradient-to-br px-6 text-center">
+      <article class="from-primary/20 to-secondary flex min-h-72 items-center justify-center rounded-3xl bg-linear-to-br px-6 text-center">
         <span class="font-title text-foreground text-lg font-semibold">{post.title}</span>
       </article>
     )}

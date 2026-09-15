@@ -38,7 +38,7 @@ export function BlogSiteBrand({
             height={40}
             fill={false}
             sizes="40px"
-            className="rounded-full border border-pink-200 bg-white object-cover shadow-xs"
+            className="border-brand-light-pink rounded-full border bg-white object-cover shadow-xs"
           />
           <span className="text-primary-deep text-base font-bold sm:text-lg">The Pink Binder</span>
         </a>

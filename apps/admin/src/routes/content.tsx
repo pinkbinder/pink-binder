@@ -123,7 +123,7 @@ function PipelineColumn({
   const meta = CONTENT_STATUS_META[status]
 
   return (
-    <section className="flex w-[272px] shrink-0 flex-col gap-2.5" aria-label={meta.label}>
+    <section className="flex w-68 shrink-0 flex-col gap-2.5" aria-label={meta.label}>
       <div>
         <h2 className="flex items-center gap-2 text-sm font-semibold">
           {meta.label}
@@ -185,7 +185,7 @@ function DraftCard({
       <p className="mt-2 text-sm leading-snug font-semibold">{draft.title}</p>
       <p className="text-muted-foreground mt-1 line-clamp-3 text-xs">{draft.body}</p>
       {draft.status === 'revision' && draft.revisionNote && (
-        <p className="border-amber-600/30 bg-amber-400/10 text-amber-900 dark:text-amber-200 mt-2 rounded-md border px-2.5 py-2 text-xs">
+        <p className="border-warning/30 bg-warning/10 text-warning-foreground mt-2 rounded-md border px-2.5 py-2 text-xs">
           {draft.revisionNote}
         </p>
       )}

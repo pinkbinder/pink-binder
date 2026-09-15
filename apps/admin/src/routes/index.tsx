@@ -114,9 +114,9 @@ function ServiceCard({
           <p
             className={
               statTone === 'warn'
-                ? 'text-sm font-semibold text-amber-700 tabular-nums dark:text-amber-400'
+                ? 'text-warning-foreground text-sm font-semibold tabular-nums'
                 : statTone === 'ok'
-                  ? 'text-sm font-semibold text-emerald-700 tabular-nums dark:text-emerald-400'
+                  ? 'text-success-foreground text-sm font-semibold tabular-nums'
                   : 'text-sm font-semibold tabular-nums'
             }
           >
@@ -134,12 +134,17 @@ function ServiceCard({
             ))}
           </ul>
         </div>
-        <Button asChild variant="outline" size="sm" className="self-start">
-          <Link to={to}>
-            {cta}
-            <ArrowRight aria-hidden />
-          </Link>
-        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          className="self-start"
+          render={
+            <Link to={to}>
+              {cta}
+              <ArrowRight aria-hidden />
+            </Link>
+          }
+        />
       </CardContent>
     </Card>
   )

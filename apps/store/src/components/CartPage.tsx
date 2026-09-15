@@ -30,17 +30,13 @@ export function CartPage() {
       <div className="mx-auto max-w-3xl">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="text-2xl font-bold">Cart</h1>
-          <Button variant="ghost" size="sm" asChild>
-            <a href="/">Continue shopping</a>
-          </Button>
+          <Button variant="ghost" size="sm" render={<a href="/">Continue shopping</a>} />
         </div>
         {cartLines.length === 0 ? (
           <Card>
             <CardContent className="py-10 text-center">
               <p className="text-muted-foreground">Your cart is empty.</p>
-              <Button className="mt-4" asChild>
-                <a href="/">Browse products</a>
-              </Button>
+              <Button className="mt-4" render={<a href="/">Browse products</a>} />
             </CardContent>
           </Card>
         ) : (

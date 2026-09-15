@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react'
 import Link from '../compat-link'
 import {
   CLICKABLE_BADGE_CLASS,
@@ -14,12 +15,13 @@ export function PokemonTypeBadge({ type, href }: { type: string; href: string })
   return (
     <Link
       href={href}
-      className={`${CLICKABLE_BADGE_CLASS} tracking-wider uppercase`}
-      style={{
-        backgroundColor: colors.bg,
-        color: readableTextColorOn(colors.bg),
-        borderColor: colors.bg,
-      }}
+      className={`${CLICKABLE_BADGE_CLASS} border-(--type-bg) bg-(--type-bg) tracking-wider text-(--type-fg) uppercase`}
+      style={
+        {
+          '--type-bg': colors.bg,
+          '--type-fg': readableTextColorOn(colors.bg),
+        } as CSSProperties
+      }
     >
       <span className="inline-flex items-center gap-1.5">
         {logoUrl ? (

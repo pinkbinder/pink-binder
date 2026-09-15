@@ -49,7 +49,7 @@ export const Route = createRootRouteWithContext<AdminRouterContext>()({
     <RootDocument>
       <ConsoleShell>
         <main className="mx-auto max-w-2xl px-4 py-16 text-center">
-          <p className="text-sm font-semibold tracking-widest text-pink-500 uppercase">404</p>
+          <p className="text-primary text-sm font-semibold tracking-widest uppercase">404</p>
           <h1 className="mt-2 text-2xl font-bold">Page not found</h1>
           <p className="text-muted-foreground mt-2">The admin page you asked for does not exist.</p>
         </main>

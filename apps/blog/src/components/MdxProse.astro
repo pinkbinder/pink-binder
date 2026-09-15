@@ -36,13 +36,13 @@ const { content } = Astro.props as Props
       if (!line) continue
       if (line.startsWith('## ')) {
         flushList()
-        html += `<h2 class="font-title mt-8 mb-3 border-b border-pink-200 pb-2 text-2xl font-bold">${inline(line.slice(3))}</h2>`
+        html += `<h2 class="font-title mt-8 mb-3 border-b border-brand-light-pink pb-2 text-2xl font-bold">${inline(line.slice(3))}</h2>`
       } else if (line.startsWith('# ')) {
         flushList()
         html += `<h1 class="font-title mt-8 mb-4 text-3xl font-bold">${inline(line.slice(2))}</h1>`
       } else if (line.startsWith('---')) {
         flushList()
-        html += '<hr class="my-8 border-pink-200" />'
+        html += '<hr class="border-brand-light-pink my-8" />'
       } else if (/^[-*] /.test(line)) {
         const items = line.split('\n').map((l) => l.replace(/^[-*] /, '').trim()).filter(Boolean)
         if (!list) list = []

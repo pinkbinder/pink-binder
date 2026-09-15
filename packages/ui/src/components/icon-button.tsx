@@ -26,17 +26,22 @@ function IconButton({ label, className, children, ...props }: IconButtonProps) {
   if ('href' in props && props.href) {
     const { href, external, target, rel, ...rest } = props as IconButtonLinkProps
     return (
-      <Button asChild variant="ghost" size="icon" className={cn(ICON_BUTTON_CN, className)}>
-        <a
-          href={href}
-          aria-label={label}
-          target={external ? '_blank' : target}
-          rel={external ? 'noopener noreferrer' : rel}
-          {...rest}
-        >
-          {children}
-        </a>
-      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        className={cn(ICON_BUTTON_CN, className)}
+        render={
+          <a
+            href={href}
+            aria-label={label}
+            target={external ? '_blank' : target}
+            rel={external ? 'noopener noreferrer' : rel}
+            {...rest}
+          >
+            {children}
+          </a>
+        }
+      />
     )
   }
 
