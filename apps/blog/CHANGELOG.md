@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.0...blog-v0.12.1) (2026-09-16)
+
+
+### Performance
+
+* Solid UX performance standards + audit remediation ([#124](https://github.com/pinkbinder/pink-binder/issues/124)) ([3712f03](https://github.com/pinkbinder/pink-binder/commit/3712f03c31b933d02d004a71a1fab96f361628a2))
+
 ## [0.12.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.11.4...blog-v0.12.0) (2026-09-15)
 
 
