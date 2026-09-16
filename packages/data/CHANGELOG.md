@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.5](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.4...data-v2.4.5) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 2 — indexed facet lookups, isolate-level derivation, tree-shaking ([#126](https://github.com/pinkbinder/pink-binder/issues/126)) ([bc12a23](https://github.com/pinkbinder/pink-binder/commit/bc12a237716d7de0d561de481a9071c6d11719bf))
+
 ## [2.4.4](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.3...data-v2.4.4) (2026-09-15)
 
 
