@@ -77,9 +77,7 @@ const index = buildBlogFacetIndex(facets)
 console.log(`buildBlogFacetIndex (one-time): ${(performance.now() - indexStart).toFixed(1)} ms`)
 
 const linear = bench('catalogSelectValueFromFilters (linear, per change)', () =>
-  catalogSelectValueFromFilters(null, grouped, tags, ctx)
-)
+  catalogSelectValueFromFilters(null, grouped, tags, ctx))
 const indexed = bench('catalogSelectValueFromFiltersIndexed (per change)', () =>
-  catalogSelectValueFromFiltersIndexed(index, null, grouped)
-)
+  catalogSelectValueFromFiltersIndexed(index, null, grouped))
 console.log(`speedup: ${(linear / indexed).toFixed(0)}x`)
