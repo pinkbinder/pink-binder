@@ -5,6 +5,7 @@ import {
   spriteUrlCandidates,
 } from '@repo/data/client'
 import { createEffect, createMemo, createSignal, Match, on, Show, Switch } from 'solid-js'
+import { createFallbackIndex } from '../../lib/fallback-index'
 
 interface Pokemon3dSpriteShowcaseProps {
   slug: string
@@ -16,7 +17,7 @@ interface Pokemon3dSpriteShowcaseProps {
 export function Pokemon3dSpriteShowcase(props: Pokemon3dSpriteShowcaseProps) {
   const candidates = createMemo(() => projectPokemonSpriteSlugCandidates(props.slug))
   const showdownCandidates = createMemo(() => spriteUrlCandidates(props.showdownSpriteUrl, null))
-  const [slugIndex, setSlugIndex] = createSignal(0)
+  const { index: slugIndex, advance: advanceSlug } = createFallbackIndex(candidates)
   const [mode, setMode] = createSignal<'project' | 'showdown'>('project')
   let loadFailures = 0
 
@@ -41,7 +42,7 @@ export function Pokemon3dSpriteShowcase(props: Pokemon3dSpriteShowcaseProps) {
     if (loadFailures < 2) return
     loadFailures = 0
     if (slugIndex() + 1 < candidates().length) {
-      setSlugIndex((current) => current + 1)
+      advanceSlug()
     } else if (showdownCandidates().length > 0) {
       setMode('showdown')
     }
@@ -108,10 +109,10 @@ function ShowdownSpriteSection(props: {
   url: string
   fallbackUrls: string[]
 }) {
-  const [candidateIndex, setCandidateIndex] = createSignal(0)
   const candidates = createMemo(() =>
     pokemonR2ImageVariantCandidates([props.url, ...props.fallbackUrls], 'small')
   )
+  const { index: candidateIndex, advance } = createFallbackIndex(candidates)
   const src = () => candidates()[candidateIndex()]
 
   return (
@@ -128,9 +129,7 @@ function ShowdownSpriteSection(props: {
               label="Showdown"
               url={current()}
               alt={`${props.displayName} Showdown battle sprite`}
-              onFailed={() => {
-                setCandidateIndex((index) => (index + 1 < candidates().length ? index + 1 : index))
-              }}
+              onFailed={advance}
             />
           </div>
         </div>

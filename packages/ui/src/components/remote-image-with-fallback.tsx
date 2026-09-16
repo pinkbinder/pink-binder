@@ -1,5 +1,6 @@
 import { pokemonR2ImageVariantCandidates, type PokemonR2ImageVariant } from '@repo/data/client'
-import { createMemo, createSignal, Show } from 'solid-js'
+import { createMemo, Show } from 'solid-js'
+import { createFallbackIndex } from '../lib/fallback-index'
 import { cn } from '../lib/utils'
 
 export function RemoteImageWithFallback(props: {
@@ -21,7 +22,7 @@ export function RemoteImageWithFallback(props: {
       ? pokemonR2ImageVariantCandidates(props.candidates, props.imageVariant)
       : [...new Set(props.candidates.map((url) => url.trim()).filter(Boolean))]
   )
-  const [index, setIndex] = createSignal(0)
+  const { index, advance } = createFallbackIndex(urls)
   const src = () => urls()[index()]
 
   return (
@@ -37,9 +38,8 @@ export function RemoteImageWithFallback(props: {
           fetchpriority={props.priority ? 'high' : undefined}
           decoding="async"
           onError={() => {
-            const next = index() + 1
-            if (next < urls().length) {
-              setIndex(next)
+            if (index() + 1 < urls().length) {
+              advance()
             } else {
               props.onExhausted?.()
             }

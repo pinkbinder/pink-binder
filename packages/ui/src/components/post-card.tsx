@@ -1,5 +1,6 @@
 import { pokemonR2ImageVariantUrl } from '@repo/data/client'
-import { createEffect, createMemo, createSignal, on, Show, splitProps, type JSX } from 'solid-js'
+import { createMemo, Show, splitProps, type JSX } from 'solid-js'
+import { createFallbackIndex } from '../lib/fallback-index'
 import { cn } from '../lib/utils'
 import { Card, CardContent, CardHeader, CardTitle } from './card'
 
@@ -33,9 +34,7 @@ function PostCard(props: PostCardProps) {
       ...new Set([optimized, primary, local.post.thumbnailFallback].filter(Boolean)),
     ] as string[]
   })
-  const [thumbnailIndex, setThumbnailIndex] = createSignal(0)
-  // Restart the fallback chain when the candidate list changes.
-  createEffect(on(thumbnailCandidates, () => setThumbnailIndex(0), { defer: true }))
+  const { index: thumbnailIndex, advance } = createFallbackIndex(thumbnailCandidates)
   const thumbnailSrc = () => thumbnailCandidates()[thumbnailIndex()]
 
   return (
@@ -68,11 +67,7 @@ function PostCard(props: PostCardProps) {
                 'h-full w-full transition-transform duration-300 group-hover:scale-[1.025]',
                 thumbnailFit() === 'contain' ? 'bg-muted/40 object-contain p-3' : 'object-cover'
               )}
-              onError={() => {
-                setThumbnailIndex((current) =>
-                  current + 1 < thumbnailCandidates().length ? current + 1 : current
-                )
-              }}
+              onError={advance}
             />
           )}
         </Show>
