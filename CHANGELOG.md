@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.5...pink-binder-v3.0.6) (2026-09-16)
+
+
+### Maintenance
+
+* **ui:** declare filterTimer before resetSearch to eliminate TDZ ambiguity ([#134](https://github.com/pinkbinder/pink-binder/issues/134)) ([ffce222](https://github.com/pinkbinder/pink-binder/commit/ffce222ccd35a82e38f34576043911a1cd2a4af4))
+
 ## [3.0.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.4...pink-binder-v3.0.5) (2026-09-16)
 
 
