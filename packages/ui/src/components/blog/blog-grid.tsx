@@ -1244,9 +1244,9 @@ export function BlogGrid(props: BlogGridProps) {
                       onClick={() =>
                         trackSelectContent({ contentType: 'blog_post', itemId: post.slug })
                       }
-                      class={`group focus-visible:ring-ring block rounded-[1.65rem] p-0.5 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden ${
+                      class={`group focus-visible:ring-ring block rounded-[1.65rem] p-0.5 transition-[transform,box-shadow] duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden ${
                         typeAura
-                          ? 'bg-[linear-gradient(145deg,var(--aura-from),var(--aura-to))] shadow-[0_12px_34px_-24px_var(--aura-glow)]'
+                          ? 'bg-[linear-gradient(145deg,var(--aura-from),var(--aura-to))]'
                           : ''
                       }`}
                       style={
@@ -1254,7 +1254,6 @@ export function BlogGrid(props: BlogGridProps) {
                           ? {
                               '--aura-from': typeAura.border,
                               '--aura-to': typeAura.bg,
-                              '--aura-glow': typeAura.text,
                             }
                           : undefined
                       }
