@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.13](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.12...marketplaces-v1.3.13) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 2 — indexed facet lookups, isolate-level derivation, tree-shaking ([#126](https://github.com/pinkbinder/pink-binder/issues/126)) ([bc12a23](https://github.com/pinkbinder/pink-binder/commit/bc12a237716d7de0d561de481a9071c6d11719bf))
+
 ## [1.3.12](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.11...marketplaces-v1.3.12) (2026-09-13)
 
 
