@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.3...pink-binder-v3.0.4) (2026-09-16)
+
+
+### Bug Fixes
+
+* **blog:** render search bar before tag catalog loads ([#130](https://github.com/pinkbinder/pink-binder/issues/130)) ([c542ca7](https://github.com/pinkbinder/pink-binder/commit/c542ca7d7fcb361a11ffdf23a9f2ed0199aee850))
+
 ## [3.0.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.2...pink-binder-v3.0.3) (2026-09-16)
 
 
