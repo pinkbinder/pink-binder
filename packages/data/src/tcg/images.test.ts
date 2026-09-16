@@ -1,6 +1,7 @@
 import { describe, expect, it, mock } from 'bun:test'
 import type { PokemonTcgCard } from '../pokemon/tcg-card'
 import { tcgCardHeroImageUrl, enrichPokemonTcgCardImages } from './images'
+import { restoreModuleMocks } from '../../test/module-mock-scope'
 
 const resolveTcgCardImageUrlsMock = mock(() => ({
   imageSmall: 'https://s.png',
@@ -21,6 +22,8 @@ const coerceMock = mock((card: any) => ({ ...card }))
 mock.module('../pokemon/image-urls', () => ({
   coercePokemonTcgCardImageUrls: coerceMock,
 }))
+
+restoreModuleMocks(import.meta, '@repo/marketplaces/tcgplayer', '../pokemon/image-urls')
 
 describe('tcg/images', () => {
   it('tcgCardHeroImageUrl returns preferred url', () => {
