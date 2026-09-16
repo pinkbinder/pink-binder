@@ -4,6 +4,7 @@ import { BlogBackLink } from './blog-back-link'
 import { BlogMainLayout } from './blog-main-layout'
 import { BLOG_POST_ARTICLE_ID } from './blog-reading-ids'
 import { BlogReadingProgress } from './blog-reading-progress'
+import { BlogSidebarShopPromo } from './blog-sidebar-shop-promo'
 import { BlogStaticTableOfContents, type BlogTableOfContentsItem } from './blog-table-of-contents'
 
 /**
@@ -74,9 +75,12 @@ export function BlogPostShell({
           ) : null}
           {children}
         </article>
-        {tocItems && tocItems.length >= 2 ? (
-          <BlogStaticTableOfContents articleId={BLOG_POST_ARTICLE_ID} items={tocItems} />
-        ) : null}
+        <div class="sticky top-6 hidden flex-col gap-4 self-start lg:flex">
+          {tocItems && tocItems.length >= 2 ? (
+            <BlogStaticTableOfContents articleId={BLOG_POST_ARTICLE_ID} items={tocItems} />
+          ) : null}
+          <BlogSidebarShopPromo shopUrl={landingUrl} />
+        </div>
       </div>
     </BlogMainLayout>
   )

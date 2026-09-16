@@ -97,9 +97,9 @@ function TableOfContentsLinks(props: {
  * the hydrated variants, driven by entries extracted at render time instead
  * of a client DOM scan (post pages ship zero JS).
  *
- * `desktop` is a sticky card in the grid column beside the article.
- * `mobile` is a `<details>` disclosure at the top of the article; it toggles
- * natively with no JS. */
+ * `desktop` renders the plain nav card — the caller owns the sidebar column
+ * (visibility + sticky positioning). `mobile` is a `<details>` disclosure at
+ * the top of the article; it toggles natively with no JS. */
 export function BlogStaticTableOfContents(props: {
   articleId: string
   items: BlogTableOfContentsItem[]
@@ -132,7 +132,7 @@ export function BlogStaticTableOfContents(props: {
         </details>
       }
     >
-      <aside class="sticky top-6 hidden self-start lg:block">
+      <aside>
         <nav
           aria-labelledby={labelId}
           class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
@@ -241,7 +241,7 @@ export function BlogTableOfContents(props: {
       <Show
         when={props.variant === 'mobile'}
         fallback={
-          <aside class="sticky top-6 hidden self-start lg:block">
+          <aside>
             <nav
               aria-labelledby={labelId}
               class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
