@@ -235,7 +235,20 @@ export function postMatchesBlogSearch(
   terms: readonly string[]
 ): boolean {
   const corpus = postSearchCorpus(post)
-  return terms.every((term) => corpus.includes(term.toLowerCase()))
+  return lowercasedTerms(terms).every((term) => corpus.includes(term))
+}
+
+/**
+ * The same `terms` array object flows through every `posts.filter` pass —
+ * normalize it once per identity instead of allocating per post per term.
+ */
+const lowercasedTermsByInput = new WeakMap<readonly string[], readonly string[]>()
+function lowercasedTerms(terms: readonly string[]): readonly string[] {
+  const cached = lowercasedTermsByInput.get(terms)
+  if (cached) return cached
+  const normalized = terms.map((term) => term.toLowerCase())
+  lowercasedTermsByInput.set(terms, normalized)
+  return normalized
 }
 
 type SearchCorpusPost = Pick<

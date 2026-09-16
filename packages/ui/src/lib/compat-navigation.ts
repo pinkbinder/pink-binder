@@ -28,15 +28,34 @@ function readSearch(): string {
   return typeof window === 'undefined' ? '' : window.location.search
 }
 
-/** Tracks `window.location` — bumped on popstate and the push/replace events our URL-state helpers dispatch. */
+let sharedRevision: Accessor<number> | undefined
+let sharedBump: (() => void) | undefined
+let sharedSubscribers = 0
+let sharedUnsubscribe: (() => void) | undefined
+
+/**
+ * Tracks `window.location` — bumped on popstate and the push/replace events
+ * our URL-state helpers dispatch. All consumers share one revision and one
+ * listener trio (ref-counted) instead of each attaching its own.
+ */
 function createLocationRevision(): Accessor<number> {
-  const [revision, setRevision] = createSignal(0)
+  sharedRevision ??= (() => {
+    const [revision, setRevision] = createSignal(0)
+    sharedBump = () => setRevision((value) => value + 1)
+    return revision
+  })()
   onMount(() => {
-    const bump = () => setRevision((value) => value + 1)
-    const unsubscribe = subscribe(bump)
-    onCleanup(unsubscribe)
+    sharedSubscribers += 1
+    sharedUnsubscribe ??= subscribe(sharedBump!)
+    onCleanup(() => {
+      sharedSubscribers -= 1
+      if (sharedSubscribers === 0) {
+        sharedUnsubscribe?.()
+        sharedUnsubscribe = undefined
+      }
+    })
   })
-  return revision
+  return sharedRevision
 }
 
 /** Current pathname; updates on history events. */

@@ -566,14 +566,47 @@ export function BlogGrid(props: BlogGridProps) {
     })
   )
 
+  /**
+   * Lowercase-keyed facet lookups for catalog-tag resolution. Without these,
+   * each of ~2 000 catalog tags ran five linear `.find()` scans (with a
+   * `toLowerCase` per element) when `tagOptions` built — one pass over the
+   * facet arrays turns every tag's resolution into O(1) map reads.
+   */
+  const catalogFacetLookups = createMemo(() => {
+    const typeByKey = new Map(typeFilters().map((type) => [type.toLowerCase(), type]))
+    const generationByKey = new Map(
+      generationFilters().flatMap((gen): [string, string][] => [
+        [gen.toLowerCase(), gen],
+        [generationFilterLabel(gen).toLowerCase(), gen],
+      ])
+    )
+    const themeByKey = new Map(
+      themeFilters().flatMap((name): [string, string][] => [
+        [name.toLowerCase(), name],
+        [name, name],
+      ])
+    )
+    const illustratorByKey = new Map(
+      illustratorFilters().flatMap((name): [string, string][] => [
+        [name.toLowerCase(), name],
+        [name, name],
+      ])
+    )
+    const listByKey = new Map(
+      roundupListFilters().flatMap((name): [string, string][] => [
+        [name.toLowerCase(), name],
+        [name, name],
+      ])
+    )
+    return { typeByKey, generationByKey, themeByKey, illustratorByKey, listByKey }
+  })
+
   const resolveCatalogTagOption = (entry: TagCatalogOption): SearchableSelectOption => {
     const catalogValue = entry.value
     const label = entry.label
+    const lookups = catalogFacetLookups()
 
-    const typeName =
-      parseTypeCategory(label) ??
-      typeFilters().find((type) => type.toLowerCase() === catalogValue) ??
-      null
+    const typeName = parseTypeCategory(label) ?? lookups.typeByKey.get(catalogValue) ?? null
     if (typeName) {
       const facet = typeOptions().find((option) => option.value === typeName)
       if (facet) {
@@ -581,12 +614,8 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const generation = generationFilters().find(
-      (gen) =>
-        gen.toLowerCase() === catalogValue ||
-        gen.toLowerCase() === label.toLowerCase() ||
-        generationFilterLabel(gen).toLowerCase() === label.toLowerCase()
-    )
+    const generation =
+      lookups.generationByKey.get(catalogValue) ?? lookups.generationByKey.get(label.toLowerCase())
     if (generation) {
       const facet = generationOptions().find((option) => option.value === generation)
       if (facet) {
@@ -594,9 +623,7 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const theme = themeFilters().find(
-      (name) => name.toLowerCase() === catalogValue || name === label
-    )
+    const theme = lookups.themeByKey.get(catalogValue) ?? lookups.themeByKey.get(label)
     if (theme) {
       const facet = themeOptions().find((option) => option.value === theme)
       if (facet) {
@@ -604,9 +631,8 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const illustrator = illustratorFilters().find(
-      (name) => name.toLowerCase() === catalogValue || name === label
-    )
+    const illustrator =
+      lookups.illustratorByKey.get(catalogValue) ?? lookups.illustratorByKey.get(label)
     if (illustrator) {
       const facet = illustratorOptions().find((option) => option.value === illustrator)
       if (facet) {
@@ -614,9 +640,7 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const list = roundupListFilters().find(
-      (name) => name.toLowerCase() === catalogValue || name === label
-    )
+    const list = lookups.listByKey.get(catalogValue) ?? lookups.listByKey.get(label)
     if (list) {
       const facet = listOptions().find((option) => option.value === list)
       if (facet) {
@@ -647,9 +671,19 @@ export function BlogGrid(props: BlogGridProps) {
 
   const tagOptions = createMemo(() => tagCatalogOptions().map(resolveCatalogTagOption))
 
+  /**
+   * Plain `{ value, label }` pairs for the search ranker — built once per
+   * facet load, not once per debounced keystroke (2k+ object allocations).
+   */
+  const tagRankInput = createMemo(() =>
+    tagOptions().map((entry) => ({ value: entry.value, label: entry.label }))
+  )
+
   const filterTagOptions = (options: SearchableSelectOption[], search: string) => {
     const ranked = filterTagCatalogOptionsBySearch(
-      options.map((entry) => ({ value: entry.value, label: entry.label })),
+      options === tagOptions()
+        ? tagRankInput()
+        : options.map((entry) => ({ value: entry.value, label: entry.label })),
       search
     )
     const order = new Map(ranked.map((entry, index) => [entry.value, index]))

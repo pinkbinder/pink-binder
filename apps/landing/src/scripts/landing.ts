@@ -51,14 +51,22 @@ function escapeHtml(value: string): string {
     .replaceAll("'", '&#039;')
 }
 
+/** Intl.NumberFormat construction is not free; one formatter per currency. */
+const priceFormatters = new Map<string, Intl.NumberFormat>()
+
 function formatPrice(listing: MarketplaceListing): string {
   if (!listing.price || !listing.currency) return listing.price
 
   try {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: listing.currency,
-    }).format(Number.parseFloat(listing.price))
+    let formatter = priceFormatters.get(listing.currency)
+    if (!formatter) {
+      formatter = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: listing.currency,
+      })
+      priceFormatters.set(listing.currency, formatter)
+    }
+    return formatter.format(Number.parseFloat(listing.price))
   } catch {
     return listing.price
   }
