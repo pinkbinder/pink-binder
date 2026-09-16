@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.3](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.2...blog-v0.12.3) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 2.1 — cached filtered sets, idle prefetch, dead prop cleanup ([#128](https://github.com/pinkbinder/pink-binder/issues/128)) ([e6c8a74](https://github.com/pinkbinder/pink-binder/commit/e6c8a748920d97a13531e2cd61038809fa001a9c))
+
 ## [0.12.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.1...blog-v0.12.2) (2026-09-16)
 
 
