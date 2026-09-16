@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.12.6](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.5...blog-v0.12.6) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 4 — shared fallback cursor, canonical posts-grid URLs, broader speculation rules ([#136](https://github.com/pinkbinder/pink-binder/issues/136)) ([3d34cfb](https://github.com/pinkbinder/pink-binder/commit/3d34cfb35f8627913a62a62227f7bffb2cf135f0))
+
 ## [0.12.5](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.4...blog-v0.12.5) (2026-09-16)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.3](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.2...admin-v0.7.3) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 4 — shared fallback cursor, canonical posts-grid URLs, broader speculation rules ([#136](https://github.com/pinkbinder/pink-binder/issues/136)) ([3d34cfb](https://github.com/pinkbinder/pink-binder/commit/3d34cfb35f8627913a62a62227f7bffb2cf135f0))
+
 ## [0.7.2](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.1...admin-v0.7.2) (2026-09-16)
 
 
