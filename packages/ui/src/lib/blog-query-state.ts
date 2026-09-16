@@ -1,5 +1,9 @@
 import type { BlogGridFacets, BlogGridQuery } from '@repo/data/client'
-import { type CatalogTagFacetContext, resolveCatalogTagToFacet } from '@repo/data/client'
+import {
+  buildBlogFacetIndex,
+  resolveCatalogTagToFacetIndexed,
+  type BlogFacetIndex,
+} from '@repo/data/client'
 import type { ParsedSearchParams, SearchParamParser } from './compat-navigation'
 
 const MAX_FILTER_LENGTH = 120
@@ -31,37 +35,28 @@ export const blogFilterParsers = {
 
 export type BlogFilterSearchParams = ParsedSearchParams<typeof blogFilterParsers>
 
-/** Resolve aliases and reject values absent from the server-provided facet catalog. */
+/**
+ * Resolve aliases and reject values absent from the server-provided facet
+ * catalog. Accepts either raw facets (server, one-off) or a prebuilt
+ * `BlogFacetIndex` (hydrated grid, rebuilt only when the facet payload
+ * changes) so URL commits never rebuild ~10 lookup sets over ~2 000 tags.
+ */
 export function resolveBlogGridQuery(
   searchParams: BlogFilterSearchParams,
-  facets: BlogGridFacets
+  facetsOrIndex: BlogGridFacets | BlogFacetIndex
 ): BlogGridQuery {
-  const typeSet = new Set(facets.types)
-  const generationSet = new Set(facets.generations)
-  const listSet = new Set(facets.lists)
-  const illustratorSet = new Set(facets.illustrators)
-  const expansionSet = new Set(facets.expansions.map((entry) => entry.slug))
-  const pokemonSet = new Set(facets.pokemon.map((entry) => entry.slug))
-  const themeSet = new Set(facets.themes)
-  const tagSet = new Set(facets.tags.map((entry) => entry.value))
-  const allFacetValues = new Set([
-    ...typeSet,
-    ...generationSet,
-    ...listSet,
-    ...illustratorSet,
-    ...expansionSet,
-    ...pokemonSet,
-    ...themeSet,
-  ])
-  const context: CatalogTagFacetContext = {
-    typeFilters: facets.types,
-    generationFilters: facets.generations,
-    roundupListFilters: facets.lists,
-    illustratorFilters: facets.illustrators,
-    expansionFilters: facets.expansions,
-    pokemonFilters: facets.pokemon,
-    themeFilters: facets.themes,
-  }
+  const index = 'typeSet' in facetsOrIndex ? facetsOrIndex : buildBlogFacetIndex(facetsOrIndex)
+  const {
+    typeSet,
+    generationSet,
+    listSet,
+    illustratorSet,
+    expansionSet,
+    pokemonSet,
+    themeSet,
+    tagSet,
+    allFacetValues,
+  } = index
 
   let direct = searchParams.filter
   let tag = searchParams.tag?.toLowerCase() ?? null
@@ -110,8 +105,8 @@ export function resolveBlogGridQuery(
   }
 
   if (tag && tagSet.has(tag)) {
-    const entry = facets.tags.find((option) => option.value === tag)
-    const promoted = resolveCatalogTagToFacet(tag, entry?.label ?? tag, context)
+    const entry = index.catalogEntryByValue.get(tag)
+    const promoted = resolveCatalogTagToFacetIndexed(index, tag, entry?.label ?? tag)
     if (promoted) {
       query[promoted.group] = promoted.facetValue
       tag = null

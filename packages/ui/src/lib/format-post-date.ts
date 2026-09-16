@@ -1,3 +1,11 @@
+// Hoisted: this formatter is constructed once, not per post card.
+const POST_DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  timeZone: 'UTC',
+})
+
 export function formatPostDate(date: string) {
   const parsedDate = new Date(date)
 
@@ -5,10 +13,5 @@ export function formatPostDate(date: string) {
     return date
   }
 
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(parsedDate)
+  return POST_DATE_FORMAT.format(parsedDate)
 }

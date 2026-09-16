@@ -33,7 +33,7 @@ export type SocialLink = {
 
 /**
  * Single source of truth for brand social icon artwork (24x24 viewBox,
- * `fill="currentColor"` single-path SVGs) so React and Astro renders of the
+ * `fill="currentColor"` single-path SVGs) so Solid and Astro renders of the
  * same icon never drift.
  */
 export const SOCIAL_ICON_PATHS: Record<SocialIcon, string> = {

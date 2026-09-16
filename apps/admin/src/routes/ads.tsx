@@ -1,5 +1,5 @@
 import { createFileRoute, stripSearchParams, useNavigate } from '@tanstack/solid-router'
-import { createEffect, createMemo, createSignal, For } from 'solid-js'
+import { createMemo, createSignal, For } from 'solid-js'
 import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from '@repo/ui'
 import { cn } from '@repo/ui'
 
@@ -223,20 +223,9 @@ function BudgetCell(props: {
   onCommit: (id: string, cents: number) => void
 }) {
   const [draft, setDraft] = createSignal('')
-  const [inputEl, setInputEl] = createSignal<HTMLInputElement>()
-
-  // Resync the field whenever the committed budget changes (including an
-  // invalid edit that was discarded) so it always reflects the store value.
-  createEffect(() => {
-    const el = inputEl()
-    if (el && document.activeElement !== el) {
-      el.value = String(props.campaign.dailyBudgetCents / 100)
-    }
-  })
 
   return (
     <Input
-      ref={setInputEl}
       type="number"
       min={0}
       step={5}

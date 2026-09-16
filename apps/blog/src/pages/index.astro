@@ -7,11 +7,7 @@ import {
   BLOG_INDEX_DESCRIPTION,
   BLOG_INDEX_TITLE,
 } from '../lib/blog-metadata'
-import {
-  buildBlogGridFacets,
-  filterBlogGridPosts,
-  getPublishedBlogGridPostsForRequest,
-} from '../lib/blog-grid-data'
+import { filterBlogGridPosts, getBlogGridDataset } from '../lib/blog-grid-data'
 import { resolveBlogGridQuery } from '@repo/ui/blog-query-state'
 import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
 import {
@@ -38,16 +34,16 @@ Astro.url.searchParams.forEach((value, key) => {
 Astro.response.headers.set('Cache-Control', INDEX_CACHE_CONTROL)
 Astro.response.headers.set('Vary', 'Accept')
 
-const [posts, parsedSearchParams] = await Promise.all([
-  getPublishedBlogGridPostsForRequest(new Date(), Astro.locals),
+const [dataset, parsedSearchParams] = await Promise.all([
+  getBlogGridDataset(new Date(), Astro.locals),
   loadBlogFilterSearchParams(rawParams),
 ])
+const { posts } = dataset
 
 // Facets stay server-side here: `resolveBlogGridQuery` sanitizes the URL
 // against them, and they are no longer passed to the island — the client
 // fetches them from /api/posts-grid?facets=1 (see BlogGridIsland).
-const facets = buildBlogGridFacets(posts)
-const query = resolveBlogGridQuery(parsedSearchParams, facets)
+const query = resolveBlogGridQuery(parsedSearchParams, dataset.facetIndex)
 const filteredPosts = filterBlogGridPosts(posts, query)
 const initialPosts = filteredPosts.slice(0, BLOG_INDEX_INITIAL_COUNT)
 

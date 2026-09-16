@@ -11,6 +11,7 @@ import { SPECIES_COLLECTIONS } from '../collections/types'
 import { ILLUSTRATOR_THEME_SKIP_LABELS } from './illustrator-theme-skip-labels'
 import { formatSlugTitle } from '../utils/slug'
 import { parseTypeCategory } from '../ui/type-colors'
+import type { BlogGridFacets } from './blog-grid-types'
 
 /** Blog index filter box labels (display only; filter values unchanged). */
 export const BLOG_FILTER_GROUP_LABELS = {
@@ -654,7 +655,7 @@ export type CatalogTagFacetGroup =
   | 'pokemon'
   | 'themes'
 
-interface CatalogTagFacetResolution {
+export interface CatalogTagFacetResolution {
   group: CatalogTagFacetGroup
   facetValue: string
 }
@@ -797,6 +798,252 @@ export function catalogSelectValueFromFilters(
   }
 
   return matches.length === 1 ? matches[0]! : null
+}
+
+/**
+ * Precomputed lookup tables for one facet payload. The linear helpers above
+ * re-scan the facet lists on every call; on a hydrated grid with ~2 000
+ * catalog tags that turns each URL change into ~2 000 options × 7 facet
+ * scans. The index is built once per facet payload (inside a `createMemo`,
+ * or once per cached index object on the server) and makes every repeated
+ * lookup O(1). The linear functions stay for tests and one-off callers.
+ */
+export interface BlogFacetIndex {
+  /** Source facet payload (identity-stable for the lifetime of the index). */
+  facets: BlogGridFacets
+  /** Facet context the linear helpers expect. */
+  ctx: CatalogTagFacetContext
+  typeSet: Set<string>
+  generationSet: Set<string>
+  listSet: Set<string>
+  illustratorSet: Set<string>
+  themeSet: Set<string>
+  pokemonSet: Set<string>
+  expansionSet: Set<string>
+  tagSet: Set<string>
+  /** Union of every grouped facet value (`?filter=` promotion checks). */
+  allFacetValues: Set<string>
+  catalogEntryByValue: Map<string, TagCatalogOption>
+  /** `group\0facetValue` → catalog tag value mirroring that facet (first match). */
+  catalogValueByFacet: Map<string, string>
+  /** Resolution for every catalog option, computed once at build time. */
+  resolutionByCatalogValue: Map<string, CatalogTagFacetResolution | null>
+  /** Species keyed by slug then lowercase label — first entry wins. */
+  pokemonByKey: Map<string, PokemonFilterOption>
+  pokemonBySlug: Map<string, PokemonFilterOption>
+  /** Expansion keyed by slug then lowercase label — first entry wins. */
+  expansionByKey: Map<string, ExpansionFilterOption>
+  expansionByLabel: Map<string, ExpansionFilterOption>
+}
+
+/**
+ * Resolution that mirrors `resolveCatalogTagToFacet` branch-for-branch, using
+ * the index's hash maps for the two large catalogs (species, expansions) and
+ * the same ordered `.find` scans for the small lists. A combined first-wins
+ * map preserves the original `find(slug === value || label === value)`
+ * ordering for value lookups; label lookups use the slug-only map so no new
+ * matches appear.
+ */
+function resolveCatalogTagViaIndex(
+  catalogValue: string,
+  catalogLabel: string,
+  index: BlogFacetIndex
+): CatalogTagFacetResolution | null {
+  const value = catalogValue.trim().toLowerCase()
+  const label = catalogLabel.trim()
+  if (!value) {
+    return null
+  }
+  const ctx = index.ctx
+
+  const typeName =
+    parseTypeCategory(label) ?? ctx.typeFilters.find((type) => type.toLowerCase() === value) ?? null
+  if (typeName && index.typeSet.has(typeName)) {
+    return { group: 'type', facetValue: typeName }
+  }
+
+  const generation = ctx.generationFilters.find(
+    (gen) =>
+      gen.toLowerCase() === value ||
+      gen.toLowerCase() === label.toLowerCase() ||
+      generationFilterLabel(gen).toLowerCase() === label.toLowerCase()
+  )
+  if (generation) {
+    return { group: 'generation', facetValue: generation }
+  }
+
+  const theme = ctx.themeFilters.find((name) => name.toLowerCase() === value || name === label)
+  if (theme) {
+    return { group: 'themes', facetValue: theme }
+  }
+
+  const illustrator = ctx.illustratorFilters.find(
+    (name) => name.toLowerCase() === value || name === label
+  )
+  if (illustrator) {
+    return { group: 'illustrator', facetValue: illustrator }
+  }
+
+  const list = ctx.roundupListFilters.find((name) => name.toLowerCase() === value || name === label)
+  if (list) {
+    return { group: 'list', facetValue: list }
+  }
+
+  const pokemon =
+    index.pokemonByKey.get(value) ?? index.pokemonBySlug.get(label.toLowerCase()) ?? null
+  if (pokemon) {
+    return { group: 'pokemon', facetValue: pokemon.slug }
+  }
+
+  const expansion = index.expansionByKey.get(value) ?? index.expansionByLabel.get(label) ?? null
+  if (expansion) {
+    return { group: 'expansion', facetValue: expansion.slug }
+  }
+
+  return null
+}
+
+/**
+ * Build every lookup table the grid and URL resolver need from one facet
+ * payload: membership sets, catalog option lookup, and the per-tag facet
+ * resolution + reverse map used by the catalog-select mirror logic. Runs one
+ * pass over the catalog instead of one pass per filter change.
+ */
+export function buildBlogFacetIndex(facets: BlogGridFacets): BlogFacetIndex {
+  const ctx: CatalogTagFacetContext = {
+    typeFilters: facets.types,
+    generationFilters: facets.generations,
+    illustratorFilters: facets.illustrators,
+    themeFilters: facets.themes,
+    roundupListFilters: facets.lists,
+    pokemonFilters: facets.pokemon,
+    expansionFilters: facets.expansions,
+  }
+
+  const pokemonByKey = new Map<string, PokemonFilterOption>()
+  const pokemonBySlug = new Map<string, PokemonFilterOption>()
+  for (const entry of facets.pokemon) {
+    pokemonBySlug.set(entry.slug, entry)
+    if (!pokemonByKey.has(entry.slug)) pokemonByKey.set(entry.slug, entry)
+    const labelKey = entry.label.toLowerCase()
+    if (!pokemonByKey.has(labelKey)) pokemonByKey.set(labelKey, entry)
+  }
+
+  const expansionByKey = new Map<string, ExpansionFilterOption>()
+  const expansionByLabel = new Map<string, ExpansionFilterOption>()
+  for (const entry of facets.expansions) {
+    if (!expansionByKey.has(entry.slug)) expansionByKey.set(entry.slug, entry)
+    const labelKey = entry.label.toLowerCase()
+    if (!expansionByKey.has(labelKey)) expansionByKey.set(labelKey, entry)
+    if (!expansionByLabel.has(entry.label)) expansionByLabel.set(entry.label, entry)
+  }
+
+  const index: BlogFacetIndex = {
+    facets,
+    ctx,
+    typeSet: new Set(facets.types),
+    generationSet: new Set(facets.generations),
+    listSet: new Set(facets.lists),
+    illustratorSet: new Set(facets.illustrators),
+    themeSet: new Set(facets.themes),
+    pokemonSet: new Set(facets.pokemon.map((entry) => entry.slug)),
+    expansionSet: new Set(facets.expansions.map((entry) => entry.slug)),
+    tagSet: new Set(facets.tags.map((entry) => entry.value)),
+    allFacetValues: new Set<string>(),
+    catalogEntryByValue: new Map(),
+    catalogValueByFacet: new Map(),
+    resolutionByCatalogValue: new Map(),
+    pokemonByKey,
+    pokemonBySlug,
+    expansionByKey,
+    expansionByLabel,
+  }
+  for (const set of [
+    index.typeSet,
+    index.generationSet,
+    index.listSet,
+    index.illustratorSet,
+    index.expansionSet,
+    index.pokemonSet,
+    index.themeSet,
+  ]) {
+    for (const value of set) index.allFacetValues.add(value)
+  }
+  for (const entry of facets.tags) {
+    index.catalogEntryByValue.set(entry.value, entry)
+  }
+
+  for (const entry of facets.tags) {
+    const resolution = resolveCatalogTagViaIndex(entry.value, entry.label, index)
+    index.resolutionByCatalogValue.set(entry.value, resolution)
+    if (resolution) {
+      const key = `${resolution.group}\0${resolution.facetValue}`
+      if (!index.catalogValueByFacet.has(key)) {
+        index.catalogValueByFacet.set(key, entry.value)
+      }
+    }
+  }
+
+  return index
+}
+
+/** Indexed `resolveCatalogTagToFacet`; falls back to the index build for unknown values. */
+export function resolveCatalogTagToFacetIndexed(
+  index: BlogFacetIndex,
+  catalogValue: string,
+  catalogLabel: string
+): CatalogTagFacetResolution | null {
+  const cached = index.resolutionByCatalogValue.get(catalogValue)
+  if (cached !== undefined) return cached
+  return resolveCatalogTagViaIndex(catalogValue, catalogLabel, index)
+}
+
+/** Indexed `findCatalogTagValueForFacet`: `group\0facetValue` → catalog tag value. */
+export function catalogTagValueForFacetIndexed(
+  index: BlogFacetIndex,
+  group: CatalogTagFacetGroup,
+  facetValue: string
+): string | null {
+  return index.catalogValueByFacet.get(`${group}\0${facetValue}`) ?? null
+}
+
+/** Indexed `catalogSelectValueFromFilters`. */
+export function catalogSelectValueFromFiltersIndexed(
+  index: BlogFacetIndex,
+  tagFilter: string | null,
+  groupedFilters: Record<CatalogTagFacetGroup, string | null>
+): string | null {
+  if (tagFilter) {
+    return tagFilter
+  }
+
+  const matches: string[] = []
+  for (const group of CATALOG_TAG_FACET_GROUP_ORDER) {
+    const facet = groupedFilters[group]
+    if (!facet) {
+      continue
+    }
+    const catalog = catalogTagValueForFacetIndexed(index, group, facet)
+    if (catalog) {
+      matches.push(catalog)
+    }
+  }
+
+  return matches.length === 1 ? matches[0]! : null
+}
+
+/** Indexed `isCatalogTagRedundantWithFacet`. */
+export function isCatalogTagRedundantWithFacetIndexed(
+  index: BlogFacetIndex,
+  catalogValue: string,
+  catalogLabel: string,
+  groupedFilters: Record<CatalogTagFacetGroup, string | null>
+): boolean {
+  const resolved = resolveCatalogTagToFacetIndexed(index, catalogValue, catalogLabel)
+  if (!resolved) {
+    return false
+  }
+  return groupedFilters[resolved.group] === resolved.facetValue
 }
 
 function levenshteinDistance(a: string, b: string): number {

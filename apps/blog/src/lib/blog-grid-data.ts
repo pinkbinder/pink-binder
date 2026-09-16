@@ -1,5 +1,6 @@
 import { isBlogPostPublished } from '@repo/data/client'
 import {
+  buildBlogFacetIndex,
   extractExpansionFilters,
   extractGenerationFilters,
   extractIllustratorFilters,
@@ -15,10 +16,12 @@ import {
   postMatchesTagFilter,
   sortPostsForExpansionFilter,
   sortPostsForPokemonFilter,
+  type BlogFacetIndex,
   type BlogGridFacets,
   type BlogGridQuery,
   type EnrichedPostForGrid,
 } from '@repo/data/client'
+import type { BlogIndex } from '@repo/data/blog/types/blog-post'
 import { getGalleryBucket, readBlogIndexFromR2 } from './blog-index-r2'
 
 /**
@@ -48,6 +51,49 @@ export function buildBlogGridFacets(posts: EnrichedPostForGrid[]): BlogGridFacet
     themes: extractThemeFilters(posts),
     tags: extractTagCatalogOptions(posts),
   }
+}
+
+export interface BlogGridDataset {
+  posts: EnrichedPostForGrid[]
+  facets: BlogGridFacets
+  facetIndex: BlogFacetIndex
+}
+
+/**
+ * Derived grid data keyed on the isolate-cached index object: facet
+ * extraction (~9 passes over every post) and the ~2 000-entry tag resolution
+ * index run once per R2 index lifetime instead of once per request. The
+ * publish-date filter inherits the index's 5-minute TTL — consistent with the
+ * 15-minute edge cache the pages already carry.
+ */
+const derivedByIndex = new WeakMap<BlogIndex, BlogGridDataset>()
+
+export async function getBlogGridDataset(
+  now = new Date(),
+  locals?: unknown
+): Promise<BlogGridDataset> {
+  const bucket = await getGalleryBucket(locals)
+  const index = await readBlogIndexFromR2(bucket)
+  if (!index) {
+    const empty: BlogGridFacets = {
+      types: [],
+      generations: [],
+      lists: [],
+      illustrators: [],
+      expansions: [],
+      pokemon: [],
+      themes: [],
+      tags: [],
+    }
+    return { posts: [], facets: empty, facetIndex: buildBlogFacetIndex(empty) }
+  }
+  const cached = derivedByIndex.get(index)
+  if (cached) return cached
+  const posts = index.posts.filter((post) => isBlogPostPublished(post.date, now))
+  const facets = buildBlogGridFacets(posts)
+  const dataset: BlogGridDataset = { posts, facets, facetIndex: buildBlogFacetIndex(facets) }
+  derivedByIndex.set(index, dataset)
+  return dataset
 }
 
 export function filterBlogGridPosts(

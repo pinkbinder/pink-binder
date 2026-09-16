@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'bun:test'
 import {
+  buildBlogFacetIndex,
   buildBlogIndexReturnHref,
   catalogSelectValueFromFilters,
+  catalogSelectValueFromFiltersIndexed,
+  catalogTagValueForFacetIndexed,
   extractExpansionFilters,
   extractGenerationFilters,
   extractIllustratorFilters,
@@ -19,6 +22,7 @@ import {
   getThemeFilterHref,
   hasBlogIndexFacetQuery,
   isCatalogTagRedundantWithFacet,
+  isCatalogTagRedundantWithFacetIndexed,
   isGenerationGuideBlogSlug,
   isIllustratorAffiliatedSpeciesGuide,
   isSpeciesBlogSlug,
@@ -28,6 +32,7 @@ import {
   postMatchesPokemonFilter,
   postMatchesTagFilter,
   resolveCatalogTagToFacet,
+  resolveCatalogTagToFacetIndexed,
   sortPostsForExpansionFilter,
   sortPostsForPokemonFilter,
   type CatalogTagFacetContext,
@@ -308,5 +313,76 @@ describe('catalog search', () => {
     ])
     expect(filterTagCatalogOptionsBySearch(options, 'zzzzzz')).toEqual([])
     expect(resolveCatalogTagToFacet('', '', facetContext)).toBeNull()
+  })
+})
+
+describe('facet index equivalence', () => {
+  const facets = {
+    types: extractTypeFilters(posts),
+    generations: extractGenerationFilters(posts),
+    lists: extractRoundupListFilters(posts),
+    illustrators: extractIllustratorFilters(posts),
+    expansions: extractExpansionFilters(posts),
+    pokemon: extractPokemonFilters(posts),
+    themes: extractThemeFilters(posts),
+    tags: extractTagCatalogOptions(posts),
+  }
+  const index = buildBlogFacetIndex(facets)
+  const catalog = facets.tags
+
+  it('resolves every catalog option identically to the linear resolver', () => {
+    for (const option of catalog) {
+      expect(resolveCatalogTagToFacetIndexed(index, option.value, option.label)).toEqual(
+        resolveCatalogTagToFacet(option.value, option.label, index.ctx)
+      )
+    }
+    expect(resolveCatalogTagToFacetIndexed(index, '', '')).toBeNull()
+    expect(resolveCatalogTagToFacetIndexed(index, 'not-a-tag', 'Not A Tag')).toEqual(
+      resolveCatalogTagToFacet('not-a-tag', 'Not A Tag', index.ctx)
+    )
+  })
+
+  it('mirrors findCatalogTagValueForFacet for every facet value', () => {
+    const groupedValues: [CatalogTagFacetGroup, string][] = [
+      ...facets.types.map((v): [CatalogTagFacetGroup, string] => ['type', v]),
+      ...facets.generations.map((v): [CatalogTagFacetGroup, string] => ['generation', v]),
+      ...facets.lists.map((v): [CatalogTagFacetGroup, string] => ['list', v]),
+      ...facets.illustrators.map((v): [CatalogTagFacetGroup, string] => ['illustrator', v]),
+      ...facets.expansions.map((e): [CatalogTagFacetGroup, string] => ['expansion', e.slug]),
+      ...facets.pokemon.map((e): [CatalogTagFacetGroup, string] => ['pokemon', e.slug]),
+      ...facets.themes.map((v): [CatalogTagFacetGroup, string] => ['themes', v]),
+      ['type', 'Missing'],
+    ]
+    for (const [group, facetValue] of groupedValues) {
+      expect(catalogTagValueForFacetIndexed(index, group, facetValue)).toBe(
+        findCatalogTagValueForFacet(group, facetValue, catalog, index.ctx)
+      )
+    }
+  })
+
+  it('matches catalogSelectValueFromFilters for grouped-filter combinations', () => {
+    const states: Record<CatalogTagFacetGroup, string | null>[] = [
+      emptyGroupedFilters,
+      { ...emptyGroupedFilters, pokemon: 'pikachu' },
+      { ...emptyGroupedFilters, type: 'Electric', themes: 'Cute & Cozy' },
+      { ...emptyGroupedFilters, expansion: 'base-set', illustrator: 'Mitsuhiro Arita' },
+      { ...emptyGroupedFilters, type: 'Missing' },
+    ]
+    for (const tagFilter of [null, 'explicit', 'pikachu']) {
+      for (const grouped of states) {
+        expect(catalogSelectValueFromFiltersIndexed(index, tagFilter, grouped)).toBe(
+          catalogSelectValueFromFilters(tagFilter, grouped, catalog, index.ctx)
+        )
+      }
+    }
+  })
+
+  it('matches isCatalogTagRedundantWithFacet for every catalog option', () => {
+    const grouped = { ...emptyGroupedFilters, type: 'Electric' }
+    for (const option of catalog) {
+      expect(
+        isCatalogTagRedundantWithFacetIndexed(index, option.value, option.label, grouped)
+      ).toBe(isCatalogTagRedundantWithFacet(option.value, option.label, grouped, index.ctx))
+    }
   })
 })

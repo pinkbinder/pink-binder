@@ -84,7 +84,7 @@ function buildStats(orders: AdminOrder[]): OrdersPayload['stats'] {
 /**
  * Orders server function — runs on the Worker (SSR + RPC), never in the
  * browser bundle. Back it with D1/R2 or the marketplace APIs later; the
- * route loader + React Query key below stay unchanged.
+ * route loader + Solid Query key below stay unchanged.
  */
 export const getOrders = createServerFn({ method: 'GET' })
   .validator((input: OrdersQuery) => input)
