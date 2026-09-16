@@ -6,7 +6,8 @@ import {
 } from '@repo/data/client'
 import { shouldBypassImageOptimization } from '@repo/data/client'
 import Image from '../compat-image'
-import { createMemo, createSignal, Show } from 'solid-js'
+import { createMemo, Show } from 'solid-js'
+import { createFallbackIndex } from '../../lib/fallback-index'
 
 interface TcgCardImageProps {
   card: PokemonTcgCard
@@ -18,24 +19,16 @@ interface TcgCardImageProps {
   height?: number
 }
 
-export function TcgCardImage({
-  card,
-  alt,
-  class: className,
-  sizes,
-  fill = true,
-  width,
-  height,
-}: TcgCardImageProps) {
+export function TcgCardImage(props: TcgCardImageProps) {
   const candidates = createMemo(() => {
-    const all = tcgCardThumbnailCandidates(card)
-    const preferred = preferredTcgCardImageUrl(card)
+    const all = tcgCardThumbnailCandidates(props.card)
+    const preferred = preferredTcgCardImageUrl(props.card)
     const ordered = preferred
       ? [preferred, ...all.filter((url) => url !== preferred)].slice(0, 2)
       : all
     return pokemonR2ImageVariantCandidates(ordered, 'small')
   })
-  const [candidateIndex, setCandidateIndex] = createSignal(0)
+  const { index: candidateIndex, advance } = createFallbackIndex(candidates)
   const src = () => candidates()[candidateIndex()]
 
   return (
@@ -43,7 +36,7 @@ export function TcgCardImage({
       when={src()}
       fallback={
         <div
-          class={`bg-muted flex items-center justify-center text-xl ${className ?? ''}`}
+          class={`bg-muted flex items-center justify-center text-xl ${props.class ?? ''}`}
           aria-hidden
         >
           🎴
@@ -53,16 +46,14 @@ export function TcgCardImage({
       {(current) => (
         <Image
           src={current()}
-          alt={alt}
-          fill={fill}
-          width={fill ? undefined : width}
-          height={fill ? undefined : height}
-          class={className}
-          sizes={sizes}
+          alt={props.alt}
+          fill={props.fill ?? true}
+          width={props.fill === false ? props.width : undefined}
+          height={props.fill === false ? props.height : undefined}
+          class={props.class}
+          sizes={props.sizes}
           unoptimized={shouldBypassImageOptimization(current())}
-          onError={() => {
-            setCandidateIndex((index) => (index + 1 < candidates().length ? index + 1 : index))
-          }}
+          onError={advance}
         />
       )}
     </Show>

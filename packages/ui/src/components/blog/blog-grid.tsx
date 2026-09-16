@@ -76,6 +76,9 @@ const DEFAULT_POST_THUMBNAIL = '/images/logo.png'
 const INITIAL_VISIBLE_POSTS = 9
 const LOAD_MORE_ROOT_MARGIN = '480px'
 
+const EMPTY_PAGES: readonly BlogGridPage[] = []
+const postsToRenderByPages = new WeakMap<readonly BlogGridPage[], EnrichedPostForGrid[]>()
+
 type FilterGroupKey =
   | 'type'
   | 'generation'
@@ -237,11 +240,20 @@ export function BlogGrid(props: BlogGridProps) {
     gcTime: BLOG_GRID_GC_TIME_MS,
   })) as UndefinedInitialDataInfiniteOptions<BlogGridPage>)
   const postsToRender = createMemo(() => {
+    // Keyed on the pages array TanStack returns: structural sharing keeps the
+    // reference stable across unrelated updates (placeholder transitions,
+    // facets arriving), so the dedupe result — and the <For> item identity —
+    // is reused instead of rebuilt.
+    const pages = gridResult.data?.pages ?? EMPTY_PAGES
+    const cached = postsToRenderByPages.get(pages)
+    if (cached) return cached
     const bySlug = new Map<string, EnrichedPostForGrid>()
-    for (const page of gridResult.data?.pages ?? []) {
+    for (const page of pages) {
       for (const post of page.posts) bySlug.set(post.slug, post)
     }
-    return [...bySlug.values()]
+    const result = [...bySlug.values()]
+    postsToRenderByPages.set(pages, result)
+    return result
   })
   const resultTotal = () => gridResult.data?.pages.at(-1)?.total ?? 0
   const isLoadingPosts = () =>
@@ -550,7 +562,6 @@ export function BlogGrid(props: BlogGridProps) {
   const expansionOptionByValue = createMemo(
     () => new Map(expansionOptions().map((option) => [option.value, option]))
   )
-
   function renderPokemonChip(option: SearchableSelectOption) {
     return <span class={cn(option.emphasized && 'font-bold')}>{option.label}</span>
   }
@@ -564,6 +575,27 @@ export function BlogGrid(props: BlogGridProps) {
         icon: icon ? <span aria-hidden>{icon}</span> : undefined,
       }
     })
+  )
+
+  /**
+   * Value → option maps so `resolveCatalogTagOption` reads maps instead of
+   * scanning each facet array once per catalog tag (~2 000 tags × 5 groups).
+   * Declared after every option memo — createMemo evaluates eagerly.
+   */
+  const typeOptionByValue = createMemo(
+    () => new Map(typeOptions().map((option) => [option.value, option]))
+  )
+  const generationOptionByValue = createMemo(
+    () => new Map(generationOptions().map((option) => [option.value, option]))
+  )
+  const themeOptionByValue = createMemo(
+    () => new Map(themeOptions().map((option) => [option.value, option]))
+  )
+  const illustratorOptionByValue = createMemo(
+    () => new Map(illustratorOptions().map((option) => [option.value, option]))
+  )
+  const listOptionByValue = createMemo(
+    () => new Map(listOptions().map((option) => [option.value, option]))
   )
 
   /**
@@ -608,7 +640,7 @@ export function BlogGrid(props: BlogGridProps) {
 
     const typeName = parseTypeCategory(label) ?? lookups.typeByKey.get(catalogValue) ?? null
     if (typeName) {
-      const facet = typeOptions().find((option) => option.value === typeName)
+      const facet = typeOptionByValue().get(typeName)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -617,7 +649,7 @@ export function BlogGrid(props: BlogGridProps) {
     const generation =
       lookups.generationByKey.get(catalogValue) ?? lookups.generationByKey.get(label.toLowerCase())
     if (generation) {
-      const facet = generationOptions().find((option) => option.value === generation)
+      const facet = generationOptionByValue().get(generation)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -625,7 +657,7 @@ export function BlogGrid(props: BlogGridProps) {
 
     const theme = lookups.themeByKey.get(catalogValue) ?? lookups.themeByKey.get(label)
     if (theme) {
-      const facet = themeOptions().find((option) => option.value === theme)
+      const facet = themeOptionByValue().get(theme)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -634,7 +666,7 @@ export function BlogGrid(props: BlogGridProps) {
     const illustrator =
       lookups.illustratorByKey.get(catalogValue) ?? lookups.illustratorByKey.get(label)
     if (illustrator) {
-      const facet = illustratorOptions().find((option) => option.value === illustrator)
+      const facet = illustratorOptionByValue().get(illustrator)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -642,7 +674,7 @@ export function BlogGrid(props: BlogGridProps) {
 
     const list = lookups.listByKey.get(catalogValue) ?? lookups.listByKey.get(label)
     if (list) {
-      const facet = listOptions().find((option) => option.value === list)
+      const facet = listOptionByValue().get(list)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -732,10 +764,14 @@ export function BlogGrid(props: BlogGridProps) {
     }
     return values
   })
-  const createChipActiveSelector = () =>
-    createSelector(activeFilterValues, (value: string, values) =>
-      Boolean(values.has(value) || values.has(value.toLowerCase()))
-    )
+  /**
+   * One selector for every chip: a filter commit re-derives this single
+   * computation instead of re-running a per-chip selector instance, and each
+   * predicate is an O(1) set lookup.
+   */
+  const isChipActive = createSelector(activeFilterValues, (value: string, values) =>
+    Boolean(values.has(value) || values.has(value.toLowerCase()))
+  )
 
   const showCatalogTagChip = createMemo(() => {
     const tag = tagFilter()
@@ -1255,11 +1291,10 @@ export function BlogGrid(props: BlogGridProps) {
                         const filterValue = getFilterValueForCategory(category)
                         if (!type) {
                           const collectionIcon = getCollectionBadgeIcon(category)
-                          const isActive = createChipActiveSelector()
                           return (
                             <Button
                               variant="filterChip"
-                              aria-pressed={isActive(filterValue)}
+                              aria-pressed={isChipActive(filterValue)}
                               onClick={() => applyCategoryFilter(filterValue)}
                               class={`h-auto ${CLICKABLE_BADGE_CLASS}`}
                             >
@@ -1273,11 +1308,10 @@ export function BlogGrid(props: BlogGridProps) {
 
                         const lightColors = getPokemonTypeLightColors(type)
                         const logoUrl = getPokemonTypeLogoUrl(type)
-                        const isActive = createChipActiveSelector()
                         return (
                           <Button
                             variant="filterChip"
-                            aria-pressed={isActive(filterValue)}
+                            aria-pressed={isChipActive(filterValue)}
                             onClick={() => applyCategoryFilter(filterValue)}
                             class={`h-auto ${CLICKABLE_BADGE_CLASS} border-(--type-border) bg-(--type-bg) text-(--type-fg)`}
                             style={{
@@ -1311,11 +1345,10 @@ export function BlogGrid(props: BlogGridProps) {
                       ) : null}
                       <For each={post.featuredSpeciesFilterTags ?? []}>
                         {(speciesSlug) => {
-                          const isActive = createChipActiveSelector()
                           return (
                             <Button
                               variant="filterChip"
-                              aria-pressed={isActive(speciesSlug)}
+                              aria-pressed={isChipActive(speciesSlug)}
                               onClick={() =>
                                 applyGroupedFilter(
                                   'pokemon',

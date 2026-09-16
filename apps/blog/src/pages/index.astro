@@ -70,6 +70,9 @@ const lcpImageHref = (() => {
  * Hover-intent prefetch for grid card links: post pages are server-rendered
  * HTML at the edge, so a moderate-eagerness prefetch makes card clicks feel
  * instant without widening the crawl budget (one URL per intent hover).
+ * A second conservative rule covers the rest of the page's same-origin links
+ * (nav, footer, tag chips) — intent signals only, so crawl budget stays
+ * bounded to one URL per hover/focus.
  */
 const speculationRules = {
   prefetch: [
@@ -77,6 +80,21 @@ const speculationRules = {
       source: 'document',
       where: { selector_matches: 'article[data-blog-card-index] a[href]' },
       eagerness: 'moderate',
+    },
+    {
+      source: 'document',
+      where: {
+        and: [
+          { href_matches: '/*' },
+          {
+            not: {
+              selector_matches:
+                'article[data-blog-card-index] a[href],a[target],a[download],[data-no-prefetch]',
+            },
+          },
+        ],
+      },
+      eagerness: 'conservative',
     },
   ],
 }

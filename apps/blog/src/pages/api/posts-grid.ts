@@ -33,9 +33,54 @@ const CACHE_HEADERS: Record<string, string> = {
   'X-Content-Type-Options': 'nosniff',
 }
 
+/**
+ * Canonical URL order — identical to `blogGridQueryString` on the client.
+ * The CDN keys its cache on the full URL, so a reordered or alias-spelled
+ * query (`?collection=` for `themes`, `?tag=` before `?q=`) would mint a
+ * second entry for the same filtered result. Redirecting once to the
+ * canonical form keeps one cache slot per semantic query; the client already
+ * emits this order, so in-app requests never pay the redirect.
+ */
+const CANONICAL_PARAM_ORDER = [
+  'q',
+  'tag',
+  'filter',
+  'type',
+  'generation',
+  'list',
+  'illustrator',
+  'expansion',
+  'pokemon',
+  'themes',
+  'offset',
+  'limit',
+] as const
+
+function canonicalSearch(searchParams: URLSearchParams): string {
+  const canonical = new URLSearchParams()
+  if (searchParams.has('facets')) canonical.set('facets', '1')
+  for (const key of CANONICAL_PARAM_ORDER) {
+    let value = searchParams.get(key)?.trim()
+    if (key === 'themes' && !value) value = searchParams.get('collection')?.trim()
+    if (key === 'q' && value) value = value.slice(0, 120)
+    // ?limit=999 and ?limit=48 resolve to the same page — collapse them.
+    if (key === 'offset' && value) value = String(boundedInteger(value, 0, Number.MAX_SAFE_INTEGER))
+    if (key === 'limit' && value)
+      value = String(boundedInteger(value, BLOG_INDEX_INITIAL_COUNT, MAX_PAGE_SIZE))
+    if (value) canonical.set(key, value)
+  }
+  const query = canonical.toString()
+  return query ? `?${query}` : ''
+}
+
 /** Small, CDN-cacheable pages of cards; filtering stays on the server. */
 export const GET: APIRoute = async ({ request, locals }) => {
-  const { searchParams } = new URL(request.url)
+  const url = new URL(request.url)
+  const canonical = canonicalSearch(url.searchParams)
+  if (url.search !== canonical) {
+    return Response.redirect(new URL(`${url.pathname}${canonical}`, url.origin), 308)
+  }
+  const { searchParams } = url
   const dataset = await getBlogGridDataset(new Date(), locals)
 
   // Facet options for the grid filter dropdowns. Served separately from the
