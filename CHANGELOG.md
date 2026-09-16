@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.0...pink-binder-v3.0.1) (2026-09-16)
+
+
+### Performance
+
+* Solid UX performance standards + audit remediation ([#124](https://github.com/pinkbinder/pink-binder/issues/124)) ([3712f03](https://github.com/pinkbinder/pink-binder/commit/3712f03c31b933d02d004a71a1fab96f361628a2))
+
 ## [3.0.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v2.7.6...pink-binder-v3.0.0) (2026-09-15)
 
 
