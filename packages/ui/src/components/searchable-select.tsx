@@ -1,5 +1,5 @@
 import * as PopoverPrimitive from '@kobalte/core/popover'
-import { Check, ChevronDown, Search } from 'lucide-solid'
+import { Check, ChevronDown, LoaderCircle, Search } from 'lucide-solid'
 import { createMemo, createSignal, For, onCleanup, Show, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
@@ -34,6 +34,12 @@ interface SearchableSelectProps {
     labelFor: (search: string) => string
     onAction: (search: string) => void
   }
+  /** Set while the option catalog is still loading: the trigger shows a
+   *  spinner and the open dropdown shows a loading row instead of "No
+   *  results". Free-text actions stay usable the whole time. */
+  loading?: boolean
+  /** Dropdown row text while `loading` (default "Loading…"). */
+  loadingLabel?: string
 }
 
 /** Cap on mounted dropdown rows. Opening a 2,000-button list costs far more
@@ -155,7 +161,12 @@ export function SearchableSelect(props: SearchableSelectProps) {
             }
           </Show>
         </span>
-        <ChevronDown class="h-3.5 w-3.5 shrink-0 opacity-50" />
+        <Show
+          when={props.loading}
+          fallback={<ChevronDown class="h-3.5 w-3.5 shrink-0 opacity-50" />}
+        >
+          <LoaderCircle class="h-3.5 w-3.5 shrink-0 animate-spin opacity-50" aria-hidden />
+        </Show>
       </PopoverPrimitive.Trigger>
 
       <PopoverPrimitive.Portal>
@@ -236,7 +247,13 @@ export function SearchableSelect(props: SearchableSelectProps) {
                 Keep typing — {overflowCount().toLocaleString()} more matches
               </p>
             </Show>
-            <Show when={filtered().length === 0}>
+            <Show when={props.loading && filtered().length === 0}>
+              <p class="text-muted-foreground flex items-center justify-center gap-2 px-2 py-4 text-sm">
+                <LoaderCircle class="h-3.5 w-3.5 animate-spin" aria-hidden />
+                {props.loadingLabel ?? 'Loading…'}
+              </p>
+            </Show>
+            <Show when={!props.loading && filtered().length === 0}>
               <p class="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
             </Show>
           </div>

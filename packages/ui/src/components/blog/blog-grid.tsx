@@ -159,6 +159,10 @@ interface BlogGridProps {
   total: number
   initialQuery?: BlogGridQuery
   defaultPostThumbnail?: string
+  /** True while the facet/tag catalog fetches in the background. The search
+   *  bar stays mounted and text search works the whole time — only the tag
+   *  options lag. */
+  facetsPending?: boolean
 }
 
 export function BlogGrid(props: BlogGridProps) {
@@ -824,52 +828,50 @@ export function BlogGrid(props: BlogGridProps) {
         data-analytics-section="blog-filters"
       >
         <div class="flex flex-col gap-4">
-          {tagCatalogOptions().length > 0 ? (
-            <div class="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
-              <div class="flex items-center gap-2">
-                <Search class="text-primary-deep h-4 w-4 shrink-0" aria-hidden />
-                <BlogFilterGroupLabel
-                  group="tag"
-                  class="text-primary-deep text-sm font-semibold tracking-[0.2em] uppercase"
-                />
-              </div>
-              <SearchableSelect
-                options={tagOptions()}
-                value={catalogSelectValue()}
-                onValueChange={(v) => applyCatalogFilter(v)}
-                placeholder="Search pokemon, illustrators, expansions, and other tags..."
-                clearLabel="All tags"
-                filterOptions={filterTagOptions}
-                renderSelected={renderTagCatalogChip}
-                label={BLOG_FILTER_GROUP_LABELS.tag}
-                freeText={{
-                  labelFor: (search) => `Search collector guides for "${search}"`,
-                  onAction: handleSearchCommit,
-                }}
-                class="border-primary/20 bg-background mt-3 h-10 shadow-xs"
+          <div class="border-primary/25 bg-primary/5 rounded-xl border-2 px-3 py-3 shadow-xs sm:px-4">
+            <div class="flex items-center gap-2">
+              <Search class="text-primary-deep h-4 w-4 shrink-0" aria-hidden />
+              <BlogFilterGroupLabel
+                group="tag"
+                class="text-primary-deep text-sm font-semibold tracking-[0.2em] uppercase"
               />
-              {resolvedQuery().q && !selectedTagOption() ? (
-                <div class="mt-2 flex items-center justify-between gap-2">
-                  <span class="text-muted-foreground truncate text-xs">
-                    Text search:{' '}
-                    <span class="text-foreground font-medium">{resolvedQuery().q}</span>
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => handleSearchCommit('')}
-                    class="text-muted-foreground hover:text-foreground shrink-0 text-xs underline underline-offset-2"
-                  >
-                    Clear
-                  </button>
-                </div>
-              ) : null}
             </div>
-          ) : null}
+            <SearchableSelect
+              options={tagOptions()}
+              value={catalogSelectValue()}
+              onValueChange={(v) => applyCatalogFilter(v)}
+              placeholder="Search pokemon, illustrators, expansions, and other tags..."
+              clearLabel="All tags"
+              filterOptions={filterTagOptions}
+              renderSelected={renderTagCatalogChip}
+              label={BLOG_FILTER_GROUP_LABELS.tag}
+              freeText={{
+                labelFor: (search) => `Search collector guides for "${search}"`,
+                onAction: handleSearchCommit,
+              }}
+              loading={props.facetsPending ?? false}
+              loadingLabel="Loading tag catalog…"
+              class="border-primary/20 bg-background mt-3 h-10 shadow-xs"
+            />
+            {resolvedQuery().q && !selectedTagOption() ? (
+              <div class="mt-2 flex items-center justify-between gap-2">
+                <span class="text-muted-foreground truncate text-xs">
+                  Text search: <span class="text-foreground font-medium">{resolvedQuery().q}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => handleSearchCommit('')}
+                  class="text-muted-foreground hover:text-foreground shrink-0 text-xs underline underline-offset-2"
+                >
+                  Clear
+                </button>
+              </div>
+            ) : null}
+          </div>
 
           <p class="text-muted-foreground text-sm leading-relaxed">
-            {tagCatalogOptions().length > 0
-              ? 'Search the entire catalog above, or expand the section below to filter by Pokémon species, TCG illustrator, and '
-              : 'Expand the sections below to browse by Pokémon species, TCG illustrator, or '}
+            Search the entire catalog above, or expand the section below to filter by Pokémon
+            species, TCG illustrator, and{' '}
             <span class="text-foreground font-medium">curated binder themes</span>!
           </p>
 

@@ -1,4 +1,4 @@
-import { createSignal, type JSX } from 'solid-js'
+import type { JSX } from 'solid-js'
 import { render, screen, waitFor } from '@solidjs/testing-library'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, describe, expect, it, mock } from 'bun:test'
@@ -33,49 +33,6 @@ mock.module('../src/components/roundup-post-card', () => ({
 
 mock.module('../src/components/pokemon-type-logo', () => ({
   PokemonTypeLogo: (props: { color: string }) => <span data-color={props.color}>type</span>,
-}))
-
-mock.module('../src/components/searchable-select', () => ({
-  SearchableSelect: (props: {
-    options: Array<{ value: string; label: string }>
-    value: string | null
-    onValueChange: (value: string | null) => void
-    label: string
-    freeText?: {
-      labelFor: (search: string) => string
-      onAction: (search: string) => void
-    }
-  }) => {
-    const [search, setSearch] = createSignal('')
-    return (
-      <div>
-        <select
-          aria-label={props.label}
-          value={props.value ?? ''}
-          onChange={(event) => props.onValueChange(event.target.value || null)}
-        >
-          <option value="">All</option>
-          {props.options.map((option) => (
-            <option value={option.value}>{option.label}</option>
-          ))}
-        </select>
-        {props.freeText ? (
-          <div>
-            <input
-              aria-label={`Search ${props.label} options`}
-              value={search()}
-              onInput={(event) => setSearch(event.target.value)}
-            />
-            {search().trim() ? (
-              <button type="button" onClick={() => props.freeText!.onAction(search().trim())}>
-                {props.freeText!.labelFor(search().trim())}
-              </button>
-            ) : null}
-          </div>
-        ) : null}
-      </div>
-    )
-  },
 }))
 
 const pikachuPost: EnrichedPostForGrid = {
@@ -188,7 +145,9 @@ describe('BlogGrid', () => {
     expect(window.location.search).toBe('?type=Electric')
     expect(pushStateSpy).toHaveBeenCalled()
 
-    await user.selectOptions(screen.getByLabelText('Filter by pokémon species'), 'pikachu')
+    // The species select is a search popover: open it and pick the option.
+    await user.click(await screen.findByRole('combobox', { name: 'Filter by pokémon species' }))
+    await user.click(await screen.findByRole('button', { name: 'Pikachu' }))
     expect(window.location.search).toBe('?type=Electric&pokemon=pikachu')
 
     await user.click(await screen.findByRole('button', { name: 'Clear all' }))
@@ -199,9 +158,10 @@ describe('BlogGrid', () => {
     const user = userEvent.setup()
     renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
-    // The merged catalog select doubles as the text search: type a phrase and
-    // commit the free-text action ("Search collector guides for …").
-    await user.type(screen.getByLabelText('Search Catalog search options'), 'pika')
+    // The merged catalog select doubles as the text search: open it, type a
+    // phrase, and commit the free-text action ("Search collector guides for …").
+    await user.click(screen.getByRole('combobox', { name: 'Catalog search' }))
+    await user.type(await screen.findByPlaceholderText('Search…'), 'pika')
     await user.click(screen.getByText('Search collector guides for "pika"'))
     await waitFor(
       () => expect(zarazTrackMock).toHaveBeenCalledWith('search', { search_term: 'pika' }),
@@ -236,7 +196,8 @@ describe('BlogGrid', () => {
     renderBlogGrid(() => <BlogGrid posts={[pikachuPost]} facets={facets} total={1} />)
 
     // 'pikachu' promotes from the tag catalog to the Pokémon species facet.
-    await user.selectOptions(screen.getByLabelText('Catalog search'), 'pikachu')
+    await user.click(screen.getByRole('combobox', { name: 'Catalog search' }))
+    await user.click(await screen.findByRole('button', { name: 'Pikachu' }))
     expect(zarazTrackMock.mock.calls.filter(([eventName]) => eventName === 'search')).toHaveLength(
       0
     )

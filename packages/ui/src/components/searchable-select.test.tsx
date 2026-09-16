@@ -72,6 +72,46 @@ describe('ui/components/searchable-select', () => {
     expect(renderedOptionLabels()).toEqual(['Option 249'])
   })
 
+  test('loading state shows a spinner and a loading row instead of "No results"', () => {
+    render(() => (
+      <SearchableSelect
+        options={[]}
+        value={null}
+        onValueChange={() => {}}
+        loading
+        loadingLabel="Loading tag catalog…"
+      />
+    ))
+
+    expect(document.querySelector('.animate-spin')).not.toBeNull()
+    openDropdown()
+    expect(screen.getByText('Loading tag catalog…')).not.toBeNull()
+    expect(screen.queryByText('No results')).toBeNull()
+  })
+
+  test('free-text search stays usable while the catalog loads', () => {
+    const commits: string[] = []
+    render(() => (
+      <SearchableSelect
+        options={[]}
+        value={null}
+        onValueChange={() => {}}
+        loading
+        freeText={{
+          labelFor: (search) => `Search for "${search}"`,
+          onAction: (search) => commits.push(search),
+        }}
+      />
+    ))
+
+    openDropdown()
+    const search = screen.getByPlaceholderText('Search…') as HTMLInputElement
+    search.value = 'pika'
+    fireEvent.input(search)
+    fireEvent.click(screen.getByText('Search for "pika"'))
+    expect(commits).toEqual(['pika'])
+  })
+
   test('the selected chip renders even when the option sits outside the mounted window', () => {
     render(() => (
       <SearchableSelect
