@@ -74,6 +74,8 @@ export function SearchableSelect(props: SearchableSelectProps) {
     () => props.options.find((opt) => opt.value === props.value) ?? null
   )
 
+  let filterTimer: ReturnType<typeof setTimeout> | undefined
+
   function resetSearch() {
     if (filterTimer !== undefined) {
       clearTimeout(filterTimer)
@@ -94,8 +96,6 @@ export function SearchableSelect(props: SearchableSelectProps) {
     setOpen(false)
     resetSearch()
   }
-
-  let filterTimer: ReturnType<typeof setTimeout> | undefined
 
   function handleFreeText() {
     const term = searchInput().trim()
