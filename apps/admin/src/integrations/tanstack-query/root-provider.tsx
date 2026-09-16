@@ -44,6 +44,9 @@ function createAdminPersister(): Persister {
     // revive entries another tab's mutations invalidated.
     storage: window.sessionStorage,
     key: PERSIST_KEY,
+    // Every persist serializes the whole client; during burst updates the
+    // 2s trailing throttle halves the default serialization frequency.
+    throttleTime: 2_000,
   })
 }
 
