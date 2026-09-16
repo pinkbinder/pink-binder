@@ -1,6 +1,6 @@
 import * as PopoverPrimitive from '@kobalte/core/popover'
 import { Check, ChevronDown, Search } from 'lucide-solid'
-import { createMemo, createSignal, For, Show, type JSX } from 'solid-js'
+import { createMemo, createSignal, For, onCleanup, Show, type JSX } from 'solid-js'
 import { cn } from '../lib/utils'
 
 export interface SearchableSelectOption {
@@ -20,6 +20,10 @@ interface SearchableSelectProps {
   clearLabel?: string
   label?: string
   class?: string
+  /** Max options mounted in the open dropdown (default 100). Large catalogs
+   *  (2k+ tag entries) only need the top of a ranked list; typing narrows
+   *  further. Selection display reads the full `options`, not this window. */
+  renderLimit?: number
   /** Render a custom chip for the selected value (shown in trigger). */
   renderSelected?: (option: SearchableSelectOption) => JSX.Element
   /** Custom option filtering (e.g. fuzzy match); defaults to case-insensitive substring on label. */
@@ -32,13 +36,23 @@ interface SearchableSelectProps {
   }
 }
 
+/** Cap on mounted dropdown rows. Opening a 2,000-button list costs far more
+ *  than the interaction it serves; the overflow hint routes users to search. */
+const DEFAULT_RENDER_LIMIT = 100
+
+/** Idle window before keystrokes re-rank/filter the option list. The ranked
+ *  catalogs can hold 2k+ entries, so the filter memo must not run per
+ *  character; the input value itself stays unsprung for immediate feedback. */
+const FILTER_DEBOUNCE_MS = 60
+
 export function SearchableSelect(props: SearchableSelectProps) {
   const [open, setOpen] = createSignal(false)
-  const [search, setSearch] = createSignal('')
+  const [searchInput, setSearchInput] = createSignal('')
+  const [appliedSearch, setAppliedSearch] = createSignal('')
   const resolvedClearLabel = () => props.clearLabel ?? props.placeholder ?? 'All'
 
   const filtered = createMemo(() => {
-    const term = search()
+    const term = appliedSearch()
     if (!term) return props.options
     if (props.filterOptions) {
       return props.filterOptions(props.options, term)
@@ -47,36 +61,70 @@ export function SearchableSelect(props: SearchableSelectProps) {
     return props.options.filter((opt) => opt.label.toLowerCase().includes(lower))
   })
 
+  const rendered = createMemo(() => filtered().slice(0, props.renderLimit ?? DEFAULT_RENDER_LIMIT))
+  const overflowCount = createMemo(() => filtered().length - rendered().length)
+
   const selectedOption = createMemo(
     () => props.options.find((opt) => opt.value === props.value) ?? null
   )
 
+  function resetSearch() {
+    if (filterTimer !== undefined) {
+      clearTimeout(filterTimer)
+      filterTimer = undefined
+    }
+    setSearchInput('')
+    setAppliedSearch('')
+  }
+
   function handleSelect(optionValue: string) {
     props.onValueChange(props.value === optionValue ? null : optionValue)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
 
   function handleClear() {
     props.onValueChange(null)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
 
+  let filterTimer: ReturnType<typeof setTimeout> | undefined
+
   function handleFreeText() {
-    const term = search().trim()
+    const term = searchInput().trim()
     if (!props.freeText || !term) return
     props.freeText.onAction(term)
     setOpen(false)
-    setSearch('')
+    resetSearch()
   }
+
+  function handleSearchInput(value: string) {
+    setSearchInput(value)
+    if (filterTimer !== undefined) {
+      clearTimeout(filterTimer)
+      filterTimer = undefined
+    }
+    if (!value) {
+      setAppliedSearch('')
+      return
+    }
+    filterTimer = setTimeout(() => {
+      filterTimer = undefined
+      setAppliedSearch(searchInput().trim())
+    }, FILTER_DEBOUNCE_MS)
+  }
+
+  onCleanup(() => {
+    if (filterTimer !== undefined) clearTimeout(filterTimer)
+  })
 
   return (
     <PopoverPrimitive.Root
       open={open()}
       onOpenChange={(next) => {
         setOpen(next)
-        if (!next) setSearch('')
+        if (!next) resetSearch()
       }}
       placement="bottom-start"
       gutter={4}
@@ -118,10 +166,10 @@ export function SearchableSelect(props: SearchableSelectProps) {
               type="text"
               placeholder="Search…"
               autofocus
-              value={search()}
-              onInput={(e) => setSearch(e.currentTarget.value)}
+              value={searchInput()}
+              onInput={(e) => handleSearchInput(e.currentTarget.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && props.freeText && search().trim()) {
+                if (e.key === 'Enter' && props.freeText && searchInput().trim()) {
                   e.preventDefault()
                   handleFreeText()
                 }
@@ -130,7 +178,7 @@ export function SearchableSelect(props: SearchableSelectProps) {
             />
           </div>
           <div class="max-h-60 overflow-y-auto p-1">
-            <Show when={props.freeText && search().trim() ? props.freeText : undefined}>
+            <Show when={props.freeText && searchInput().trim() ? props.freeText : undefined}>
               {(freeText) => (
                 <button
                   type="button"
@@ -140,7 +188,9 @@ export function SearchableSelect(props: SearchableSelectProps) {
                   <span class="flex h-4 w-4 shrink-0 items-center justify-center">
                     <Search class="text-muted-foreground h-3.5 w-3.5" />
                   </span>
-                  <span class="truncate font-medium">{freeText().labelFor(search().trim())}</span>
+                  <span class="truncate font-medium">
+                    {freeText().labelFor(searchInput().trim())}
+                  </span>
                 </button>
               )}
             </Show>
@@ -159,7 +209,7 @@ export function SearchableSelect(props: SearchableSelectProps) {
               </span>
               <span>{resolvedClearLabel()}</span>
             </button>
-            <For each={filtered()}>
+            <For each={rendered()}>
               {(option) => (
                 <button
                   type="button"
@@ -181,6 +231,11 @@ export function SearchableSelect(props: SearchableSelectProps) {
                 </button>
               )}
             </For>
+            <Show when={overflowCount() > 0}>
+              <p class="text-muted-foreground px-2 py-2 text-center text-xs">
+                Keep typing — {overflowCount().toLocaleString()} more matches
+              </p>
+            </Show>
             <Show when={filtered().length === 0}>
               <p class="text-muted-foreground px-2 py-4 text-center text-sm">No results</p>
             </Show>

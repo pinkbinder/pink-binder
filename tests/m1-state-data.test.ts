@@ -82,7 +82,9 @@ describe('M1 state and data ownership contract', () => {
     expect(gallery).not.toContain('useQuery')
     expect(gallery).not.toContain('manifestRef')
     expect(serverSection).toContain('initialQuery={query}')
-    expect(grid).toContain('blogGridInitialData(posts, total)')
+    // Props stay on the reactive proxy (Solid standard) — the SSR seed still
+    // flows through blogGridInitialData inside the grid component.
+    expect(grid).toContain('blogGridInitialData(props.posts, props.total)')
   })
 
   test('pins the cache and history policies used by the implementation', () => {

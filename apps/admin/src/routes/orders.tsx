@@ -1,24 +1,12 @@
 import { createFileRoute, stripSearchParams, useNavigate } from '@tanstack/solid-router'
 import { For, Show, Suspense } from 'solid-js'
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Input,
-} from '@repo/ui'
+import { Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from '@repo/ui'
 
 import { ordersQueryOptions } from '../queries/orders'
 import { ORDER_STATUSES, ordersSearchParsers } from '../lib/order-search'
-import {
-  adminSelection,
-  clearSelection,
-  formatAmountCents,
-  toggleOrder,
-} from '../stores/preferences'
+import { formatAmountCents } from '../lib/format'
+import { DebouncedInput } from '../components/debounced-input'
+import { adminSelection, clearSelection, toggleOrder } from '../stores/preferences'
 
 export const Route = createFileRoute('/orders')({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -96,9 +84,9 @@ function OrderFilters() {
 
   return (
     <div class="flex flex-wrap items-center gap-2">
-      <Input
+      <DebouncedInput
         value={search().q}
-        onInput={(event) => setParam('q', event.target.value || null)}
+        onCommit={(value) => setParam('q', value || null)}
         placeholder="Search orders…"
         aria-label="Search orders"
         class="w-48"

@@ -48,12 +48,22 @@ export function usePathname(): Accessor<string> {
   })
 }
 
-/** Current query params; re-parsed on history events. */
+/** Current query params; re-parsed on history events. A history event that
+ *  leaves the query string unchanged (hash-only pushes, unrelated writers)
+ *  returns the memoized instance instead of a fresh object, so downstream
+ *  memos keyed on identity do not re-run. */
 export function useSearchParams(): Accessor<URLSearchParams> {
   const revision = createLocationRevision()
+  let lastSearch: string | null = null
+  let lastParams = new URLSearchParams()
   return createMemo(() => {
     revision()
-    return new URLSearchParams(readSearch())
+    const search = readSearch()
+    if (search !== lastSearch) {
+      lastSearch = search
+      lastParams = new URLSearchParams(search)
+    }
+    return lastParams
   })
 }
 
@@ -87,9 +97,18 @@ export function createUrlQueryStates<P extends Record<string, SearchParamParser>
   options: UrlQueryStatesOptions = {}
 ): [Accessor<ParsedSearchParams<P>>, (next: Partial<ParsedSearchParams<P>> | null) => void] {
   const revision = createLocationRevision()
+  // Same search string, same parsed object — a no-op history event (or a
+  // redundant write) then never re-runs the filter pipeline downstream.
+  let lastSearch: string | null = null
+  let lastState = parseSearchParams(parsers, '')
   const state = createMemo(() => {
     revision()
-    return parseSearchParams(parsers, readSearch())
+    const search = readSearch()
+    if (search !== lastSearch) {
+      lastSearch = search
+      lastState = parseSearchParams(parsers, search)
+    }
+    return lastState
   })
 
   const setState = (next: Partial<ParsedSearchParams<P>> | null) => {

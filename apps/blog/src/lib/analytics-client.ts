@@ -1,4 +1,9 @@
-import { trackButtonClick, trackOutboundClick, trackPostView } from '@repo/ui/zaraz-events'
+import {
+  trackButtonClick,
+  trackOutboundClick,
+  trackPostView,
+  trackWebVital,
+} from '@repo/ui/zaraz-events'
 
 /**
  * Page-level analytics wiring for the blog (button clicks, outbound links,
@@ -134,6 +139,30 @@ function handleClick(event: MouseEvent): void {
 
 let initialized = false
 
+/**
+ * Report Core Web Vitals as Zaraz events. The library is loaded lazily so it
+ * never competes with the metrics it measures; all four helpers buffer their
+ * samples until invoked, so nothing is lost during the import.
+ */
+async function initWebVitals(): Promise<void> {
+  try {
+    const { onCLS, onINP, onLCP, onTTFB } = await import('web-vitals')
+    const report = (metric: {
+      name: string
+      value: number
+      rating?: string
+      id?: string
+      navigationType?: string
+    }) => trackWebVital(metric)
+    onCLS(report)
+    onINP(report)
+    onLCP(report)
+    onTTFB(report)
+  } catch {
+    // Metrics are observability, never a page dependency.
+  }
+}
+
 /** Attach the delegated click tracker once, then report the page's post view. */
 export function initBlogPageTracking(): void {
   if (typeof window === 'undefined') return
@@ -141,6 +170,7 @@ export function initBlogPageTracking(): void {
     initialized = true
     // Capture phase: keep counting even if app code stops propagation.
     document.addEventListener('click', handleClick, true)
+    void initWebVitals()
   }
   const postView = readEmbeddedPostView()
   if (postView) {
