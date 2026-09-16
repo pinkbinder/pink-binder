@@ -2,15 +2,14 @@ import { useStore } from '@nanostores/solid'
 import { Button } from '@repo/ui'
 import { createSignal, onMount } from 'solid-js'
 
-import { cart, cartCount, hydrateCartFromStorage, setCartOpen } from '../stores/cart'
+import { cartCount, hydrateCartFromStorage } from '../stores/cart'
 
 /**
- * Header island: cart count + drawer toggle come from the nanostores cart.
- * Hydration from localStorage happens once, on the first island mount; the
- * count stays 0 until mount so server and client markup match.
+ * Header island: the cart count comes from the nanostores cart. Hydration
+ * from localStorage happens once, on the first island mount; the count stays
+ * 0 until mount so server and client markup match.
  */
 export function StoreHeader() {
-  const cartState = useStore(cart)
   const count = useStore(cartCount)
   const [mounted, setMounted] = createSignal(false)
   onMount(() => {
@@ -25,10 +24,7 @@ export function StoreHeader() {
           <Button variant="ghost" size="sm" as="a" href="/">
             Products
           </Button>
-          <Button variant="ghost" size="sm" as="a" href="/cart">
-            Cart
-          </Button>
-          <Button size="sm" onClick={() => setCartOpen(!cartState().isOpen)}>
+          <Button size="sm" as="a" href="/cart">
             Cart ({mounted() ? count() : 0})
           </Button>
         </nav>

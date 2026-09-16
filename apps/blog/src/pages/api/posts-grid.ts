@@ -1,11 +1,7 @@
 import type { APIRoute } from 'astro'
 import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
 import type { BlogGridQuery } from '@repo/data/client'
-import {
-  buildBlogGridFacets,
-  filterBlogGridPosts,
-  getPublishedBlogGridPostsForRequest,
-} from '../../lib/blog-grid-data'
+import { filterBlogGridPosts, getBlogGridDataset } from '../../lib/blog-grid-data'
 
 export const prerender = false
 
@@ -40,13 +36,13 @@ const CACHE_HEADERS: Record<string, string> = {
 /** Small, CDN-cacheable pages of cards; filtering stays on the server. */
 export const GET: APIRoute = async ({ request, locals }) => {
   const { searchParams } = new URL(request.url)
-  const posts = await getPublishedBlogGridPostsForRequest(new Date(), locals)
+  const { posts, facets } = await getBlogGridDataset(new Date(), locals)
 
   // Facet options for the grid filter dropdowns. Served separately from the
   // index page so ~230 KB of facet JSON is fetched on demand (CDN-cached)
   // instead of serialized into every page.
   if (searchParams.has('facets')) {
-    return Response.json({ facets: buildBlogGridFacets(posts) }, { headers: CACHE_HEADERS })
+    return Response.json({ facets }, { headers: CACHE_HEADERS })
   }
 
   const offset = boundedInteger(searchParams.get('offset'), 0, Number.MAX_SAFE_INTEGER)

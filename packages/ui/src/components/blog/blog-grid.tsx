@@ -22,17 +22,17 @@ import {
   type BlogGridQuery,
   type EnrichedPostForGrid,
   type TagCatalogOption,
+  buildBlogFacetIndex,
   getCollectionBadgeIcon,
   generationFilterLabel,
   BLOG_FILTER_GROUP_LABELS,
   BLOG_FILTER_SECTION_LABELS,
   filterTagCatalogOptionsBySearch,
-  catalogSelectValueFromFilters,
-  getFilterValueForCategory,
-  isCatalogTagRedundantWithFacet,
-  resolveCatalogTagToFacet,
-  type CatalogTagFacetContext,
+  catalogSelectValueFromFiltersIndexed,
   type CatalogTagFacetGroup,
+  getFilterValueForCategory,
+  isCatalogTagRedundantWithFacetIndexed,
+  resolveCatalogTagToFacetIndexed,
   isTopPopularPokemonSlug,
   getPokemonTypeLightColors,
   getPokemonTypeLogoColor,
@@ -75,46 +75,6 @@ const DEFAULT_POST_THUMBNAIL = '/images/logo.png'
 /** Unfiltered index: first paint shows this many cards; more mount on scroll. */
 const INITIAL_VISIBLE_POSTS = 9
 const LOAD_MORE_ROOT_MARGIN = '480px'
-
-function isFilterValueActive(
-  filterValue: string,
-  grouped: GroupedFilters,
-  direct: string | null,
-  tag: string | null,
-  catalogSelectValue: string | null,
-  ctx: CatalogTagFacetContext,
-  catalogOptions: readonly TagCatalogOption[]
-): boolean {
-  const normalized = filterValue.toLowerCase()
-  if (
-    tag === filterValue ||
-    tag === normalized ||
-    direct === filterValue ||
-    grouped.type === filterValue ||
-    grouped.generation === filterValue ||
-    grouped.list === filterValue ||
-    grouped.illustrator === filterValue ||
-    grouped.themes === filterValue ||
-    grouped.expansion === filterValue ||
-    grouped.pokemon === filterValue
-  ) {
-    return true
-  }
-
-  if (catalogSelectValue) {
-    const catalogEntry = catalogOptions.find((entry) => entry.value === catalogSelectValue)
-    const resolved = resolveCatalogTagToFacet(
-      catalogSelectValue,
-      catalogEntry?.label ?? catalogSelectValue,
-      ctx
-    )
-    if (resolved?.facetValue === filterValue) {
-      return true
-    }
-  }
-
-  return false
-}
 
 type FilterGroupKey =
   | 'type'
@@ -223,25 +183,13 @@ export function BlogGrid(props: BlogGridProps) {
   const roundupListFilters = () => props.facets.lists
   const tagCatalogOptions = () => props.facets.tags
 
-  const typeFilterSet = createMemo(() => new Set(typeFilters()))
-  const generationFilterSet = createMemo(() => new Set(generationFilters()))
-  const illustratorFilterSet = createMemo(() => new Set(illustratorFilters()))
-  const themeFilterSet = createMemo(() => new Set(themeFilters()))
-  const expansionFilterSet = createMemo(
-    () => new Set(expansionFilters().map((entry) => entry.slug))
-  )
-  const pokemonFilterSet = createMemo(() => new Set(pokemonFilters().map((entry) => entry.slug)))
-  const roundupListFilterSet = createMemo(() => new Set(roundupListFilters()))
-  const tagCatalogSet = createMemo(() => new Set(tagCatalogOptions().map((entry) => entry.value)))
-  const catalogFacetContext = createMemo<CatalogTagFacetContext>(() => ({
-    typeFilters: typeFilters(),
-    generationFilters: generationFilters(),
-    illustratorFilters: illustratorFilters(),
-    themeFilters: themeFilters(),
-    roundupListFilters: roundupListFilters(),
-    pokemonFilters: pokemonFilters(),
-    expansionFilters: expansionFilters(),
-  }))
+  /**
+   * One lookup index per facet payload: membership sets, catalog-option
+   * maps, and per-tag facet resolution all built in a single pass, instead of
+   * re-scanning ~2 000 catalog tags on every URL commit. Rebuilt only when
+   * `props.facets` identity changes (once, when the facets query resolves).
+   */
+  const facetIndex = createMemo(() => buildBlogFacetIndex(props.facets))
   const typeVisuals = createMemo(() =>
     Object.fromEntries(
       typeFilters().map((type) => [
@@ -254,7 +202,7 @@ export function BlogGrid(props: BlogGridProps) {
     )
   )
 
-  const resolvedQuery = createMemo(() => resolveBlogGridQuery(urlFilters(), props.facets))
+  const resolvedQuery = createMemo(() => resolveBlogGridQuery(urlFilters(), facetIndex()))
   const groupedFilters = createMemo<GroupedFilters>(() => ({
     type: resolvedQuery().type ?? null,
     generation: resolvedQuery().generation ?? null,
@@ -380,11 +328,11 @@ export function BlogGrid(props: BlogGridProps) {
     if (!nextTag) {
       return nextTag
     }
-    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === nextTag)
-    const resolved = resolveCatalogTagToFacet(
+    const catalogEntry = facetIndex().catalogEntryByValue.get(nextTag)
+    const resolved = resolveCatalogTagToFacetIndexed(
+      facetIndex(),
       nextTag,
-      catalogEntry?.label ?? nextTag,
-      catalogFacetContext()
+      catalogEntry?.label ?? nextTag
     )
     if (resolved?.group === group) {
       return null
@@ -407,11 +355,11 @@ export function BlogGrid(props: BlogGridProps) {
       return
     }
 
-    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === nextTag)
-    const promoted = resolveCatalogTagToFacet(
+    const catalogEntry = facetIndex().catalogEntryByValue.get(nextTag)
+    const promoted = resolveCatalogTagToFacetIndexed(
+      facetIndex(),
       nextTag,
-      catalogEntry?.label ?? nextTag,
-      catalogFacetContext()
+      catalogEntry?.label ?? nextTag
     )
     if (promoted) {
       const current = groupedFilters()[promoted.group]
@@ -425,18 +373,17 @@ export function BlogGrid(props: BlogGridProps) {
 
   function applyCatalogFilter(nextCatalogValue: string | null) {
     if (!nextCatalogValue) {
-      const mirrored = catalogSelectValueFromFilters(
+      const mirrored = catalogSelectValueFromFiltersIndexed(
+        facetIndex(),
         tagFilter(),
-        groupedFilters(),
-        tagCatalogOptions(),
-        catalogFacetContext()
+        groupedFilters()
       )
       if (mirrored) {
-        const catalogEntry = tagCatalogOptions().find((entry) => entry.value === mirrored)
-        const resolved = resolveCatalogTagToFacet(
+        const catalogEntry = facetIndex().catalogEntryByValue.get(mirrored)
+        const resolved = resolveCatalogTagToFacetIndexed(
+          facetIndex(),
           mirrored,
-          catalogEntry?.label ?? mirrored,
-          catalogFacetContext()
+          catalogEntry?.label ?? mirrored
         )
         if (resolved) {
           applyGroupedFilter(resolved.group, null)
@@ -446,11 +393,10 @@ export function BlogGrid(props: BlogGridProps) {
       applyTagFilter(null)
       return
     }
-    const currentCatalog = catalogSelectValueFromFilters(
+    const currentCatalog = catalogSelectValueFromFiltersIndexed(
+      facetIndex(),
       tagFilter(),
-      groupedFilters(),
-      tagCatalogOptions(),
-      catalogFacetContext()
+      groupedFilters()
     )
     applyTagFilter(nextCatalogValue === currentCatalog ? null : nextCatalogValue)
   }
@@ -471,50 +417,50 @@ export function BlogGrid(props: BlogGridProps) {
   }
 
   function applyCategoryFilter(filterValue: string) {
-    if (typeFilterSet().has(filterValue)) {
+    const index = facetIndex()
+    if (index.typeSet.has(filterValue)) {
       applyGroupedFilter('type', groupedFilters().type === filterValue ? null : filterValue)
       return
     }
-    if (generationFilterSet().has(filterValue)) {
+    if (index.generationSet.has(filterValue)) {
       applyGroupedFilter(
         'generation',
         groupedFilters().generation === filterValue ? null : filterValue
       )
       return
     }
-    if (roundupListFilterSet().has(filterValue)) {
+    if (index.listSet.has(filterValue)) {
       applyGroupedFilter('list', groupedFilters().list === filterValue ? null : filterValue)
       return
     }
-    if (illustratorFilterSet().has(filterValue)) {
+    if (index.illustratorSet.has(filterValue)) {
       applyGroupedFilter(
         'illustrator',
         groupedFilters().illustrator === filterValue ? null : filterValue
       )
       return
     }
-    if (themeFilterSet().has(filterValue)) {
+    if (index.themeSet.has(filterValue)) {
       applyGroupedFilter('themes', groupedFilters().themes === filterValue ? null : filterValue)
       return
     }
-    if (expansionFilterSet().has(filterValue)) {
+    if (index.expansionSet.has(filterValue)) {
       applyGroupedFilter(
         'expansion',
         groupedFilters().expansion === filterValue ? null : filterValue
       )
       return
     }
-    if (pokemonFilterSet().has(filterValue)) {
+    if (index.pokemonSet.has(filterValue)) {
       applyGroupedFilter('pokemon', groupedFilters().pokemon === filterValue ? null : filterValue)
       return
     }
-    if (tagCatalogSet().has(filterValue.toLowerCase())) {
+    if (index.tagSet.has(filterValue.toLowerCase())) {
       const catalogValue = filterValue.toLowerCase()
-      const currentCatalog = catalogSelectValueFromFilters(
+      const currentCatalog = catalogSelectValueFromFiltersIndexed(
+        index,
         tagFilter(),
-        groupedFilters(),
-        tagCatalogOptions(),
-        catalogFacetContext()
+        groupedFilters()
       )
       applyCatalogFilter(currentCatalog === catalogValue ? null : catalogValue)
       return
@@ -522,45 +468,27 @@ export function BlogGrid(props: BlogGridProps) {
     applyDirectFilter(directFilter() === filterValue ? null : filterValue)
   }
 
-  function buildPostHref(slug: string): string {
-    const base = getPostHref(slug)
+  /**
+   * Active facet query shared by every card href — built once per filter
+   * change instead of once per card per change.
+   */
+  const filterQuerySuffix = createMemo(() => {
     const grouped = groupedFilters()
     const params = new URLSearchParams()
-    if (grouped.type) {
-      params.set('type', grouped.type)
-    }
-    if (grouped.generation) {
-      params.set('generation', grouped.generation)
-    }
-    if (grouped.list) {
-      params.set('list', grouped.list)
-    }
-    if (grouped.illustrator) {
-      params.set('illustrator', grouped.illustrator)
-    }
-    if (grouped.expansion) {
-      params.set('expansion', grouped.expansion)
-    }
-    if (grouped.pokemon) {
-      params.set('pokemon', grouped.pokemon)
-    }
-    if (grouped.themes) {
-      params.set('themes', grouped.themes)
-    }
+    if (grouped.type) params.set('type', grouped.type)
+    if (grouped.generation) params.set('generation', grouped.generation)
+    if (grouped.list) params.set('list', grouped.list)
+    if (grouped.illustrator) params.set('illustrator', grouped.illustrator)
+    if (grouped.expansion) params.set('expansion', grouped.expansion)
+    if (grouped.pokemon) params.set('pokemon', grouped.pokemon)
+    if (grouped.themes) params.set('themes', grouped.themes)
     const tag = tagFilter()
     const direct = directFilter()
-    if (tag) {
-      params.set('tag', tag)
-    }
-    if (direct) {
-      params.set('filter', direct)
-    }
+    if (tag) params.set('tag', tag)
+    if (direct) params.set('filter', direct)
     const query = params.toString()
-    if (!query) {
-      return base
-    }
-    return `${base}?${query}`
-  }
+    return query ? `?${query}` : ''
+  })
 
   const typeOptions = createMemo(() =>
     typeFilters().map((type) => {
@@ -611,6 +539,12 @@ export function BlogGrid(props: BlogGridProps) {
       label: entry.label,
       emphasized: isTopPopularPokemonSlug(entry.slug),
     }))
+  )
+  const pokemonOptionByValue = createMemo(
+    () => new Map(pokemonOptions().map((option) => [option.value, option]))
+  )
+  const expansionOptionByValue = createMemo(
+    () => new Map(expansionOptions().map((option) => [option.value, option]))
   )
 
   function renderPokemonChip(option: SearchableSelectOption) {
@@ -686,24 +620,19 @@ export function BlogGrid(props: BlogGridProps) {
       }
     }
 
-    const pokemon = pokemonFilters().find(
-      (species) => species.slug === catalogValue || species.label.toLowerCase() === catalogValue
-    )
+    const index = facetIndex()
+    const pokemon = index.pokemonByKey.get(catalogValue)
     if (pokemon) {
-      const facet = pokemonOptions().find((option) => option.value === pokemon.slug)
+      const facet = pokemonOptionByValue().get(pokemon.slug)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
     }
 
-    const expansion = expansionFilters().find(
-      (expansionEntry) =>
-        expansionEntry.slug === catalogValue ||
-        expansionEntry.label.toLowerCase() === catalogValue ||
-        expansionEntry.label === label
-    )
+    const expansion =
+      index.expansionByKey.get(catalogValue) ?? index.expansionByLabel.get(label) ?? null
     if (expansion) {
-      const facet = expansionOptions().find((option) => option.value === expansion.slug)
+      const facet = expansionOptionByValue().get(expansion.slug)
       if (facet) {
         return { ...facet, value: catalogValue }
       }
@@ -726,42 +655,48 @@ export function BlogGrid(props: BlogGridProps) {
   }
 
   const catalogSelectValue = createMemo(() =>
-    catalogSelectValueFromFilters(
-      tagFilter(),
-      groupedFilters(),
-      tagCatalogOptions(),
-      catalogFacetContext()
-    )
+    catalogSelectValueFromFiltersIndexed(facetIndex(), tagFilter(), groupedFilters())
   )
 
+  const tagOptionByValue = createMemo(
+    () => new Map(tagOptions().map((option) => [option.value, option]))
+  )
   const selectedTagOption = createMemo(
-    () => tagOptions().find((entry) => entry.value === catalogSelectValue()) ?? null
+    () => tagOptionByValue().get(catalogSelectValue() ?? '') ?? null
   )
 
   /**
-   * Chip-active state is a pure function of this snapshot. Each chip wraps it
-   * in `createSelector` so a filter change only re-runs the selectors whose
-   * pressed state actually flips, instead of every card's aria/class effect.
+   * Chip-active state is a pure function of this value set. Each chip wraps
+   * it in `createSelector` so a filter change only re-runs the selectors
+   * whose pressed state actually flips — and each selector predicate is an
+   * O(1) lookup instead of a catalog scan.
    */
-  const activeFilterState = createMemo(() => ({
-    grouped: groupedFilters(),
-    direct: directFilter(),
-    tag: tagFilter(),
-    catalog: catalogSelectValue(),
-    ctx: catalogFacetContext(),
-    options: tagCatalogOptions(),
-  }))
-  const createChipActiveSelector = () =>
-    createSelector(activeFilterState, (value: string, state) =>
-      isFilterValueActive(
-        value,
-        state.grouped,
-        state.direct,
-        state.tag,
-        state.catalog,
-        state.ctx,
-        state.options
+  const activeFilterValues = createMemo(() => {
+    const grouped = groupedFilters()
+    const values = new Set<string>()
+    for (const group of FILTER_GROUP_KEYS) {
+      const value = grouped[group]
+      if (value) values.add(value)
+    }
+    const direct = directFilter()
+    if (direct) values.add(direct)
+    const tag = tagFilter()
+    if (tag) values.add(tag)
+    const catalog = catalogSelectValue()
+    if (catalog) {
+      const catalogEntry = facetIndex().catalogEntryByValue.get(catalog)
+      const resolved = resolveCatalogTagToFacetIndexed(
+        facetIndex(),
+        catalog,
+        catalogEntry?.label ?? catalog
       )
+      if (resolved) values.add(resolved.facetValue)
+    }
+    return values
+  })
+  const createChipActiveSelector = () =>
+    createSelector(activeFilterValues, (value: string, values) =>
+      Boolean(values.has(value) || values.has(value.toLowerCase()))
     )
 
   const showCatalogTagChip = createMemo(() => {
@@ -769,12 +704,12 @@ export function BlogGrid(props: BlogGridProps) {
     if (!tag) {
       return false
     }
-    const catalogEntry = tagCatalogOptions().find((entry) => entry.value === tag)
-    return !isCatalogTagRedundantWithFacet(
+    const catalogEntry = facetIndex().catalogEntryByValue.get(tag)
+    return !isCatalogTagRedundantWithFacetIndexed(
+      facetIndex(),
       tag,
       catalogEntry?.label ?? tag,
-      groupedFilters(),
-      catalogFacetContext()
+      groupedFilters()
     )
   })
 
@@ -811,7 +746,7 @@ export function BlogGrid(props: BlogGridProps) {
 
   function renderTagCatalogChip(option: SearchableSelectOption) {
     const typeName = parseTypeCategory(option.label)
-    if (typeName && typeFilterSet().has(typeName)) {
+    if (typeName && facetIndex().typeSet.has(typeName)) {
       return renderTypeChip({ ...option, value: typeName, label: typeName })
     }
     if (option.icon) {
@@ -830,11 +765,11 @@ export function BlogGrid(props: BlogGridProps) {
       groupedFilters().list,
       groupedFilters().illustrator,
       groupedFilters().expansion
-        ? (expansionFilters().find((entry) => entry.slug === groupedFilters().expansion)?.label ??
+        ? (facetIndex().expansionByKey.get(groupedFilters().expansion!)?.label ??
           groupedFilters().expansion)
         : null,
       groupedFilters().pokemon
-        ? (pokemonFilters().find((entry) => entry.slug === groupedFilters().pokemon)?.label ??
+        ? (facetIndex().pokemonBySlug.get(groupedFilters().pokemon!)?.label ??
           groupedFilters().pokemon)
         : null,
       groupedFilters().themes,
@@ -860,7 +795,7 @@ export function BlogGrid(props: BlogGridProps) {
     if (facetFilterCount() === 0) {
       return
     }
-    setFiltersAccordionValue((current) => (current === 'filters' ? current : 'filters'))
+    setFiltersAccordionValue('filters')
   })
 
   const pokemonFilterRowClass = 'grid grid-cols-1 gap-3 sm:grid-cols-3'
@@ -1165,8 +1100,8 @@ export function BlogGrid(props: BlogGridProps) {
                 onClick={() => applyGroupedFilter('expansion', null)}
                 class={`h-auto ${CLICKABLE_BADGE_CLASS} bg-secondary text-secondary-foreground`}
               >
-                {expansionFilters().find((entry) => entry.slug === groupedFilters().expansion)
-                  ?.label ?? groupedFilters().expansion}{' '}
+                {facetIndex().expansionByKey.get(groupedFilters().expansion ?? '')?.label ??
+                  groupedFilters().expansion}{' '}
                 <span class="ml-1 text-[10px] opacity-60">×</span>
               </Button>
             ) : null}
@@ -1233,7 +1168,7 @@ export function BlogGrid(props: BlogGridProps) {
                     class="flex h-full flex-col rounded-3xl [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
                   >
                     <Link
-                      href={buildPostHref(post.slug)}
+                      href={getPostHref(post.slug) + filterQuerySuffix()}
                       onClick={() =>
                         trackSelectContent({ contentType: 'blog_post', itemId: post.slug })
                       }

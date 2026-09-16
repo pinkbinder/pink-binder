@@ -118,3 +118,27 @@ did not move, so the list never re-derives itself.
   template.
 - Web Vitals for admin: no analytics sink exists in admin; adopting Zaraz
   there is a product decision, not a perf task.
+
+## Addendum — second audit round
+
+A follow-up pass applied the same standards to hot paths the first round
+missed. Adopted additionally:
+
+| Decision                                                                     | Location                                                     |
+| ---------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Prebuilt facet lookup index (`buildBlogFacetIndex`) replaces per-commit      | `@repo/data` post-filters; consumed by `blog-grid`,          |
+| catalog scans (~665 ms → sub-ms per filter change)                           | `blog-query-state`, blog SSR                                 |
+| Isolate-level derived grid dataset (`posts`, `facets`, `facetIndex`) cached  | `apps/blog/src/lib/blog-grid-data.ts` (`getBlogGridDataset`) |
+| in a `WeakMap` keyed on the R2 index object                                  |                                                              |
+| Per-card href query suffix built once per filter change, not per card        | `packages/ui` blog grid (`filterQuerySuffix`)                |
+| `Intl.NumberFormat` hoisted to module scope in admin formatting              | `apps/admin/src/lib/format.ts`                               |
+| Redundant `value`-mirror effect removed from `BudgetCell`                    | `apps/admin` ads route                                       |
+| Cart persists only when `lines` change; dead `isOpen`/drawer toggle removed, | `apps/store` cart store + `StoreHeader`                      |
+| count button links to `/cart`                                                |                                                              |
+| Medusa region list memoized in-isolate (5-min TTL + in-flight dedupe)        | `apps/store/src/lib/catalog.ts`                              |
+| `server-only` stub/alias/test mock removed (no remaining importers)          | blog astro config, `test/preload.ts`                         |
+| `sideEffects` declared for tree-shaking (`@repo/ui` CSS-only; data/config/   | package manifests                                            |
+| marketplaces `false`)                                                        |                                                              |
+| Admin search-param parser factories deduplicated                             | `apps/admin/src/lib/{order,console}-search.ts`               |
+| Facet-index equivalence tests (indexed helpers ≡ linear helpers)             | `packages/data/test/post-routing-and-filters.test.ts`        |
+| Facet-index microbenchmark                                                   | `scripts/benchmark-facet-index.mjs`                          |
