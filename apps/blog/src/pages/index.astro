@@ -7,7 +7,7 @@ import {
   BLOG_INDEX_DESCRIPTION,
   BLOG_INDEX_TITLE,
 } from '../lib/blog-metadata'
-import { filterBlogGridPosts, getBlogGridDataset } from '../lib/blog-grid-data'
+import { filterBlogGridPostsCached, getBlogGridDataset } from '../lib/blog-grid-data'
 import { resolveBlogGridQuery } from '@repo/ui/blog-query-state'
 import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
 import {
@@ -38,13 +38,12 @@ const [dataset, parsedSearchParams] = await Promise.all([
   getBlogGridDataset(new Date(), Astro.locals),
   loadBlogFilterSearchParams(rawParams),
 ])
-const { posts } = dataset
 
 // Facets stay server-side here: `resolveBlogGridQuery` sanitizes the URL
 // against them, and they are no longer passed to the island — the client
 // fetches them from /api/posts-grid?facets=1 (see BlogGridIsland).
 const query = resolveBlogGridQuery(parsedSearchParams, dataset.facetIndex)
-const filteredPosts = filterBlogGridPosts(posts, query)
+const filteredPosts = filterBlogGridPostsCached(dataset, query)
 const initialPosts = filteredPosts.slice(0, BLOG_INDEX_INITIAL_COUNT)
 
 /**
@@ -88,6 +87,7 @@ const speculationRules = {
   description={BLOG_INDEX_DESCRIPTION}
   canonical={BLOG_INDEX_URL}
   preloadImage={lcpImageHref}
+  prefetchJson="/api/posts-grid?facets=1"
 >
   <script is:inline type="speculationrules" set:html={JSON.stringify(speculationRules)} />
   <BlogMainLayout landingUrl={LANDING_URL}>

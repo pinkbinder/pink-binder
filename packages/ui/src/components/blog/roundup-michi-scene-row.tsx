@@ -29,11 +29,7 @@ export function RoundupMichiSceneRow({
         {scenes.map((scene) => (
           <figure class="space-y-2">
             <div class="bg-muted/30 relative aspect-[4/3] overflow-hidden rounded-xl border">
-              <MichiSceneArtImage
-                scene={scene}
-                displayName={displayName}
-                sizes="(max-width: 640px) 45vw, 240px"
-              />
+              <MichiSceneArtImage scene={scene} displayName={displayName} />
             </div>
             <figcaption class="text-muted-foreground text-xs leading-relaxed">
               {scene.label}

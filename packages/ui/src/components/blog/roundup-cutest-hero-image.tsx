@@ -13,7 +13,6 @@ export function RoundupCutestHeroImage({ candidates, alt }: { candidates: string
           alt={alt}
           fill
           class="object-cover"
-          sizes="(max-width: 768px) 100vw, 720px"
           imageVariant="large"
         />
       </div>

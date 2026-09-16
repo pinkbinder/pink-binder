@@ -37,6 +37,12 @@ const SIGNATURE_DEFAULTS_ALLOWLIST = [
 /** `const { a, b } = props` anywhere in a component body. */
 const PROXY_DESTRUCTURE = /const\s*\{[^}]*\}\s*=\s*props\b/
 /**
+ * `new Intl.*` not at module scope — formatter construction is comparatively
+ * expensive, so standards §5 requires hoisting to a top-level const. Any
+ * indented occurrence is inside a function/component body.
+ */
+const INDENTED_INTL_CTOR = /^[ \t]+.*new Intl\./m
+/**
  * Component signature destructuring with a default value
  * (`function X({ a = 1 }: Props)`) — the React idiom this repo migrated off.
  */
@@ -66,6 +72,16 @@ describe('solid hygiene (hydrated surfaces)', () => {
     const violations = []
     for (const file of files) {
       if (PROXY_DESTRUCTURE.test(readFileSync(file, 'utf8'))) {
+        violations.push(relative(repositoryRoot, file))
+      }
+    }
+    expect(violations).toEqual([])
+  })
+
+  test('Intl formatters are hoisted to module scope', () => {
+    const violations = []
+    for (const file of files) {
+      if (INDENTED_INTL_CTOR.test(readFileSync(file, 'utf8'))) {
         violations.push(relative(repositoryRoot, file))
       }
     }

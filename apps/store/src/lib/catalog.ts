@@ -85,6 +85,15 @@ async function listRegions(): Promise<MedusaRegion[]> {
 }
 
 /**
+ * Product catalog per region, memoized briefly in the isolate: the storefront
+ * re-fetches on every request today, and a 60-second window collapses bursts
+ * of navigation into one Medusa round-trip while keeping prices/stock fresh.
+ */
+const CATALOG_TTL_MS = 60 * 1_000
+const catalogCache = new Map<string, { expiresAt: number; payload: CatalogPayload }>()
+const catalogInFlight = new Map<string, Promise<CatalogPayload>>()
+
+/**
  * Server-side catalog fetch — Medusa Store API via the SDK singleton.
  * Region resolution is cookie-driven (see src/middleware.ts); the USD
  * calculated price is requested per region so currency stays consistent.
@@ -96,22 +105,35 @@ export async function getCatalog(regionId: string | null): Promise<CatalogPayloa
   const region = regionId
     ? (regionList.find((entry) => entry.id === regionId) ?? regionList[0])
     : (regionList.find((entry) => entry.currency_code === 'usd') ?? regionList[0])
+  const cacheKey = region?.id ?? 'default'
 
-  const { products } = await sdk.store.product.list({
-    limit: 100,
-    region_id: region?.id,
-    fields: '+tags,*variants.calculated_price',
-  })
+  const cached = catalogCache.get(cacheKey)
+  if (cached && cached.expiresAt > Date.now()) return cached.payload
+  const inFlight = catalogInFlight.get(cacheKey)
+  if (inFlight) return inFlight
 
-  const mapped = (products as MedusaProduct[])
-    .filter((product) => (product.tags ?? []).some((tag) => tag.value?.startsWith('category:')))
-    .map((product) => toCatalogProduct(product))
-  const categories: string[] = ['All', ...new Set(mapped.map((product) => product.category))]
-
-  return {
-    products: mapped,
-    categories,
-    currencyCode: region?.currency_code ?? 'usd',
-    regionId: region?.id ?? null,
-  }
+  const request = sdk.store.product
+    .list({
+      limit: 100,
+      region_id: region?.id,
+      fields: '+tags,*variants.calculated_price',
+    })
+    .then(({ products }) => {
+      const mapped = (products as MedusaProduct[])
+        .filter((product) => (product.tags ?? []).some((tag) => tag.value?.startsWith('category:')))
+        .map((product) => toCatalogProduct(product))
+      const payload: CatalogPayload = {
+        products: mapped,
+        categories: ['All', ...new Set(mapped.map((product) => product.category))],
+        currencyCode: region?.currency_code ?? 'usd',
+        regionId: region?.id ?? null,
+      }
+      catalogCache.set(cacheKey, { payload, expiresAt: Date.now() + CATALOG_TTL_MS })
+      return payload
+    })
+    .finally(() => {
+      catalogInFlight.delete(cacheKey)
+    })
+  catalogInFlight.set(cacheKey, request)
+  return request
 }

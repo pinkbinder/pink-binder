@@ -19,7 +19,6 @@ export function SpeciesHeroArtwork({
       width={160}
       height={160}
       class="drop-shadow-lg"
-      sizes="160px"
       imageVariant="small"
     />
   )

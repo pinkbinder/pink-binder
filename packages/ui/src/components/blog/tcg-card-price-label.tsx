@@ -1,11 +1,15 @@
 import type { PokemonTcgCard } from '@repo/data/client'
 
+// Hoisted: Intl.NumberFormat construction is comparatively expensive, so the
+// shared USD formatter is created once, not per rendered price label.
+const USD_FORMAT = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 2,
+})
+
 function formatUsd(amount: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 2,
-  }).format(amount)
+  return USD_FORMAT.format(amount)
 }
 
 export function TcgCardPriceLabel({
