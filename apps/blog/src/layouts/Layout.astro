@@ -23,6 +23,9 @@ interface Props {
   /** Above-the-fold LCP image of the page — emitted as a high-priority
    *  preload so discovery does not wait for layout. */
   preloadImage?: string
+  /** JSON endpoint warmed at idle so a deferred island's first fetch is a
+   *  cache hit (emitted as `<link rel="prefetch" as="fetch">`). */
+  prefetchJson?: string
 }
 
 const SITE_URL = getSitemapBlogUrl()
@@ -36,6 +39,7 @@ const {
   noindex = false,
   postView = undefined,
   preloadImage = undefined,
+  prefetchJson = undefined,
 } = Astro.props as Props
 
 const isArticle = Boolean(publishedTime)
@@ -93,6 +97,9 @@ const rssFeeds = [
     <link rel="canonical" href={canonical} />
     {preloadImage ? (
       <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />
+    ) : null}
+    {prefetchJson ? (
+      <link rel="prefetch" as="fetch" href={prefetchJson} crossorigin="anonymous" />
     ) : null}
     {rssFeeds.map((feed) => (
       <link rel="alternate" type="application/rss+xml" title={feed.title} href={feed.url} />

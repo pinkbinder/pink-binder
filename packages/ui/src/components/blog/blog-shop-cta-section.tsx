@@ -71,7 +71,6 @@ export function BlogShopCtaSection({
                   width={96}
                   height={96}
                   fill={false}
-                  sizes="96px"
                   class="object-contain p-1"
                 />
               ) : (
