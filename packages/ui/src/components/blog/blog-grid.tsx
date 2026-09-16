@@ -1237,7 +1237,7 @@ export function BlogGrid(props: BlogGridProps) {
                 return (
                   <article
                     data-blog-card-index={index()}
-                    class="flex h-full flex-col rounded-3xl [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
+                    class="flex h-full flex-col rounded-3xl pt-2 [content-visibility:auto] [contain-intrinsic-size:auto_480px]"
                   >
                     <Link
                       href={getPostHref(post.slug) + filterQuerySuffix()}

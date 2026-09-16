@@ -10,7 +10,7 @@ export type BlogTableOfContentsItem = {
   level: 2 | 3
 }
 
-const DESKTOP_MEDIA_QUERY = '(min-width: 1280px)'
+const DESKTOP_MEDIA_QUERY = '(min-width: 1024px)'
 
 /** Shared with components that stamp heading ids so static TOC extraction
  *  and the client-side DOM collector derive identical anchors. */
@@ -97,10 +97,9 @@ function TableOfContentsLinks(props: {
  * the hydrated variants, driven by entries extracted at render time instead
  * of a client DOM scan (post pages ship zero JS).
  *
- * `desktop` floats in the article's right margin — it must render inside a
- * `relative` container so the sticky nav tracks the full article height
- * without offsetting the centered column. `mobile` is a `<details>`
- * disclosure at the top of the article; it toggles natively with no JS. */
+ * `desktop` is a sticky card in the grid column beside the article.
+ * `mobile` is a `<details>` disclosure at the top of the article; it toggles
+ * natively with no JS. */
 export function BlogStaticTableOfContents(props: {
   articleId: string
   items: BlogTableOfContentsItem[]
@@ -113,7 +112,7 @@ export function BlogStaticTableOfContents(props: {
     <Show
       when={props.variant !== 'mobile'}
       fallback={
-        <details class="group bg-card/80 mb-6 rounded-xl border px-4 py-3 xl:hidden">
+        <details class="group bg-card/80 mb-6 rounded-xl border px-4 py-3 lg:hidden">
           <summary
             aria-controls={disclosureNavId}
             class="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden"
@@ -133,10 +132,10 @@ export function BlogStaticTableOfContents(props: {
         </details>
       }
     >
-      <aside class="absolute top-0 left-full ml-8 hidden h-full w-48 xl:block">
+      <aside class="sticky top-6 hidden self-start lg:block">
         <nav
           aria-labelledby={labelId}
-          class="bg-card/80 sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+          class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
         >
           <p
             id={labelId}
@@ -242,10 +241,10 @@ export function BlogTableOfContents(props: {
       <Show
         when={props.variant === 'mobile'}
         fallback={
-          <aside class="absolute top-0 left-full ml-8 hidden h-full w-48 xl:block">
+          <aside class="sticky top-6 hidden self-start lg:block">
             <nav
               aria-labelledby={labelId}
-              class="bg-card/80 sticky top-6 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
+              class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
             >
               <p
                 id={labelId}
@@ -262,7 +261,7 @@ export function BlogTableOfContents(props: {
         <details
           ref={setDetails}
           onToggle={(event) => setMobileOpen(event.currentTarget.open)}
-          class="group bg-card/80 mt-5 rounded-xl border px-4 py-3 xl:hidden"
+          class="group bg-card/80 mt-5 rounded-xl border px-4 py-3 lg:hidden"
         >
           <summary
             aria-expanded={mobileOpen()}

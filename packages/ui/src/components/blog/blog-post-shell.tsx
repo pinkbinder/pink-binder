@@ -57,14 +57,13 @@ export function BlogPostShell({
         </div>
       </Show>
       {/**
-       * The article column always stays page-centered; the desktop TOC hangs
-       * off its right margin (absolute in this relative box) instead of
-       * taking a grid column that would push the article off-center. Below
-       * xl the margin is too narrow, so a zero-JS <details> disclosure sits
-       * at the top of the article instead.
+       * Standard post container: a fixed-width article column (42rem ≈ 70ch
+       * measure) plus a TOC column, centered as a pair inside the page rail.
+       * Below lg the TOC column collapses and a zero-JS <details> disclosure
+       * sits at the top of the article instead.
        */}
-      <div class="relative mx-auto w-full max-w-3xl min-w-0">
-        <article id={BLOG_POST_ARTICLE_ID} class="text-pretty">
+      <div class="mx-auto grid w-full max-w-6xl grid-cols-1 gap-6 lg:grid-cols-[minmax(0,42rem)_13rem] lg:items-start lg:justify-center lg:gap-8">
+        <article id={BLOG_POST_ARTICLE_ID} class="min-w-0 text-pretty">
           <BlogBackLink />
           {tocItems && tocItems.length >= 2 ? (
             <BlogStaticTableOfContents
