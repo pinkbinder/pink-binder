@@ -1,14 +1,10 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
 import { plugin } from 'bun'
-import { mock } from 'bun:test'
 
 // Register happy-dom globals BEFORE any testing-library/Solid modules load.
 if (!(globalThis as { happyDOM?: unknown }).happyDOM) {
   GlobalRegistrator.register()
 }
-
-// Keep the `server-only` import as a no-op in the Bun test environment.
-mock.module('server-only', () => ({}))
 
 const SOLID_ROOT = new URL('../node_modules/solid-js', import.meta.url).pathname
 

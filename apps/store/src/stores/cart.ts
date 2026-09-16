@@ -11,7 +11,6 @@ export interface CartLine {
 
 export interface CartState {
   lines: CartLine[]
-  isOpen: boolean
   lastAddedAt: string | null
 }
 
@@ -31,7 +30,7 @@ function upsert(lines: CartLine[], line: Omit<CartLine, 'qty'>, qty: number): Ca
  * server render never touches localStorage. Quantities clamp to 1..99 and
  * removing a line is a qty <= 0 side effect.
  */
-export const cart = atom<CartState>({ lines: [], isOpen: false, lastAddedAt: null })
+export const cart = atom<CartState>({ lines: [], lastAddedAt: null })
 
 let hydrated = false
 
@@ -49,7 +48,12 @@ export function hydrateCartFromStorage(): void {
   } catch {
     // Corrupt storage is not fatal; start with an empty cart.
   }
+  // Persist only when the lines array actually changed — unrelated state
+  // updates (e.g. lastAddedAt) must not rewrite storage.
+  let persistedLines = cart.get().lines
   cart.subscribe((state) => {
+    if (state.lines === persistedLines) return
+    persistedLines = state.lines
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ lines: state.lines }))
   })
 }
@@ -83,10 +87,6 @@ export function removeLine(id: string): void {
 
 export function clearCart(): void {
   cart.set({ ...cart.get(), lines: [] })
-}
-
-export function setCartOpen(open: boolean): void {
-  cart.set({ ...cart.get(), isOpen: open })
 }
 
 export const cartCount = computed(cart, (state) =>

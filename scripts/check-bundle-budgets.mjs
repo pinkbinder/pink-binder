@@ -20,14 +20,12 @@ const assetsDir = resolve(repositoryRoot, 'apps/admin/dist/client/assets')
  */
 const BUDGETS = [
   {
-    id: 'admin entry chunk (src-*.js)',
-    pattern: /^src-.*\.js$/,
-    maxGzipBytes: 55_000,
-  },
-  {
-    id: 'vendor chunk (index-*.js)',
+    // `sideEffects` metadata on @repo packages lets rolldown tree-shake the
+    // workspace barrels, so the app entry merged into the vendor chunk — the
+    // two are now one `index-*.js` asset (~48 KB gz, down from ~86 KB split).
+    id: 'admin entry+vendor chunk (index-*.js)',
     pattern: /^index-.*\.js$/,
-    maxGzipBytes: 50_000,
+    maxGzipBytes: 55_000,
   },
   {
     id: 'stylesheet (styles-*.css)',

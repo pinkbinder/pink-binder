@@ -8,7 +8,7 @@ export interface SearchParamParser<T> {
   defaultValue: T
 }
 
-function stringParser(defaultValue: string): SearchParamParser<string> {
+export function stringParser(defaultValue: string): SearchParamParser<string> {
   return {
     parse: (value) => value ?? defaultValue,
     serialize: (value) => value,
@@ -16,7 +16,7 @@ function stringParser(defaultValue: string): SearchParamParser<string> {
   }
 }
 
-function literalParser<const T extends readonly string[]>(
+export function literalParser<const T extends readonly string[]>(
   values: T,
   defaultValue: T[number]
 ): SearchParamParser<T[number]> {

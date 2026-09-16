@@ -53,6 +53,37 @@ function toCatalogProduct(product: MedusaProduct): CatalogProduct {
   }
 }
 
+interface MedusaRegion {
+  id: string
+  currency_code: string
+}
+
+/**
+ * Region list is near-static Medusa configuration, so it is memoized in the
+ * isolate instead of re-fetched on every index request — that removes one
+ * serialized round-trip before the product list on each page load.
+ */
+const REGION_LIST_TTL_MS = 5 * 60 * 1_000
+let cachedRegions: { expiresAt: number; regions: MedusaRegion[] } | null = null
+let regionsInFlight: Promise<MedusaRegion[]> | null = null
+
+async function listRegions(): Promise<MedusaRegion[]> {
+  const now = Date.now()
+  if (cachedRegions && cachedRegions.expiresAt > now) return cachedRegions.regions
+  if (regionsInFlight) return regionsInFlight
+  regionsInFlight = sdk.store.region
+    .list({ limit: 20 })
+    .then(({ regions }) => {
+      const list = regions as MedusaRegion[]
+      cachedRegions = { regions: list, expiresAt: Date.now() + REGION_LIST_TTL_MS }
+      return list
+    })
+    .finally(() => {
+      regionsInFlight = null
+    })
+  return regionsInFlight
+}
+
 /**
  * Server-side catalog fetch — Medusa Store API via the SDK singleton.
  * Region resolution is cookie-driven (see src/middleware.ts); the USD
@@ -61,8 +92,7 @@ function toCatalogProduct(product: MedusaProduct): CatalogProduct {
  * excluded from the storefront listing.
  */
 export async function getCatalog(regionId: string | null): Promise<CatalogPayload> {
-  const { regions } = await sdk.store.region.list({ limit: 20 })
-  const regionList = regions as Array<{ id: string; currency_code: string }>
+  const regionList = await listRegions()
   const region = regionId
     ? (regionList.find((entry) => entry.id === regionId) ?? regionList[0])
     : (regionList.find((entry) => entry.currency_code === 'usd') ?? regionList[0])

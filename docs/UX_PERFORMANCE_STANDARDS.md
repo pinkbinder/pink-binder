@@ -52,7 +52,9 @@ not in a plain function that recomputes for every consumer.
 transformation belongs in `createMemo`; event handlers belong in event
 handlers. Every effect that subscribes to something external must register
 `onCleanup` — timers, observers, listeners, aborts (see
-`blog-reading-progress.tsx` for the pattern).
+`blog-reading-progress.tsx` for the pattern). An effect that re-applies what
+a reactive binding already does (e.g. writing `input.value` where `value` is
+bound to the same store) is redundant — delete it rather than guard it.
 
 ### Rendering primitives
 
@@ -139,6 +141,19 @@ The admin console is the reference implementation.
   `IntersectionObserver` with `rootMargin` pre-roll (blog grid loads ~480 px
   before the sentinel). Virtualize only when a single view must mount >500
   live rows.
+- **Catalog lookups are indexed once per payload.** A helper that resolves by
+  scanning a list (`find`/`includes`) and runs per interaction or per rendered
+  item gets a `Map`/`Set` built in one pass — `buildBlogFacetIndex` is the
+  reference (tag-catalog resolution dropped from ~665 ms of scans per filter
+  commit to sub-millisecond reads). On the server, derive such indexes once
+  per source object behind a `WeakMap` (`getBlogGridDataset`), not once per
+  request.
+- **Per-row work shares loop-invariant computation.** Strings/maps every row
+  of a `<For>` needs are computed in one memo and concatenated per row (see
+  `filterQuerySuffix` in `blog-grid`), never rebuilt inside each child.
+- **Store writes persist on real change only.** localStorage subscriptions
+  compare the persisted slice before writing — unrelated fields updating the
+  same atom must not rewrite storage (see `apps/store` cart).
 - **Hot paths don't construct formatters.** Hoist `Intl.*` instances to module
   scope, or use the arithmetic formatters in table cells
   (`lib/format.ts#formatAmountCents`).
