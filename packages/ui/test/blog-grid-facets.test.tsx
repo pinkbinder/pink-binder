@@ -1,5 +1,5 @@
 import { createSignal } from 'solid-js'
-import { render, screen } from '@solidjs/testing-library'
+import { fireEvent, render, screen } from '@solidjs/testing-library'
 import { describe, expect, it, mock } from 'bun:test'
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
 import { BlogGrid } from '../src/components/blog/blog-grid'
@@ -33,18 +33,29 @@ const pikachuPost: EnrichedPostForGrid = {
 describe('BlogGrid facets reactivity', () => {
   // Facets hydrate client-side after mount (EMPTY_FACETS -> fetched data);
   // destructuring the prop would freeze the empty state forever.
-  it('shows the search box when facets arrive after mount', async () => {
+  it('keeps the search box mounted while facets load, then fills its options', async () => {
     const queryClient = new QueryClient()
     const [facets, setFacets] = createSignal<BlogGridFacets>(EMPTY)
+    const [pending, setPending] = createSignal(true)
     render(() => (
       <QueryClientProvider client={queryClient}>
-        <BlogGrid posts={[]} total={0} facets={facets()} />
+        <BlogGrid posts={[]} total={0} facets={facets()} facetsPending={pending()} />
       </QueryClientProvider>
     ))
-    expect(screen.queryByText(/Search the entire catalog above/)).toBeNull()
-    setFacets({ ...EMPTY, tags: [{ value: 'pikachu', label: 'Pikachu' }] })
-    await new Promise((r) => setTimeout(r, 0))
+
+    // The search box renders before the tag catalog arrives.
+    const combobox = screen.getByRole('combobox', { name: 'Catalog search' })
     expect(screen.queryByText(/Search the entire catalog above/)).not.toBeNull()
+
+    fireEvent.click(combobox)
+    expect(screen.queryByText('Loading tag catalog…')).not.toBeNull()
+    expect(screen.queryByText('No results')).toBeNull()
+
+    setFacets({ ...EMPTY, tags: [{ value: 'pikachu', label: 'Pikachu' }] })
+    setPending(false)
+    await new Promise((r) => setTimeout(r, 0))
+    expect(screen.queryByText('Loading tag catalog…')).toBeNull()
+    expect(screen.queryByText('Pikachu')).not.toBeNull()
   })
 
   // A filter change swaps the infinite query key; without placeholderData the

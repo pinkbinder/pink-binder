@@ -34,7 +34,9 @@ function FacetedGrid(props: BlogGridProps) {
       return body.facets
     },
   }))
-  return <BlogGrid {...props} facets={facets.data ?? EMPTY_FACETS} />
+  return (
+    <BlogGrid {...props} facets={facets.data ?? EMPTY_FACETS} facetsPending={facets.isPending} />
+  )
 }
 
 export function BlogGridIsland(props: BlogGridProps) {
