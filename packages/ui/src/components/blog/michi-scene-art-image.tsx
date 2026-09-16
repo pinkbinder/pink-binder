@@ -4,7 +4,6 @@ import { RemoteImageWithFallback } from '../remote-image-with-fallback'
 export function MichiSceneArtImage({
   scene,
   displayName,
-  sizes = '(max-width: 640px) 100vw, 360px',
 }: {
   scene: {
     url: string
@@ -13,7 +12,6 @@ export function MichiSceneArtImage({
     sourceUrl?: string
   }
   displayName: string
-  sizes?: string
 }) {
   const candidates = sceneArtUrlCandidates(scene)
   if (candidates.length === 0) {
@@ -26,7 +24,6 @@ export function MichiSceneArtImage({
       alt={`${displayName} Michi Method scene — ${scene.label}`}
       fill
       class="object-cover object-center"
-      sizes={sizes}
       imageVariant="large"
     />
   )

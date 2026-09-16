@@ -6,8 +6,6 @@ export function RemoteImageWithFallback(props: {
   candidates: string[]
   alt: string
   class?: string
-  /** Passed to the `srcSet`/`sizes` responsive image pair. */
-  sizes: string
   fill?: boolean
   width?: number
   height?: number

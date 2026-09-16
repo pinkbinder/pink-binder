@@ -76,7 +76,6 @@ export function RoundupHeroArtworkGrid({
               alt=""
               fill
               class="object-cover"
-              sizes="(max-width: 768px) 33vw, 240px"
               priority={variant === 'article' && index === 0}
               imageVariant={variant === 'article' ? 'large' : 'small'}
             />
@@ -92,7 +91,6 @@ export function RoundupHeroArtworkGrid({
                 alt=""
                 fill
                 class="object-contain drop-shadow-lg"
-                sizes="(max-width: 768px) 33vw, 240px"
                 priority={variant === 'article' && index === 0}
                 imageVariant={variant === 'article' ? 'large' : 'small'}
               />

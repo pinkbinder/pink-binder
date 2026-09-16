@@ -154,7 +154,6 @@ function BinderPage(props: {
                     <MichiSceneArtImage
                       scene={placed.slot.scene}
                       displayName={placed.slot.displayName}
-                      sizes={placed.colSpan === 2 ? '240px' : '120px'}
                     />
                   </div>
                 ) : placed.slot.kind === 'back' ? (
@@ -178,7 +177,6 @@ function BinderPage(props: {
                         width={48}
                         height={48}
                         class="object-contain"
-                        sizes="48px"
                         imageVariant="small"
                       />
                     </div>

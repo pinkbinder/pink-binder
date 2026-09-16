@@ -78,7 +78,6 @@ export function BinderSpriteReferencePanel(props: {
                         candidates={[item.url, ...(item.fallbackUrls ?? [])]}
                         alt={`${props.displayName} ${item.label}`}
                         fill
-                        sizes={isCompact() ? '72px' : '120px'}
                         class="object-contain drop-shadow-md"
                         imageVariant="small"
                         onExhausted={() => markFailed(item.url)}
@@ -146,7 +145,6 @@ export function BinderSpriteReferencePanel(props: {
                       candidates={[item.url, ...(item.fallbackUrls ?? [])]}
                       alt={`${props.displayName} ${item.label}`}
                       fill
-                      sizes="(max-width: 768px) 22vw, 120px"
                       class="object-contain drop-shadow-md"
                       imageVariant="small"
                       onExhausted={() => markFailed(item.url)}

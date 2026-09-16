@@ -12,7 +12,6 @@ describe('RemoteImageWithFallback', () => {
         ]}
         imageVariant="small"
         alt="Pikachu"
-        sizes="160px"
         fill={false}
         width={160}
         height={160}

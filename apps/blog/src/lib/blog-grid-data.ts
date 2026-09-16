@@ -54,9 +54,13 @@ export function buildBlogGridFacets(posts: EnrichedPostForGrid[]): BlogGridFacet
 }
 
 export interface BlogGridDataset {
+  /** Source R2 index object — WeakMap key for per-generation caches. */
+  index: BlogIndex
   posts: EnrichedPostForGrid[]
   facets: BlogGridFacets
   facetIndex: BlogFacetIndex
+  /** Serialized `{ facets }` body — the API serializes once per generation. */
+  facetsJson: string
 }
 
 /**
@@ -67,6 +71,8 @@ export interface BlogGridDataset {
  * 15-minute edge cache the pages already carry.
  */
 const derivedByIndex = new WeakMap<BlogIndex, BlogGridDataset>()
+
+const EMPTY_INDEX = { posts: [] } as unknown as BlogIndex
 
 export async function getBlogGridDataset(
   now = new Date(),
@@ -85,23 +91,38 @@ export async function getBlogGridDataset(
       themes: [],
       tags: [],
     }
-    return { posts: [], facets: empty, facetIndex: buildBlogFacetIndex(empty) }
+    return {
+      index: EMPTY_INDEX,
+      posts: [],
+      facets: empty,
+      facetIndex: buildBlogFacetIndex(empty),
+      facetsJson: JSON.stringify({ facets: empty }),
+    }
   }
   const cached = derivedByIndex.get(index)
   if (cached) return cached
   const posts = index.posts.filter((post) => isBlogPostPublished(post.date, now))
   const facets = buildBlogGridFacets(posts)
-  const dataset: BlogGridDataset = { posts, facets, facetIndex: buildBlogFacetIndex(facets) }
+  const dataset: BlogGridDataset = {
+    index,
+    posts,
+    facets,
+    facetIndex: buildBlogFacetIndex(facets),
+    facetsJson: JSON.stringify({ facets }),
+  }
   derivedByIndex.set(index, dataset)
   return dataset
 }
 
 export function filterBlogGridPosts(
   posts: EnrichedPostForGrid[],
-  query: BlogGridQuery
+  query: BlogGridQuery,
+  illustratorSet?: ReadonlySet<string>
 ): EnrichedPostForGrid[] {
   const searchTerms = tokenizeSearchQuery(query.q)
-  const illustratorFilters = query.filter ? new Set(extractIllustratorFilters(posts)) : null
+  const illustratorFilters = query.filter
+    ? (illustratorSet ?? new Set(extractIllustratorFilters(posts)))
+    : null
   const filtered = posts.filter((post) => {
     if (searchTerms && !postMatchesBlogSearch(post, searchTerms)) return false
     if (query.type && !post.categories.includes(`${query.type} Type`)) return false
@@ -129,6 +150,56 @@ export function filterBlogGridPosts(
   if (query.pokemon) return sortPostsForPokemonFilter(filtered, query.pokemon)
   if (query.expansion) return sortPostsForExpansionFilter(filtered, query.expansion)
   return filtered
+}
+
+const FILTERED_POSTS_CACHE_LIMIT = 200
+const GRID_QUERY_KEYS = [
+  'q',
+  'type',
+  'generation',
+  'list',
+  'illustrator',
+  'expansion',
+  'pokemon',
+  'themes',
+  'tag',
+  'filter',
+] as const
+const filteredPostsByIndex = new WeakMap<BlogIndex, Map<string, EnrichedPostForGrid[]>>()
+
+/**
+ * Canonical-query → filtered-posts results, keyed on the isolate-cached index
+ * object and bounded FIFO. Facet pages bypass the shared edge cache, so
+ * popular filter URLs would otherwise re-run every post matcher (plus a
+ * full illustrator extraction for `?filter=`) on every request.
+ */
+export function filterBlogGridPostsCached(
+  dataset: BlogGridDataset,
+  query: BlogGridQuery
+): EnrichedPostForGrid[] {
+  let cache = filteredPostsByIndex.get(dataset.index)
+  if (!cache) {
+    cache = new Map()
+    filteredPostsByIndex.set(dataset.index, cache)
+  }
+  let key = ''
+  for (const name of GRID_QUERY_KEYS) {
+    const value = query[name]
+    if (value) key += `${name}=${value}\u0000`
+  }
+  const cached = cache.get(key)
+  if (cached) {
+    // Refresh recency so hot queries survive eviction.
+    cache.delete(key)
+    cache.set(key, cached)
+    return cached
+  }
+  const result = filterBlogGridPosts(dataset.posts, query, dataset.facetIndex.illustratorSet)
+  if (cache.size >= FILTERED_POSTS_CACHE_LIMIT) {
+    cache.delete(cache.keys().next().value!)
+  }
+  cache.set(key, result)
+  return result
 }
 
 /** Whitespace tokens from a free-text search; null when there is nothing to match. */
@@ -163,7 +234,32 @@ export function postMatchesBlogSearch(
   >,
   terms: readonly string[]
 ): boolean {
-  const haystacks = [
+  const corpus = postSearchCorpus(post)
+  return terms.every((term) => corpus.includes(term.toLowerCase()))
+}
+
+type SearchCorpusPost = Pick<
+  EnrichedPostForGrid,
+  | 'slug'
+  | 'title'
+  | 'description'
+  | 'tags'
+  | 'categories'
+  | 'displayCategories'
+  | 'speciesFilterTags'
+  | 'featuredSpeciesFilterTags'
+  | 'expansionFilterTags'
+>
+
+// Fields joined by a control separator no search token can contain; one
+// `includes` scan replaces a fresh 9-field allocation + lowercase per match.
+const SEARCH_FIELD_SEPARATOR = '\u001f'
+const searchCorpusByPost = new WeakMap<SearchCorpusPost, string>()
+
+function postSearchCorpus(post: SearchCorpusPost): string {
+  const cached = searchCorpusByPost.get(post)
+  if (cached !== undefined) return cached
+  const corpus = [
     post.slug,
     post.title,
     post.description,
@@ -173,9 +269,9 @@ export function postMatchesBlogSearch(
     ...post.speciesFilterTags,
     ...post.featuredSpeciesFilterTags,
     ...post.expansionFilterTags,
-  ].map((field) => field.toLowerCase())
-  return terms.every((term) => {
-    const needle = term.toLowerCase()
-    return haystacks.some((haystack) => haystack.includes(needle))
-  })
+  ]
+    .join(SEARCH_FIELD_SEPARATOR)
+    .toLowerCase()
+  searchCorpusByPost.set(post, corpus)
+  return corpus
 }

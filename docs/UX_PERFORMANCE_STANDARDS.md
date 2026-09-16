@@ -151,6 +151,19 @@ The admin console is the reference implementation.
 - **Per-row work shares loop-invariant computation.** Strings/maps every row
   of a `<For>` needs are computed in one memo and concatenated per row (see
   `filterQuerySuffix` in `blog-grid`), never rebuilt inside each child.
+- **Derived results are cached per generation, bounded.** When a request
+  pipeline re-runs the same filter/sort over the same source object, cache by
+  (source identity, canonical input) behind a `WeakMap` + bounded LRU —
+  `filterBlogGridPostsCached` is the reference. Serialize large JSON bodies
+  once per generation too (`dataset.facetsJson`), not once per request.
+- **Deferred islands prefetch their data at idle.** A `client:interaction`
+  island that fetches on hydrate gets its endpoint warmed by
+  `<link rel="prefetch" as="fetch">` (`Layout.prefetchJson`), so the first
+  interaction reads HTTP cache, not the network.
+- **Component props must earn their slot.** A prop that is accepted but never
+  read (`RemoteImageWithFallback.sizes`) is deleted along with every
+  caller-site value — dead props hide migration debt and inflate the mirrored
+  pipeline surface.
 - **Store writes persist on real change only.** localStorage subscriptions
   compare the persisted slice before writing — unrelated fields updating the
   same atom must not rewrite storage (see `apps/store` cart).

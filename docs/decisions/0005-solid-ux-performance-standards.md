@@ -142,3 +142,31 @@ missed. Adopted additionally:
 | Admin search-param parser factories deduplicated                             | `apps/admin/src/lib/{order,console}-search.ts`               |
 | Facet-index equivalence tests (indexed helpers ≡ linear helpers)             | `packages/data/test/post-routing-and-filters.test.ts`        |
 | Facet-index microbenchmark                                                   | `scripts/benchmark-facet-index.mjs`                          |
+
+## Addendum — third pass (server derivation + dead API surface)
+
+A further pass closed out the remaining audit items:
+
+| Decision                                                                    | Location                                                    |
+| --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| Filtered post sets cached per (R2 index object, canonical query) in a       | `filterBlogGridPostsCached` in blog-grid-data; index page + |
+| bounded LRU — facet pages bypass the edge cache, so repeated filter URLs    | posts-grid API                                              |
+| no longer re-run every matcher (or `extractIllustratorFilters`) per request |                                                             |
+| Facet API body serialized once per index generation (`facetsJson`), not     | `getBlogGridDataset`; `/api/posts-grid?facets=1`            |
+| `JSON.stringify` of ~230 KB per request                                     |                                                             |
+| Free-text search corpus precomputed per post (WeakMap, `\u001f`-joined      | `postSearchCorpus` in blog-grid-data                        |
+| lowercase fields) — replaces a fresh 9-field allocation + lowercase per     |                                                             |
+| post per query                                                              |                                                             |
+| Facet payload warmed at idle via `<link rel="prefetch" as="fetch">` so the  | `Layout.prefetchJson`; blog index                           |
+| `client:interaction` island's first fetch is an HTTP-cache hit              |                                                             |
+| Dead `sizes` prop removed from `RemoteImageWithFallback` and threaded       | remote-image-with-fallback, michi-scene-art-image + callers |
+| wrappers (`MichiSceneArtImage`) — it was never rendered (no `srcSet`)       |                                                             |
+| Store catalog memoized per region (60 s TTL + in-flight dedupe) — collapses | `apps/store/src/lib/catalog.ts`                             |
+| navigation bursts into one Medusa round-trip while keeping prices fresh     |                                                             |
+| `Intl.*` construction outside module scope banned by a hygiene test         | `tests/solid-hygiene.test.ts`; hoisted `TcgCardPriceLabel`  |
+
+Deliberately deferred again: edge-caching facet HTML (unbounded query
+cardinality — the LRU removes the origin cost instead), wholesale
+destructure-prop cleanup in static blog components (pipeline-mirrored files),
+admin route loaders for demo stores (real integrations required), facet
+payload slimming (every field is consumed; prefetch + gzip already amortize).
