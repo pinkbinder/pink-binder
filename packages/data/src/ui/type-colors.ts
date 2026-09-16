@@ -107,13 +107,24 @@ function shade(hex: string, factor: number): string {
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`
 }
 
+/**
+ * Derived light-theme triple per type. The domain is ~18 type names but the
+ * grid calls this several times per chip per render, so results are cached —
+ * the hex math (blend, shade, luminance loops) is pure and immutable.
+ */
+const lightColorsByType = new Map<string, { bg: string; text: string; border: string }>()
+
 export function getPokemonTypeLightColors(type: string) {
+  const cached = lightColorsByType.get(type)
+  if (cached) return cached
   const colors = getPokemonTypeColors(type)
-  return {
+  const derived = {
     bg: toSolidLightColor(colors.bg),
     text: toSolidDarkColor(colors.bg),
     border: colors.bg,
   }
+  lightColorsByType.set(type, derived)
+  return derived
 }
 
 export function getPokemonTypeLogoColor(type: string) {

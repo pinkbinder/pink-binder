@@ -32,10 +32,6 @@
     "validate:pre-commit": "node scripts/with-env.mjs turbo run type-check && oxlint . --max-warnings 0",
     "format:check": "oxfmt --check ."
   },
-  "dependencies": {
-    "nanoid": "6.0.1",
-    "sharp": "0.35.4"
-  },
   "devDependencies": {
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.27.0",
