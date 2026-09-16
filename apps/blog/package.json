@@ -22,7 +22,8 @@
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
     "@tanstack/solid-query": "^5.102.8",
-    "solid-js": "^1.9.15"
+    "solid-js": "^1.9.15",
+    "web-vitals": "^5"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",

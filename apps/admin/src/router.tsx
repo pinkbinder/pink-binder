@@ -20,9 +20,16 @@ export function getRouter() {
     scrollRestoration: true,
     defaultPreload: 'intent',
     defaultPreloadStaleTime: 0,
+    // `Wrap` hosts the persisting QueryClientProvider (UX perf standards §2),
+    // so the integration's default wrap is disabled to keep one provider.
+    Wrap: (props) => (
+      <TanStackQuery.AdminQueryProvider client={queryClient}>
+        {props.children}
+      </TanStackQuery.AdminQueryProvider>
+    ),
   })
 
-  setupRouterSsrQueryIntegration({ router, queryClient })
+  setupRouterSsrQueryIntegration({ router, queryClient, wrapQueryClient: false })
 
   return router
 }

@@ -14,7 +14,11 @@ import {
 } from '../lib/blog-grid-data'
 import { resolveBlogGridQuery } from '@repo/ui/blog-query-state'
 import { loadBlogFilterSearchParams } from '@repo/ui/blog-query-state/server'
-import { BLOG_INDEX_INITIAL_COUNT } from '@repo/data/client'
+import {
+  BLOG_INDEX_INITIAL_COUNT,
+  heroStripImageCandidates,
+  pokemonR2ImageVariantUrl,
+} from '@repo/data/client'
 import { BlogGridIsland } from '../components/BlogGridIsland'
 
 // Facet queries re-render per query string; the default view only changes on
@@ -46,9 +50,50 @@ const facets = buildBlogGridFacets(posts)
 const query = resolveBlogGridQuery(parsedSearchParams, facets)
 const filteredPosts = filterBlogGridPosts(posts, query)
 const initialPosts = filteredPosts.slice(0, BLOG_INDEX_INITIAL_COUNT)
+
+/**
+ * The first grid card is the LCP candidate; its image URL is fully known at
+ * render time, so preload it at high priority instead of waiting for the
+ * island markup to be laid out (mirrors BlogGrid's first-card rendering:
+ * hero strip candidates, else the small R2 variant of the post image).
+ */
+const firstPost = initialPosts[0]
+const lcpImageHref = (() => {
+  if (!firstPost) return undefined
+  if (firstPost.heroArtworkUrls?.length) {
+    const candidates = heroStripImageCandidates(firstPost.heroArtworkUrls[0]!)
+    const optimized = candidates
+      .map((candidate) => pokemonR2ImageVariantUrl(candidate, 'small'))
+      .find((url) => url !== null)
+    return optimized ?? candidates[0]
+  }
+  if (!firstPost.image) return undefined
+  return pokemonR2ImageVariantUrl(firstPost.image, 'small') ?? firstPost.image
+})()
+
+/**
+ * Hover-intent prefetch for grid card links: post pages are server-rendered
+ * HTML at the edge, so a moderate-eagerness prefetch makes card clicks feel
+ * instant without widening the crawl budget (one URL per intent hover).
+ */
+const speculationRules = {
+  prefetch: [
+    {
+      source: 'document',
+      where: { selector_matches: 'article[data-blog-card-index] a[href]' },
+      eagerness: 'moderate',
+    },
+  ],
+}
 ---
 
-<Layout title={BLOG_INDEX_TITLE} description={BLOG_INDEX_DESCRIPTION} canonical={BLOG_INDEX_URL}>
+<Layout
+  title={BLOG_INDEX_TITLE}
+  description={BLOG_INDEX_DESCRIPTION}
+  canonical={BLOG_INDEX_URL}
+  preloadImage={lcpImageHref}
+>
+  <script is:inline type="speculationrules" set:html={JSON.stringify(speculationRules)} />
   <BlogMainLayout landingUrl={LANDING_URL}>
     <header class="mx-auto max-w-2xl text-center">
       <h1 class="font-title text-4xl font-bold tracking-tight">

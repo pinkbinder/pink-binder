@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/solid-query'
+import { BLOG_QUERY_DEFAULTS } from '@repo/config/query-defaults'
 import type { JSX } from 'solid-js'
 
-const QUERY_STALE_TIME_MS = 5 * 60 * 1_000
-const QUERY_GC_TIME_MS = 30 * 60 * 1_000
+const QUERY_STALE_TIME_MS = BLOG_QUERY_DEFAULTS.staleTimeMs
+const QUERY_GC_TIME_MS = BLOG_QUERY_DEFAULTS.gcTimeMs
 
 function createBlogQueryClient() {
   return new QueryClient({

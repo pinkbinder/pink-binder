@@ -13,6 +13,7 @@ import { createMemo, createSignal, For, onCleanup, onMount, Show } from 'solid-j
 import type { CatalogProduct } from '../lib/catalog'
 import {
   STORE_CATEGORIES,
+  buildCatalogUrl,
   matchesSearch,
   parseCatalogSearch,
   type StoreCategory,
@@ -44,11 +45,10 @@ export function CatalogSection(props: Props) {
   })
 
   const setParam = (key: 'q' | 'category', value: string | null) => {
-    const url = new URL(window.location.href)
-    if (value === null || value === '' || value === 'All') url.searchParams.delete(key)
-    else url.searchParams.set(key, value)
-    window.history.pushState(null, '', url)
-    setSearch(parseCatalogSearch(url.searchParams))
+    const { url, replace } = buildCatalogUrl(window.location.href, key, value)
+    if (replace) window.history.replaceState(null, '', url)
+    else window.history.pushState(null, '', url)
+    setSearch(parseCatalogSearch(new URL(url).searchParams))
   }
 
   const visible = createMemo(() =>
