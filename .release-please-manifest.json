@@ -1,5 +1,5 @@
 {
-  ".": "3.0.5",
+  ".": "3.0.6",
   "apps/admin": "0.7.2",
   "apps/blog": "0.12.5",
   "apps/landing": "0.7.5",
@@ -8,5 +8,5 @@
   "packages/data": "2.4.6",
   "packages/marketplaces": "1.3.13",
   "packages/typescript-config": "2.0.0",
-  "packages/ui": "2.0.5"
+  "packages/ui": "2.0.6"
 }
