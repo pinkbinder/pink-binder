@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.0.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.1...pink-binder-v3.0.2) (2026-09-16)
+
+
+### Performance
+
+* Solid audit round 2 — indexed facet lookups, isolate-level derivation, tree-shaking ([#126](https://github.com/pinkbinder/pink-binder/issues/126)) ([bc12a23](https://github.com/pinkbinder/pink-binder/commit/bc12a237716d7de0d561de481a9071c6d11719bf))
+
 ## [3.0.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.0...pink-binder-v3.0.1) (2026-09-16)
 
 
