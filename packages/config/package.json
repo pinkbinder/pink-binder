@@ -9,7 +9,8 @@
     ".": "./src/index.ts",
     "./site": "./src/site.ts",
     "./security-headers": "./security-headers.mjs",
-    "./edge-cache": "./src/edge-cache.ts"
+    "./edge-cache": "./src/edge-cache.ts",
+    "./query-defaults": "./src/query-defaults.ts"
   },
   "scripts": {
     "lint": "oxlint . --max-warnings 0",

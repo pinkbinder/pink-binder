@@ -2,10 +2,11 @@ import { QueryClient } from '@tanstack/solid-query'
 import { PersistQueryClientProvider } from '@tanstack/solid-query-persist-client'
 import type { Persister } from '@tanstack/query-persist-client-core'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { ADMIN_QUERY_DEFAULTS } from '@repo/config/query-defaults'
 import type { JSX } from 'solid-js'
 
-const QUERY_STALE_TIME_MS = 60 * 1_000
-const QUERY_GC_TIME_MS = 10 * 60 * 1_000
+const QUERY_STALE_TIME_MS = ADMIN_QUERY_DEFAULTS.staleTimeMs
+const QUERY_GC_TIME_MS = ADMIN_QUERY_DEFAULTS.gcTimeMs
 const PERSIST_KEY = 'pink-binder-admin-query-cache'
 /**
  * Persisted cache survives full reloads and tab restores; keep entries no

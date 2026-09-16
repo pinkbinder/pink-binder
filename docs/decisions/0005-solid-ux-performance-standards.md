@@ -63,3 +63,58 @@ remediation:
 - Future work continues from the standard's follow-up backlog (route-level
   data preloading expansion, list virtualization threshold, island bundle
   budgets), tracked in the public repo.
+
+## Addendum (2026-09-15, round 2): backlog disposition
+
+The follow-up list published with the audit is dispositioned as follows.
+Items marked _done_ shipped on the same branch; the rest record why code
+did not move, so the list never re-derives itself.
+
+**Done**
+
+| Item                                                                                           | Where                                                                         |
+| ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `createSelector` filter-chip active states                                                     | `packages/ui` blog grid — one active-filter snapshot memo, per-chip selectors |
+| `startTransition` on filter commits                                                            | `packages/ui` blog grid (`pushFilterParams`, search commit)                   |
+| SearchableSelect filter debounce (60 ms)                                                       | `packages/ui` searchable select                                               |
+| Blog grid retained-page cap (`maxPages` 20)                                                    | `packages/ui` blog-grid-query                                                 |
+| Query-state caching by search string (equals semantics)                                        | `packages/ui` compat-navigation                                               |
+| `content-visibility: auto` on grid cards                                                       | `packages/ui` blog grid                                                       |
+| Hydrated-surface anti-pattern guard                                                            | `tests/solid-hygiene.test.ts` (CI-enforced §1)                                |
+| Admin query cache persistence (sessionStorage, `maxAge` = gcTime)                              | `apps/admin` root-provider via router `Wrap`                                  |
+| Shared query policy module                                                                     | `@repo/config/query-defaults` (admin, blog providers, grid query)             |
+| View transitions for store navigation (`ClientRouter`)                                         | `apps/store` layout                                                           |
+| Cart island deferred to `client:idle`                                                          | `apps/store` cart page                                                        |
+| Speculation-rules prefetch of grid links (moderate)                                            | blog index                                                                    |
+| High-priority LCP image preload (first grid card)                                              | blog index + layout                                                           |
+| Web Vitals → Zaraz `web_vitals` events, lazily loaded                                          | blog analytics client                                                         |
+| Subpath exports for the interactive kit                                                        | `@repo/ui` package exports                                                    |
+| Bundle budgets as a `performance` script (gzip ceilings; entry, vendor, CSS, per-route, total) | `scripts/check-bundle-budgets.mjs`                                            |
+
+**Closed without code (evaluated)**
+
+- `batch()` audit: Solid already batches synchronous event-handler writes;
+  the remaining async sequences are intentionally ordered. No change.
+- `<Index>` for tables: rows key by stable object references today (store
+  `produce` mutates in place), so `<For>` already preserves row DOM.
+- `defaultPreloadDelay`: the router's 50 ms default was already active.
+- Virtualization: the `maxPages` cap bounds the grid at ~171 mounted cards,
+  under the 500-row virtualization threshold; revisit per §5.
+- Font preloading: `font-title`/`font-body` are system font stacks — zero
+  webfont bytes to optimize.
+- `benchmark:routes`: harness exists; belongs to the weekly audit lane with
+  live servers, not to per-PR checks.
+
+**Blocked (external dependency, revisit when unblocked)**
+
+- Converting the ~40 server-rendered blog components off destructured props:
+  incremental as files are touched, with the blog-pipeline vendored copy
+  mirrored per the artifact-drift rule; the hygiene guard pins the boundary.
+- `srcset`/`sizes` and AVIF: R2 image variants carry no width metadata
+  in-repo and the transcode lives in blog-pipeline (paused). Requires
+  pipeline-side metadata first.
+- Route loaders for inventory/content/ads: blocked until the real
+  marketplace integrations replace the demo stores; the orders route is the
+  template.
+- Web Vitals for admin: no analytics sink exists in admin; adopting Zaraz
+  there is a product decision, not a perf task.

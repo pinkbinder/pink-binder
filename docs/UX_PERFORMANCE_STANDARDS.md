@@ -157,4 +157,7 @@ The admin console is the reference implementation.
       (discrete filters).
 - [ ] Lists: `<For>`; >100 mounted rows from one interaction needs a window.
 - [ ] Images: explicit dimensions, one eager candidate per view, WebP variant.
-- [ ] `bun run validate` + affected app builds green.
+- [ ] Large option lists and paged lists respect the interaction budgets
+      (§5) — `tests/solid-hygiene.test.ts` enforces §1 mechanically.
+- [ ] `bun run validate` + affected app builds green; admin bundle sizes
+      within budget via `bun run performance`.
