@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.5](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.4...landing-v0.7.5) (2026-09-16)
+
+
+### Performance
+
+* second-pass Solid audit — memoized type colors, indexed catalog resolution, shared location revision ([#132](https://github.com/pinkbinder/pink-binder/issues/132)) ([9b836f0](https://github.com/pinkbinder/pink-binder/commit/9b836f06cfca71b82e0f91416fd98163f16eaa27))
+
 ## [0.7.4](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.3...landing-v0.7.4) (2026-09-15)
 
 

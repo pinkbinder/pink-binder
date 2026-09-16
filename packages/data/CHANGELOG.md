@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.6](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.5...data-v2.4.6) (2026-09-16)
+
+
+### Performance
+
+* second-pass Solid audit — memoized type colors, indexed catalog resolution, shared location revision ([#132](https://github.com/pinkbinder/pink-binder/issues/132)) ([9b836f0](https://github.com/pinkbinder/pink-binder/commit/9b836f06cfca71b82e0f91416fd98163f16eaa27))
+
 ## [2.4.5](https://github.com/pinkbinder/pink-binder/compare/data-v2.4.4...data-v2.4.5) (2026-09-16)
 
 
