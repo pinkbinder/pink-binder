@@ -35,11 +35,7 @@ export function BlogSidebarShopPromo({ shopUrl }: { shopUrl: string }) {
           Shop now
         </span>
       </a>
-      <SocialBar
-        socials={socials}
-        class="gap-2.5 sm:gap-2.5"
-        iconClass="hover:bg-primary/75"
-      />
+      <SocialBar socials={socials} class="gap-2.5 sm:gap-2.5" iconClass="hover:bg-primary/75" />
     </div>
   )
 }
