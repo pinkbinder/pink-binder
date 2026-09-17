@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.15](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.14...marketplaces-v1.3.15) (2026-09-17)
+
+
+### Maintenance
+
+* toolchain-alignment ([#144](https://github.com/pinkbinder/pink-binder/issues/144)) ([3c2e964](https://github.com/pinkbinder/pink-binder/commit/3c2e96423aa634af16aba20e0abbb826b5d91bdd))
+
 ## [1.3.14](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.13...marketplaces-v1.3.14) (2026-09-17)
 
 

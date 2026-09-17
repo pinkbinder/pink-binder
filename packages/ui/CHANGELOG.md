@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.1...ui-v2.1.2) (2026-09-17)
+
+
+### Maintenance
+
+* toolchain-alignment ([#144](https://github.com/pinkbinder/pink-binder/issues/144)) ([3c2e964](https://github.com/pinkbinder/pink-binder/commit/3c2e96423aa634af16aba20e0abbb826b5d91bdd))
+
 ## [2.1.1](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.0...ui-v2.1.1) (2026-09-17)
 
 
