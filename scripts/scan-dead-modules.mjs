@@ -76,7 +76,7 @@ for (const file of candidates) {
 }
 
 console.log('=== NEVER-IMPORTED MODULES (potential dead files) ===')
-for (const d of dead.sort()) {
+for (const d of dead.toSorted()) {
   console.log(`  ${d.file}`)
 }
 console.log(`\nTotal: ${dead.length} candidates`)

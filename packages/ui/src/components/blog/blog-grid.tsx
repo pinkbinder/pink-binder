@@ -156,6 +156,41 @@ function trackFilterChanges(
   }
 }
 
+/** Pure facet-chip renderers: they only read their option argument, so they
+ *  live at module scope instead of being recreated inside BlogGrid. */
+function renderPokemonChip(option: SearchableSelectOption) {
+  return <span class={cn(option.emphasized && 'font-bold')}>{option.label}</span>
+}
+
+function renderTypeChip(option: SearchableSelectOption) {
+  const lightColors = getPokemonTypeLightColors(option.value)
+  const logoUrl = getPokemonTypeLogoUrl(option.value)
+  return (
+    <span
+      class="inline-flex items-center gap-1.5 rounded-full border border-(--type-border) bg-(--type-bg) px-2 py-0.5 text-xs font-semibold text-(--type-fg)"
+      style={{
+        '--type-bg': lightColors.bg,
+        '--type-fg': lightColors.text,
+        '--type-border': lightColors.border,
+      }}
+    >
+      {logoUrl ? (
+        <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(option.value)} />
+      ) : null}
+      {option.label}
+    </span>
+  )
+}
+
+function renderIconChip(option: SearchableSelectOption) {
+  return (
+    <span class="inline-flex items-center gap-1.5">
+      {option.icon}
+      <span>{option.label}</span>
+    </span>
+  )
+}
+
 interface BlogGridProps {
   posts: EnrichedPostForGrid[]
   facets: BlogGridFacets
@@ -562,9 +597,6 @@ export function BlogGrid(props: BlogGridProps) {
   const expansionOptionByValue = createMemo(
     () => new Map(expansionOptions().map((option) => [option.value, option]))
   )
-  function renderPokemonChip(option: SearchableSelectOption) {
-    return <span class={cn(option.emphasized && 'font-bold')}>{option.label}</span>
-  }
 
   const themeOptions = createMemo(() =>
     themeFilters().map((name) => {
@@ -721,7 +753,7 @@ export function BlogGrid(props: BlogGridProps) {
     const order = new Map(ranked.map((entry, index) => [entry.value, index]))
     return [...options]
       .filter((entry) => order.has(entry.value))
-      .sort((a, b) => (order.get(a.value) ?? 0) - (order.get(b.value) ?? 0))
+      .toSorted((a, b) => (order.get(a.value) ?? 0) - (order.get(b.value) ?? 0))
   }
 
   const catalogSelectValue = createMemo(() =>
@@ -788,35 +820,6 @@ export function BlogGrid(props: BlogGridProps) {
   })
 
   const tagFilterLabel = () => selectedTagOption()?.label ?? tagFilter()
-
-  function renderTypeChip(option: SearchableSelectOption) {
-    const lightColors = getPokemonTypeLightColors(option.value)
-    const logoUrl = getPokemonTypeLogoUrl(option.value)
-    return (
-      <span
-        class="inline-flex items-center gap-1.5 rounded-full border border-(--type-border) bg-(--type-bg) px-2 py-0.5 text-xs font-semibold text-(--type-fg)"
-        style={{
-          '--type-bg': lightColors.bg,
-          '--type-fg': lightColors.text,
-          '--type-border': lightColors.border,
-        }}
-      >
-        {logoUrl ? (
-          <PokemonTypeLogo logoUrl={logoUrl} color={getPokemonTypeLogoColor(option.value)} />
-        ) : null}
-        {option.label}
-      </span>
-    )
-  }
-
-  function renderIconChip(option: SearchableSelectOption) {
-    return (
-      <span class="inline-flex items-center gap-1.5">
-        {option.icon}
-        <span>{option.label}</span>
-      </span>
-    )
-  }
 
   function renderTagCatalogChip(option: SearchableSelectOption) {
     const typeName = parseTypeCategory(option.label)

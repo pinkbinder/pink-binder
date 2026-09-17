@@ -467,7 +467,7 @@ export const ARTIST_COLLECTIONS_WITH_ILLUSTRATOR_BLOG = new Set<SpeciesCollectio
 export function sortSpeciesCollections(
   collections: SpeciesCollectionSlug[]
 ): SpeciesCollectionSlug[] {
-  return [...collections].sort((a, b) => {
+  return collections.toSorted((a, b) => {
     const aIndex = SORT_INDEX.get(a) ?? Number.MAX_SAFE_INTEGER
     const bIndex = SORT_INDEX.get(b) ?? Number.MAX_SAFE_INTEGER
     if (aIndex !== bIndex) {

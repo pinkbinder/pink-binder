@@ -17,7 +17,7 @@
     "dev:admin": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/admin",
     "dev:blog": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/blog",
     "dev:landing": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev --filter=@repo/landing",
-    "lint": "oxlint . --max-warnings 0",
+    "lint": "oxlint . --deny-warnings",
     "type-check": "turbo run type-check",
     "type:check": "turbo run type-check",
     "start": "node scripts/kill-dev-ports.mjs && node scripts/with-env.mjs turbo run dev",
@@ -36,7 +36,7 @@
     "@babel/core": "^7.28.0",
     "@babel/preset-typescript": "^7.27.0",
     "@happy-dom/global-registrator": "^20.14.5",
-    "@shadcn/lint": "0.1.0",
+    "@shadcn/lint": "^0.1.1",
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/user-event": "14.6.7",
     "@types/bun": "^1.4.2",
@@ -44,8 +44,8 @@
     "chrome-launcher": "1.2.1",
     "lighthouse": "13.4.1",
     "lint-staged": "^17.5.1",
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
     "turbo": "2.10.12"
   },
   "overrides": {

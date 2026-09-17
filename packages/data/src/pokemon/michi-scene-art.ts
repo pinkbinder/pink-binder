@@ -114,7 +114,7 @@ export function compareMichiSceneLandscapePreference(
 export function sortMichiSceneArtByLandscapePreference(
   entries: MichiSceneArtEntry[]
 ): MichiSceneArtEntry[] {
-  return [...entries].sort(compareMichiSceneLandscapePreference)
+  return entries.toSorted(compareMichiSceneLandscapePreference)
 }
 
 export function pickBestLandscapeMichiScene(
@@ -248,7 +248,7 @@ export function pickMichiSceneArtFromCards(cards: PokemonTcgCard[], max = 2): Mi
   const ranked = cards
     .map((card) => ({ card, score: scoreCardForMichiScene(card) }))
     .filter((entry) => entry.score >= 40)
-    .sort((a, b) => b.score - a.score)
+    .toSorted((a, b) => b.score - a.score)
 
   const picked: MichiSceneArtEntry[] = []
   const usedIds = new Set<string>()

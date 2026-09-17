@@ -72,7 +72,7 @@ describe('displayCategoriesForPost', () => {
 describe('deprecated alias sets', () => {
   it('GRID_META_CATEGORIES mirrors the format set', () => {
     // GRID_META_CATEGORIES aliases POST_FORMAT_SET; content-equal to the deprecated COLLECTION_FILTER_SKIP
-    expect([...GRID_META_CATEGORIES].sort()).toEqual([...COLLECTION_FILTER_SKIP].sort())
-    expect([...THEME_FILTER_SKIP].sort()).toEqual([...COLLECTION_FILTER_SKIP].sort())
+    expect([...GRID_META_CATEGORIES].toSorted()).toEqual([...COLLECTION_FILTER_SKIP].toSorted())
+    expect([...THEME_FILTER_SKIP].toSorted()).toEqual([...COLLECTION_FILTER_SKIP].toSorted())
   })
 })

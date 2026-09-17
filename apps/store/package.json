@@ -37,8 +37,8 @@
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.1.2",
-    "oxfmt": "^0.67.0",
-    "oxlint": "^1.81.0",
+    "oxfmt": "^0.68.0",
+    "oxlint": "^1.83.0",
     "tailwindcss": "^4.3.3",
     "typescript": "6.0.3",
     "wrangler": "^4.130.0"

@@ -31,6 +31,11 @@ export function getPokemonTypeLogoUrl(type: string): string | null {
   return POKEMON_TYPE_LOGOS[type] ?? null
 }
 
+/** Format a 0–255 channel as two lowercase hex digits. */
+function toHex(channel: number): string {
+  return channel.toString(16).padStart(2, '0')
+}
+
 function toSolidLightColor(hex: string) {
   const normalized = hex.replace('#', '')
   if (normalized.length !== 6) return '#E5E7EB'
@@ -43,26 +48,30 @@ function toSolidLightColor(hex: string) {
   const LIGHT_MODE_WHITE_BLEND_FACTOR = 0.72
   const mixWithWhite = (channel: number) =>
     Math.round(channel + (255 - channel) * LIGHT_MODE_WHITE_BLEND_FACTOR)
-  const toHex = (channel: number) => channel.toString(16).padStart(2, '0')
   return `#${toHex(mixWithWhite(r))}${toHex(mixWithWhite(g))}${toHex(mixWithWhite(b))}`
 }
 
+/** Linearize an sRGB channel per the WCAG 2.x relative-luminance formula. */
+function linearizedChannel(value: number): number {
+  const scaled = value / 255
+  return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4
+}
+
 function luminance(hex: string): number {
-  const channel = (value: number): number => {
-    const scaled = value / 255
-    return scaled <= 0.03928 ? scaled / 12.92 : ((scaled + 0.055) / 1.055) ** 2.4
-  }
-  const r = channel(Number.parseInt(hex.slice(0, 2), 16))
-  const g = channel(Number.parseInt(hex.slice(2, 4), 16))
-  const b = channel(Number.parseInt(hex.slice(4, 6), 16))
+  const r = linearizedChannel(Number.parseInt(hex.slice(0, 2), 16))
+  const g = linearizedChannel(Number.parseInt(hex.slice(2, 4), 16))
+  const b = linearizedChannel(Number.parseInt(hex.slice(4, 6), 16))
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+
+function stripHashPrefix(hex: string): string {
+  return hex.replace('#', '')
 }
 
 /** WCAG contrast ratio between two opaque hex colors. */
 export function contrastRatio(foreground: string, background: string): number {
-  const parse = (hex: string): string => hex.replace('#', '')
-  const fg = luminance(parse(foreground))
-  const bg = luminance(parse(background))
+  const fg = luminance(stripHashPrefix(foreground))
+  const bg = luminance(stripHashPrefix(background))
   const [lighter, darker] = fg >= bg ? [fg, bg] : [bg, fg]
   return (lighter + 0.05) / (darker + 0.05)
 }
@@ -100,11 +109,11 @@ function shade(hex: string, factor: number): string {
   const g = Number.parseInt(normalized.slice(2, 4), 16)
   const b = Number.parseInt(normalized.slice(4, 6), 16)
   if (Number.isNaN(r) || Number.isNaN(g) || Number.isNaN(b)) return '#3D3D3D'
-  const toHex = (channel: number) =>
+  const shadeChannel = (channel: number) =>
     Math.round(channel * factor)
       .toString(16)
       .padStart(2, '0')
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`
+  return `#${shadeChannel(r)}${shadeChannel(g)}${shadeChannel(b)}`
 }
 
 /**
