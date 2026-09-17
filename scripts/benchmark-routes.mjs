@@ -73,7 +73,7 @@ function parseArgs(argv) {
 }
 
 function median(values) {
-  const numeric = values.filter(Number.isFinite).sort((left, right) => left - right)
+  const numeric = values.filter(Number.isFinite).toSorted((left, right) => left - right)
   if (numeric.length === 0) return null
   const middle = Math.floor(numeric.length / 2)
   return numeric.length % 2 === 0 ? (numeric[middle - 1] + numeric[middle]) / 2 : numeric[middle]

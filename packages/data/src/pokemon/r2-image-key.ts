@@ -171,7 +171,7 @@ export function buildPokemonImageSourceKeyMap(sourceKeys: readonly string[]): Ma
 
     const canonical = canonicalPokemonSourceKey(sourceKey)
     const groupKey = canonical.slice(0, canonical.lastIndexOf('.'))
-    const group = [...(groups.get(groupKey) ?? [sourceKey])].sort()
+    const group = (groups.get(groupKey) ?? [sourceKey]).toSorted()
     if (group.length === 1) {
       mapping.set(sourceKey, canonical)
       continue
@@ -229,7 +229,7 @@ export function buildLegacyPokemonImageSourceKeyMap(
       false
     )
     const groupKey = `pokemon/${directory}/${stem}`
-    const group = [...(groups.get(groupKey) ?? [sourceKey])].sort()
+    const group = (groups.get(groupKey) ?? [sourceKey]).toSorted()
     const ordinal = group.length > 1 ? group.indexOf(sourceKey) + 1 : undefined
     mapping.set(sourceKey, canonicalPokemonSourceKeyWithStem(sourceKey, stem, ordinal))
   }

@@ -12,6 +12,10 @@ export type BlogTableOfContentsItem = {
 
 const DESKTOP_MEDIA_QUERY = '(min-width: 1024px)'
 
+/** Placeholder disposal so `disposeActiveTracker` is always callable before
+ *  the scroll tracker installs its real teardown. */
+const noopDisposal = () => {}
+
 /** Shared with components that stamp heading ids so static TOC extraction
  *  and the client-side DOM collector derive identical anchors. */
 export function slugifyHeading(value: string) {
@@ -166,7 +170,7 @@ export function BlogTableOfContents(props: {
     const articleId = props.articleId
     const variant = props.variant
     const mediaQuery = window.matchMedia(DESKTOP_MEDIA_QUERY)
-    let disposeActiveTracker = () => {}
+    let disposeActiveTracker = noopDisposal
 
     const setupActiveTracker = () => {
       disposeActiveTracker()
@@ -177,7 +181,7 @@ export function BlogTableOfContents(props: {
       if (!shouldRun || !article) {
         setItems([])
         setActiveId(undefined)
-        disposeActiveTracker = () => {}
+        disposeActiveTracker = noopDisposal
         return
       }
 
@@ -186,7 +190,7 @@ export function BlogTableOfContents(props: {
 
       if (headings.length === 0) {
         setActiveId(undefined)
-        disposeActiveTracker = () => {}
+        disposeActiveTracker = noopDisposal
         return
       }
 

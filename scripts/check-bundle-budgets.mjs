@@ -83,7 +83,7 @@ function check(budget, assets, failures) {
   }
   const largest = matches
     .map((asset) => ({ name: asset.name, bytes: gzipSize(asset.path) }))
-    .sort((a, b) => b.bytes - a.bytes)[0]
+    .toSorted((a, b) => b.bytes - a.bytes)[0]
   const line = `${budget.id}: ${largest.bytes.toLocaleString()} gz bytes (budget ${budget.maxGzipBytes.toLocaleString()})`
   if (largest.bytes > budget.maxGzipBytes) {
     failures.push(`OVER BUDGET — ${line}`)

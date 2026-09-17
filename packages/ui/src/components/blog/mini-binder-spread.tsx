@@ -77,7 +77,7 @@ function materializePage(
     }
   }
 
-  return materialized.sort((a, b) => (a.row !== b.row ? a.row - b.row : a.col - b.col))
+  return materialized.toSorted((a, b) => (a.row !== b.row ? a.row - b.row : a.col - b.col))
 }
 
 function layoutStorageKey(layout: BinderLayout, title: string, persistenceKey?: string): string {

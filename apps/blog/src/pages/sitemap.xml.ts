@@ -15,8 +15,8 @@ export const prerender = false
 
 export const GET: APIRoute = async ({ locals }) => {
   const blogSiteUrl = getSitemapBlogUrl()
-  const sortedPosts = (await getPublishedBlogGridPostsForRequest(new Date(), locals)).sort((a, b) =>
-    a.slug.localeCompare(b.slug)
+  const sortedPosts = (await getPublishedBlogGridPostsForRequest(new Date(), locals)).toSorted(
+    (a, b) => a.slug.localeCompare(b.slug)
   )
   const entries = [
     { url: blogSiteUrl, lastModified: new Date().toISOString(), priority: 1 },

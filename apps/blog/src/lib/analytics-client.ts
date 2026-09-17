@@ -139,6 +139,19 @@ function handleClick(event: MouseEvent): void {
 
 let initialized = false
 
+/** web-vitals metric shape forwarded to Zaraz (structural subset we consume). */
+interface WebVitalMetric {
+  name: string
+  value: number
+  rating?: string
+  id?: string
+  navigationType?: string
+}
+
+function reportWebVital(metric: WebVitalMetric): void {
+  trackWebVital(metric)
+}
+
 /**
  * Report Core Web Vitals as Zaraz events. The library is loaded lazily so it
  * never competes with the metrics it measures; all four helpers buffer their
@@ -147,17 +160,10 @@ let initialized = false
 async function initWebVitals(): Promise<void> {
   try {
     const { onCLS, onINP, onLCP, onTTFB } = await import('web-vitals')
-    const report = (metric: {
-      name: string
-      value: number
-      rating?: string
-      id?: string
-      navigationType?: string
-    }) => trackWebVital(metric)
-    onCLS(report)
-    onINP(report)
-    onLCP(report)
-    onTTFB(report)
+    onCLS(reportWebVital)
+    onINP(reportWebVital)
+    onLCP(reportWebVital)
+    onTTFB(reportWebVital)
   } catch {
     // Metrics are observability, never a page dependency.
   }

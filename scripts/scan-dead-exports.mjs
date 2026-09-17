@@ -114,7 +114,7 @@ for (const file of allFiles) {
 }
 
 console.log('=== POSSIBLY DEAD NAMED EXPORTS (no non-barrel references) ===')
-for (const c of candidates.sort(
+for (const c of candidates.toSorted(
   (a, b) => a.file.localeCompare(b.file) || a.name.localeCompare(b.name)
 )) {
   console.log(`  ${c.file}: ${c.name}`)

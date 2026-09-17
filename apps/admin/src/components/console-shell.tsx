@@ -99,6 +99,12 @@ function useThemeEffect() {
   })
 }
 
+/** Reactive accessors over the module-level preferences store; hoisted so
+ *  components share one closure instead of recreating them per render. */
+const themeToggleLabel = () =>
+  adminPreferences.theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
+const sidebarOpen = () => adminPreferences.sidebarOpen
+
 function BrandMark(props: { collapsed?: boolean }) {
   return (
     <Link to="/" class="flex min-w-0 items-center gap-2.5" title="Pink Binder console">
@@ -119,10 +125,8 @@ function BrandMark(props: { collapsed?: boolean }) {
 }
 
 function ThemeToggle(props: { expanded?: boolean }) {
-  const label = () =>
-    adminPreferences.theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'
   return (
-    <Button variant="navItem" size="sm" onClick={toggleTheme} aria-label={label()}>
+    <Button variant="navItem" size="sm" onClick={toggleTheme} aria-label={themeToggleLabel()}>
       {adminPreferences.theme === 'light' ? <Moon class="size-4" /> : <Sun class="size-4" />}
       <Show when={props.expanded}>
         <span class="text-sm">
@@ -135,7 +139,6 @@ function ThemeToggle(props: { expanded?: boolean }) {
 
 function DesktopSidebar() {
   const matchRoute = useMatchRoute()
-  const sidebarOpen = () => adminPreferences.sidebarOpen
 
   return (
     <aside
