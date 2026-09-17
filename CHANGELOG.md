@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.4...pink-binder-v3.1.5) (2026-09-17)
+
+
+### Maintenance
+
+* adopt Code Foundry runtime v1.30.0 ([#148](https://github.com/pinkbinder/pink-binder/issues/148)) ([7ddc4c5](https://github.com/pinkbinder/pink-binder/commit/7ddc4c5d5c3faf153560647bbd87dc31fd2bf9d1))
+
 ## [3.1.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.3...pink-binder-v3.1.4) (2026-09-17)
 
 
