@@ -91,6 +91,19 @@ function buildPostsPath(segments: string[]): string {
   return `/posts/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`
 }
 
+/**
+ * Decode one request path segment. Malformed percent escapes (e.g. `%`,
+ * `%zz`, truncated UTF-8 sequences) make `decodeURIComponent` throw — treat
+ * them as unresolvable instead of surfacing a 500.
+ */
+function decodePathSegment(segment: string): string | null {
+  try {
+    return decodeURIComponent(segment)
+  } catch {
+    return null
+  }
+}
+
 /** Strip deprecated `list--` prefix from roundup slugs. */
 export function normalizeCanonicalBlogSlug(slug: string): string {
   return slug.startsWith('list--') ? slug.slice('list--'.length) : slug
@@ -161,12 +174,16 @@ export function pathSegmentsToCanonicalSlug(segments: string[]): string | null {
   }
 
   if (segments.length === 1) {
-    const single = normalizeCanonicalBlogSlug(decodeURIComponent(segments[0]!))
+    const decoded = decodePathSegment(segments[0]!)
+    if (decoded === null) return null
+    const single = normalizeCanonicalBlogSlug(decoded)
     return single.trim() ? single : null
   }
 
   if (segments.length === 2) {
-    const [kind, id] = segments.map((segment) => decodeURIComponent(segment))
+    const kind = decodePathSegment(segments[0]!)
+    const id = decodePathSegment(segments[1]!)
+    if (kind === null || id === null) return null
     if (kind === 'species' && id) {
       const slug = normalizeCanonicalBlogSlug(id)
       return slug.trim() ? slug : null
@@ -181,9 +198,10 @@ export function pathSegmentsToCanonicalSlug(segments: string[]): string | null {
   }
 
   if (segments.length === 3) {
-    const axis = decodeURIComponent(segments[0] ?? '')
-    const theme = decodeURIComponent(segments[1] ?? '')
-    const angle = decodeURIComponent(segments[2] ?? '')
+    const axis = decodePathSegment(segments[0] ?? '')
+    const theme = decodePathSegment(segments[1] ?? '')
+    const angle = decodePathSegment(segments[2] ?? '')
+    if (axis === null || theme === null || angle === null) return null
 
     if (angle === 'overview' && ENTITY_OVERVIEW_KINDS.has(axis as EntityOverviewKind) && theme) {
       return `${axis}--${entitySlugFromPathId(axis as EntityOverviewKind, theme)}`
@@ -218,14 +236,31 @@ export function getPostHref(canonicalSlug: string, baseUrl?: string): string {
   return baseUrl ? new URL(pathname, baseUrl).toString() : pathname
 }
 
-/** 301 target when a request still uses a legacy URL shape. */
-export function getLegacyPostRedirectPath(segments: string[]): string | null {
+/**
+ * 301 target when a request still uses a legacy URL shape.
+ *
+ * Pass the raw request pathname as `requestPathname` so non-canonical URL
+ * spellings that decode to a valid post — trailing slashes, doubled
+ * separators, or alternate percent-encodings — redirect to the one canonical
+ * path instead of serving a duplicate 200.
+ */
+export function getLegacyPostRedirectPath(
+  segments: string[],
+  requestPathname?: string
+): string | null {
   if (segments.length === 0) {
     return null
   }
 
-  const currentPath = buildPostsPath(segments)
-  const decoded = segments.map((segment) => decodeURIComponent(segment))
+  const currentPath = requestPathname ?? buildPostsPath(segments)
+  const decoded: string[] = []
+  for (const segment of segments) {
+    const value = decodePathSegment(segment)
+    if (value === null) {
+      return null
+    }
+    decoded.push(value)
+  }
 
   const canonical = pathSegmentsToCanonicalSlug(decoded)
   if (canonical) {

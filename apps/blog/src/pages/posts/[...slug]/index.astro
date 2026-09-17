@@ -1,6 +1,8 @@
 ---
 import Layout from '../../../layouts/Layout.astro'
 import MdxProse from '../../../components/MdxProse.astro'
+import { pathSegmentsToCanonicalSlug } from '@repo/data/blog/post-path'
+import { getAuthoredPost } from '../../../lib/authored-posts'
 import { POST_PAGE_CACHE_CONTROL, loadPostPageForRequest } from '../../../lib/post-render-r2'
 
 export const prerender = false
@@ -8,15 +10,37 @@ export const prerender = false
 const slugParam = Astro.params.slug ?? ''
 const slugSegments = Array.isArray(slugParam) ? slugParam : slugParam.split('/').filter(Boolean)
 
-const loaded = await loadPostPageForRequest(slugSegments, Astro.locals)
-if (loaded.status === 'not-found') {
+const canonicalSlug = pathSegmentsToCanonicalSlug(slugSegments)
+const loaded = canonicalSlug
+  ? await loadPostPageForRequest(slugSegments, Astro.locals)
+  : null
+
+// Authored posts live in `content/*.mdx` and carry no render artifact; they
+// backstop the R2 loader both when the artifact reports the authored status
+// (no sections, no render) and when no artifact exists at all. An artifact
+// claiming `authored` with no committed source still 404s — serving a
+// head-only shell reads as a soft 404 to crawlers.
+const authored = canonicalSlug ? getAuthoredPost(canonicalSlug) : null
+
+const resolved =
+  loaded?.status === 'ok'
+    ? { kind: 'prebuilt' as const, head: loaded.head, html: loaded.html }
+    : authored
+      ? {
+          kind: 'authored' as const,
+          head: loaded && loaded.status !== 'not-found' ? loaded.head : authored.head,
+          body: authored.body,
+        }
+      : null
+
+if (!resolved) {
   return new Response('Not Found', { status: 404 })
 }
 
 // Published articles are immutable; serve them from the CDN edge and purge
 // on data publish (see the private data service's publish workflow).
 Astro.response.headers.set('Cache-Control', POST_PAGE_CACHE_CONTROL)
-const { head } = loaded
+const { head } = resolved
 ---
 
 <Layout
@@ -25,13 +49,13 @@ const { head } = loaded
   canonical={head.canonical}
   image={head.image}
   publishedTime={head.publishedTime}
-  postView={{ slug: slugSegments.join('/'), title: head.title }}
+  postView={{ slug: canonicalSlug ?? '', title: head.title }}
 >
   {
-    loaded.status === 'authored' ? (
-      <MdxProse content="" />
+    resolved.kind === 'prebuilt' ? (
+      <Fragment set:html={resolved.html} />
     ) : (
-      <Fragment set:html={loaded.html} />
+      <MdxProse content={resolved.body} />
     )
   }
 </Layout>

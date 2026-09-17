@@ -26,5 +26,19 @@ export const onRequest = defineMiddleware(async (context, next) => {
     })
   }
 
-  return applySecurityHeaders(response)
+  const secured = applySecurityHeaders(response)
+
+  // Preview hosts (`<worker>.workers.dev`) serve identical duplicates — the
+  // storefront is gated out of production, so keep them usable but unindexed.
+  if (new URL(context.request.url).hostname.endsWith('.workers.dev')) {
+    const headers = new Headers(secured.headers)
+    headers.set('X-Robots-Tag', 'noindex, follow')
+    return new Response(secured.body, {
+      headers,
+      status: secured.status,
+      statusText: secured.statusText,
+    })
+  }
+
+  return secured
 })

@@ -7,6 +7,9 @@ const headers = {
   'Cache-Control': WELL_KNOWN_CACHE_CONTROL,
   'Content-Type': 'text/html; charset=utf-8',
   'X-Content-Type-Options': 'nosniff',
+  // Agent/developer surface, not a search landing page — keep it out of the
+  // index so it never shows up as thin or duplicate coverage.
+  'X-Robots-Tag': 'noindex, follow',
 }
 
 const document = `<!doctype html>

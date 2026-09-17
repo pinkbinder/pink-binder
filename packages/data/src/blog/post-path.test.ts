@@ -8,6 +8,7 @@ import {
   pathSegmentsToCanonicalSlug,
   getPostPathname,
   getPostHref,
+  getLegacyPostRedirectPath,
 } from './post-path'
 
 describe('blog/post-path', () => {
@@ -50,5 +51,29 @@ describe('blog/post-path', () => {
     expect(getPostHref('pokemon/pikachu', 'https://example.com')).toBe(
       'https://example.com/posts/species/pokemon%2Fpikachu'
     )
+  })
+
+  it('treats malformed percent escapes as unresolvable instead of throwing', () => {
+    expect(pathSegmentsToCanonicalSlug(['%'])).toBeNull()
+    expect(pathSegmentsToCanonicalSlug(['species', '%zz'])).toBeNull()
+    expect(pathSegmentsToCanonicalSlug(['species', '%E0%A4%A'])).toBeNull()
+    expect(pathSegmentsToCanonicalSlug(['themes', '%', 'cutest'])).toBeNull()
+    expect(() => getLegacyPostRedirectPath(['%'])).not.toThrow()
+    expect(getLegacyPostRedirectPath(['%'])).toBeNull()
+    expect(getLegacyPostRedirectPath(['species', '%E0%A4%A'])).toBeNull()
+  })
+
+  it('redirects non-canonical request spellings to the canonical path', () => {
+    expect(getLegacyPostRedirectPath(['species', 'pikachu'], '/posts/species/pikachu/')).toBe(
+      '/posts/species/pikachu'
+    )
+    expect(getLegacyPostRedirectPath(['species', 'pikachu'], '/posts//species//pikachu')).toBe(
+      '/posts/species/pikachu'
+    )
+    expect(getLegacyPostRedirectPath(['species', '%70ikachu'], '/posts/species/%70ikachu')).toBe(
+      '/posts/species/pikachu'
+    )
+    expect(getLegacyPostRedirectPath(['species', 'pikachu'], '/posts/species/pikachu')).toBeNull()
+    expect(getLegacyPostRedirectPath(['pikachu'], '/posts/pikachu')).toBe('/posts/species/pikachu')
   })
 })

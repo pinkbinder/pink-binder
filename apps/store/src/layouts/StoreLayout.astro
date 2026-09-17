@@ -5,9 +5,11 @@ import '../styles.css'
 interface Props {
   title: string
   description: string
+  /** Utility pages (cart, checkout) stay crawlable but unindexed. */
+  noindex?: boolean
 }
 
-const { title, description } = Astro.props
+const { title, description, noindex = false } = Astro.props
 ---
 
 <!doctype html>
@@ -18,6 +20,9 @@ const { title, description } = Astro.props
     <ClientRouter />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {noindex
+      ? <meta name="robots" content="noindex, follow" />
+      : <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />}
     <link rel="icon" href="/favicon/favicon.ico" />
     <link rel="icon" href="/favicon/favicon-32x32.png" sizes="32x32" type="image/png" />
     <link rel="apple-touch-icon" href="/favicon/apple-touch-icon.png" sizes="180x180" />
