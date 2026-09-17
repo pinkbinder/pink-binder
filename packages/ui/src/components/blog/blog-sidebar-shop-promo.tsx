@@ -38,7 +38,7 @@ export function BlogSidebarShopPromo({ shopUrl }: { shopUrl: string }) {
       <SocialBar
         socials={socials}
         class="gap-2.5 sm:gap-2.5"
-        iconClass="hover:bg-primary-deep hover:-translate-y-0.5 hover:shadow-md transition-[background-color,transform,box-shadow] duration-200"
+        iconClass="hover:bg-primary/75"
       />
     </div>
   )
