@@ -46,7 +46,7 @@
     "lint-staged": "^17.5.1",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
-    "turbo": "2.10.12"
+    "turbo": "^2.10.12"
   },
   "overrides": {
     "nanoid": "6.0.1",
