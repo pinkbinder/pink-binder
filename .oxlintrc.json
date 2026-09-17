@@ -3,7 +3,7 @@
   "jsPlugins": ["@shadcn/lint"],
   "categories": {
     "correctness": "error",
-    "suspicious": "off"
+    "suspicious": "error"
   },
   "settings": {
     "shadcn": {
