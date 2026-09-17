@@ -31,13 +31,13 @@
     "@astrojs/solid-js": "^7.0.2",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.5.1",
     "astro": "7.3.2",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
     "postcss": "8.5.28",
     "tailwindcss": "^4.3.3",
-    "typescript": "6.0.3",
-    "wrangler": "^4.127.1"
+    "typescript": "^6.0.3",
+    "wrangler": "^4.130.0"
   }
 }
