@@ -1,17 +1,19 @@
 import { defineMiddleware } from 'astro:middleware'
 import { SECURITY_HEADERS } from '@repo/config'
 import { serveWithEdgeCache } from '@repo/config/edge-cache'
-import { getLegacyPostRedirectPath } from '@repo/data/blog/post-path'
+import { getLegacyPostRedirectPath, pathSegmentsToCanonicalSlug } from '@repo/data/blog/post-path'
 import {
   API_CATALOG_PATH,
   API_DOCS_PATH,
   DISCOVERY_LINK_HEADER,
   OPENAPI_PATH,
 } from './lib/agent-discovery-headers'
+import { getAuthoredPost } from './lib/authored-posts'
 import { loadPostPageForRequest, POST_PAGE_CACHE_CONTROL } from './lib/post-render-r2'
 import { renderPostMarkdown } from './lib/post-markdown'
 
 const BLOG_ORIGIN = 'https://pinkbinder.blog'
+const CANONICAL_HOSTNAME = new URL(BLOG_ORIGIN).hostname
 
 const BLOG_INDEX_FACET_QUERY_KEYS = [
   'q',
@@ -71,10 +73,28 @@ export const onRequest = defineMiddleware(async (context, next) => {
   const url = new URL(context.request.url)
   const { pathname } = url
 
-  // Legacy `/posts/<slug>` single-segment redirects (unchanged behavior).
+  // Secondary hosts (e.g. the `<worker>.workers.dev` preview domain) serve
+  // byte-identical duplicates of the production site. Keep them usable for
+  // humans but out of the index so crawl stats and canonicalization stay
+  // clean. The tag is stamped on every non-redirect response below.
+  const isCanonicalHost = url.hostname === CANONICAL_HOSTNAME
+  const stampNonCanonicalHost = (headers: Headers): void => {
+    if (!isCanonicalHost) headers.set('X-Robots-Tag', 'noindex, follow')
+  }
+
+  // Bare `/posts` has no index page of its own — send it to the blog index.
+  if (pathname === '/posts' || pathname === '/posts/') {
+    url.pathname = '/'
+    return Response.redirect(url.toString(), 301)
+  }
+
+  // Legacy `/posts/<slug>` single-segment redirects plus canonical spelling
+  // normalization: passing the raw pathname lets trailing slashes, doubled
+  // separators, and alternate percent-encodings 301 to the canonical path
+  // instead of serving duplicate 200s.
   if (pathname.startsWith('/posts/')) {
     const segments = pathname.slice('/posts/'.length).split('/').filter(Boolean)
-    const redirectPath = getLegacyPostRedirectPath(segments)
+    const redirectPath = getLegacyPostRedirectPath(segments, pathname)
     if (redirectPath) {
       url.pathname = redirectPath
       return Response.redirect(url.toString(), 301)
@@ -89,6 +109,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         Vary: 'Accept',
         'X-Markdown-Tokens': String(Math.ceil(MARKDOWN_HOME.length / 4)),
       })
+      stampNonCanonicalHost(headers)
       applySecurity(headers)
       return new Response(MARKDOWN_HOME, { headers })
     }
@@ -96,23 +117,30 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   // Agent-facing Markdown for articles: the artifact JSON the prebuilt HTML
   // renders from maps cleanly to Markdown, so agents referencing a post get
-  // the full text without an HTML-to-text pass. Falls through to HTML when
-  // the slug is unknown or the post has no artifact body (authored MDX).
+  // the full text without an HTML-to-text pass. Authored posts serve their
+  // committed MDX body verbatim; unknown slugs fall through to HTML.
   if (acceptsMarkdown(context.request) && pathname.startsWith('/posts/')) {
     const segments = pathname.slice('/posts/'.length).split('/').filter(Boolean)
     const loaded = await loadPostPageForRequest(segments, context.locals)
-    if (loaded.status === 'ok') {
-      const body = renderPostMarkdown({
-        post: loaded.post,
-        head: loaded.head,
-        blogUrl: BLOG_ORIGIN,
-      })
+    const canonicalSlug = pathSegmentsToCanonicalSlug(segments)
+    const authored =
+      loaded.status === 'ok' || !canonicalSlug ? null : getAuthoredPost(canonicalSlug)
+    const body =
+      loaded.status === 'ok'
+        ? renderPostMarkdown({
+            post: loaded.post,
+            head: loaded.head,
+            blogUrl: BLOG_ORIGIN,
+          })
+        : authored?.body
+    if (body) {
       const headers = discoveryHeaders({
         'Cache-Control': POST_PAGE_CACHE_CONTROL,
         'Content-Type': 'text/markdown; charset=utf-8',
         Vary: 'Accept',
         'X-Markdown-Tokens': String(Math.ceil(body.length / 4)),
       })
+      stampNonCanonicalHost(headers)
       applySecurity(headers)
       return new Response(body, { headers })
     }
@@ -155,6 +183,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
   }
 
   const headers = discoveryHeaders(response.headers)
+  stampNonCanonicalHost(headers)
   applySecurity(headers)
   return new Response(response.body, {
     status: response.status,

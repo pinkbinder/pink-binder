@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro'
+import { getSitemapBlogUrl } from '@repo/config'
+
+export const prerender = false
+
+const blogIndexUrl = getSitemapBlogUrl()
+---
+
+<Layout
+  title="Page not found"
+  description="The page you were looking for does not exist."
+  canonical={blogIndexUrl}
+  noindex
+>
+  <main class="mx-auto flex max-w-2xl flex-col items-center px-4 py-24 text-center">
+    <h1 class="font-title text-4xl font-bold tracking-tight">Page not found</h1>
+    <p class="text-muted-foreground mt-4 text-base leading-relaxed">
+      This page wandered out of the binder. Head back to the blog to keep browsing cute cards and
+      collector guides.
+    </p>
+    <a
+      href="/"
+      class="bg-primary-deep text-primary-foreground mt-8 inline-flex h-10 items-center rounded-full px-6 text-sm font-medium"
+    >
+      Back to the blog
+    </a>
+  </main>
+</Layout>
