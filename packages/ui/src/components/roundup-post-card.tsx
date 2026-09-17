@@ -24,7 +24,7 @@ export function RoundupPostCard({
 }: RoundupPostCardProps) {
   return (
     <Card
-      class={`bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg ${className ?? ''}`}
+      class={`bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[border-color] duration-200 ${className ?? ''}`}
     >
       <RoundupHeroArtworkGrid artworkUrls={artworkUrls} fallback={fallback} fillFrame={fillFrame} />
       <CardHeader class="space-y-3">

@@ -1,4 +1,5 @@
-import { createEffect, createMemo, createSignal, For, Show } from 'solid-js'
+import { createMemo, createSignal, For, onMount, Show } from 'solid-js'
+import { slugifyHeading } from './blog-table-of-contents'
 import type { PokemonTcgCard } from '@repo/data/client'
 import { MichiSceneArtImage } from './michi-scene-art-image'
 import { PokemonTcgCardTile } from './pokemon-tcg-card-tile'
@@ -123,6 +124,9 @@ function BinderPage(props: {
   slots: InteractiveBinderSlot[]
   pageKey: BinderPageKey
   pageLabel: string
+  /** Pocket swap affordances render only once hydration is live — prebuilt
+   *  post pages ship no client JS, where dead buttons would be broken UI. */
+  interactive: boolean
   selectedIndex: number | null
   onSelect: (page: BinderPageKey, index: number) => void
 }) {
@@ -182,15 +186,17 @@ function BinderPage(props: {
                     </div>
                   </div>
                 )}
-                <button
-                  type="button"
-                  aria-pressed={selected()}
-                  aria-label={`${selected() ? 'Cancel moving' : 'Move'} ${props.pageLabel} pocket ${placed.row * 3 + placed.col + 1}`}
-                  onClick={() => props.onSelect(props.pageKey, index())}
-                  class="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring absolute top-1 right-1 z-20 rounded-full border border-white/70 px-2 py-1 text-[10px] font-semibold shadow-md backdrop-blur transition focus-visible:ring-2 focus-visible:outline-hidden"
-                >
-                  {selected() ? 'Selected' : 'Move'}
-                </button>
+                <Show when={props.interactive}>
+                  <button
+                    type="button"
+                    aria-pressed={selected()}
+                    aria-label={`${selected() ? 'Cancel moving' : 'Move'} ${props.pageLabel} pocket ${placed.row * 3 + placed.col + 1}`}
+                    onClick={() => props.onSelect(props.pageKey, index())}
+                    class="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring absolute top-1 right-1 z-20 rounded-full border border-white/70 px-2 py-1 text-[10px] font-semibold shadow-md backdrop-blur transition focus-visible:ring-2 focus-visible:outline-hidden"
+                  >
+                    {selected() ? 'Selected' : 'Move'}
+                  </button>
+                </Show>
               </div>
             )
           }}
@@ -226,42 +232,30 @@ export function MiniBinderSpread(props: {
     page: BinderPageKey
     index: number
   } | null>(null)
-  const [storageReady, setStorageReady] = createSignal(false)
+  /** True only in a mounted (hydrated) island — the statically rendered post
+   *  markup runs no client JS, so interactive affordances stay hidden there. */
+  const [hydrated, setHydrated] = createSignal(false)
   const [status, setStatus] = createSignal('Choose Move on two pockets to swap them.')
-  let skipNextSave = true
 
-  createEffect(() => {
-    const key = storageKey()
-    const initial = initialLayout()
-    skipNextSave = true
+  onMount(() => {
     let serialized: string | null = null
     try {
-      serialized = window.localStorage.getItem(key)
+      serialized = window.localStorage.getItem(storageKey())
     } catch {
       setStatus('Pocket moves work here, but this browser has disabled local saving.')
     }
-    const saved = restoreLayout(initial, serialized)
+    const saved = restoreLayout(initialLayout(), serialized)
     if (saved) {
       setLayout(saved)
       setStatus('Your saved pocket layout is ready.')
-    } else {
-      setLayout(initial)
     }
-    setSelected(null)
-    setStorageReady(true)
+    setHydrated(true)
   })
 
-  createEffect(() => {
-    const current = layout()
-    const key = storageKey()
-    if (!storageReady()) return
-    if (skipNextSave) {
-      skipNextSave = false
-      return
-    }
+  function persistLayout(current: BinderLayout) {
     try {
       window.localStorage.setItem(
-        key,
+        storageKey(),
         JSON.stringify({
           pageOne: current.pageOne.map((slot) => slot.contentId),
           pageTwo: current.pageTwo.map((slot) => slot.contentId),
@@ -270,7 +264,7 @@ export function MiniBinderSpread(props: {
     } catch {
       setStatus('Pocket move applied for this visit; local saving is unavailable.')
     }
-  })
+  }
 
   function selectPocket(page: BinderPageKey, index: number) {
     const current = selected()
@@ -285,20 +279,20 @@ export function MiniBinderSpread(props: {
       return
     }
 
-    setLayout((existing) => {
-      const next: BinderLayout = {
-        pageOne: existing.pageOne.map((slot) => ({ ...slot })),
-        pageTwo: existing.pageTwo.map((slot) => ({ ...slot })),
-      }
-      const first = next[current.page][current.index]!
-      const second = next[page][index]!
-      const firstContent = { contentId: first.contentId, slot: first.slot }
-      first.contentId = second.contentId
-      first.slot = second.slot
-      second.contentId = firstContent.contentId
-      second.slot = firstContent.slot
-      return next
-    })
+    const existing = layout()
+    const next: BinderLayout = {
+      pageOne: existing.pageOne.map((slot) => ({ ...slot })),
+      pageTwo: existing.pageTwo.map((slot) => ({ ...slot })),
+    }
+    const first = next[current.page][current.index]!
+    const second = next[page][index]!
+    const firstContent = { contentId: first.contentId, slot: first.slot }
+    first.contentId = second.contentId
+    first.slot = second.slot
+    second.contentId = firstContent.contentId
+    second.slot = firstContent.slot
+    setLayout(next)
+    persistLayout(next)
     setSelected(null)
     setStatus('Pockets swapped and saved on this device.')
   }
@@ -319,26 +313,39 @@ export function MiniBinderSpread(props: {
       <section class="bg-card rounded-2xl border p-5">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <h2 class="text-xl font-semibold tracking-tight">{title()}</h2>
+            <h2
+              id={slugifyHeading(title()) || 'mini-binder-spread'}
+              data-blog-toc-heading
+              class="text-xl font-semibold tracking-tight"
+            >
+              {title()}
+            </h2>
             <Show when={props.description}>
               <p class="text-muted-foreground mt-2 text-sm leading-relaxed">{props.description}</p>
             </Show>
-            <p class="text-primary-deep mt-2 text-xs font-medium">
-              Interactive Pocket Binder · changes stay on this device
-            </p>
+            <Show when={hydrated()}>
+              <p class="text-primary-deep mt-2 text-xs font-medium">
+                Interactive Pocket Binder · changes stay on this device
+              </p>
+            </Show>
           </div>
-          <Button variant="outline" size="sm" onClick={resetLayout} class="shrink-0">
-            Reset pockets
-          </Button>
+          <Show when={hydrated()}>
+            <Button variant="outline" size="sm" onClick={resetLayout} class="shrink-0">
+              Reset pockets
+            </Button>
+          </Show>
         </div>
-        <p class="sr-only" aria-live="polite">
-          {status()}
-        </p>
+        <Show when={hydrated()}>
+          <p class="sr-only" aria-live="polite">
+            {status()}
+          </p>
+        </Show>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
           <BinderPage
             slots={layout().pageOne}
             pageKey="pageOne"
             pageLabel={leftPageLabel()}
+            interactive={hydrated()}
             selectedIndex={selected()?.page === 'pageOne' ? selected()!.index : null}
             onSelect={selectPocket}
           />
@@ -346,6 +353,7 @@ export function MiniBinderSpread(props: {
             slots={layout().pageTwo}
             pageKey="pageTwo"
             pageLabel={rightPageLabel()}
+            interactive={hydrated()}
             selectedIndex={selected()?.page === 'pageTwo' ? selected()!.index : null}
             onSelect={selectPocket}
           />

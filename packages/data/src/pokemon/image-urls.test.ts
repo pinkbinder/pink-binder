@@ -5,6 +5,7 @@ import {
   pokemonR2ImageVariantUrl,
   sceneArtUrlCandidates,
 } from './image-urls'
+import { restoreModuleMocks } from '../../test/module-mock-scope'
 
 mock.module('@repo/marketplaces/config', () => ({
   TCGDEX_CDN: { assetsHost: 'assets.tcgdex.net' },
@@ -30,6 +31,13 @@ mock.module('./artwork', () => ({
   buildOfficialArtworkCdnUrl: () => 'https://art/official.png',
   buildShinyArtworkCdnUrl: () => 'https://art/shiny.png',
 }))
+
+restoreModuleMocks(
+  import.meta,
+  '@repo/marketplaces/config',
+  '@repo/marketplaces/tcgplayer',
+  './artwork'
+)
 
 describe('pokemon/image-urls', () => {
   it('isTcgdexImageUrl detects tcgdex host', () => {

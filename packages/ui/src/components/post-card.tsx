@@ -40,7 +40,7 @@ function PostCard(props: PostCardProps) {
   return (
     <Card
       class={cn(
-        'bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[transform,box-shadow,border-color] duration-200 group-hover:-translate-y-1 group-hover:shadow-lg',
+        'bg-card/95 group-hover:border-primary/45 border-brand-light-pink/70 h-full overflow-hidden rounded-3xl shadow-xs transition-[border-color] duration-200',
         local.class
       )}
       {...rest}
