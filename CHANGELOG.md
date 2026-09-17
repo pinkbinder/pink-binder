@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.0...pink-binder-v3.1.1) (2026-09-17)
+
+
+### Bug Fixes
+
+* **blog:** resolve Search Console coverage issues ([#140](https://github.com/pinkbinder/pink-binder/issues/140)) ([d0fdd06](https://github.com/pinkbinder/pink-binder/commit/d0fdd060e4ff6e1ef58a1fb45675f92939ad558c))
+
 ## [3.1.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.0.7...pink-binder-v3.1.0) (2026-09-17)
 
 
