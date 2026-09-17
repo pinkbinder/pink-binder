@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.3...pink-binder-v3.1.4) (2026-09-17)
+
+
+### Maintenance
+
+* point config runtime_ref at v1.29.1 ([#146](https://github.com/pinkbinder/pink-binder/issues/146)) ([3fee1b8](https://github.com/pinkbinder/pink-binder/commit/3fee1b8a7c28f39cc42b9dc703a3f8c5824d4f44))
+
 ## [3.1.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.2...pink-binder-v3.1.3) (2026-09-17)
 
 
