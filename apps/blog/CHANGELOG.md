@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.13.1...blog-v0.13.2) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [0.13.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.13.0...blog-v0.13.1) (2026-09-17)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.7](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.6...config-v1.3.7) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [1.3.6](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.5...config-v1.3.6) (2026-09-16)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.0...ui-v2.1.1) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [2.1.0](https://github.com/pinkbinder/pink-binder/compare/ui-v2.0.7...ui-v2.1.0) (2026-09-17)
 
 
