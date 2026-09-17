@@ -12,7 +12,9 @@ export type BlogTableOfContentsItem = {
 
 const DESKTOP_MEDIA_QUERY = '(min-width: 1024px)'
 
-function slugifyHeading(value: string) {
+/** Shared with components that stamp heading ids so static TOC extraction
+ *  and the client-side DOM collector derive identical anchors. */
+export function slugifyHeading(value: string) {
   return value
     .normalize('NFKD')
     .replace(/[\u0300-\u036f]/g, '')
@@ -91,31 +93,61 @@ function TableOfContentsLinks(props: {
   )
 }
 
-/** Server-rendered desktop TOC for the static prebuilt pipeline: identical
- * markup to the hydrated desktop variant, driven by entries extracted at
- * render time instead of a client DOM scan (post pages ship zero JS). */
+/** Server-rendered TOC for the static prebuilt pipeline: identical markup to
+ * the hydrated variants, driven by entries extracted at render time instead
+ * of a client DOM scan (post pages ship zero JS).
+ *
+ * `desktop` renders the plain nav card — the caller owns the sidebar column
+ * (visibility + sticky positioning). `mobile` is a `<details>` disclosure at
+ * the top of the article; it toggles natively with no JS. */
 export function BlogStaticTableOfContents(props: {
   articleId: string
   items: BlogTableOfContentsItem[]
+  variant?: BlogTableOfContentsVariant
 }) {
   const labelId = `${props.articleId}-static-toc`
+  const disclosureNavId = `${props.articleId}-static-toc-nav`
 
   return (
-    <aside class="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
-      <nav
-        aria-labelledby={labelId}
-        class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
-      >
-        <p
-          id={labelId}
-          class="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+    <Show
+      when={props.variant !== 'mobile'}
+      fallback={
+        <details class="group bg-card/80 mb-6 rounded-xl border px-4 py-3 lg:hidden">
+          <summary
+            aria-controls={disclosureNavId}
+            class="text-foreground focus-visible:ring-ring flex cursor-pointer list-none items-center justify-between gap-3 font-semibold focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-hidden [&::-webkit-details-marker]:hidden"
+          >
+            <span class="inline-flex items-center gap-2">
+              <List class="text-primary h-4 w-4" aria-hidden />
+              On this page
+            </span>
+            <ChevronDown
+              class="text-muted-foreground h-4 w-4 transition-transform group-open:rotate-180"
+              aria-hidden
+            />
+          </summary>
+          <nav id={disclosureNavId} aria-label="Table of contents" class="mt-3 border-t pt-3">
+            <TableOfContentsLinks items={props.items} />
+          </nav>
+        </details>
+      }
+    >
+      <aside>
+        <nav
+          aria-labelledby={labelId}
+          class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"
         >
-          <List class="text-primary h-4 w-4" aria-hidden />
-          On this page
-        </p>
-        <TableOfContentsLinks items={props.items} />
-      </nav>
-    </aside>
+          <p
+            id={labelId}
+            class="font-title text-foreground mb-3 inline-flex items-center gap-2 text-sm font-semibold"
+          >
+            <List class="text-primary h-4 w-4" aria-hidden />
+            On this page
+          </p>
+          <TableOfContentsLinks items={props.items} />
+        </nav>
+      </aside>
+    </Show>
   )
 }
 
@@ -209,7 +241,7 @@ export function BlogTableOfContents(props: {
       <Show
         when={props.variant === 'mobile'}
         fallback={
-          <aside class="sticky top-6 col-start-2 row-start-1 hidden self-start lg:block">
+          <aside>
             <nav
               aria-labelledby={labelId}
               class="bg-card/80 max-h-[calc(100vh-3rem)] overflow-y-auto rounded-2xl border p-4 shadow-xs backdrop-blur"

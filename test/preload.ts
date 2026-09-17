@@ -1,5 +1,6 @@
 import { GlobalRegistrator } from '@happy-dom/global-registrator'
 import { plugin } from 'bun'
+import { captureRealModules } from '../packages/data/test/module-mock-scope'
 
 // Register happy-dom globals BEFORE any testing-library/Solid modules load.
 if (!(globalThis as { happyDOM?: unknown }).happyDOM) {
@@ -52,3 +53,11 @@ plugin({
     })
   },
 })
+
+/**
+ * Snapshot the real exports of every module that packages/data tests stub via
+ * `mock.module`, while the registry is still clean. Test files re-register
+ * these snapshots in `afterAll` via `restoreModuleMocks` so their process-
+ * global stubs cannot leak into files that run after them (issue #35).
+ */
+await captureRealModules()
