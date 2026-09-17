@@ -2,6 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { getPostHref, isBlogPostPublished } from '@repo/data/client'
+import { parseAuthoredMdx } from './authored-mdx'
 import type { RssSourcePost } from './rss'
 import { readBlogIndexFromR2 } from './blog-index-r2'
 
@@ -20,13 +21,6 @@ function authoredContentDir(): string {
 }
 
 type FeedFrontmatter = Pick<RssSourcePost, 'title' | 'description' | 'date' | 'image'>
-
-const EMPTY_FEED_FRONTMATTER: FeedFrontmatter = {
-  title: '',
-  description: '',
-  date: '',
-  image: '',
-}
 
 /**
  * Read normalized posts from the shared mtime-cached blog index reader.
@@ -66,64 +60,15 @@ function readNormalizedPostsFromIndex(
   })
 }
 
-function parseYamlScalar(value: string): string {
-  const trimmed = value.trim()
-  if (trimmed.length >= 2 && trimmed.startsWith("'") && trimmed.endsWith("'")) {
-    return trimmed.slice(1, -1).replace(/''/g, "'")
-  }
-  if (trimmed.length >= 2 && trimmed.startsWith('"') && trimmed.endsWith('"')) {
-    try {
-      return JSON.parse(trimmed) as string
-    } catch {
-      return trimmed.slice(1, -1)
-    }
-  }
-  return trimmed.replace(/\s+#.*$/, '').trim()
-}
-
 /** Read just the scalar metadata RSS needs without bundling an MDX compiler. */
 export function parseFeedFrontmatter(raw: string): FeedFrontmatter {
-  const lines = raw.replace(/^\uFEFF/, '').split(/\r?\n/)
-  if (lines[0]?.trim() !== '---') {
-    return { ...EMPTY_FEED_FRONTMATTER }
+  const { data } = parseAuthoredMdx(raw)
+  return {
+    title: data.title ?? '',
+    description: data.description ?? '',
+    date: data.date ?? '',
+    image: data.image ?? '',
   }
-
-  const data = { ...EMPTY_FEED_FRONTMATTER }
-  for (let index = 1; index < lines.length; index += 1) {
-    const line = lines[index] ?? ''
-    if (/^(---|\.\.\.)\s*$/.test(line)) {
-      break
-    }
-
-    const match = line.match(/^([A-Za-z][\w-]*):\s*(.*)$/)
-    if (!match) {
-      continue
-    }
-    const key = match[1] as keyof FeedFrontmatter
-    if (!(key in data)) {
-      continue
-    }
-
-    const rawValue = match[2] ?? ''
-    const blockStyle = rawValue.trim().match(/^([>|])[+-]?$/)
-    if (!blockStyle) {
-      data[key] = parseYamlScalar(rawValue)
-      continue
-    }
-
-    const blockLines: string[] = []
-    while (index + 1 < lines.length) {
-      const nextLine = lines[index + 1] ?? ''
-      if (nextLine && !/^\s/.test(nextLine)) {
-        break
-      }
-      index += 1
-      blockLines.push(nextLine.replace(/^\s+/, ''))
-    }
-    data[key] = blockStyle[1] === '>' ? blockLines.join(' ') : blockLines.join('\n')
-  }
-
-  return data
 }
 
 function readAuthoredPosts(siteUrl: string): RssSourcePost[] {
@@ -138,19 +83,25 @@ function readAuthoredPosts(siteUrl: string): RssSourcePost[] {
     return []
   }
 
-  return filenames.map((filename) => {
+  return filenames.flatMap((filename) => {
     const slug = filename.replace(/\.mdx?$/, '')
     const raw = fs.readFileSync(path.join(contentDir, filename), 'utf8')
     const data = parseFeedFrontmatter(raw)
-    return {
-      id: slug,
-      title: data.title,
-      description: data.description,
-      date: data.date,
-      link: getPostHref(slug, siteUrl),
-      image: data.image,
-      kind: 'authored' as const,
+    // Future-dated authored posts stay out of the feed until their date.
+    if (!isBlogPostPublished(data.date)) {
+      return []
     }
+    return [
+      {
+        id: slug,
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        link: getPostHref(slug, siteUrl),
+        image: data.image,
+        kind: 'authored' as const,
+      },
+    ]
   })
 }
 
