@@ -1,3 +1,4 @@
+// oxlint-disable-next-line unicorn/require-module-specifiers -- the empty export keeps this side-effect-only script an ES module; its `declare global` Window augmentation below requires module scope.
 export {}
 
 interface MarketplaceListing {

@@ -16,6 +16,21 @@ function scene(
   return { url: 'x', label: '', source: 'tcg', ...over } as any
 }
 
+function card(over: Partial<PokemonTcgCard>): PokemonTcgCard {
+  return {
+    id: 'sv1-1',
+    name: 'Testmon',
+    setName: 'Base',
+    number: '1',
+    imageSmall: '',
+    imageLarge: 'l.png',
+    rarity: null,
+    setSeries: '',
+    artist: null,
+    ...over,
+  } as PokemonTcgCard
+}
+
 describe('michi-scene-art landscape scoring', () => {
   it('scores wide images high', () => {
     expect(landscapeScoreMichiScene(scene({ width: 1600, height: 900 }))).toBeGreaterThan(100)
@@ -64,21 +79,6 @@ describe('michi-scene-art landscape scoring', () => {
 })
 
 describe('michi-scene-art card selection', () => {
-  function card(over: Partial<PokemonTcgCard>): PokemonTcgCard {
-    return {
-      id: 'sv1-1',
-      name: 'Testmon',
-      setName: 'Base',
-      number: '1',
-      imageSmall: '',
-      imageLarge: 'l.png',
-      rarity: null,
-      setSeries: '',
-      artist: null,
-      ...over,
-    } as PokemonTcgCard
-  }
-
   it('scoreCardForMichiScene rewards high rarity, penalizes shiny', () => {
     const ultra = scoreCardForMichiScene(card({ rarity: 'Ultra Rare' }))
     const shiny = scoreCardForMichiScene(card({ rarity: 'Shiny Rare' }))

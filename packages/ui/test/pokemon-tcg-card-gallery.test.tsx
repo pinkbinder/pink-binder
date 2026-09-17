@@ -7,7 +7,7 @@ mock.module('../src/components/blog/pokemon-tcg-card-tile', () => ({
   PokemonTcgCardTile: ({ card }: { card: PokemonTcgCard }) => <div>{card.name}</div>,
 }))
 
-function card(index: number): PokemonTcgCard {
+function makeCard(index: number): PokemonTcgCard {
   return {
     id: `card-${index}`,
     name: `Card ${index}`,
@@ -21,7 +21,7 @@ function card(index: number): PokemonTcgCard {
   }
 }
 
-const allCards = Array.from({ length: 40 }, (_, index) => card(index + 1))
+const allCards = Array.from({ length: 40 }, (_, index) => makeCard(index + 1))
 
 afterEach(() => {
   cleanup()

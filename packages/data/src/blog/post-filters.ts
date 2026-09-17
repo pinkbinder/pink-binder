@@ -169,7 +169,7 @@ export function extractPokemonFilters(
       label: formatSlugTitle(post.slug),
     })
   }
-  return options.sort((a, b) => a.label.localeCompare(b.label))
+  return options.toSorted((a, b) => a.label.localeCompare(b.label))
 }
 
 export function postMatchesPokemonFilter(
@@ -191,7 +191,7 @@ export function sortPostsForPokemonFilter<T extends { slug: string; date: string
   speciesSlug: string
 ): T[] {
   const normalized = speciesSlug.trim().toLowerCase()
-  return [...posts].sort((a, b) => {
+  return posts.toSorted((a, b) => {
     if (a.slug.toLowerCase() === normalized) return -1
     if (b.slug.toLowerCase() === normalized) return 1
     return new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -252,7 +252,7 @@ export function extractExpansionFilters(
 
   return [...labelBySlug.entries()]
     .map(([slug, label]) => ({ slug, label }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .toSorted((a, b) => a.label.localeCompare(b.label))
 }
 
 export function postMatchesExpansionFilter(
@@ -275,7 +275,7 @@ export function sortPostsForExpansionFilter<T extends { slug: string; date: stri
 ): T[] {
   const normalized = expansionSlug.trim().toLowerCase()
   const overviewSlug = `expansion--${normalized}`
-  return [...posts].sort((a, b) => {
+  return posts.toSorted((a, b) => {
     const aOverview = a.slug === overviewSlug
     const bOverview = b.slug === overviewSlug
     if (aOverview !== bOverview) {
@@ -333,7 +333,7 @@ export function extractTypeFilters(posts: PostWithCategories[]): string[] {
       if (typeName) types.add(typeName)
     }
   }
-  return [...types].sort()
+  return [...types].toSorted()
 }
 
 export function extractIllustratorFilters(posts: PostWithCategories[]): string[] {
@@ -346,7 +346,7 @@ export function extractIllustratorFilters(posts: PostWithCategories[]): string[]
       }
     }
   }
-  return [...illustrators].sort()
+  return [...illustrators].toSorted()
 }
 
 /** Species guides tagged with illustrator credits — hidden from illustrator index filter only. */
@@ -411,7 +411,7 @@ export function extractThemeFilters(posts: PostWithCategories[]): string[] {
       }
     }
   }
-  return [...themes].sort()
+  return [...themes].toSorted()
 }
 
 /** Blog index “Lists” chips: species guides + roundup angles, stable order. */
@@ -460,7 +460,7 @@ export function extractGenerationFilters(posts: PostWithCategories[]): string[] 
     }
   }
 
-  return [...generations].sort((a, b) => {
+  return [...generations].toSorted((a, b) => {
     const aRoman = a.replace('Gen ', '')
     const bRoman = b.replace('Gen ', '')
     return (
@@ -642,7 +642,7 @@ export function extractTagCatalogOptions(posts: PostForTagCatalog[]): TagCatalog
 
   return [...byValue.entries()]
     .map(([value, label]) => ({ value, label }))
-    .sort((a, b) => a.label.localeCompare(b.label))
+    .toSorted((a, b) => a.label.localeCompare(b.label))
 }
 
 /** Facet groups that catalog tag search can drive (same axes as blog index dropdowns). */
@@ -1123,7 +1123,7 @@ export function filterTagCatalogOptionsBySearch(
   return options
     .map((option) => ({ option, score: tagCatalogSearchScore(query, option) }))
     .filter((entry) => entry.score >= 0)
-    .sort((a, b) => b.score - a.score || a.option.label.localeCompare(b.option.label))
+    .toSorted((a, b) => b.score - a.score || a.option.label.localeCompare(b.option.label))
     .map((entry) => entry.option)
 }
 

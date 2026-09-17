@@ -108,9 +108,11 @@ function OrderFilters() {
   )
 }
 
+/** Reactive accessor over the module-level selection store. */
+const selectedIds = () => adminSelection.selectedOrderIds
+
 function OrdersTable() {
   const data = Route.useLoaderData()
-  const selectedIds = () => adminSelection.selectedOrderIds
 
   return (
     <Show

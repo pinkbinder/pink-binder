@@ -23,7 +23,7 @@ const contract = JSON.parse(read('docs/baselines/m1-state-data.json')) as {
 
 describe('M1 state and data ownership contract', () => {
   test('covers all four apps and assigns one owner to each state class', () => {
-    expect(Object.keys(contract.apps).sort()).toEqual(['admin', 'blog', 'landing', 'store'])
+    expect(Object.keys(contract.apps).toSorted()).toEqual(['admin', 'blog', 'landing', 'store'])
     expect(contract.owners).toEqual({
       localPresentation: 'react',
       sharedClient: 'none',
