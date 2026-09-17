@@ -85,10 +85,12 @@ function SocialIconSvg(props: { icon: SocialIcon; label: string }) {
 
 interface SocialBarProps extends JSX.HTMLAttributes<HTMLDivElement> {
   socials: SocialLink[]
+  /** Extra classes merged onto each icon button (e.g. stronger hover). */
+  iconClass?: string
 }
 
 function SocialBar(props: SocialBarProps) {
-  const [local, rest] = splitProps(props, ['socials', 'class'])
+  const [local, rest] = splitProps(props, ['socials', 'iconClass', 'class'])
   return (
     <div
       class={cn(
@@ -99,7 +101,12 @@ function SocialBar(props: SocialBarProps) {
     >
       <For each={local.socials}>
         {(social) => (
-          <IconButton href={social.href} label={social.label} external={social.icon !== 'email'}>
+          <IconButton
+            href={social.href}
+            label={social.label}
+            external={social.icon !== 'email'}
+            class={local.iconClass}
+          >
             <SocialIconSvg icon={social.icon} label={social.label} />
           </IconButton>
         )}
