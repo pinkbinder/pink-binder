@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.13.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.6...blog-v0.13.0) (2026-09-17)
+
+
+### Features
+
+* **blog:** centered post layout, margin TOC, and card aura fixes ([#138](https://github.com/pinkbinder/pink-binder/issues/138)) ([f7f90af](https://github.com/pinkbinder/pink-binder/commit/f7f90af6f4d7cd0b6ebc9fc6ed3470c83710192d))
+
 ## [0.12.6](https://github.com/pinkbinder/pink-binder/compare/blog-v0.12.5...blog-v0.12.6) (2026-09-16)
 
 

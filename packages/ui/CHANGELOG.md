@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.0](https://github.com/pinkbinder/pink-binder/compare/ui-v2.0.7...ui-v2.1.0) (2026-09-17)
+
+
+### Features
+
+* **blog:** centered post layout, margin TOC, and card aura fixes ([#138](https://github.com/pinkbinder/pink-binder/issues/138)) ([f7f90af](https://github.com/pinkbinder/pink-binder/commit/f7f90af6f4d7cd0b6ebc9fc6ed3470c83710192d))
+
 ## [2.0.7](https://github.com/pinkbinder/pink-binder/compare/ui-v2.0.6...ui-v2.0.7) (2026-09-16)
 
 
