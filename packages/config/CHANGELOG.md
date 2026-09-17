@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.7...config-v1.3.8) (2026-09-17)
+
+
+### Maintenance
+
+* toolchain-alignment ([#144](https://github.com/pinkbinder/pink-binder/issues/144)) ([3c2e964](https://github.com/pinkbinder/pink-binder/commit/3c2e96423aa634af16aba20e0abbb826b5d91bdd))
+
 ## [1.3.7](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.6...config-v1.3.7) (2026-09-17)
 
 
