@@ -36,11 +36,11 @@
     "@astrojs/check": "0.9.10",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.5.1",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
     "tailwindcss": "^4.3.3",
-    "typescript": "6.0.3",
+    "typescript": "^6.0.3",
     "wrangler": "^4.130.0"
   }
 }
