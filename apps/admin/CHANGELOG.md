@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.4](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.3...admin-v0.7.4) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [0.7.3](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.2...admin-v0.7.3) (2026-09-16)
 
 

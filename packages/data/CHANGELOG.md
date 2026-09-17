@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.2](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.1...data-v2.5.2) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [2.5.1](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.0...data-v2.5.1) (2026-09-17)
 
 

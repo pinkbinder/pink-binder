@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v2.0.0...typescript-config-v2.0.1) (2026-09-17)
+
+
+### Maintenance
+
+* lint-toolchain-standardization ([#142](https://github.com/pinkbinder/pink-binder/issues/142)) ([01d0e32](https://github.com/pinkbinder/pink-binder/commit/01d0e32c49ac858d181cb0bca12fefc120ba51f5))
+
 ## [2.0.0](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v1.0.6...typescript-config-v2.0.0) (2026-09-15)
 
 
