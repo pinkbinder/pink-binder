@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.3](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.2...data-v2.5.3) (2026-09-17)
+
+
+### Maintenance
+
+* toolchain-alignment ([#144](https://github.com/pinkbinder/pink-binder/issues/144)) ([3c2e964](https://github.com/pinkbinder/pink-binder/commit/3c2e96423aa634af16aba20e0abbb826b5d91bdd))
+
 ## [2.5.2](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.1...data-v2.5.2) (2026-09-17)
 
 

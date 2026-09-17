@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.5](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.4...admin-v0.7.5) (2026-09-17)
+
+
+### Maintenance
+
+* toolchain-alignment ([#144](https://github.com/pinkbinder/pink-binder/issues/144)) ([3c2e964](https://github.com/pinkbinder/pink-binder/commit/3c2e96423aa634af16aba20e0abbb826b5d91bdd))
+
 ## [0.7.4](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.3...admin-v0.7.4) (2026-09-17)
 
 
