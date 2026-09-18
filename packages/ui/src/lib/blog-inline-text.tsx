@@ -1,4 +1,4 @@
-import type { JSX } from 'solid-js'
+import { createMemo, type JSX } from 'solid-js'
 
 type BlogInlineSegment =
   | { kind: 'text'; value: string }
@@ -20,7 +20,7 @@ function schemeEndAt(text: string, start: number): number {
 
 /**
  * Markdown `[label](url)`: the href stops at the first `)` or whitespace,
- * matching the original greedy `[^)\s]+` before a literal `)`.
+ * matching the original greedy `[^)\\s]+` before a literal `)`.
  */
 function parseMarkdownLinkAt(text: string, open: number): ParsedInlineLink | null {
   const labelEnd = text.indexOf(']', open + 1)
@@ -47,7 +47,7 @@ function parseMarkdownLinkAt(text: string, open: number): ParsedInlineLink | nul
 
 /**
  * Legacy Bulbapedia `[url label]`: a greedy `[^\\s\\]]+` href, then `\\s+`,
- * then a `[^\]]+` label closed by `]`. The whitespace run backs off one
+ * then a `[^\\]]+` label closed by `]`. The whitespace run backs off one
  * character only when `]` directly follows it (the same backtrack the regex
  * performed), which keeps every input to linear-time parsing.
  */
@@ -112,27 +112,24 @@ export function splitBlogInlineText(text: string): BlogInlineSegment[] {
   return segments.length > 0 ? segments : [{ kind: 'text', value: text }]
 }
 
-export function BlogInlineText({
-  text,
-  linkClassName = 'font-medium text-primary underline underline-offset-2 hover:text-primary/80',
-}: {
+export function BlogInlineText(props: {
   text: string
   linkClassName?: string
 }) {
-  const segments = splitBlogInlineText(text)
+  const segments = createMemo(() => splitBlogInlineText(props.text))
 
-  if (segments.length === 1 && segments[0]?.kind === 'text') {
-    return <>{segments[0].value}</>
+  if (segments().length === 1 && segments()[0]?.kind === 'text') {
+    return <>{segments()[0].value}</>
   }
 
   const nodes: JSX.Element[] = []
-  for (const segment of segments) {
+  for (const segment of segments()) {
     if (segment.kind === 'text') {
       nodes.push(segment.value)
       continue
     }
     nodes.push(
-      <a href={segment.href} class={linkClassName} target="_blank" rel="noopener noreferrer">
+      <a href={segment.href} class={props.linkClassName ?? 'font-medium text-primary underline underline-offset-2 hover:text-primary/80'} target="_blank" rel="noopener noreferrer">
         {segment.label}
       </a>
     )
