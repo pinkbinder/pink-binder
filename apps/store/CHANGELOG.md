@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.7](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.6...store-v0.7.7) (2026-09-18)
+
+
+### Bug Fixes
+
+* remove console statements from production code ([#156](https://github.com/pinkbinder/pink-binder/issues/156)) ([caa68d4](https://github.com/pinkbinder/pink-binder/commit/caa68d42f4a6340650b4a070e2412cf30ff3b3a1))
+
 ## [0.7.6](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.5...store-v0.7.6) (2026-09-17)
 
 

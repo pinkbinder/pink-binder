@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.7...pink-binder-v3.1.8) (2026-09-18)
+
+
+### Bug Fixes
+
+* remove console statements from production code ([#156](https://github.com/pinkbinder/pink-binder/issues/156)) ([caa68d4](https://github.com/pinkbinder/pink-binder/commit/caa68d42f4a6340650b4a070e2412cf30ff3b3a1))
+
 ## [3.1.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.6...pink-binder-v3.1.7) (2026-09-18)
 
 
