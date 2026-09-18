@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.9](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.8...pink-binder-v3.1.9) (2026-09-18)
+
+
+### Performance
+
+* memoize BlogInlineText text parsing with createMemo ([#155](https://github.com/pinkbinder/pink-binder/issues/155)) ([54a823d](https://github.com/pinkbinder/pink-binder/commit/54a823d6dbe5d917a49dcc156addbec3993cb90a))
+
 ## [3.1.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.7...pink-binder-v3.1.8) (2026-09-18)
 
 

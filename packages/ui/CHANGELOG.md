@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.4](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.3...ui-v2.1.4) (2026-09-18)
+
+
+### Performance
+
+* memoize BlogInlineText text parsing with createMemo ([#155](https://github.com/pinkbinder/pink-binder/issues/155)) ([54a823d](https://github.com/pinkbinder/pink-binder/commit/54a823d6dbe5d917a49dcc156addbec3993cb90a))
+
 ## [2.1.3](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.2...ui-v2.1.3) (2026-09-18)
 
 
