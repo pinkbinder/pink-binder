@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.10](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.9...pink-binder-v3.1.10) (2026-09-18)
+
+
+### Bug Fixes
+
+* silence deprecated baseUrl option in tsconfig with ignoreDeprecations ([#154](https://github.com/pinkbinder/pink-binder/issues/154)) ([85b4ac7](https://github.com/pinkbinder/pink-binder/commit/85b4ac7da8baa50dc6ce56371255c9e571828dc7))
+
 ## [3.1.9](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.8...pink-binder-v3.1.9) (2026-09-18)
 
 
