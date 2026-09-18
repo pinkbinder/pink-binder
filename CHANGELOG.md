@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.5...pink-binder-v3.1.6) (2026-09-18)
+
+
+### Bug Fixes
+
+* **ui:** theme scrollbars to the site background and bridge stale blog renders ([#150](https://github.com/pinkbinder/pink-binder/issues/150)) ([02e05e5](https://github.com/pinkbinder/pink-binder/commit/02e05e54a03b2e28ee22b8e2ec65132429e80b5e))
+
 ## [3.1.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.4...pink-binder-v3.1.5) (2026-09-17)
 
 
