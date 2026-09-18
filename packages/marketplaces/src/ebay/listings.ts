@@ -40,17 +40,6 @@ function readEnv(name: string, fallback: string): string {
 export async function getEbayListings(): Promise<EbayListing[]> {
   const credentials = getEbayClientCredentials()
   if (!credentials) {
-    const missing: string[] = []
-    if (!process.env[EBAY_ENV.appId]?.trim()) missing.push(EBAY_ENV.appId)
-    if (!process.env[EBAY_ENV.clientSecret]?.trim() && !process.env[EBAY_ENV.certId]?.trim()) {
-      missing.push(`${EBAY_ENV.clientSecret} (${EBAY_ENV.certId})`)
-    }
-
-    console.warn(
-      `eBay Browse API: missing ${missing.join(' and ')}. ` +
-        'Add them to the repo root `.env.local` (local) or Cloudflare Worker env (deployed). ' +
-        'Restart the dev server after changing env files.'
-    )
     return []
   }
 
@@ -91,11 +80,6 @@ export async function getEbayListings(): Promise<EbayListing[]> {
     const response = await fetch(url.toString(), fetchOptions)
 
     if (!response.ok) {
-      const body = await response.text().catch(() => '')
-      console.error(
-        `eBay Browse API HTTP error: ${response.status} ${response.statusText}`,
-        body.slice(0, 500)
-      )
       return []
     }
 
@@ -108,13 +92,6 @@ export async function getEbayListings(): Promise<EbayListing[]> {
         total: data.total ?? null,
         parsedItems: items.length,
       })
-    }
-
-    if (data.errors?.length) {
-      console.error(
-        'eBay Browse API returned errors:',
-        data.errors.map((error) => error.message ?? error.errorId).join('; ')
-      )
     }
 
     return items
@@ -141,8 +118,7 @@ export async function getEbayListings(): Promise<EbayListing[]> {
         }
       })
       .filter((listing): listing is EbayListing => listing !== null)
-  } catch (error) {
-    console.error('Failed to fetch eBay listings:', error)
+  } catch {
     return []
   }
 }
