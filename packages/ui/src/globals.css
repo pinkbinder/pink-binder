@@ -133,6 +133,34 @@
   body {
     @apply bg-background font-body text-foreground;
   }
+
+  /* Scrollbar chrome blends into the page: the track uses the site
+     background and the thumb the brand pink. Chromium and Firefox honor the
+     standard property (and keep overlay scrollbars on macOS); the
+     ::-webkit-* rules are the Safari fallback, where a background-colored
+     track means even a classic scrollbar reads as part of the page. */
+  html {
+    scrollbar-color: var(--color-primary) var(--color-background);
+  }
+
+  ::-webkit-scrollbar {
+    width: 0.75rem;
+  }
+
+  ::-webkit-scrollbar-track {
+    background-color: var(--color-background);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    border: 0.1875rem solid transparent;
+    border-radius: 9999px;
+    background-color: var(--color-primary);
+    background-clip: padding-box;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-primary-deep);
+  }
 }
 
 @utility text-primary-deep {
