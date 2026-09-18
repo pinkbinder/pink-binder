@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.6...pink-binder-v3.1.7) (2026-09-18)
+
+
+### Bug Fixes
+
+* complete fleet toolchain alignment ([#152](https://github.com/pinkbinder/pink-binder/issues/152)) ([37265e7](https://github.com/pinkbinder/pink-binder/commit/37265e7173ee7562e95bf8d742fd9e3b9b581ff8))
+
 ## [3.1.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.5...pink-binder-v3.1.6) (2026-09-18)
 
 
