@@ -46,11 +46,6 @@ export async function getEbayApplicationAccessToken(credentials?: {
   })
 
   if (!response.ok) {
-    const body = await response.text().catch(() => '')
-    console.error(
-      `eBay OAuth token request failed: ${response.status} ${response.statusText}`,
-      body.slice(0, 500)
-    )
     return null
   }
 
@@ -60,7 +55,6 @@ export async function getEbayApplicationAccessToken(credentials?: {
   }
 
   if (!data.access_token) {
-    console.error('eBay OAuth token response missing access_token.')
     return null
   }
 
