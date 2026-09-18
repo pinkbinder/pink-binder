@@ -6,4 +6,4 @@
 
 /* Prebaked R2 post artifacts carry the previous shell classes; keep emitting
    them so published posts stay styled until blog-pipeline republishes. */
-@source inline('lg:grid-cols-[minmax(0,48rem)_minmax(13rem,1fr)] lg:col-start-1 lg:row-start-1 lg:col-start-2 xl:gap-10');
+@source inline('lg:grid-cols-[minmax(0,48rem)_minmax(13rem,1fr)] lg:col-start-1 lg:row-start-1 col-start-2 row-start-1 lg:block xl:gap-10');
