@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from '@tanstack/solid-router'
 import { ArrowRight } from 'lucide-solid'
 import { createMemo, For } from 'solid-js'
-import { Button, Card, CardContent, CardDescription, CardHeader } from '@repo/ui'
+import { Button, Card, CardContent, CardDescription, CardHeader, cn } from '@repo/ui'
 
 import { ChannelDot, PageHeader } from '../components/console'
 import { AD_PLATFORM_META, CONTENT_PLATFORM_META, INVENTORY_CHANNEL_META } from '../lib/channels'
@@ -100,13 +100,14 @@ function ServiceCard(props: {
       <CardContent class="flex flex-1 flex-col justify-between gap-5">
         <div>
           <p
-            class={
+            class={cn(
+              'text-sm font-semibold tabular-nums',
               props.statTone === 'warn'
-                ? 'text-warning-foreground text-sm font-semibold tabular-nums'
+                ? 'text-warning-foreground'
                 : props.statTone === 'ok'
-                  ? 'text-success-foreground text-sm font-semibold tabular-nums'
-                  : 'text-sm font-semibold tabular-nums'
-            }
+                  ? 'text-success-foreground'
+                  : ''
+            )}
           >
             {props.stat}
           </p>

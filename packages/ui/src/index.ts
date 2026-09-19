@@ -13,6 +13,7 @@ export * from './components/blog'
 export * from './components/select'
 export * from './components/searchable-select'
 export * from './components/separator'
+export * from './components/filter-chip-group'
 
 export * from './components/pokemon-type-logo'
 
