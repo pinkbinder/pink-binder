@@ -34,7 +34,8 @@
     "./roundup-post-card": "./src/components/roundup-post-card.tsx",
     "./searchable-select": "./src/components/searchable-select.tsx",
     "./select": "./src/components/select.tsx",
-    "./separator": "./src/components/separator.tsx"
+    "./separator": "./src/components/separator.tsx",
+    "./filter-chip-group": "./src/components/filter-chip-group.tsx"
   },
   "scripts": {
     "lint": "oxlint . --max-warnings 0",

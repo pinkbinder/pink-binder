@@ -1,6 +1,15 @@
 import { createFileRoute, stripSearchParams, useNavigate } from '@tanstack/solid-router'
 import { createMemo, createSignal, For } from 'solid-js'
-import { Badge, Button, Card, CardContent, CardHeader, CardTitle, Input } from '@repo/ui'
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  FilterChipGroup,
+  Input,
+} from '@repo/ui'
 import { cn } from '@repo/ui'
 
 import { ChannelDot, IntegrationNotice, PageHeader, StatCard } from '../components/console'
@@ -114,18 +123,14 @@ function AdsPage() {
       </Card>
 
       <div class="mb-4 flex flex-wrap items-center gap-1.5">
-        <For each={AD_PLATFORM_FILTERS}>
-          {(entry) => (
-            <Button
-              size="sm"
-              variant="filterChip"
-              aria-pressed={platform() === entry}
-              onClick={() => setPlatform(entry === 'all' ? null : entry)}
-            >
-              {entry === 'all' ? 'all' : AD_PLATFORM_META[entry as AdPlatform].label}
-            </Button>
-          )}
-        </For>
+        <FilterChipGroup
+          options={AD_PLATFORM_FILTERS}
+          currentValue={platform}
+          getLabel={(entry) =>
+            entry === 'all' ? 'all' : AD_PLATFORM_META[entry as AdPlatform].label
+          }
+          onSelect={(value) => setPlatform(value)}
+        />
       </div>
 
       <Card>

@@ -6,6 +6,7 @@ import { cn } from '@repo/ui'
 
 import { ChannelDot, IntegrationNotice, PageHeader, StatCard } from '../components/console'
 import { DebouncedInput } from '../components/debounced-input'
+import { FilterChipGroup } from '@repo/ui'
 import { INVENTORY_CHANNELS, INVENTORY_CHANNEL_META, type ChannelMeta } from '../lib/channels'
 import { inventorySearchParsers, INVENTORY_CATEGORY_FILTERS } from '../lib/console-search'
 import { formatCents } from '../lib/format'
@@ -98,18 +99,12 @@ function InventoryPage() {
           class="w-56"
         />
         <div class="flex flex-wrap gap-1.5">
-          <For each={INVENTORY_CATEGORY_FILTERS}>
-            {(entry) => (
-              <Button
-                size="sm"
-                variant="filterChip"
-                aria-pressed={category() === entry}
-                onClick={() => setParam('category', entry === 'all' ? null : entry)}
-              >
-                {entry}
-              </Button>
-            )}
-          </For>
+          <FilterChipGroup
+            options={INVENTORY_CATEGORY_FILTERS}
+            currentValue={category}
+            getLabel={(entry) => entry}
+            onSelect={(value) => setParam('category', value)}
+          />
         </div>
       </div>
 
