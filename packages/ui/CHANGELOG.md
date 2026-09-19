@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.0](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.4...ui-v2.2.0) (2026-09-19)
+
+
+### Features
+
+* refactor-filter-chips-and-service-card ([#160](https://github.com/pinkbinder/pink-binder/issues/160)) ([fbf66de](https://github.com/pinkbinder/pink-binder/commit/fbf66ded47d6bf7c6a803d0f086ab7156103f54a))
+
 ## [2.1.4](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.3...ui-v2.1.4) (2026-09-18)
 
 
