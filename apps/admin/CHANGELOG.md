@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.5...admin-v0.8.0) (2026-09-19)
+
+
+### Features
+
+* refactor-filter-chips-and-service-card ([#160](https://github.com/pinkbinder/pink-binder/issues/160)) ([fbf66de](https://github.com/pinkbinder/pink-binder/commit/fbf66ded47d6bf7c6a803d0f086ab7156103f54a))
+
 ## [0.7.5](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.4...admin-v0.7.5) (2026-09-17)
 
 
