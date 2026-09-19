@@ -14,6 +14,7 @@ import {
 
 import { ChannelDot, IntegrationNotice, PageHeader } from '../components/console'
 import { DebouncedInput } from '../components/debounced-input'
+import { FilterChipGroup } from '@repo/ui'
 import { CONTENT_PLATFORM_META, type ContentPlatform } from '../lib/channels'
 import { contentSearchParsers, CONTENT_PLATFORM_FILTERS } from '../lib/console-search'
 import { formatDate } from '../lib/format'
@@ -85,18 +86,14 @@ function ContentStudioPage() {
           class="w-56"
         />
         <div class="flex flex-wrap gap-1.5">
-          <For each={CONTENT_PLATFORM_FILTERS}>
-            {(entry) => (
-              <Button
-                size="sm"
-                variant="filterChip"
-                aria-pressed={platform() === entry}
-                onClick={() => setParam('platform', entry === 'all' ? null : entry)}
-              >
-                {entry === 'all' ? 'all' : CONTENT_PLATFORM_META[entry as ContentPlatform].label}
-              </Button>
-            )}
-          </For>
+          <FilterChipGroup
+            options={CONTENT_PLATFORM_FILTERS}
+            currentValue={platform}
+            getLabel={(entry) =>
+              entry === 'all' ? 'all' : CONTENT_PLATFORM_META[entry as ContentPlatform].label
+            }
+            onSelect={(value) => setParam('platform', value)}
+          />
         </div>
       </div>
 
