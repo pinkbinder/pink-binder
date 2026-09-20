@@ -111,6 +111,52 @@ describe('shared edge cache', () => {
     expect(second.headers.get('X-Edge-Stored-At')).toBeNull()
   })
 
+  it('shares a concurrent cache miss without sharing response bodies', async () => {
+    installMemoryCache()
+    let produced = 0
+    let releaseProduce!: () => void
+    let markProduceStarted!: () => void
+    const produceStarted = new Promise<void>((resolve) => {
+      markProduceStarted = resolve
+    })
+    const produce = async () => {
+      produced += 1
+      markProduceStarted()
+      await new Promise<void>((resolve) => {
+        releaseProduce = resolve
+      })
+      return jsonResponse({ listings: [produced] })
+    }
+
+    const first = serveWithEdgeCache(
+      new Request('https://pinkbinder.shop/api/marketplace'),
+      {},
+      produce,
+      POLICY,
+      undefined,
+      1_000_000
+    )
+    const second = serveWithEdgeCache(
+      new Request('https://pinkbinder.shop/api/marketplace'),
+      {},
+      produce,
+      POLICY,
+      undefined,
+      1_000_000
+    )
+
+    await produceStarted
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(produced).toBe(1)
+    releaseProduce()
+
+    const [firstResponse, secondResponse] = await Promise.all([first, second])
+    expect(firstResponse.headers.get('X-Cache')).toBe('MISS')
+    expect(secondResponse.headers.get('X-Cache')).toBe('MISS')
+    expect(await firstResponse.json()).toEqual({ listings: [1] })
+    expect(await secondResponse.json()).toEqual({ listings: [1] })
+  })
+
   it('serves stale content while revalidating in the background', async () => {
     installMemoryCache()
     let produced = 0
