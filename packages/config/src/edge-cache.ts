@@ -35,6 +35,9 @@ const STORED_AT_HEADER = 'X-Edge-Stored-At'
 const FRESH_FOR_HEADER = 'X-Edge-Fresh-For'
 const STALE_FOR_HEADER = 'X-Edge-Stale-For'
 
+/** One upstream refresh per normalized cache key within a Worker isolate. */
+const inFlightRefreshes = new Map<string, Promise<Response>>()
+
 /** `caches.default` on Workers; `undefined` locally where Cache API is absent. */
 export function getDefaultCache(): Cache | undefined {
   try {
@@ -109,6 +112,27 @@ async function storeResponse(
 }
 
 /**
+ * Share an origin refresh between concurrent requests without sharing the
+ * consumable `Response` body. Callers clone the settled response before
+ * returning it so every request owns an independent stream.
+ */
+function getOrStartRefresh(key: Request, refresh: () => Promise<Response>): Promise<Response> {
+  const keyUrl = key.url
+  const existing = inFlightRefreshes.get(keyUrl)
+  if (existing) return existing
+
+  const pending = refresh()
+  inFlightRefreshes.set(keyUrl, pending)
+  const clear = () => {
+    if (inFlightRefreshes.get(keyUrl) === pending) {
+      inFlightRefreshes.delete(keyUrl)
+    }
+  }
+  void pending.then(clear, clear)
+  return pending
+}
+
+/**
  * Serve `produce()` through `caches.default` keyed on a normalized GET URL.
  * Query strings are stripped so arbitrary `?cache-buster=` values cannot
  * create unbounded entries or fan out into origin fetches. Callers whose
@@ -174,7 +198,7 @@ export async function serveWithEdgeCache(
       if (age < freshFor + staleFor) {
         // Serve stale now; revalidate off the critical path. A failed
         // background refresh keeps the stored copy for the next visitor.
-        const revalidate = refresh().catch(() => undefined)
+        const revalidate = getOrStartRefresh(key, refresh).catch(() => undefined)
         if (context) {
           context.waitUntil(revalidate)
         } else {
@@ -185,5 +209,6 @@ export async function serveWithEdgeCache(
     }
   }
 
-  return refresh()
+  const refreshed = await getOrStartRefresh(key, refresh)
+  return refreshed.clone()
 }
