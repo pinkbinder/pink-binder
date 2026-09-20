@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.0...pink-binder-v3.2.1) (2026-09-20)
+
+
+### Bug Fixes
+
+* **cache:** deduplicate concurrent edge refreshes ([#162](https://github.com/pinkbinder/pink-binder/issues/162)) ([4377f8e](https://github.com/pinkbinder/pink-binder/commit/4377f8e634c5819eaa642368b59dfb815fb74062))
+
 ## [3.2.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.1.10...pink-binder-v3.2.0) (2026-09-19)
 
 
