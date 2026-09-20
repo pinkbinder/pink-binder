@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.9](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.8...config-v1.3.9) (2026-09-20)
+
+
+### Bug Fixes
+
+* **cache:** deduplicate concurrent edge refreshes ([#162](https://github.com/pinkbinder/pink-binder/issues/162)) ([4377f8e](https://github.com/pinkbinder/pink-binder/commit/4377f8e634c5819eaa642368b59dfb815fb74062))
+
 ## [1.3.8](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.7...config-v1.3.8) (2026-09-17)
 
 
