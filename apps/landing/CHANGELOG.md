@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.9](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.8...landing-v0.7.9) (2026-09-21)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group across 1 directory with 5 updates ([#164](https://github.com/pinkbinder/pink-binder/issues/164)) ([f2df7d1](https://github.com/pinkbinder/pink-binder/commit/f2df7d1149222d57588e3505cb782729848b2edf))
+
 ## [0.7.8](https://github.com/pinkbinder/pink-binder/compare/landing-v0.7.7...landing-v0.7.8) (2026-09-17)
 
 
