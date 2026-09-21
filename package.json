@@ -8,7 +8,7 @@
     "apps/*"
   ],
   "scripts": {
-    "build": "node scripts/with-env.mjs turbo run build",
+    "build": "node scripts/with-env.mjs turbo run build --concurrency=1",
     "build:cloudflare": "node scripts/build-cloudflare-worker.mjs",
     "benchmark:routes": "node scripts/benchmark-routes.mjs",
     "performance": "node scripts/check-bundle-budgets.mjs",
