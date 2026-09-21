@@ -20,7 +20,7 @@
     "cf-typegen": "wrangler types"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.3.1",
+    "@astrojs/cloudflare": "14.3.2",
     "@astrojs/solid-js": "^7.0.2",
     "@medusajs/js-sdk": "^2.1.0",
     "@nanostores/solid": "^1.1.1",
@@ -28,7 +28,7 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "astro": "^7.3.2",
+    "astro": "^7.3.3",
     "nanostores": "^1.5.3",
     "solid-js": "^1.9.15"
   },
