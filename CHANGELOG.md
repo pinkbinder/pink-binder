@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.3...pink-binder-v3.2.4) (2026-09-21)
+
+
+### Bug Fixes
+
+* keep blog layout compatible with astro checks ([#165](https://github.com/pinkbinder/pink-binder/issues/165)) ([0cb64ed](https://github.com/pinkbinder/pink-binder/commit/0cb64ed393649d66c3ce5587a32228d0d7493e47))
+
 ## [3.2.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.2...pink-binder-v3.2.3) (2026-09-21)
 
 
