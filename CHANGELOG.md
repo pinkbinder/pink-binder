@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.1...pink-binder-v3.2.2) (2026-09-21)
+
+
+### Bug Fixes
+
+* **ci:** stabilize parallel app builds ([559bbec](https://github.com/pinkbinder/pink-binder/commit/559bbec6f90dc96fcde1ed2e13cde2d721e57d2f))
+
 ## [3.2.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.0...pink-binder-v3.2.1) (2026-09-20)
 
 
