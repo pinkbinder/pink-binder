@@ -29,7 +29,7 @@ jobs:
       mode: audit
       runtime-repository: 0xPlayerOne/code-foundry
       runtime-ref: v1.30.0
-      ci-runner: ubuntu-slim
+      ci-runner: ubuntu-latest
       test-runner: ubuntu-slim
       unit-runner: ubuntu-slim
       performance-runner: ubuntu-latest
