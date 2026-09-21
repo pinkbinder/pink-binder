@@ -45,6 +45,9 @@ const {
 const isArticle = Boolean(publishedTime)
 const publishedTimeIso = publishedTime ? toSchemaDate(publishedTime) : undefined
 const ogImage = image ? new URL(image, SITE_URL).toString() : new URL('/images/logo.png', SITE_URL).toString()
+const postViewJson = postView
+  ? JSON.stringify(postView).replaceAll('&', '\\u0026').replaceAll('<', '\\u003c').replaceAll('>', '\\u003e')
+  : undefined
 
 // Posts (which carry a publish date) get article metadata plus a BlogPosting
 // node; the index gets the WebSite/Blog collection nodes instead.
@@ -134,19 +137,9 @@ const rssFeeds = [
   </head>
   <body class="antialiased">
     <slot />
-    {
-      postView ? (
-        <script
-          is:inline
-          type="application/json"
-          id="pb-post-view"
-          set:html={JSON.stringify(postView)
-            .replace(/&/g, '\\u0026')
-            .replace(/</g, '\\u003c')
-            .replace(/>/g, '\\u003e')}
-        />
-      ) : null
-    }
+    {postViewJson ? (
+      <script is:inline type="application/json" id="pb-post-view" set:html={postViewJson} />
+    ) : null}
     <script>
       import { initBlogPageTracking } from '../lib/analytics-client'
       initBlogPageTracking()
