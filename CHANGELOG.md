@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.2.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.2...pink-binder-v3.2.3) (2026-09-21)
+
+
+### Maintenance
+
+* **deps:** bump the npm-dependencies group across 1 directory with 5 updates ([#164](https://github.com/pinkbinder/pink-binder/issues/164)) ([f2df7d1](https://github.com/pinkbinder/pink-binder/commit/f2df7d1149222d57588e3505cb782729848b2edf))
+
 ## [3.2.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.1...pink-binder-v3.2.2) (2026-09-21)
 
 
