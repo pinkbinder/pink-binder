@@ -23,16 +23,16 @@
     "@repo/ui": "workspace:*",
     "@tanstack/solid-query": "^5.102.8",
     "solid-js": "^1.9.15",
-    "web-vitals": "^5"
+    "web-vitals": "^6"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@astrojs/cloudflare": "14.3.1",
+    "@astrojs/cloudflare": "14.3.2",
     "@astrojs/solid-js": "^7.0.2",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.5.1",
-    "astro": "7.3.2",
+    "astro": "7.3.3",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
     "postcss": "8.5.28",

@@ -43,10 +43,7 @@ plugin({
         filename: path,
         babelrc: false,
         configFile: false,
-        presets: [
-          ['@babel/preset-typescript', { isTSX: true, allExtensions: true }],
-          'babel-preset-solid',
-        ],
+        presets: [['@babel/preset-typescript', {}], 'babel-preset-solid'],
         sourceMaps: 'inline',
       })
       return { contents: result?.code ?? '', loader: 'js' }
