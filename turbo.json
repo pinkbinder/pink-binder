@@ -58,6 +58,22 @@
       "cache": false,
       "persistent": true,
       "inputs": [".env", ".env.local", ".env.development", ".env.development.local"]
+    },
+    "cf:build": {
+      "dependsOn": [],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+    },
+    "blog#cf:build": {
+      "env": ["CI", "PUBLIC_BLOG_URL"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+    },
+    "landing#cf:build": {
+      "env": ["CI"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+    },
+    "admin#cf:build": {
+      "env": ["CI", "PUBLIC_*"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
     }
   }
 }
