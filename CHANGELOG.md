@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.4...pink-binder-v3.3.0) (2026-09-22)
+
+
+### Features
+
+* **build:** self-hosted turbo remote cache on Cloudflare + cached deploy builds ([#170](https://github.com/pinkbinder/pink-binder/issues/170)) ([d981bc2](https://github.com/pinkbinder/pink-binder/commit/d981bc2896b54df3b00c79945b618a15489506df))
+
 ## [3.2.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.3...pink-binder-v3.2.4) (2026-09-21)
 
 

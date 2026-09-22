@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/admin-v0.8.0...admin-v0.9.0) (2026-09-22)
+
+
+### Features
+
+* **build:** self-hosted turbo remote cache on Cloudflare + cached deploy builds ([#170](https://github.com/pinkbinder/pink-binder/issues/170)) ([d981bc2](https://github.com/pinkbinder/pink-binder/commit/d981bc2896b54df3b00c79945b618a15489506df))
+
 ## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/admin-v0.7.5...admin-v0.8.0) (2026-09-19)
 
 
