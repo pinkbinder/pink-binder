@@ -4,7 +4,8 @@
   "account_id": "e9b73b1b6c312b889732f29b884a5166",
   "compatibility_date": "2026-09-09",
   "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
-  "main": "@tanstack/solid-start/server-entry",
+  "main": "src/server.ts",
+  "assets": { "directory": "./dist/client" },
   "observability": { "enabled": true },
   "workers_dev": true,
 }
