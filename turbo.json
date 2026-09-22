@@ -1,17 +1,7 @@
 {
   "$schema": "https://v2-9-16.turborepo.dev/schema.json",
-  "globalDependencies": [
-    ".env",
-    ".env.local"
-  ],
-  "globalEnv": [
-    "EBAY_*",
-    "ETSY_*",
-    "WHATNOT_*",
-    "LIVE_SHOWS_*",
-    "BLOG_*",
-    "PUBLIC_*"
-  ],
+  "globalDependencies": [".env", ".env.local"],
+  "globalEnv": ["EBAY_*", "ETSY_*", "WHATNOT_*", "LIVE_SHOWS_*", "BLOG_*", "PUBLIC_*"],
   "globalPassThroughEnv": [
     "EBAY_*",
     "ETSY_*",
@@ -23,9 +13,7 @@
   ],
   "tasks": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
+      "dependsOn": ["^build"],
       "inputs": [
         "$TURBO_DEFAULT$",
         ".env",
@@ -37,10 +25,7 @@
         "../../packages/data/cache/normalized/blogs/**",
         "../../packages/data/cache/normalized/cards/**"
       ],
-      "outputs": [
-        "dist/**",
-        ".astro/**"
-      ],
+      "outputs": ["dist/**", ".astro/**"],
       "env": [
         "EBAY_*",
         "ETSY_*",
@@ -52,25 +37,17 @@
       ]
     },
     "lint": {
-      "dependsOn": [
-        "^lint"
-      ]
+      "dependsOn": ["^lint"]
     },
     "type-check": {
-      "dependsOn": [
-        "^type-check"
-      ]
+      "dependsOn": ["^type-check"]
     },
     "test": {
-      "dependsOn": [
-        "^test"
-      ],
+      "dependsOn": ["^test"],
       "outputs": []
     },
     "test:coverage": {
-      "dependsOn": [
-        "^test:coverage"
-      ],
+      "dependsOn": ["^test:coverage"],
       "cache": false
     },
     "format": {},
@@ -80,52 +57,23 @@
     "dev": {
       "cache": false,
       "persistent": true,
-      "inputs": [
-        ".env",
-        ".env.local",
-        ".env.development",
-        ".env.development.local"
-      ]
+      "inputs": [".env", ".env.local", ".env.development", ".env.development.local"]
     },
     "cf:build": {
       "dependsOn": [],
-      "outputs": [
-        "dist/_astro/**",
-        "dist/_headers",
-        "dist/**/*.html"
-      ]
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
     },
     "blog#cf:build": {
-      "env": [
-        "CI",
-        "PUBLIC_BLOG_URL"
-      ],
-      "outputs": [
-        "dist/_astro/**",
-        "dist/_headers",
-        "dist/**/*.html"
-      ]
+      "env": ["CI", "PUBLIC_BLOG_URL"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
     },
     "landing#cf:build": {
-      "env": [
-        "CI"
-      ],
-      "outputs": [
-        "dist/_astro/**",
-        "dist/_headers",
-        "dist/**/*.html"
-      ]
+      "env": ["CI"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
     },
     "admin#cf:build": {
-      "env": [
-        "CI",
-        "PUBLIC_*"
-      ],
-      "outputs": [
-        "dist/_astro/**",
-        "dist/_headers",
-        "dist/**/*.html"
-      ]
+      "env": ["CI", "PUBLIC_*"],
+      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
     }
   }
 }
