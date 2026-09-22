@@ -79,32 +79,23 @@ describe('no Next.js or Vercel deployment dependencies', () => {
     // legitimate and must not trip the check:
     //   - `next` as a plain identifier (nextFrame, nextOffset)
     //   - negative assertions that a file does *not* contain a Next import
-    // Only real module specifiers count.
-    const patterns = [
-      '^[[:space:]]*import[[:space:]].*from[[:space:]]*[\'"]next(/|[\'"])',
-      '^[[:space:]]*import[[:space:]]*[\'"]next/',
-      'require\\([\'"]next/',
-    ]
+    // Keep the scan scoped to source-bearing directories and use one git
+    // process so this guard stays well below Bun's default test timeout.
+    const pattern = String.raw`^[[:space:]]*import[[:space:]].*from[[:space:]]*['"]next(/|['"])|^[[:space:]]*import[[:space:]]*['"]next/|require\(['"]next/`
     let matches: string[] = []
-    for (const pattern of patterns) {
-      try {
-        matches.push(
-          ...execFileSync('git', ['grep', '-nE', pattern, '--', '.'], {
-            cwd: repoRoot,
-            encoding: 'utf8',
-          })
-            .split('\n')
-            .filter(Boolean)
-        )
-      } catch {
-        // git grep exits 1 when nothing matches, which is the passing case.
-      }
+    try {
+      matches = execFileSync(
+        'git',
+        ['grep', '-nE', pattern, '--', 'apps', 'packages', 'scripts', 'tests'],
+        { cwd: repoRoot, encoding: 'utf8' }
+      )
+        .split('\n')
+        .filter(Boolean)
+    } catch {
+      // git grep exits 1 when nothing matches, which is the passing case.
     }
 
-    // Vendored third-party skills cite Next.js as a generic example; they are
-    // not this repository's source.
-    const relevant = matches.filter((line) => !line.startsWith('.agents/'))
-    expect(relevant).toEqual([])
+    expect(matches).toEqual([])
   })
 
   test('no tracked source reads a Vercel deployment environment variable', () => {

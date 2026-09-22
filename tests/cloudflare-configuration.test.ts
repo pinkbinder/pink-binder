@@ -27,7 +27,18 @@ describe('Cloudflare build configuration', () => {
       const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
 
       expect(config).not.toMatch(/"build"\s*:/)
-      expect(config).toMatch(/"main"\s*:\s*"@tanstack\/solid-start\/server-entry"/)
+      const main = config.match(/"main"\s*:\s*"([^"]+)"/)?.[1]
+      expect(main).toBeDefined()
+      if (main === 'src/server.ts') {
+        const serverEntry = await readFile(resolve(repoRoot, 'apps', app, main), 'utf8')
+        expect(serverEntry).toContain('@tanstack/solid-start/server-entry')
+        expect(config).toContain('"#tanstack-router-entry"')
+        expect(config).toContain('"#tanstack-start-entry"')
+        expect(config).toContain('server-fn-resolver.js')
+        expect(config).toContain('start-manifest.js')
+      } else {
+        expect(main).toBe('@tanstack/solid-start/server-entry')
+      }
       expect(config).not.toContain('.open-next')
     }
 
