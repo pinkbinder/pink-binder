@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.17](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.16...marketplaces-v1.3.17) (2026-09-22)
+
+
+### Tests
+
+* **marketplaces:** cover TCGdex provider ([#173](https://github.com/pinkbinder/pink-binder/issues/173)) ([621dc78](https://github.com/pinkbinder/pink-binder/commit/621dc78600ce166bf48cc3b0b04cad8792499fa1))
+
 ## [1.3.16](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.15...marketplaces-v1.3.16) (2026-09-18)
 
 

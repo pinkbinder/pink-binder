@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.3.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.0...pink-binder-v3.3.1) (2026-09-22)
+
+
+### Bug Fixes
+
+* **build:** serve turbo cache artifacts from the edge ([#172](https://github.com/pinkbinder/pink-binder/issues/172)) ([a5ba245](https://github.com/pinkbinder/pink-binder/commit/a5ba245e5c345a76ad568c0cabe7ab7e0e293379))
+
+
+### Tests
+
+* **marketplaces:** cover TCGdex provider ([#173](https://github.com/pinkbinder/pink-binder/issues/173)) ([621dc78](https://github.com/pinkbinder/pink-binder/commit/621dc78600ce166bf48cc3b0b04cad8792499fa1))
+
 ## [3.3.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.2.4...pink-binder-v3.3.0) (2026-09-22)
 
 

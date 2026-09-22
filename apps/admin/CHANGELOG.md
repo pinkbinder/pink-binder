@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/pinkbinder/pink-binder/compare/admin-v0.9.0...admin-v0.9.1) (2026-09-22)
+
+
+### Tests
+
+* **marketplaces:** cover TCGdex provider ([#173](https://github.com/pinkbinder/pink-binder/issues/173)) ([621dc78](https://github.com/pinkbinder/pink-binder/commit/621dc78600ce166bf48cc3b0b04cad8792499fa1))
+
 ## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/admin-v0.8.0...admin-v0.9.0) (2026-09-22)
 
 
