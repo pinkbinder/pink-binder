@@ -61,19 +61,50 @@
     },
     "cf:build": {
       "dependsOn": [],
-      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+      "outputs": [
+        "dist/client/_astro/**",
+        "dist/client/assets/**",
+        "dist/client/_headers",
+        "dist/client/.assetsignore",
+        "dist/client/.well-known/**",
+        "dist/client/**/*.html",
+        "dist/client/robots.txt",
+        "dist/client/sitemap.xml",
+        "dist/server/**"
+      ]
     },
     "blog#cf:build": {
       "env": ["CI", "PUBLIC_BLOG_URL"],
-      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+      "outputs": [
+        "dist/client/_astro/**",
+        "dist/client/_headers",
+        "dist/client/.assetsignore",
+        "dist/client/.well-known/**",
+        "dist/client/**/*.html",
+        "dist/client/robots.txt",
+        "dist/server/**"
+      ]
     },
     "landing#cf:build": {
       "env": ["CI"],
-      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+      "outputs": [
+        "dist/client/_astro/**",
+        "dist/client/_headers",
+        "dist/client/.assetsignore",
+        "dist/client/**/*.html",
+        "dist/client/robots.txt",
+        "dist/client/sitemap.xml",
+        "dist/server/**"
+      ]
     },
     "admin#cf:build": {
       "env": ["CI", "PUBLIC_*"],
-      "outputs": ["dist/_astro/**", "dist/_headers", "dist/**/*.html"]
+      "outputs": [
+        "dist/client/assets/**",
+        "dist/client/_headers",
+        "dist/client/.assetsignore",
+        "dist/server/**"
+      ]
     }
   }
 }
