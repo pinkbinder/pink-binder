@@ -1,0 +1,13 @@
+{
+  "$schema": "https://unpkg.com/wrangler/config-schema.json",
+  // Turborepo remote cache for the Pink Binder account. Secrets: TURBO_TOKEN
+  // (bearer token turbo sends) and TURBO_TEAM (the team slug turbo sends);
+  // see README.md for the deploy sequence.
+  "name": "pinkbinder-turbo-cache",
+  "account_id": "e9b73b1b6c312b889732f29b884a5166",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-08-06",
+  "observability": { "enabled": true },
+  "workers_dev": true,
+  "r2_buckets": [{ "binding": "BUCKET", "bucket_name": "pinkbinder-turbo-cache" }],
+}
