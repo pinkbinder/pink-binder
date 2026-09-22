@@ -32,6 +32,10 @@ describe('Cloudflare build configuration', () => {
       if (main === 'src/server.ts') {
         const serverEntry = await readFile(resolve(repoRoot, 'apps', app, main), 'utf8')
         expect(serverEntry).toContain('@tanstack/solid-start/server-entry')
+        expect(config).toContain('"#tanstack-router-entry"')
+        expect(config).toContain('"#tanstack-start-entry"')
+        expect(config).toContain('server-fn-resolver.js')
+        expect(config).toContain('start-manifest.js')
       } else {
         expect(main).toBe('@tanstack/solid-start/server-entry')
       }

@@ -18,7 +18,7 @@
     "preview": "vite preview --port 3003",
     "deploy": "bun run build:cloudflare && wrangler deploy",
     "cf-typegen": "wrangler types",
-    "cf:build": "vite build"
+    "cf:build": "vite build && node scripts/prepare-cloudflare-entry.mjs"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
