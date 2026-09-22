@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "astro build",
-    "build:cloudflare": "astro build",
+    "build:cloudflare": "cd ../.. && bunx turbo run cf:build --filter=@repo/landing && bun scripts/restore-cached-media.mjs landing",
     "dev": "astro dev --port 3000",
     "lint": "oxlint . --max-warnings 0",
     "type-check": "astro check",
@@ -14,7 +14,8 @@
     "test:coverage": "cd ../.. && bun test --coverage apps/landing",
     "format": "oxfmt --check .",
     "format:fix": "oxfmt --write .",
-    "start": "astro preview --port 3000"
+    "start": "astro preview --port 3000",
+    "cf:build": "astro build"
   },
   "dependencies": {
     "@repo/config": "workspace:*",

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsr generate && vite build",
-    "build:cloudflare": "vite build",
+    "build:cloudflare": "cd ../.. && bunx turbo run cf:build --filter=@repo/admin && bun scripts/restore-cached-media.mjs admin",
     "dev": "vite dev --port 3003",
     "lint": "oxlint . --max-warnings 0",
     "type-check": "tsc --noEmit",
@@ -17,7 +17,8 @@
     "start": "vite preview --port 3003",
     "preview": "vite preview --port 3003",
     "deploy": "bun run build:cloudflare && wrangler deploy",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "cf:build": "vite build"
   },
   "dependencies": {
     "@repo/config": "workspace:*",
