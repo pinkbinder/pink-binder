@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.10](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.9...config-v1.3.10) (2026-09-23)
+
+
+### Maintenance
+
+* **security:** deduplicate security headers via shared helper ([#175](https://github.com/pinkbinder/pink-binder/issues/175)) ([0c59876](https://github.com/pinkbinder/pink-binder/commit/0c59876cf5aa3b0e147e0e7d259d1f32a11ce6ca))
+
 ## [1.3.9](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.8...config-v1.3.9) (2026-09-20)
 
 
