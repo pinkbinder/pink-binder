@@ -1,5 +1,5 @@
 import { defineMiddleware } from 'astro:middleware'
-import { SECURITY_HEADERS } from '@repo/config'
+import { applySecurityHeaders } from '@repo/config'
 import { serveWithEdgeCache } from '@repo/config/edge-cache'
 import { getLegacyPostRedirectPath, pathSegmentsToCanonicalSlug } from '@repo/data/blog/post-path'
 import {
@@ -103,15 +103,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   if (pathname === '/') {
     if (acceptsMarkdown(context.request)) {
-      const headers = discoveryHeaders({
-        'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
-        'Content-Type': 'text/markdown; charset=utf-8',
-        Vary: 'Accept',
-        'X-Markdown-Tokens': String(Math.ceil(MARKDOWN_HOME.length / 4)),
+      const response = new Response(MARKDOWN_HOME, {
+        headers: discoveryHeaders({
+          'Cache-Control': 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400',
+          'Content-Type': 'text/markdown; charset=utf-8',
+          Vary: 'Accept',
+          'X-Markdown-Tokens': String(Math.ceil(MARKDOWN_HOME.length / 4)),
+        }),
       })
-      stampNonCanonicalHost(headers)
-      applySecurity(headers)
-      return new Response(MARKDOWN_HOME, { headers })
+      stampNonCanonicalHost(response.headers)
+      return applySecurityHeaders(response)
     }
   }
 
@@ -134,15 +135,16 @@ export const onRequest = defineMiddleware(async (context, next) => {
           })
         : authored?.body
     if (body) {
-      const headers = discoveryHeaders({
-        'Cache-Control': POST_PAGE_CACHE_CONTROL,
-        'Content-Type': 'text/markdown; charset=utf-8',
-        Vary: 'Accept',
-        'X-Markdown-Tokens': String(Math.ceil(body.length / 4)),
+      const response = new Response(body, {
+        headers: discoveryHeaders({
+          'Cache-Control': POST_PAGE_CACHE_CONTROL,
+          'Content-Type': 'text/markdown; charset=utf-8',
+          Vary: 'Accept',
+          'X-Markdown-Tokens': String(Math.ceil(body.length / 4)),
+        }),
       })
-      stampNonCanonicalHost(headers)
-      applySecurity(headers)
-      return new Response(body, { headers })
+      stampNonCanonicalHost(response.headers)
+      return applySecurityHeaders(response)
     }
   }
 
@@ -184,16 +186,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const headers = discoveryHeaders(response.headers)
   stampNonCanonicalHost(headers)
-  applySecurity(headers)
-  return new Response(response.body, {
+  const secured = new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
     headers,
   })
+  return applySecurityHeaders(secured)
 })
-
-function applySecurity(headers: Headers): void {
-  for (const header of SECURITY_HEADERS) {
-    headers.set(header.key, header.value)
-  }
-}
