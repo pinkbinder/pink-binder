@@ -35,3 +35,20 @@ export const SECURITY_HEADERS: SecurityHeader[] = [
   { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
   { key: 'Permissions-Policy', value: 'camera=(), geolocation=(), microphone=()' },
 ]
+
+/**
+ * Apply the shared security headers to a Response, returning a new
+ * Response with the headers merged in. Use this in middleware and
+ * request handlers across all apps instead of duplicating the loop.
+ */
+export function applySecurityHeaders(response: Response): Response {
+  const headers = new Headers(response.headers)
+  for (const header of SECURITY_HEADERS) {
+    headers.set(header.key, header.value)
+  }
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  })
+}
