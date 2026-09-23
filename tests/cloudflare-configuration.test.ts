@@ -76,7 +76,7 @@ describe('Cloudflare build configuration', () => {
 
   test('hardens blog responses through Astro middleware with shared headers', async () => {
     const middleware = await readFile(resolve(repoRoot, 'apps/blog/src/middleware.ts'), 'utf8')
-    expect(middleware).toContain('SECURITY_HEADERS')
+    expect(middleware).toContain('applySecurityHeaders')
     expect(middleware).not.toContain('unsafe-eval')
 
     const headersModule = await readFile(
@@ -108,7 +108,7 @@ describe('Cloudflare build configuration', () => {
       } catch {
         continue
       }
-      expect(middleware).toContain('SECURITY_HEADERS')
+      expect(middleware).toContain('applySecurityHeaders')
       expect(middleware).toContain('createMiddleware')
       expect(middleware).not.toContain('unsafe-eval')
       expect(middleware).not.toContain("from 'next/")
@@ -118,7 +118,7 @@ describe('Cloudflare build configuration', () => {
       resolve(repoRoot, 'apps/landing/src/middleware.ts'),
       'utf8'
     )
-    expect(landingMiddleware).toContain('SECURITY_HEADERS')
+    expect(landingMiddleware).toContain('applySecurityHeaders')
     expect(landingMiddleware).not.toContain('unsafe-eval')
   })
 
@@ -127,7 +127,7 @@ describe('Cloudflare build configuration', () => {
 
     expect(middleware).not.toContain("from 'next/server'")
     expect(middleware).toContain("'Content-Type': 'text/markdown; charset=utf-8'")
-    expect(middleware).toContain('SECURITY_HEADERS')
+    expect(middleware).toContain('applySecurityHeaders')
     expect(middleware).toContain('DISCOVERY_LINK_HEADER')
   })
 
