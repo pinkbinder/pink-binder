@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.9](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.8...store-v0.7.9) (2026-09-23)
+
+
+### Maintenance
+
+* **security:** deduplicate security headers via shared helper ([#175](https://github.com/pinkbinder/pink-binder/issues/175)) ([0c59876](https://github.com/pinkbinder/pink-binder/commit/0c59876cf5aa3b0e147e0e7d259d1f32a11ce6ca))
+
 ## [0.7.8](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.7...store-v0.7.8) (2026-09-21)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.14.1](https://github.com/pinkbinder/pink-binder/compare/blog-v0.14.0...blog-v0.14.1) (2026-09-23)
+
+
+### Maintenance
+
+* **security:** deduplicate security headers via shared helper ([#175](https://github.com/pinkbinder/pink-binder/issues/175)) ([0c59876](https://github.com/pinkbinder/pink-binder/commit/0c59876cf5aa3b0e147e0e7d259d1f32a11ce6ca))
+
 ## [0.14.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.13.6...blog-v0.14.0) (2026-09-22)
 
 
