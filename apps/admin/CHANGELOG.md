@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.3](https://github.com/pinkbinder/pink-binder/compare/admin-v0.9.2...admin-v0.9.3) (2026-09-24)
+
+
+### CI
+
+* trigger fresh workflow ([#179](https://github.com/pinkbinder/pink-binder/issues/179)) ([f6960af](https://github.com/pinkbinder/pink-binder/commit/f6960af9e7eb9606de60370f167d78c898c29e0c))
+
 ## [0.9.2](https://github.com/pinkbinder/pink-binder/compare/admin-v0.9.1...admin-v0.9.2) (2026-09-23)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.3...pink-binder-v3.3.4) (2026-09-24)
+
+
+### CI
+
+* trigger fresh workflow ([#179](https://github.com/pinkbinder/pink-binder/issues/179)) ([f6960af](https://github.com/pinkbinder/pink-binder/commit/f6960af9e7eb9606de60370f167d78c898c29e0c))
+
 ## [3.3.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.2...pink-binder-v3.3.3) (2026-09-24)
 
 
