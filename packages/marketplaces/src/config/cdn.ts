@@ -11,10 +11,6 @@ const SCRYDEX_CDN = {
   host: 'images.scrydex.com',
 } as const
 
-/** Scrydex returns a generic card-back PNG (~45k small / ~186k large) when the catalog id is wrong. */
-export const SCRYDEX_PLACEHOLDER_SMALL_BYTES = 45_551
-export const SCRYDEX_PLACEHOLDER_LARGE_BYTES = 186_316
-
 const POKEMON_TCG_CDN = {
   imageHost: 'images.pokemontcg.io',
 } as const
