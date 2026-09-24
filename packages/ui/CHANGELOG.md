@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.1](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.0...ui-v2.2.1) (2026-09-24)
+
+
+### Maintenance
+
+* remove dead exports and deduplicate CSS ambient declarations ([#177](https://github.com/pinkbinder/pink-binder/issues/177)) ([87fd365](https://github.com/pinkbinder/pink-binder/commit/87fd365a6288ebd87d96d78b6da14be235eca3f6))
+
 ## [2.2.0](https://github.com/pinkbinder/pink-binder/compare/ui-v2.1.4...ui-v2.2.0) (2026-09-19)
 
 

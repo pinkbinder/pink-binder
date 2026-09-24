@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.18](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.17...marketplaces-v1.3.18) (2026-09-24)
+
+
+### Maintenance
+
+* remove dead exports and deduplicate CSS ambient declarations ([#177](https://github.com/pinkbinder/pink-binder/issues/177)) ([87fd365](https://github.com/pinkbinder/pink-binder/commit/87fd365a6288ebd87d96d78b6da14be235eca3f6))
+
 ## [1.3.17](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.16...marketplaces-v1.3.17) (2026-09-22)
 
 
