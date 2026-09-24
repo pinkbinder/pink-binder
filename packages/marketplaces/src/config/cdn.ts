@@ -11,8 +11,6 @@ const SCRYDEX_CDN = {
   host: 'images.scrydex.com',
 } as const
 
-
-
 const POKEMON_TCG_CDN = {
   imageHost: 'images.pokemontcg.io',
 } as const
