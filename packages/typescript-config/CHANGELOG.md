@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v2.0.1...typescript-config-v2.0.2) (2026-09-24)
+
+
+### CI
+
+* trigger fresh workflow ([#179](https://github.com/pinkbinder/pink-binder/issues/179)) ([f6960af](https://github.com/pinkbinder/pink-binder/commit/f6960af9e7eb9606de60370f167d78c898c29e0c))
+
 ## [2.0.1](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v2.0.0...typescript-config-v2.0.1) (2026-09-17)
 
 
