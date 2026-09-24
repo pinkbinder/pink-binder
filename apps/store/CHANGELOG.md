@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.10](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.9...store-v0.7.10) (2026-09-24)
+
+
+### CI
+
+* trigger fresh workflow ([#179](https://github.com/pinkbinder/pink-binder/issues/179)) ([f6960af](https://github.com/pinkbinder/pink-binder/commit/f6960af9e7eb9606de60370f167d78c898c29e0c))
+
 ## [0.7.9](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.8...store-v0.7.9) (2026-09-23)
 
 

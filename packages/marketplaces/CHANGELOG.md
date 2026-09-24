@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.19](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.18...marketplaces-v1.3.19) (2026-09-24)
+
+
+### CI
+
+* trigger fresh workflow ([#179](https://github.com/pinkbinder/pink-binder/issues/179)) ([f6960af](https://github.com/pinkbinder/pink-binder/commit/f6960af9e7eb9606de60370f167d78c898c29e0c))
+
 ## [1.3.18](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.17...marketplaces-v1.3.18) (2026-09-24)
 
 
