@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.2...pink-binder-v3.3.3) (2026-09-24)
+
+
+### Maintenance
+
+* remove dead exports and deduplicate CSS ambient declarations ([#177](https://github.com/pinkbinder/pink-binder/issues/177)) ([87fd365](https://github.com/pinkbinder/pink-binder/commit/87fd365a6288ebd87d96d78b6da14be235eca3f6))
+
 ## [3.3.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.1...pink-binder-v3.3.2) (2026-09-23)
 
 
