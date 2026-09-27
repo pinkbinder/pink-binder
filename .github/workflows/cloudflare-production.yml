@@ -21,7 +21,9 @@ jobs:
     uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.33.0
     with:
       mode: production
-      wrangler-version: local
+      # Wrangler 4.131.1 fails on the admin Worker under the reusable Bun
+      # launcher with "The object can not be cloned"; 4.130.0 deploys cleanly.
+      wrangler-version: 4.130.0
       working-directory: apps/${{ matrix.app }}
       # explicit package filter: the v1.28.6 auto-detect returns an empty
       # turbo_package on hosted runners, failing the impact check
