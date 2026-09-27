@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.5...pink-binder-v3.3.6) (2026-09-27)
+
+
+### Bug Fixes
+
+* pin cloudflare production wrangler ([#183](https://github.com/pinkbinder/pink-binder/issues/183)) ([960bfe7](https://github.com/pinkbinder/pink-binder/commit/960bfe78ed44673aceb0f4cee0ca8ab944bc26d2))
+
 ## [3.3.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.4...pink-binder-v3.3.5) (2026-09-27)
 
 
