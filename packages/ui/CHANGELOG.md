@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.3](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.2...ui-v2.2.3) (2026-09-27)
+
+
+### Maintenance
+
+* remove dead globals.css.d.ts ambient declaration ([#181](https://github.com/pinkbinder/pink-binder/issues/181)) ([778aa8c](https://github.com/pinkbinder/pink-binder/commit/778aa8ca8c7889fa1c36fa85ab7b19a32fe81cd2))
+
 ## [2.2.2](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.1...ui-v2.2.2) (2026-09-24)
 
 
