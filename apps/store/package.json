@@ -16,7 +16,7 @@
     "format:fix": "oxfmt --write .",
     "start": "astro preview --port 3001",
     "preview": "astro preview --port 3001",
-    "deploy": "cf deploy",
+    "deploy": "bun run build:cloudflare && cf-wrangler build && cf deploy --prebuilt",
     "cf-typegen": "wrangler types",
     "cloudflare:build": "astro build && cf-wrangler build && cf deploy --dry-run",
     "deploy:preview": "cf previews deploy"

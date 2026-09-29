@@ -16,7 +16,7 @@
     "format:fix": "oxfmt --write .",
     "start": "vite preview --port 3003",
     "preview": "vite preview --port 3003",
-    "deploy": "bun run build:cloudflare && wrangler deploy",
+    "deploy": "bun run build:cloudflare && cf-wrangler build && cf deploy --prebuilt",
     "cf-typegen": "wrangler types",
     "cf:build": "vite build && node scripts/prepare-cloudflare-entry.mjs"
   },
@@ -40,12 +40,13 @@
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-cli": "^1.167.35",
     "@types/node": "^26.5.1",
+    "cf": "^1.0.0-beta.5",
     "oxfmt": "^0.68.0",
     "oxlint": "^1.83.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite": "^8.2.2",
     "vite-plugin-solid": "^2.11.14",
-    "wrangler": "4.130.0"
+    "wrangler": "^4.143.0"
   }
 }
