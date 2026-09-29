@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.5.0...pink-binder-v3.6.0) (2026-09-29)
+
+
+### Features
+
+* **ci:** deploy through the cf CLI; drop the deploy-only wrangler.jsonc files ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([9939de3](https://github.com/pinkbinder/pink-binder/commit/9939de322333d10a6bf14a0b533c497b3c9662df))
+
 ## [3.5.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.1...pink-binder-v3.5.0) (2026-09-29)
 
 

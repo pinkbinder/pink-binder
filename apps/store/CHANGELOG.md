@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.9.0...store-v0.10.0) (2026-09-29)
+
+
+### Features
+
+* **ci:** deploy through the cf CLI; drop the deploy-only wrangler.jsonc files ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([9939de3](https://github.com/pinkbinder/pink-binder/commit/9939de322333d10a6bf14a0b533c497b3c9662df))
+
 ## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.8.0...store-v0.9.0) (2026-09-29)
 
 

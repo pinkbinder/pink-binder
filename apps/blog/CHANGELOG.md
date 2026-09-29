@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.16.0...blog-v0.17.0) (2026-09-29)
+
+
+### Features
+
+* **ci:** deploy through the cf CLI; drop the deploy-only wrangler.jsonc files ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([9939de3](https://github.com/pinkbinder/pink-binder/commit/9939de322333d10a6bf14a0b533c497b3c9662df))
+
 ## [0.16.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.15.0...blog-v0.16.0) (2026-09-29)
 
 
