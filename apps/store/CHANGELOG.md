@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.8.0...store-v0.9.0) (2026-09-29)
+
+
+### Features
+
+* **deploy:** cf CLI deploys for admin; prebuilt deploys everywhere ([#192](https://github.com/pinkbinder/pink-binder/issues/192)) ([4ed1467](https://github.com/pinkbinder/pink-binder/commit/4ed1467abb1d469176d997cecd3a37e87660bfe6))
+
 ## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.10...store-v0.8.0) (2026-09-29)
 
 
