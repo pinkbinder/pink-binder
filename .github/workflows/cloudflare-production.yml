@@ -17,9 +17,10 @@ jobs:
           - admin
           - blog
           - landing
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.33.3
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.36.0
     with:
       mode: production
+      deploy-tool: cf
       wrangler-version: 4.130.0
       working-directory: apps/${{ matrix.app }}
       turbo-filter: '@repo/${{ matrix.app }}'
