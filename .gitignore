@@ -87,3 +87,6 @@ eval-results/
 .wrangler/
 # Agent session tooling (plans, local state)
 .zcode/
+
+# cf CLI build output
+.cloudflare/
