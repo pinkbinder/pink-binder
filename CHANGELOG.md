@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.4.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.6...pink-binder-v3.4.0) (2026-09-29)
+
+
+### Features
+
+* cf-migrate ([#187](https://github.com/pinkbinder/pink-binder/issues/187)) ([4f2d2e0](https://github.com/pinkbinder/pink-binder/commit/4f2d2e05ed132d17ca99f4ae076c14a5f298dd93))
+
+
+### Maintenance
+
+* **ci:** bump the cloudflare deploy workflow to v1.33.3 ([#189](https://github.com/pinkbinder/pink-binder/issues/189)) ([c5ac253](https://github.com/pinkbinder/pink-binder/commit/c5ac253c78efb5c5eaba4be4414ca908bed50a03))
+
 ## [3.3.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.5...pink-binder-v3.3.6) (2026-09-27)
 
 
