@@ -17,7 +17,7 @@ jobs:
           - admin
           - blog
           - landing
-    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.36.2
+    uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.36.4
     with:
       mode: production
       deploy-tool: cf
