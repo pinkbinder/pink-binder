@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.15.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.14.2...blog-v0.15.0) (2026-09-29)
+
+
+### Features
+
+* cf-migrate ([#187](https://github.com/pinkbinder/pink-binder/issues/187)) ([4f2d2e0](https://github.com/pinkbinder/pink-binder/commit/4f2d2e05ed132d17ca99f4ae076c14a5f298dd93))
+
 ## [0.14.2](https://github.com/pinkbinder/pink-binder/compare/blog-v0.14.1...blog-v0.14.2) (2026-09-24)
 
 

@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.10...store-v0.8.0) (2026-09-29)
+
+
+### Features
+
+* cf-migrate ([#187](https://github.com/pinkbinder/pink-binder/issues/187)) ([4f2d2e0](https://github.com/pinkbinder/pink-binder/commit/4f2d2e05ed132d17ca99f4ae076c14a5f298dd93))
+
 ## [0.7.10](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.9...store-v0.7.10) (2026-09-24)
 
 
