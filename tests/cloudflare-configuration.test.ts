@@ -42,11 +42,11 @@ describe('Cloudflare build configuration', () => {
       expect(config).not.toContain('.open-next')
     }
 
-    for (const app of ['blog', 'landing']) {
-      const config = await readFile(resolve(repoRoot, 'apps', app, 'wrangler.jsonc'), 'utf8')
+    for (const app of ['blog', 'landing', 'store']) {
+      const config = await readFile(resolve(repoRoot, 'apps', app, 'cloudflare.config.ts'), 'utf8')
 
-      expect(config).not.toMatch(/"build"\s*:/)
-      expect(config).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
+      expect(config).not.toMatch(/build:\s*\{/)
+      expect(config).toContain("entrypoint: 'dist/server/entry.mjs'")
     }
   })
 
@@ -68,10 +68,10 @@ describe('Cloudflare build configuration', () => {
   })
 
   test('keeps the R2 gallery binding on the Astro blog worker', async () => {
-    const config = await readFile(resolve(repoRoot, 'apps/blog/wrangler.jsonc'), 'utf8')
+    const config = await readFile(resolve(repoRoot, 'apps/blog/cloudflare.config.ts'), 'utf8')
 
-    expect(config).toMatch(/"binding"\s*:\s*"BLOG_GALLERY_BUCKET"/)
-    expect(config).toMatch(/"main"\s*:\s*"dist\/server\/entry\.mjs"/)
+    expect(config).toContain('BLOG_GALLERY_BUCKET')
+    expect(config).toContain("entrypoint: 'dist/server/entry.mjs'")
   })
 
   test('hardens blog responses through Astro middleware with shared headers', async () => {
@@ -164,6 +164,17 @@ describe('Cloudflare build configuration', () => {
     const config = await readFile(resolve(repoRoot, 'apps/landing/astro.wrangler.jsonc'), 'utf8')
     expect(config, 'landing needs the blog R2 binding').toContain('BLOG_GALLERY_BUCKET')
     expect(config).toContain('pink-binder')
+
+    // The cf deploy path takes its bindings from cloudflare.config.ts; a
+    // deploy without the bucket silently empties the landing blog section
+    // (shipped to production exactly that way once).
+    const deployConfig = await readFile(
+      resolve(repoRoot, 'apps/landing/cloudflare.config.ts'),
+      'utf8'
+    )
+    expect(deployConfig, 'landing cf deploy config needs the blog R2 binding').toContain(
+      'BLOG_GALLERY_BUCKET'
+    )
 
     const source = await readFile(
       resolve(repoRoot, 'apps/landing/src/lib/landing-blog-featured.ts'),

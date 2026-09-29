@@ -21,6 +21,11 @@ export default defineConfig({
       enabled: true,
     },
     env: {
+      // Landing reads blog artifacts from the shared R2 bucket at runtime;
+      // dropping this binding silently empties the landing blog section.
+      BLOG_GALLERY_BUCKET: bindings.r2({
+        name: 'pink-binder',
+      }),
       ASSETS: bindings.assets(),
     },
   },
