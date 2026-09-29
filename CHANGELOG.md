@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.4.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.0...pink-binder-v3.4.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* worker-observability ([#190](https://github.com/pinkbinder/pink-binder/issues/190)) ([ea92b3b](https://github.com/pinkbinder/pink-binder/commit/ea92b3ba862307c429671044a71e8d255cc76a70))
+
 ## [3.4.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.6...pink-binder-v3.4.0) (2026-09-29)
 
 
