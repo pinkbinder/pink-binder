@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.5.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.1...pink-binder-v3.5.0) (2026-09-29)
+
+
+### Features
+
+* **deploy:** cf CLI deploys for admin; prebuilt deploys everywhere ([#192](https://github.com/pinkbinder/pink-binder/issues/192)) ([4ed1467](https://github.com/pinkbinder/pink-binder/commit/4ed1467abb1d469176d997cecd3a37e87660bfe6))
+
 ## [3.4.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.0...pink-binder-v3.4.1) (2026-09-29)
 
 
