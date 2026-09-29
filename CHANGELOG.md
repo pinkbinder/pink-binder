@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.0...pink-binder-v3.6.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* restore the production deploy trigger key ([#195](https://github.com/pinkbinder/pink-binder/issues/195)) ([8829ca4](https://github.com/pinkbinder/pink-binder/commit/8829ca4d6f2a7adfe4d281e1250505ad78b95a37))
+
 ## [3.6.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.5.0...pink-binder-v3.6.0) (2026-09-29)
 
 
