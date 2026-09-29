@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.16.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.15.0...blog-v0.16.0) (2026-09-29)
+
+
+### Features
+
+* **deploy:** cf CLI deploys for admin; prebuilt deploys everywhere ([#192](https://github.com/pinkbinder/pink-binder/issues/192)) ([4ed1467](https://github.com/pinkbinder/pink-binder/commit/4ed1467abb1d469176d997cecd3a37e87660bfe6))
+
 ## [0.15.0](https://github.com/pinkbinder/pink-binder/compare/blog-v0.14.2...blog-v0.15.0) (2026-09-29)
 
 
