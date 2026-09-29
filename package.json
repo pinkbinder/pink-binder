@@ -49,9 +49,7 @@
     "turbo": "^2.10.12"
   },
   "overrides": {
-    "nanoid": "6.0.1",
-    "postcss": "8.5.25",
-    "sharp": "0.35.4"
+    "undici": "^7.29.1"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": "oxlint --max-warnings 0",
