@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.2...pink-binder-v3.6.3) (2026-09-29)
+
+
+### Bug Fixes
+
+* **ci:** retire the worker-observability PATCH job ([#201](https://github.com/pinkbinder/pink-binder/issues/201)) ([f8fb740](https://github.com/pinkbinder/pink-binder/commit/f8fb740154b2c839cc246d1e9421c12f1a8f4399))
+
 ## [3.6.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.1...pink-binder-v3.6.2) (2026-09-29)
 
 
