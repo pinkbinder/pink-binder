@@ -1,32 +1,27 @@
 name: Cloudflare Production
-
-on:
+true:
   push:
-    branches: [main]
-  workflow_dispatch:
-
+    branches:
+    - main
+  workflow_dispatch: null
 permissions:
   contents: read
   deployments: write
-
 jobs:
   production:
     name: Cloudflare Production / ${{ matrix.app }}
     strategy:
       fail-fast: false
       matrix:
-        # store is gated out of production until the Medusa backend is hosted
-        # and the MEDUSA_* Worker secrets are set (see docs/ENV_SETUP.md).
-        app: [admin, blog, landing]
+        app:
+        - admin
+        - blog
+        - landing
     uses: 0xPlayerOne/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.33.3
     with:
       mode: production
-      # Wrangler 4.131.1 fails on the admin Worker under the reusable Bun
-      # launcher with "The object can not be cloned"; 4.130.0 deploys cleanly.
       wrangler-version: 4.130.0
       working-directory: apps/${{ matrix.app }}
-      # explicit package filter: the v1.28.6 auto-detect returns an empty
-      # turbo_package on hosted runners, failing the impact check
       turbo-filter: '@repo/${{ matrix.app }}'
       install-working-directory: .
       build-script: build:cloudflare
@@ -36,43 +31,50 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-
-  # App deploys rehash hashed assets (e.g. /_astro/Layout.*.css), so any HTML
-  # cached at the edge before a deploy can reference a stylesheet that no
-  # longer exists and render unstyled. Purge the blog zone after production
-  # deploys so cached pages always match the just-deployed asset set.
+  worker-observability:
+    name: Cloudflare Production / Worker observability
+    needs: production
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+        - admin
+        - blog
+        - landing
+    steps:
+    - name: Enable Worker observability
+      env:
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      run: "for app in admin blog landing; do\n  settings='{\"observability\":{\"\
+        enabled\":true,\"head_sampling_rate\":1}}'\n  response=$(curl -s -X PATCH\
+        \ \\\n    -F \"settings=$settings;type=application/json\" \\\n    -H \"Authorization:\
+        \ Bearer $CLOUDFLARE_API_TOKEN\" \\\n    \"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$app/settings\"\
+        )\n  echo \"$response\" | jq -e '.success == true' > /dev/null\ndone"
   purge-blog-zone:
     name: Cloudflare Production / purge blog zone
     needs: production
     runs-on: ubuntu-latest
     steps:
-      - name: Purge pinkbinder.blog CDN cache
-        env:
-          CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
-          CLOUDFLARE_ZONE_ID: 6ef2d55c02326c7ecfe469140f4da392
-        run: |
-          response=$(curl -sf -X POST \
-            -H "Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
-            -d '{"purge_everything":true}')
-          echo "$response"
-          echo "$response" | jq -e '.success == true' > /dev/null
-
+    - name: Purge pinkbinder.blog CDN cache
+      env:
+        CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
+        CLOUDFLARE_ZONE_ID: 6ef2d55c02326c7ecfe469140f4da392
+      run: "response=$(curl -sf -X POST \\\n  -H \"Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN\"\
+        \ \\\n  -H \"Content-Type: application/json\" \\\n  \"https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache\"\
+        \ \\\n  -d '{\"purge_everything\":true}')\necho \"$response\"\necho \"$response\"\
+        \ | jq -e '.success == true' > /dev/null\n"
   purge-landing-zone:
     name: Cloudflare Production / purge landing zone
     needs: production
     runs-on: ubuntu-latest
     steps:
-      - name: Purge pinkbinder.shop CDN cache
-        env:
-          CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
-          CLOUDFLARE_ZONE_ID: be1ab67d01c231d4b2b681a055de2a12
-        run: |
-          response=$(curl -sf -X POST \
-            -H "Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN" \
-            -H "Content-Type: application/json" \
-            "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache" \
-            -d '{"purge_everything":true}')
-          echo "$response"
-          echo "$response" | jq -e '.success == true' > /dev/null
+    - name: Purge pinkbinder.shop CDN cache
+      env:
+        CLOUDFLARE_PURGE_API_TOKEN: ${{ secrets.CLOUDFLARE_PURGE_API_TOKEN }}
+        CLOUDFLARE_ZONE_ID: be1ab67d01c231d4b2b681a055de2a12
+      run: "response=$(curl -sf -X POST \\\n  -H \"Authorization: Bearer $CLOUDFLARE_PURGE_API_TOKEN\"\
+        \ \\\n  -H \"Content-Type: application/json\" \\\n  \"https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/purge_cache\"\
+        \ \\\n  -d '{\"purge_everything\":true}')\necho \"$response\"\necho \"$response\"\
+        \ | jq -e '.success == true' > /dev/null\n"
