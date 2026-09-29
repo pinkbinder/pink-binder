@@ -32,27 +32,6 @@ jobs:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-  worker-observability:
-    name: Cloudflare Production / Worker observability
-    needs: production
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        app:
-          - admin
-          - blog
-          - landing
-    steps:
-      - name: Enable Worker observability
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: "for app in admin blog landing; do\n  settings='{\"observability\":{\"\
-          enabled\":true,\"head_sampling_rate\":1}}'\n  response=$(curl -s -X PATCH\
-          \ \\\n    -F \"settings=$settings;type=application/json\" \\\n    -H \"Authorization:\
-          \ Bearer $CLOUDFLARE_API_TOKEN\" \\\n    \"https://api.cloudflare.com/client/v4/accounts/$CLOUDFLARE_ACCOUNT_ID/workers/scripts/$app/settings\"\
-          )\n  echo \"$response\" | jq -e '.success == true' > /dev/null\ndone"
   purge-blog-zone:
     name: Cloudflare Production / purge blog zone
     needs: production
