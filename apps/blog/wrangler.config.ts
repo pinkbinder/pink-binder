@@ -1,8 +1,8 @@
-import { defineWranglerConfig } from "wrangler/experimental-config";
+import { defineWranglerConfig } from 'wrangler/experimental-config'
 
 export default defineWranglerConfig({
-	types: {
-		generate: false,
-	},
-	assetsDirectory: "./dist/client",
-});
+  types: {
+    generate: false,
+  },
+  assetsDirectory: './dist/client',
+})
