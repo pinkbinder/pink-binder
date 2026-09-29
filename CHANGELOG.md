@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.1...pink-binder-v3.6.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* **ci:** previews consume the prebuilt Build Output (code-foundry v1.36.4) ([#199](https://github.com/pinkbinder/pink-binder/issues/199)) ([017454a](https://github.com/pinkbinder/pink-binder/commit/017454a256545d89d76c13bfaa1174aa9d843929))
+
 ## [3.6.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.0...pink-binder-v3.6.1) (2026-09-29)
 
 
