@@ -17,7 +17,7 @@
     "start": "astro preview --port 3000",
     "cf:build": "astro build",
     "cloudflare:build": "astro build && cf-wrangler build && cf deploy --dry-run",
-    "deploy": "cf deploy",
+    "deploy": "bun run build:cloudflare && cf-wrangler build && cf deploy --prebuilt",
     "deploy:preview": "cf previews deploy"
   },
   "dependencies": {
