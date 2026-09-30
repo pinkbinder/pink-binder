@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.4](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.3...ui-v2.2.4) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** switch Dependabot to bun ecosystem for bun.lock ([#186](https://github.com/pinkbinder/pink-binder/issues/186)) ([6870be9](https://github.com/pinkbinder/pink-binder/commit/6870be9f7a28e39a8329c7a93a92c3b9dd8c55df))
+
 ## [2.2.3](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.2...ui-v2.2.3) (2026-09-27)
 
 
