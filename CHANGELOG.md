@@ -1,5 +1,66 @@
 # Changelog
 
+## [3.6.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.3...pink-binder-v3.6.4) (2026-09-30)
+
+
+### Maintenance
+
+* **code-foundry:** upgrade runtime to v1.36.4 ([#203](https://github.com/pinkbinder/pink-binder/issues/203)) ([3d769f5](https://github.com/pinkbinder/pink-binder/commit/3d769f5e60419625f00e9853fc0e333f426ceea5))
+
+## [3.6.3](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.2...pink-binder-v3.6.3) (2026-09-29)
+
+
+### Bug Fixes
+
+* **ci:** retire the worker-observability PATCH job ([#201](https://github.com/pinkbinder/pink-binder/issues/201)) ([f8fb740](https://github.com/pinkbinder/pink-binder/commit/f8fb740154b2c839cc246d1e9421c12f1a8f4399))
+
+## [3.6.2](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.1...pink-binder-v3.6.2) (2026-09-29)
+
+
+### Bug Fixes
+
+* **ci:** previews consume the prebuilt Build Output (code-foundry v1.36.4) ([#199](https://github.com/pinkbinder/pink-binder/issues/199)) ([017454a](https://github.com/pinkbinder/pink-binder/commit/017454a256545d89d76c13bfaa1174aa9d843929))
+
+## [3.6.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.0...pink-binder-v3.6.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* restore the production deploy trigger key ([#195](https://github.com/pinkbinder/pink-binder/issues/195)) ([8829ca4](https://github.com/pinkbinder/pink-binder/commit/8829ca4d6f2a7adfe4d281e1250505ad78b95a37))
+
+## [3.6.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.5.0...pink-binder-v3.6.0) (2026-09-29)
+
+
+### Features
+
+* **ci:** deploy through the cf CLI; drop the deploy-only wrangler.jsonc files ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([9939de3](https://github.com/pinkbinder/pink-binder/commit/9939de322333d10a6bf14a0b533c497b3c9662df))
+
+## [3.5.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.1...pink-binder-v3.5.0) (2026-09-29)
+
+
+### Features
+
+* **deploy:** cf CLI deploys for admin; prebuilt deploys everywhere ([#192](https://github.com/pinkbinder/pink-binder/issues/192)) ([4ed1467](https://github.com/pinkbinder/pink-binder/commit/4ed1467abb1d469176d997cecd3a37e87660bfe6))
+
+## [3.4.1](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.4.0...pink-binder-v3.4.1) (2026-09-29)
+
+
+### Bug Fixes
+
+* worker-observability ([#190](https://github.com/pinkbinder/pink-binder/issues/190)) ([ea92b3b](https://github.com/pinkbinder/pink-binder/commit/ea92b3ba862307c429671044a71e8d255cc76a70))
+
+## [3.4.0](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.6...pink-binder-v3.4.0) (2026-09-29)
+
+
+### Features
+
+* cf-migrate ([#187](https://github.com/pinkbinder/pink-binder/issues/187)) ([4f2d2e0](https://github.com/pinkbinder/pink-binder/commit/4f2d2e05ed132d17ca99f4ae076c14a5f298dd93))
+
+
+### Maintenance
+
+* **ci:** bump the cloudflare deploy workflow to v1.33.3 ([#189](https://github.com/pinkbinder/pink-binder/issues/189)) ([c5ac253](https://github.com/pinkbinder/pink-binder/commit/c5ac253c78efb5c5eaba4be4414ca908bed50a03))
+
 ## [3.3.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.3.5...pink-binder-v3.3.6) (2026-09-27)
 
 

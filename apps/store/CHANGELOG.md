@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.10.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.9.0...store-v0.10.0) (2026-09-29)
+
+
+### Features
+
+* **ci:** deploy through the cf CLI; drop the deploy-only wrangler.jsonc files ([#194](https://github.com/pinkbinder/pink-binder/issues/194)) ([9939de3](https://github.com/pinkbinder/pink-binder/commit/9939de322333d10a6bf14a0b533c497b3c9662df))
+
+## [0.9.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.8.0...store-v0.9.0) (2026-09-29)
+
+
+### Features
+
+* **deploy:** cf CLI deploys for admin; prebuilt deploys everywhere ([#192](https://github.com/pinkbinder/pink-binder/issues/192)) ([4ed1467](https://github.com/pinkbinder/pink-binder/commit/4ed1467abb1d469176d997cecd3a37e87660bfe6))
+
+## [0.8.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.10...store-v0.8.0) (2026-09-29)
+
+
+### Features
+
+* cf-migrate ([#187](https://github.com/pinkbinder/pink-binder/issues/187)) ([4f2d2e0](https://github.com/pinkbinder/pink-binder/commit/4f2d2e05ed132d17ca99f4ae076c14a5f298dd93))
+
 ## [0.7.10](https://github.com/pinkbinder/pink-binder/compare/store-v0.7.9...store-v0.7.10) (2026-09-24)
 
 
