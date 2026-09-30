@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.7...pink-binder-v3.6.8) (2026-09-30)
+
+
+### Maintenance
+
+* **code-foundry:** upgrade runtime to v1.38.1 ([#211](https://github.com/pinkbinder/pink-binder/issues/211)) ([a5d4b87](https://github.com/pinkbinder/pink-binder/commit/a5d4b87e32ba1085598bcf391b14b9075380b743))
+
 ## [3.6.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.6...pink-binder-v3.6.7) (2026-09-30)
 
 
