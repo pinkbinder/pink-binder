@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.7](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.6...pink-binder-v3.6.7) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** bump the Code Foundry runtime to v1.37.2 for cf deploy diagnostics ([3f95534](https://github.com/pinkbinder/pink-binder/commit/3f95534341437331a7cb36de76357e7a67fcf01b))
+
 ## [3.6.6](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.5...pink-binder-v3.6.6) (2026-09-30)
 
 
