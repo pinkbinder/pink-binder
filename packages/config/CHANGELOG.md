@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.12](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.11...config-v1.3.12) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** switch Dependabot to bun ecosystem for bun.lock ([#186](https://github.com/pinkbinder/pink-binder/issues/186)) ([6870be9](https://github.com/pinkbinder/pink-binder/commit/6870be9f7a28e39a8329c7a93a92c3b9dd8c55df))
+
 ## [1.3.11](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.10...config-v1.3.11) (2026-09-24)
 
 

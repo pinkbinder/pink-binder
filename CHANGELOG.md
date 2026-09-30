@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.5](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.4...pink-binder-v3.6.5) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** switch Dependabot to bun ecosystem for bun.lock ([#186](https://github.com/pinkbinder/pink-binder/issues/186)) ([6870be9](https://github.com/pinkbinder/pink-binder/commit/6870be9f7a28e39a8329c7a93a92c3b9dd8c55df))
+
 ## [3.6.4](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.3...pink-binder-v3.6.4) (2026-09-30)
 
 

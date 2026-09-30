@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/pinkbinder/pink-binder/compare/store-v0.10.0...store-v0.10.1) (2026-09-30)
+
+
+### Bug Fixes
+
+* **ci:** switch Dependabot to bun ecosystem for bun.lock ([#186](https://github.com/pinkbinder/pink-binder/issues/186)) ([6870be9](https://github.com/pinkbinder/pink-binder/commit/6870be9f7a28e39a8329c7a93a92c3b9dd8c55df))
+
 ## [0.10.0](https://github.com/pinkbinder/pink-binder/compare/store-v0.9.0...store-v0.10.0) (2026-09-29)
 
 
