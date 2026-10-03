@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.6.9](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.8...pink-binder-v3.6.9) (2026-10-03)
+
+
+### Maintenance
+
+* **code-foundry:** upgrade to v1.41.0 ([#214](https://github.com/pinkbinder/pink-binder/issues/214)) ([c98c245](https://github.com/pinkbinder/pink-binder/commit/c98c245e805672bc87f88053b317c79eb6e4e5a8))
+* **code-foundry:** upgrade to v1.44.3 ([#215](https://github.com/pinkbinder/pink-binder/issues/215)) ([0f9917c](https://github.com/pinkbinder/pink-binder/commit/0f9917c5287191e074303e6772727ce917395c44))
+
 ## [3.6.8](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.7...pink-binder-v3.6.8) (2026-09-30)
 
 
