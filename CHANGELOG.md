@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.10](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.9...pink-binder-v3.6.10) (2026-10-06)
+
+
+### Bug Fixes
+
+* **deps:** patch seroval, sharp, source-map-js, smol-toml advisories ([#218](https://github.com/pinkbinder/pink-binder/issues/218)) ([f0e2f1f](https://github.com/pinkbinder/pink-binder/commit/f0e2f1f54009937175d5ad21897f88d39e29fc79))
+
 ## [3.6.9](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.8...pink-binder-v3.6.9) (2026-10-03)
 
 
