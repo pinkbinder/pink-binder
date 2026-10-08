@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.11](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.10...pink-binder-v3.6.11) (2026-10-08)
+
+
+### CI
+
+* **preview:** skip preview deploys for Dependabot PRs ([#220](https://github.com/pinkbinder/pink-binder/issues/220)) ([9ef3ca0](https://github.com/pinkbinder/pink-binder/commit/9ef3ca0c26dc22832dab6b9e330d9c48aca63e22))
+
 ## [3.6.10](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.9...pink-binder-v3.6.10) (2026-10-06)
 
 
