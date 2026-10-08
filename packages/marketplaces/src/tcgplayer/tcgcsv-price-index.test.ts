@@ -26,6 +26,17 @@ const makeTcgcsvGroup = (
   categoryId = 1
 ): TcgcsvGroup => ({ groupId, name, abbreviation, categoryId })
 
+// hoisted to module scope (oxlint 1.86: unicorn/consistent-function-scoping)
+const group = (
+  groupId: number,
+  name = 'SV01: Scarlet & Violet Base Set',
+  abbreviation = 'SV01'
+): { group: TcgcsvGroup; products: TcgcsvProduct[]; prices: TcgcsvPriceRow[] } => ({
+  group: makeTcgcsvGroup(groupId, name, abbreviation),
+  products: [],
+  prices: [],
+})
+
 describe('tcgplayer/tcgcsv-price-index', () => {
   describe('parseTcgplayerSetIdFromProductUrl', () => {
     it('extracts a simple set id', () => {
@@ -124,16 +135,6 @@ describe('tcgplayer/tcgcsv-price-index', () => {
   })
 
   describe('buildTcgcsvPriceIndex', () => {
-    const group = (
-      groupId: number,
-      name = 'SV01: Scarlet & Violet Base Set',
-      abbreviation = 'SV01'
-    ): { group: TcgcsvGroup; products: TcgcsvProduct[]; prices: TcgcsvPriceRow[] } => ({
-      group: makeTcgcsvGroup(groupId, name, abbreviation),
-      products: [],
-      prices: [],
-    })
-
     it('returns an empty index with correct stats', () => {
       const index = buildTcgcsvPriceIndex({ groups: [], tcgcsvLastUpdated: null })
       expect(index.schemaVersion).toBe(3)

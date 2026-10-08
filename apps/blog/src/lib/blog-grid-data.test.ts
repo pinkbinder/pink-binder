@@ -84,27 +84,28 @@ describe('blog grid search', () => {
   })
 })
 
-describe('filterBlogGridPostsCached', () => {
-  function datasetFor(posts: EnrichedPostForGrid[]) {
-    const facets = {
-      types: [],
-      generations: [],
-      lists: [],
-      illustrators: [],
-      expansions: [],
-      pokemon: [],
-      themes: [],
-      tags: [],
-    }
-    return {
-      index: { posts: [] } as never,
-      posts,
-      facets,
-      facetIndex: buildBlogFacetIndex(facets),
-      facetsJson: '{}',
-    }
+// hoisted to module scope (oxlint 1.86: unicorn/consistent-function-scoping)
+function datasetFor(posts: EnrichedPostForGrid[]) {
+  const facets = {
+    types: [],
+    generations: [],
+    lists: [],
+    illustrators: [],
+    expansions: [],
+    pokemon: [],
+    themes: [],
+    tags: [],
   }
+  return {
+    index: { posts: [] } as never,
+    posts,
+    facets,
+    facetIndex: buildBlogFacetIndex(facets),
+    facetsJson: '{}',
+  }
+}
 
+describe('filterBlogGridPostsCached', () => {
   it('returns the identical array for repeated queries on the same index', () => {
     const dataset = datasetFor([pikachu, eevee])
     const first = filterBlogGridPostsCached(dataset, { q: 'pikachu' })
