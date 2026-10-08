@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.21](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.20...marketplaces-v1.3.21) (2026-10-08)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 24 updates ([#217](https://github.com/pinkbinder/pink-binder/issues/217)) ([4053d87](https://github.com/pinkbinder/pink-binder/commit/4053d879c8141a5eb90136c197994fa70db23e50))
+
 ## [1.3.20](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.19...marketplaces-v1.3.20) (2026-09-30)
 
 

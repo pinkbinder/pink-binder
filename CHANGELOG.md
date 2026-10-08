@@ -1,5 +1,17 @@
 # Changelog
 
+## [3.6.12](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.11...pink-binder-v3.6.12) (2026-10-08)
+
+
+### Documentation
+
+* **adr:** ADR 0006 — Effect viability no-go, closes [#14](https://github.com/pinkbinder/pink-binder/issues/14) ([#222](https://github.com/pinkbinder/pink-binder/issues/222)) ([f456ebb](https://github.com/pinkbinder/pink-binder/commit/f456ebbb241b5350fe2d2d983bf80e71662aba48))
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 24 updates ([#217](https://github.com/pinkbinder/pink-binder/issues/217)) ([4053d87](https://github.com/pinkbinder/pink-binder/commit/4053d879c8141a5eb90136c197994fa70db23e50))
+
 ## [3.6.11](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.10...pink-binder-v3.6.11) (2026-10-08)
 
 

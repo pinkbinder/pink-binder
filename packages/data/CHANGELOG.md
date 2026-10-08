@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.5.6](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.5...data-v2.5.6) (2026-10-08)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 24 updates ([#217](https://github.com/pinkbinder/pink-binder/issues/217)) ([4053d87](https://github.com/pinkbinder/pink-binder/commit/4053d879c8141a5eb90136c197994fa70db23e50))
+
 ## [2.5.5](https://github.com/pinkbinder/pink-binder/compare/data-v2.5.4...data-v2.5.5) (2026-09-30)
 
 
