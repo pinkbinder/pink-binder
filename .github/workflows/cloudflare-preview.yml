@@ -16,7 +16,13 @@ permissions:
 jobs:
   preview:
     name: Cloudflare Preview / ${{ matrix.app }}
-    if: github.event.pull_request.draft == false
+    # Dependabot-triggered runs receive secrets from the Dependabot store only,
+    # never from Actions (see github.com/docs "Troubleshoot Dependabot on GitHub
+    # Actions"), so the deploy step fails on CLOUDFLARE_API_TOKEN even though the
+    # build succeeds. Skip previews for Dependabot PRs until
+    # CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID are mirrored as Dependabot
+    # secrets, which restores preview deployments for them.
+    if: github.event.pull_request.draft == false && github.actor != 'dependabot[bot]'
     strategy:
       fail-fast: false
       matrix:
