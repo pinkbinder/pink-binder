@@ -26,8 +26,8 @@
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^26.5.1",
-    "oxfmt": "^0.68.0",
-    "oxlint": "^1.83.0",
+    "oxfmt": "^0.71.0",
+    "oxlint": "^1.86.0",
     "typescript": "^6.0.3"
   }
 }

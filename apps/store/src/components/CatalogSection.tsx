@@ -37,9 +37,11 @@ export function CatalogSection(props: Props) {
       : parseCatalogSearch(new URL(window.location.href).searchParams)
   )
 
+  // hoisted out of onMount (oxlint 1.86: unicorn/consistent-function-scoping —
+  // the handler captures nothing from the mount callback's own scope)
+  const onPopState = () => setSearch(parseCatalogSearch(new URL(window.location.href).searchParams))
+
   onMount(() => {
-    const onPopState = () =>
-      setSearch(parseCatalogSearch(new URL(window.location.href).searchParams))
     window.addEventListener('popstate', onPopState)
     onCleanup(() => window.removeEventListener('popstate', onPopState))
   })
