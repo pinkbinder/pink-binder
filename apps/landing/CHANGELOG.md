@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/pinkbinder/pink-binder/compare/landing-v0.11.1...landing-v0.11.2) (2026-10-08)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 24 updates ([#217](https://github.com/pinkbinder/pink-binder/issues/217)) ([4053d87](https://github.com/pinkbinder/pink-binder/commit/4053d879c8141a5eb90136c197994fa70db23e50))
+
 ## [0.11.1](https://github.com/pinkbinder/pink-binder/compare/landing-v0.11.0...landing-v0.11.1) (2026-09-30)
 
 
