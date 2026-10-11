@@ -31,21 +31,21 @@
     "@tanstack/solid-router": "^1.170.38",
     "@tanstack/solid-router-ssr-query": "^1.167.3",
     "@tanstack/solid-start": "^1.168.57",
-    "lucide-solid": "^1.51.0",
-    "solid-js": "^1.9.15"
+    "lucide-solid": "^1.53.0",
+    "solid-js": "^1.9.17"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.62.5",
+    "@cloudflare/vite-plugin": "^1.63.0",
     "@repo/typescript-config": "workspace:*",
     "@tailwindcss/vite": "^4.3.3",
     "@tanstack/router-cli": "^1.167.40",
     "@types/node": "^26.5.1",
-    "cf": "^1.0.0-beta.12",
-    "oxfmt": "^0.71.0",
-    "oxlint": "^1.86.0",
+    "cf": "^1.0.0-beta.13",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
-    "vite": "^8.3.2",
+    "vite": "^8.3.4",
     "vite-plugin-solid": "^2.11.14",
     "wrangler": "^4.143.0"
   }

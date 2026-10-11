@@ -33,19 +33,19 @@
     "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "@babel/core": "^8.0.5",
-    "@babel/preset-typescript": "^8.0.1",
+    "@babel/core": "^8.0.7",
+    "@babel/preset-typescript": "^8.0.7",
     "@happy-dom/global-registrator": "^20.14.5",
     "@shadcn/lint": "^0.2.0",
     "@solidjs/testing-library": "^0.8.10",
     "@testing-library/user-event": "14.6.7",
     "@types/bun": "^1.4.2",
-    "babel-preset-solid": "^1.9.15",
+    "babel-preset-solid": "^1.9.16",
     "chrome-launcher": "1.2.2",
     "lighthouse": "13.5.0",
     "lint-staged": "^17.6.0",
-    "oxfmt": "^0.71.0",
-    "oxlint": "^1.86.0",
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
     "turbo": "^2.11.7"
   },
   "overrides": {
