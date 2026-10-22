@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.14](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.13...config-v1.3.14) (2026-10-22)
+
+
+### Maintenance
+
+* bun-1.4.4-cloud ([#228](https://github.com/pinkbinder/pink-binder/issues/228)) ([2ba1add](https://github.com/pinkbinder/pink-binder/commit/2ba1add9c3f7f12e7056f5805f2137beeb2ec8e1))
+
 ## [1.3.13](https://github.com/pinkbinder/pink-binder/compare/config-v1.3.12...config-v1.3.13) (2026-10-08)
 
 
