@@ -41,7 +41,7 @@ jobs:
       turbo-filter: '@repo/${{ matrix.app }}'
       install-working-directory: .
       build-script: build:cloudflare
-      bun-version: 1.4.0
+      bun-version: 1.4.4
       environment: Preview - pink-binder-${{ matrix.app }}
     secrets:
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
