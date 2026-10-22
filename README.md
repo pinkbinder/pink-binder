@@ -45,6 +45,12 @@ Cloudflare Workers Builds setup, monorepo watch paths, build caching, and the
 GitHub deployment-status behavior are documented in
 [`docs/CLOUDFLARE_BUILDS.md`](docs/CLOUDFLARE_BUILDS.md).
 
+## Type checking
+
+Run `bun run type-check` from the repository root. Each Astro app runs
+`astro sync` before native Bun checking and retains `astro check`, so a clean
+checkout generates its framework types before checking imports.
+
 ## eBay marketplace account deletion notifications
 
 Configure this callback URL in your eBay marketplace account deletion notification settings:

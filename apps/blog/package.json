@@ -8,7 +8,7 @@
     "build:cloudflare": "cd ../.. && bunx turbo run cf:build --filter=@repo/blog && bun scripts/restore-cached-media.mjs blog",
     "dev": "astro dev --port 3002",
     "lint": "oxlint . --max-warnings 0",
-    "type-check": "astro check",
+    "type-check": "astro sync && bun check --no-script && astro check",
     "test": "cd ../.. && bun test apps/blog",
     "test:watch": "cd ../.. && bun test --watch apps/blog",
     "test:coverage": "cd ../.. && bun test --coverage apps/blog",
