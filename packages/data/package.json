@@ -18,7 +18,7 @@
   },
   "scripts": {
     "lint": "oxlint . --max-warnings 0",
-    "type-check": "tsc --noEmit",
+    "type-check": "bun check --no-script",
     "test": "cd ../.. && bun test --isolate packages/data",
     "test:watch": "cd ../.. && bun test --watch packages/data",
     "test:coverage": "cd ../.. && bun test --coverage packages/data",

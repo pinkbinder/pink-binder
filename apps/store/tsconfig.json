@@ -4,10 +4,10 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
-    "baseUrl": ".",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "paths": {
+      "*": ["./*"],
       "@/*": ["./src/*"]
     }
   },
