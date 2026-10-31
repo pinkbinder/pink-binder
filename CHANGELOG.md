@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.15](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.14...pink-binder-v3.6.15) (2026-10-31)
+
+
+### Maintenance
+
+* pin Bun references to 1.4.4 ([#233](https://github.com/pinkbinder/pink-binder/issues/233)) ([ba98a96](https://github.com/pinkbinder/pink-binder/commit/ba98a96f5e04714c5d86562c1e94860cf9445bc7))
+
 ## [3.6.14](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.13...pink-binder-v3.6.14) (2026-10-22)
 
 
