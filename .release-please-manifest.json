@@ -1,12 +1,12 @@
 {
-  ".": "3.6.15",
-  "apps/admin": "0.11.3",
-  "apps/blog": "0.17.3",
-  "apps/landing": "0.11.3",
-  "apps/store": "0.10.3",
-  "packages/config": "1.3.14",
-  "packages/data": "2.5.7",
-  "packages/marketplaces": "1.3.22",
-  "packages/typescript-config": "2.0.4",
-  "packages/ui": "2.2.6"
+  ".": "3.6.16",
+  "apps/admin": "0.11.4",
+  "apps/blog": "0.17.4",
+  "apps/landing": "0.11.4",
+  "apps/store": "0.10.4",
+  "packages/config": "1.3.15",
+  "packages/data": "2.5.8",
+  "packages/marketplaces": "1.3.23",
+  "packages/typescript-config": "2.0.5",
+  "packages/ui": "2.2.7"
 }

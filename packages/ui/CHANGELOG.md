@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.2.7](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.6...ui-v2.2.7) (2026-10-31)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 29 updates ([#235](https://github.com/pinkbinder/pink-binder/issues/235)) ([8d34b50](https://github.com/pinkbinder/pink-binder/commit/8d34b5017c62cf118ad0ab2d5cff38c1ba61d4c4))
+
 ## [2.2.6](https://github.com/pinkbinder/pink-binder/compare/ui-v2.2.5...ui-v2.2.6) (2026-10-22)
 
 
