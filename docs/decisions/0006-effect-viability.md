@@ -49,7 +49,7 @@ still lands on the no-go side of the bar.
 
 Reimplemented the core of `apps/blog/scripts/publish-blog-posts.ts` with
 **effect@4.0.2** (pinned) on a local-only branch `spike/effect-publish-blog-posts`
-in blog-pipeline (Bun 1.4.0, repo tsc/oxlint toolchain, macOS arm64).
+in blog-pipeline (Bun 1.4.4, repo tsc/oxlint toolchain, macOS arm64).
 Schema-validated `blogs/index.json` boundary, four typed error classes,
 Layer-provided in-memory R2 port, `Effect.forEach` bounded concurrency (24),
 bounded `Effect.retry`. The branch was deleted after measurement; nothing
