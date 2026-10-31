@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.4](https://github.com/pinkbinder/pink-binder/compare/store-v0.10.3...store-v0.10.4) (2026-10-31)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 29 updates ([#235](https://github.com/pinkbinder/pink-binder/issues/235)) ([8d34b50](https://github.com/pinkbinder/pink-binder/commit/8d34b5017c62cf118ad0ab2d5cff38c1ba61d4c4))
+
 ## [0.10.3](https://github.com/pinkbinder/pink-binder/compare/store-v0.10.2...store-v0.10.3) (2026-10-22)
 
 
