@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.4](https://github.com/pinkbinder/pink-binder/compare/blog-v0.17.3...blog-v0.17.4) (2026-10-31)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 29 updates ([#235](https://github.com/pinkbinder/pink-binder/issues/235)) ([8d34b50](https://github.com/pinkbinder/pink-binder/commit/8d34b5017c62cf118ad0ab2d5cff38c1ba61d4c4))
+
 ## [0.17.3](https://github.com/pinkbinder/pink-binder/compare/blog-v0.17.2...blog-v0.17.3) (2026-10-22)
 
 

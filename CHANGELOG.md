@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.16](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.15...pink-binder-v3.6.16) (2026-10-31)
+
+
+### Maintenance
+
+* **deps:** bump the bun-dependencies group across 1 directory with 29 updates ([#235](https://github.com/pinkbinder/pink-binder/issues/235)) ([8d34b50](https://github.com/pinkbinder/pink-binder/commit/8d34b5017c62cf118ad0ab2d5cff38c1ba61d4c4))
+
 ## [3.6.15](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.14...pink-binder-v3.6.15) (2026-10-31)
 
 
