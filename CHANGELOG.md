@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.17](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.16...pink-binder-v3.6.17) (2026-10-31)
+
+
+### Maintenance
+
+* **deps:** bump 0xPlayerOne/opencode-security/.github/workflows/opencode-security.yml ([#231](https://github.com/pinkbinder/pink-binder/issues/231)) ([e91854b](https://github.com/pinkbinder/pink-binder/commit/e91854bb5594b714b68f65d54fae316853eb8ad9))
+
 ## [3.6.16](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.15...pink-binder-v3.6.16) (2026-10-31)
 
 
