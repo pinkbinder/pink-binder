@@ -22,27 +22,27 @@
     "deploy:preview": "cf previews deploy"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "14.4.3",
+    "@astrojs/cloudflare": "14.4.4",
     "@astrojs/solid-js": "^7.1.2",
-    "@medusajs/js-sdk": "^2.22.1",
+    "@medusajs/js-sdk": "^2.22.3",
     "@nanostores/solid": "^1.1.1",
     "@repo/config": "workspace:*",
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "astro": "^7.4.3",
+    "astro": "^7.4.5",
     "nanostores": "^1.5.5",
-    "solid-js": "^1.9.17"
+    "solid-js": "^1.9.18"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.4",
     "@types/node": "^26.5.1",
-    "cf": "^1.0.0-beta.24",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
-    "tailwindcss": "^4.3.3",
+    "cf": "^1.0.0-beta.28",
+    "oxfmt": "^0.76.0",
+    "oxlint": "^1.91.0",
+    "tailwindcss": "^4.3.4",
     "typescript": "^6.0.3",
     "wrangler": "^4.143.0"
   }
