@@ -33,20 +33,20 @@
     "format:check": "oxfmt --check ."
   },
   "devDependencies": {
-    "@babel/core": "^8.0.9",
+    "@babel/core": "^8.1.2",
     "@babel/preset-typescript": "^8.0.7",
     "@happy-dom/global-registrator": "^21.0.4",
-    "@shadcn/lint": "^0.2.3",
+    "@shadcn/lint": "^0.2.5",
     "@solidjs/testing-library": "^0.8.10",
-    "@testing-library/user-event": "14.6.8",
+    "@testing-library/user-event": "14.6.13",
     "@types/bun": "^1.4.4",
-    "babel-preset-solid": "^1.9.16",
-    "chrome-launcher": "1.2.2",
+    "babel-preset-solid": "^1.9.19",
+    "chrome-launcher": "1.2.3",
     "lighthouse": "13.6.0",
-    "lint-staged": "^17.6.0",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
-    "turbo": "^2.11.10"
+    "lint-staged": "^17.6.1",
+    "oxfmt": "^0.79.0",
+    "oxlint": "^1.94.0",
+    "turbo": "^2.11.13"
   },
   "overrides": {
     "happy-dom": "21.0.4",
