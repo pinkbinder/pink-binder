@@ -17,10 +17,14 @@ jobs:
           - admin
           - blog
           - landing
-    uses: AndrewM-F/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.54.3
+    uses: AndrewM-F/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.54.5
     with:
       mode: production
       deploy-tool: cf
+      # Production updates the same Worker that previews upload through the
+      # script API, so cf refuses the upload as a conflicting remote change
+      # unless forced. force has no effect on the wrangler deploy path.
+      force: true
       wrangler-version: 4.130.0
       working-directory: apps/${{ matrix.app }}
       turbo-filter: '@repo/${{ matrix.app }}'
