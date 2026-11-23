@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.6](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v2.0.5...typescript-config-v2.0.6) (2026-11-23)
+
+
+### Maintenance
+
+* **deps:** update dependencies, toolchain, and code-foundry runtime ([#243](https://github.com/pinkbinder/pink-binder/issues/243)) ([d9af7f8](https://github.com/pinkbinder/pink-binder/commit/d9af7f85cd07c9d58d94d592a4fc463b48580ee1))
+
 ## [2.0.5](https://github.com/pinkbinder/pink-binder/compare/typescript-config-v2.0.4...typescript-config-v2.0.5) (2026-10-31)
 
 

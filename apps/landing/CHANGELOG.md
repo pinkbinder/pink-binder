@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.5](https://github.com/pinkbinder/pink-binder/compare/landing-v0.11.4...landing-v0.11.5) (2026-11-23)
+
+
+### Maintenance
+
+* **deps:** update dependencies, toolchain, and code-foundry runtime ([#243](https://github.com/pinkbinder/pink-binder/issues/243)) ([d9af7f8](https://github.com/pinkbinder/pink-binder/commit/d9af7f85cd07c9d58d94d592a4fc463b48580ee1))
+
 ## [0.11.4](https://github.com/pinkbinder/pink-binder/compare/landing-v0.11.3...landing-v0.11.4) (2026-10-31)
 
 

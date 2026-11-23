@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.5](https://github.com/pinkbinder/pink-binder/compare/store-v0.10.4...store-v0.10.5) (2026-11-23)
+
+
+### Maintenance
+
+* **deps:** update dependencies, toolchain, and code-foundry runtime ([#243](https://github.com/pinkbinder/pink-binder/issues/243)) ([d9af7f8](https://github.com/pinkbinder/pink-binder/commit/d9af7f85cd07c9d58d94d592a4fc463b48580ee1))
+
 ## [0.10.4](https://github.com/pinkbinder/pink-binder/compare/store-v0.10.3...store-v0.10.4) (2026-10-31)
 
 
