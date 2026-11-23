@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.24](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.23...marketplaces-v1.3.24) (2026-11-23)
+
+
+### Maintenance
+
+* **deps:** update dependencies, toolchain, and code-foundry runtime ([#243](https://github.com/pinkbinder/pink-binder/issues/243)) ([d9af7f8](https://github.com/pinkbinder/pink-binder/commit/d9af7f85cd07c9d58d94d592a4fc463b48580ee1))
+
 ## [1.3.23](https://github.com/pinkbinder/pink-binder/compare/marketplaces-v1.3.22...marketplaces-v1.3.23) (2026-10-31)
 
 

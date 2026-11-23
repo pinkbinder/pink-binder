@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.18](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.17...pink-binder-v3.6.18) (2026-11-23)
+
+
+### Maintenance
+
+* **deps:** update dependencies, toolchain, and code-foundry runtime ([#243](https://github.com/pinkbinder/pink-binder/issues/243)) ([d9af7f8](https://github.com/pinkbinder/pink-binder/commit/d9af7f85cd07c9d58d94d592a4fc463b48580ee1))
+
 ## [3.6.17](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.16...pink-binder-v3.6.17) (2026-10-31)
 
 
