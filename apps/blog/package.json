@@ -25,24 +25,24 @@
     "@repo/data": "workspace:*",
     "@repo/marketplaces": "workspace:*",
     "@repo/ui": "workspace:*",
-    "@tanstack/solid-query": "^5.105.0",
-    "solid-js": "^1.9.17",
-    "web-vitals": "^6"
+    "@tanstack/solid-query": "^5.108.4",
+    "solid-js": "^1.9.20",
+    "web-vitals": "^6.2.3"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.12",
-    "@astrojs/cloudflare": "14.4.3",
-    "@astrojs/solid-js": "^7.1.2",
+    "@astrojs/cloudflare": "14.4.9",
+    "@astrojs/solid-js": "^7.1.6",
     "@repo/typescript-config": "workspace:*",
-    "@tailwindcss/postcss": "^4.3.3",
-    "@types/node": "^26.5.1",
-    "astro": "7.4.3",
-    "cf": "^1.0.0-beta.24",
-    "oxfmt": "^0.75.0",
-    "oxlint": "^1.90.0",
-    "postcss": "8.5.32",
-    "tailwindcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.5",
+    "@types/node": "^26.6.6",
+    "astro": "7.4.13",
+    "cf": "1.0.0-beta.24",
+    "oxfmt": "^0.80.0",
+    "oxlint": "^1.95.0",
+    "postcss": "8.5.33",
+    "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
-    "wrangler": "^4.143.0"
+    "wrangler": "4.143.0"
   }
 }

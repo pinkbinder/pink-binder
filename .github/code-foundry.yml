@@ -3,8 +3,8 @@ profile: monorepo
 languages: typescript
 features: all
 package_manager: bun
-runtime_repository: 0xPlayerOne/code-foundry
-runtime_ref: v1.48.4
+runtime_repository: AndrewM-F/code-foundry
+runtime_ref: v1.54.3
 runner: ubuntu-slim
 unit_runner: ubuntu-slim
 ci_runner: ubuntu-latest
@@ -47,3 +47,5 @@ coverage_metrics: lines
 coverage_report:
 draft_protection: true
 monorepo_tool: auto
+release_qualification_receipts: false
+npm_publish_auth: auto
