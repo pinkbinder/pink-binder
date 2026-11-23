@@ -32,7 +32,7 @@
     "@tanstack/solid-router-ssr-query": "^1.167.3",
     "@tanstack/solid-start": "^1.169.7",
     "lucide-solid": "^1.78.0",
-    "solid-js": "^1.9.20"
+    "solid-js": "^2.0.3"
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "^1.70.1",
@@ -40,13 +40,13 @@
     "@tailwindcss/vite": "^4.3.5",
     "@tanstack/router-cli": "^1.168.0",
     "@types/node": "^26.6.6",
-    "cf": "1.0.0-beta.24",
+    "cf": "1.0.0-rc.2",
     "oxfmt": "^0.80.0",
     "oxlint": "^1.95.0",
     "tailwindcss": "^4.3.5",
     "typescript": "^6.0.3",
     "vite": "^8.3.8",
     "vite-plugin-solid": "^2.11.17",
-    "wrangler": "4.143.0"
+    "wrangler": "4.166.0"
   }
 }
