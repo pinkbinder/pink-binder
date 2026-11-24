@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.20](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.19...pink-binder-v3.6.20) (2026-11-24)
+
+
+### Bug Fixes
+
+* **ci:** adopt code-foundry v1.54.6 ([#248](https://github.com/pinkbinder/pink-binder/issues/248)) ([28fe2e9](https://github.com/pinkbinder/pink-binder/commit/28fe2e943ea76457425297aa1fb87f2c2a4be72b))
+
 ## [3.6.19](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.18...pink-binder-v3.6.19) (2026-11-24)
 
 
