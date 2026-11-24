@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.6.19](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.18...pink-binder-v3.6.19) (2026-11-24)
+
+
+### Bug Fixes
+
+* **ci:** adopt code-foundry v1.54.5 and force cf deploys ([#246](https://github.com/pinkbinder/pink-binder/issues/246)) ([85e2b06](https://github.com/pinkbinder/pink-binder/commit/85e2b061d8f604940b0f95c604aae58342bb20a3))
+
 ## [3.6.18](https://github.com/pinkbinder/pink-binder/compare/pink-binder-v3.6.17...pink-binder-v3.6.18) (2026-11-23)
 
 
