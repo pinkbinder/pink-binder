@@ -62,7 +62,7 @@ jobs:
         with:
           persist-credentials: false
           repository: AndrewM-F/code-foundry
-          ref: v1.54.3
+          ref: v1.54.5
           path: .github/.code-foundry
           sparse-checkout: |
             src/lib
@@ -193,7 +193,7 @@ jobs:
       packages: read
       pull-requests: read
       security-events: write
-    uses: AndrewM-F/code-foundry/.github/workflows/validation.yml@v1.54.3
+    uses: AndrewM-F/code-foundry/.github/workflows/validation.yml@v1.54.5
     with:
       mode: ${{ needs.mode.outputs.mode }}
       release-qualification-receipts: ${{ github.repository == 'AndrewM-F/code-foundry' }}
@@ -201,7 +201,7 @@ jobs:
       # Source PRs validate their proposed runtime commit. A Release Please PR
       # uses its main base, keeping version-only metadata out of the runtime
       # content identity. Scheduled audits use a separate default-branch caller.
-      runtime-ref: v1.54.3
+      runtime-ref: v1.54.5
       ci-runner: ubuntu-latest
       test-runner: ubuntu-slim
       unit-runner: ubuntu-slim
@@ -237,10 +237,10 @@ jobs:
       contents: read
       packages: read
       security-events: write
-    uses: AndrewM-F/code-foundry/.github/workflows/codeql.yml@v1.54.3
+    uses: AndrewM-F/code-foundry/.github/workflows/codeql.yml@v1.54.5
     with:
       runtime-repository: AndrewM-F/code-foundry
-      runtime-ref: v1.54.3
+      runtime-ref: v1.54.5
       runner: ubuntu-latest
       rust-shards: '["all"]'
       rust-threads: '1'

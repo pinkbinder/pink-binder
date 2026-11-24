@@ -25,11 +25,11 @@ jobs:
       issues: read
       packages: read
       security-events: write
-    uses: AndrewM-F/code-foundry/.github/workflows/validation.yml@v1.54.3
+    uses: AndrewM-F/code-foundry/.github/workflows/validation.yml@v1.54.5
     with:
       mode: audit
       runtime-repository: AndrewM-F/code-foundry
-      runtime-ref: v1.54.3
+      runtime-ref: v1.54.5
       ci-runner: ubuntu-latest
       test-runner: ubuntu-slim
       unit-runner: ubuntu-slim
