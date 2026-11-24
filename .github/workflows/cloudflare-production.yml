@@ -17,7 +17,7 @@ jobs:
           - admin
           - blog
           - landing
-    uses: AndrewM-F/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.54.5
+    uses: AndrewM-F/code-foundry/.github/workflows/cloudflare-deploy.yml@v1.54.6
     with:
       mode: production
       deploy-tool: cf
