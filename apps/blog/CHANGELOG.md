@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.17.6](https://github.com/pinkbinder/pink-binder/compare/blog-v0.17.5...blog-v0.17.6) (2026-11-24)
+
+
+### Bug Fixes
+
+* **ci:** adopt code-foundry v1.54.5 and force cf deploys ([#246](https://github.com/pinkbinder/pink-binder/issues/246)) ([85e2b06](https://github.com/pinkbinder/pink-binder/commit/85e2b061d8f604940b0f95c604aae58342bb20a3))
+
 ## [0.17.5](https://github.com/pinkbinder/pink-binder/compare/blog-v0.17.4...blog-v0.17.5) (2026-11-23)
 
 
